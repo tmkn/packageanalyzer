@@ -12,9 +12,9 @@
   "scripts": {
     "build": "node utility/clean.js && tsc",
     "dev": "tsc --watch",
-    "test": "node utility/clean.js && tsc && mocha --timeout 10000 ./build/tests/**/*.test.js",
+    "test": "mocha --timeout 10000 ./build/tests/**/*.test.js",
     "test:watch": "tsc && mocha --timeout 10000 --watch ./build/tests/**/*.test.js",
-    "test:cover": "nyc --reporter=lcov npm run test",
+    "test:cover": "nyc --reporter=lcov --reporter=text-summary --all npm run test",
     "test:clean": "node build/tests/clean.js",
     "prettier": "prettier --write \"{src,tests,utility}/**/{*.ts,*.js}\"",
     "cli": "node build/src/cli.js",
