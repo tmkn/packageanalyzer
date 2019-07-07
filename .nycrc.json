@@ -1,0 +1,20 @@
+{
+    "all": true,
+    "cache": false,
+
+    "sourceMap": true,
+    "instrument": true,
+    "reporter": [
+        "text-summary",
+        "lcov",
+        "text"
+    ],
+    "include": [
+        "build/**/*.test.js",
+        "src/**"
+    ],
+    "extension": [
+        ".js",
+        ".ts"
+    ]
+}
