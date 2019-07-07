@@ -1,0 +1,35 @@
+{
+  "name": "packageanalyzer",
+  "version": "1.0.0-beta0",
+  "description": "A tool to analyze a Node.js project/package",
+  "main": "./build/src/cli.js",
+  "files": [
+    "/build/src/**/*.js"
+  ],
+  "bin": {
+    "npa": "./build/src/cli.js"
+  },
+  "scripts": {
+    "build": "node utility/clean.js && tsc",
+    "dev": "tsc --watch",
+    "test": "node utility/clean.js && tsc && mocha --timeout 10000 ./build/tests/**/*.test.js",
+    "test:watch": "tsc && mocha --timeout 10000 --watch ./build/tests/**/*.test.js",
+    "test:clean": "node build/tests/clean.js",
+    "prettier": "prettier --write \"{src,tests,utility}/**/{*.ts,*.js}\"",
+    "cli": "node build/src/cli.js",
+    "preview": "npm pack && tar -xvzf *.tgz && rm -rf package *.tgz"
+  },
+  "author": "tmkn",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/mocha": "^5.2.6",
+    "@types/node": "^11.13.2",
+    "@types/semver": "^6.0.0",
+    "mocha": "^6.1.4",
+    "prettier": "^1.18.2",
+    "typescript": "^3.5.1"
+  },
+  "dependencies": {
+    "semver": "^6.0.0"
+  }
+}
