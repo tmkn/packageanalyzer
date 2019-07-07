@@ -14,6 +14,7 @@
     "dev": "tsc --watch",
     "test": "node utility/clean.js && tsc && mocha --timeout 10000 ./build/tests/**/*.test.js",
     "test:watch": "tsc && mocha --timeout 10000 --watch ./build/tests/**/*.test.js",
+    "test:cover": "istanbul cover ./node_modules/mocha/bin/_mocha ./build/tests/**/*.test.js --reporter lcovonly -- -R spec",
     "test:clean": "node build/tests/clean.js",
     "prettier": "prettier --write \"{src,tests,utility}/**/{*.ts,*.js}\"",
     "cli": "node build/src/cli.js",
@@ -30,6 +31,7 @@
     "typescript": "^3.5.1"
   },
   "dependencies": {
+    "istanbul": "^0.4.5",
     "semver": "^6.0.0"
   }
 }
