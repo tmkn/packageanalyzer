@@ -24,7 +24,7 @@ steps:
     npm run test
   displayName: 'Run tests'
 
-- script:
+- script: |
     npm install -g codecov
     istanbul cover ./node_modules/mocha/bin/_mocha --reporter lcovonly -- -R spec
     codecov
