@@ -23,3 +23,9 @@ steps:
 - script: |
     npm run test
   displayName: 'Run tests'
+
+- script:
+    npm install -g codecov
+    istanbul cover ./node_modules/mocha/bin/_mocha --reporter lcovonly -- -R spec
+    codecov
+  displayName: 'Generate code coverage'
