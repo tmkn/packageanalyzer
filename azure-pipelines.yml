@@ -26,6 +26,6 @@ steps:
 
 - script: |
     npm install -g codecov
-    istanbul cover ./node_modules/mocha/bin/_mocha --reporter lcovonly -- -R spec
+    npm run test:cover
     codecov -t $(CODECOV_TOKEN)
   displayName: 'Generate code coverage'
