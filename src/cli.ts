@@ -151,8 +151,8 @@ function printLicenseInfo(allLicenses: VersionSummary): void {
     let summary = new Map<string, number>();
     let longestLine = 0;
 
-    for (const [name, licenses] of allLicenses) {
-        for (const [version, license] of licenses) {
+    for (const [, licenses] of allLicenses) {
+        for (const [, license] of licenses) {
             let specificLicense = summary.get(license);
 
             if (!specificLicense) {

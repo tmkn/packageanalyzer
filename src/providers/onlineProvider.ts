@@ -17,7 +17,7 @@ export class OnlinePackageProvider implements IPackageProvider {
     get size(): number {
         let size = 0;
 
-        for (let [name, info] of this._cache) {
+        for (let [, info] of this._cache) {
             size += Object.keys(info.versions).length;
         }
 
@@ -56,18 +56,14 @@ export class OnlinePackageProvider implements IPackageProvider {
         if (this._cache.has(name)) {
             info = this._cache.get(name)!;
         } else {
-            try {
-                info = await this._getModuleInfo(name);
+            info = await this._getModuleInfo(name);
 
-                if (!info) {
-                    let _version: string = typeof version !== "undefined" ? `@${version}` : ``;
-                    throw `Couldn't get package "${name}${_version}"`;
-                }
-
-                this._cache.set(name, info);
-            } catch (e) {
-                throw e;
+            if (!info) {
+                let _version: string = typeof version !== "undefined" ? `@${version}` : ``;
+                throw `Couldn't get package "${name}${_version}"`;
             }
+
+            this._cache.set(name, info);
         }
 
         let versions: string[] = Object.keys(info.versions);

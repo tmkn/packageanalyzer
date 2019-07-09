@@ -20,7 +20,7 @@ export class NodeModulesProvider implements IPackageProvider {
     constructor(_folder: string) {
         let matches = this._findPackageJson(_folder);
 
-        this._paths = new Set(matches.sort());
+        this._paths = new Set([...matches].sort());
         this._load();
     }
 
@@ -72,8 +72,8 @@ export class NodeModulesProvider implements IPackageProvider {
     get size(): number {
         let size = 0;
 
-        for (let [name, versions] of this._cache) {
-            for (let [version, pkg] of versions) {
+        for (let [, versions] of this._cache) {
+            for (let version of versions) {
                 size++;
             }
         }

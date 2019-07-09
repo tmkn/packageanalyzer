@@ -81,7 +81,6 @@ class NpmJsonExtractor implements INpmJsonExtractor {
                             let npmPkg = this._toJson(line);
 
                             if (typeof npmPkg !== "undefined") {
-                                let [] = process.hrtime(startTime);
                                 startTime = process.hrtime();
 
                                 yield {
@@ -152,7 +151,6 @@ class NpmJsonExtractor implements INpmJsonExtractor {
             }
         } catch (e) {
             console.log(e);
-        } finally {
         }
     }
 
