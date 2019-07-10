@@ -24,18 +24,20 @@ export class OnlinePackageProvider implements IPackageProvider {
         return size;
     }
 
-    private async _getModuleInfo(name: string): Promise<INpmPackageInfo | null> {
-        console.log(`Fetching ${name}`);
+    async getPackageInfo(name: string): Promise<INpmPackageInfo | null> {
+        const cachedInfo = this._cache.get(name);
 
-        let data = await downloadHttpJson<INpmPackageInfo>(
-            `${this._url}/${encodeURIComponent(name)}`
-        );
+        if (typeof cachedInfo !== "undefined") {
+            return cachedInfo;
+        } else {
+            console.log(`Fetching ${name}`);
 
-        /*if (data === null) {
-            throw new Error(`Server didn't respond/returned wrong format for ${name}`);
-        }*/
+            let data = await downloadHttpJson<INpmPackageInfo>(
+                `${this._url}/${encodeURIComponent(name)}`
+            );
 
-        return data;
+            return data;
+        }
     }
 
     async *getPackagesByVersion(modules: PackageVersion[]): AsyncIterableIterator<INpmPackage[]> {
@@ -56,7 +58,7 @@ export class OnlinePackageProvider implements IPackageProvider {
         if (this._cache.has(name)) {
             info = this._cache.get(name)!;
         } else {
-            info = await this._getModuleInfo(name);
+            info = await this.getPackageInfo(name);
 
             if (!info) {
                 let _version: string = typeof version !== "undefined" ? `@${version}` : ``;

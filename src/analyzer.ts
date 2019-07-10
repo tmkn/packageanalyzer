@@ -1,7 +1,15 @@
 import { INpmPackage } from "./npm";
 
-export type VersionSummary = Map<string /*name*/, Map<string /*version*/, string /*license*/>>;
-export type VersionSummary2 = Map<string /*name*/, Set<string> /*versions*/>;
+export type LicenseSummary = Map<string /*name*/, Map<string /*version*/, string /*license*/>>;
+export type VersionSummary = Map<string /*name*/, Set<string> /*versions*/>;
+
+//statistics that need internet as that info is not available locally
+interface IAsyncPackageStatistics {
+    size: number;
+    oldestPackage: PackageAnalytics; //npm show ${name} time
+    newestPackage: PackageAnalytics;
+    timeSpan: number; //time between oldest and newest package
+}
 
 interface IPackageStatistics {
     all: PackageAnalytics[];
@@ -10,11 +18,9 @@ interface IPackageStatistics {
     path: Array<[string, string]>;
     mostReferencedPackage: PackageAnalytics;
     packagesWithMultipleVersions: Array<PackageAnalytics[]>;
-    oldestPackage: PackageAnalytics;
-    newestPackage: PackageAnalytics;
     getLoops: PackageAnalytics[];
-    cost: number;
-    licenses: VersionSummary;
+    licenses: LicenseSummary;
+    async: IAsyncPackageStatistics;
 }
 
 export class PackageAnalytics /*implements IPackageStatistics*/ {
@@ -124,8 +130,8 @@ export class PackageAnalytics /*implements IPackageStatistics*/ {
         return distinctPkgs.size;
     }
 
-    get licenses(): VersionSummary {
-        let licenseMap: VersionSummary = new Map();
+    get licenses(): LicenseSummary {
+        let licenseMap: LicenseSummary = new Map();
 
         this.visit(d => {
             let packageKey = licenseMap.get(d.name);
@@ -195,9 +201,9 @@ export class PackageAnalytics /*implements IPackageStatistics*/ {
         return [name, max];
     }
 
-    get mostVersions(): VersionSummary2 {
+    get mostVersions(): VersionSummary {
         let max = 0;
-        let map: VersionSummary2 = new Map();
+        let map: VersionSummary = new Map();
 
         for (const [name, versions] of this.sorted) {
             if (versions.size > max) {
@@ -209,5 +215,44 @@ export class PackageAnalytics /*implements IPackageStatistics*/ {
         }
 
         return map;
+    }
+
+    get cost(): number {
+        let cost = 0;
+
+        this.visit(d => {
+            const dist = d.getData("dist");
+
+            if (typeof dist !== "undefined") {
+                cost += dist.unpackedSize ? dist.unpackedSize : 0;
+            } else console.log(`${d.fullName} doesn't contain a dist key`);
+        }, true);
+
+        return cost;
+    }
+}
+
+//todo refactor so it throws on parsing fail
+export function getNameAndVersion(name: string): [string, string?] {
+    if (name.startsWith(`@`)) {
+        const parts = name.slice(1).split("@");
+
+        if (parts.length === 1) {
+            return [`@${parts[0]}`, undefined];
+        } else if (parts.length === 2) {
+            if (parts[1].trim() !== "") return [`@${parts[0]}`, parts[1]];
+        }
+
+        return [name, undefined];
+    } else {
+        const parts = name.split("@");
+
+        if (parts.length === 1) {
+            return [`${parts[0]}`, undefined];
+        } else if (parts.length === 2) {
+            if (parts[1].trim() !== "") return [`${parts[0]}`, parts[1]];
+        }
+
+        return [name, undefined];
     }
 }

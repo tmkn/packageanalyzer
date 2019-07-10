@@ -10,6 +10,7 @@ export interface IPackageProvider {
     size: number;
     getPackageByVersion: (name: string, version?: string) => Promise<INpmPackage>;
     getPackagesByVersion: (modules: PackageVersion[]) => AsyncIterableIterator<INpmPackage[]>;
+    //getPackageInfo(name: string) => Promise<INpmPackageInfo | null>;
 }
 
 //gathers packages from a node_modules folder

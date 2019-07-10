@@ -26,6 +26,6 @@ steps:
 
 - script: |
     npm install -g codecov
-    npm run test:cover
+    npm run test:coverage
     codecov -t $(CODECOV_TOKEN)
   displayName: 'Generate code coverage'

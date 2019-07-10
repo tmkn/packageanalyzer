@@ -5,7 +5,7 @@ const pkg = require("./../../package.json");
 import { resolveFromFolder } from "./resolvers/folderResolver";
 import { resolveFromName } from "./resolvers/nameResolver";
 import { npmOnline } from "./providers/onlineProvider";
-import { PackageAnalytics, VersionSummary, VersionSummary2 } from "./analyzer";
+import { PackageAnalytics, LicenseSummary, VersionSummary, getNameAndVersion } from "./analyzer";
 
 let commandFound = false;
 
@@ -87,32 +87,6 @@ async function cliResolveName(pkgName: string | undefined): Promise<void> {
     }
 }
 
-function getNameAndVersion(name: string): [string, string?] {
-    if (name.startsWith(`@`)) {
-        const parts = name.slice(1).split("@");
-
-        if (parts.length === 1) {
-            return [`@${parts[0]}`, undefined];
-        } else if (parts.length === 2) {
-            return [`@${parts[0]}`, parts[1]];
-        }
-
-        console.log(`Couldn't parse package name`);
-        return [name, undefined];
-    } else {
-        const parts = name.split("@");
-
-        if (parts.length === 1) {
-            return [`${parts[0]}`, undefined];
-        } else if (parts.length === 2) {
-            return [`${parts[0]}`, parts[1]];
-        }
-
-        console.log(`Couldn't parse package name`);
-        return [name, undefined];
-    }
-}
-
 function printStatistics(pa: PackageAnalytics): void {
     const padding = 40;
 
@@ -139,7 +113,7 @@ function printMostReferred(arg: [string, number], padding: number): void {
     console.log(`${`Most referred package:`.padEnd(padding)}${arg[1]}x "${arg[0]}"`);
 }
 
-function printMostVersion(mostVerions: VersionSummary2, padding: number): void {
+function printMostVersion(mostVerions: VersionSummary, padding: number): void {
     console.log(`${`Package(s) with most versions:`.padEnd(padding)}`);
 
     for (const [name, versions] of mostVerions) {
@@ -147,7 +121,7 @@ function printMostVersion(mostVerions: VersionSummary2, padding: number): void {
     }
 }
 
-function printLicenseInfo(allLicenses: VersionSummary): void {
+function printLicenseInfo(allLicenses: LicenseSummary): void {
     let summary = new Map<string, number>();
     let longestLine = 0;
 

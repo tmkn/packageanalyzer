@@ -1,7 +1,6 @@
 import * as assert from "assert";
 import * as path from "path";
 
-import { NodeModulesProvider } from "../src/providers/folderProvider";
 import { PackageAnalytics } from "../src/analyzer";
 import { resolveFromFolder } from "../src/resolvers/folderResolver";
 
@@ -9,9 +8,6 @@ describe(`resolveFromFolder Tests`, () => {
     let pa: PackageAnalytics;
 
     before(async () => {
-        const destination = path.join("tests", "data", "testproject2", "node_modules");
-        const provider: NodeModulesProvider = new NodeModulesProvider(destination);
-
         pa = await resolveFromFolder(path.join("tests", "data", "testproject2"));
     });
 
@@ -29,5 +25,17 @@ describe(`resolveFromFolder Tests`, () => {
 
     it(`Checks license`, () => {
         assert.equal(`ISC`, pa.license);
+    });
+
+    it(`Throws on missing package.json`, async () => {
+        let hasThrown = false;
+
+        try {
+            await resolveFromFolder(`folderdoesntexist`);
+        } catch {
+            hasThrown = true;
+        }
+
+        assert.equal(hasThrown, true, `Did not throw on invalid path`);
     });
 });
