@@ -165,45 +165,23 @@ describe(`Checks Name and Version extraction`, () => {
         assert.equal(version, undefined);
     });
 
-    it(`Fails to parse, returns name`, () => {
-        let [name, version] = getNameAndVersion(`foo`);
-
-        assert.equal(name, "foo");
-        assert.equal(version, undefined);
-    });
-
     it(`Fails to parse, returns as is for local package 1`, () => {
-        let [name, version] = getNameAndVersion(`@foo@`);
-
-        assert.equal(name, "@foo@");
-        assert.equal(version, undefined);
+        assert.throws(() => getNameAndVersion(`@foo@`));
     });
 
     it(`Fails to parse, returns as is for local package 2`, () => {
-        let [name, version] = getNameAndVersion(`@foo@@ bla`);
-
-        assert.equal(name, "@foo@@ bla");
-        assert.equal(version, undefined);
+        assert.throws(() => getNameAndVersion(`@foo@@ bla`));
     });
 
     it(`Fails to parse, returns as is for local package 3`, () => {
-        let [name, version] = getNameAndVersion(`@@foo@@ bla`);
-
-        assert.equal(name, "@@foo@@ bla");
-        assert.equal(version, undefined);
+        assert.throws(() => getNameAndVersion(`@@foo@@ bla`));
     });
 
     it(`Fails to parse, returns as is for package 1 `, () => {
-        let [name, version] = getNameAndVersion(`foo@`);
-
-        assert.equal(name, "foo@");
-        assert.equal(version, undefined);
+        assert.throws(() => getNameAndVersion(`foo@`));
     });
 
     it(`Fails to parse, returns as is for package 2`, () => {
-        let [name, version] = getNameAndVersion(`foo@@ bla`);
-
-        assert.equal(name, "foo@@ bla");
-        assert.equal(version, undefined);
+        assert.throws(() => getNameAndVersion(`foo@2@ bla`));
     });
 });

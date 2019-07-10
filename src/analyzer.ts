@@ -243,7 +243,7 @@ export function getNameAndVersion(name: string): [string, string?] {
             if (parts[1].trim() !== "") return [`@${parts[0]}`, parts[1]];
         }
 
-        return [name, undefined];
+        throw `Unable to determine version from "${name}"`;
     } else {
         const parts = name.split("@");
 
@@ -253,6 +253,6 @@ export function getNameAndVersion(name: string): [string, string?] {
             if (parts[1].trim() !== "") return [`${parts[0]}`, parts[1]];
         }
 
-        return [name, undefined];
+        throw `Unable to determine version from "${name}"`;
     }
 }
