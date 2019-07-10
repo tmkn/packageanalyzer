@@ -232,7 +232,6 @@ export class PackageAnalytics /*implements IPackageStatistics*/ {
     }
 }
 
-//todo refactor so it throws on parsing fail
 export function getNameAndVersion(name: string): [string, string?] {
     if (name.startsWith(`@`)) {
         const parts = name.slice(1).split("@");
