@@ -300,3 +300,33 @@ export function getNameAndVersion(name: string): [string, string?] {
         throw `Unable to determine version from "${name}"`;
     }
 }
+
+//todo simplify
+export function groupPackagesByLicense(licenses: LicenseSummary): Array<{license: string, names: string[]}> {
+    let sorted: Map<string, Set<string>> = new Map();
+    const tmp: Array<{license: string, names: string[]}> = [];
+
+    for(const [name, versions] of licenses) {
+        for(const license of versions.values()) {
+            let entry = sorted.get(license);
+
+            if(entry) {
+                entry.add(name);
+            }
+            else {
+                sorted.set(license, new Set([name]));
+            }
+        }
+    }
+
+    for(const [license, names] of sorted) {
+        sorted.set(license, new Set([...names.values()].sort()));
+
+        tmp.push({
+            license: license,
+            names: [...new Set([...names.values()].sort())]
+        });
+    }
+
+    return tmp.sort((a, b) => b.names.length - a.names.length);
+}

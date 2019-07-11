@@ -2,7 +2,7 @@ import * as assert from "assert";
 import * as path from "path";
 
 import { NodeModulesProvider } from "../src/providers/folderProvider";
-import { PackageAnalytics } from "../src/analyzer";
+import { PackageAnalytics, groupPackagesByLicense } from "../src/analyzer";
 import { resolveFromName } from "../src/resolvers/nameResolver";
 
 describe(`resolveFromFolder Tests`, () => {
@@ -128,5 +128,15 @@ describe(`resolveFromFolder Tests`, () => {
         assert.equal(version, "4.35.2");
         assert.equal(Object.keys(dependencies!).length, 24);
         assert.equal(license, "MIT");
+    });
+
+    it(`Test group packages by license`, () => {
+        let [{license, names}, ...rest] = groupPackagesByLicense(pa.licenses);
+
+        assert.equal(license, "MIT");
+        assert.equal(names.length, 239);
+
+        assert.equal(rest[0].license, "ISC");
+        assert.equal(rest[0].names.length, 51);
     });
 });
