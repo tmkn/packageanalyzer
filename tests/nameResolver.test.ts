@@ -131,7 +131,7 @@ describe(`resolveFromFolder Tests`, () => {
     });
 
     it(`Test group packages by license`, () => {
-        let [{license, names}, ...rest] = groupPackagesByLicense(pa.licenses);
+        let [{ license, names }, ...rest] = groupPackagesByLicense(pa.licenses);
 
         assert.equal(license, "MIT");
         assert.equal(names.length, 239);

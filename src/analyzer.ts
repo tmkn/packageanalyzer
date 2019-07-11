@@ -301,32 +301,32 @@ export function getNameAndVersion(name: string): [string, string?] {
     }
 }
 
-//todo simplify
-export function groupPackagesByLicense(licenses: LicenseSummary): Array<{license: string, names: string[]}> {
+export function groupPackagesByLicense(
+    licenses: LicenseSummary
+): Array<{ license: string; names: string[] }> {
     let sorted: Map<string, Set<string>> = new Map();
-    const tmp: Array<{license: string, names: string[]}> = [];
+    const grouped: Array<{ license: string; names: string[] }> = [];
 
-    for(const [name, versions] of licenses) {
-        for(const license of versions.values()) {
+    for (const [name, versions] of licenses) {
+        for (const license of versions.values()) {
             let entry = sorted.get(license);
 
-            if(entry) {
+            if (entry) {
                 entry.add(name);
-            }
-            else {
+            } else {
                 sorted.set(license, new Set([name]));
             }
         }
     }
 
-    for(const [license, names] of sorted) {
+    for (const [license, names] of sorted) {
         sorted.set(license, new Set([...names.values()].sort()));
 
-        tmp.push({
+        grouped.push({
             license: license,
             names: [...new Set([...names.values()].sort())]
         });
     }
 
-    return tmp.sort((a, b) => b.names.length - a.names.length);
+    return grouped.sort((a, b) => b.names.length - a.names.length);
 }

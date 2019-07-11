@@ -5,7 +5,13 @@ const pkg = require("./../../package.json");
 import { resolveFromFolder } from "./resolvers/folderResolver";
 import { resolveFromName } from "./resolvers/nameResolver";
 import { npmOnline } from "./providers/onlineProvider";
-import { PackageAnalytics, LicenseSummary, VersionSummary, getNameAndVersion } from "./analyzer";
+import {
+    PackageAnalytics,
+    LicenseSummary,
+    VersionSummary,
+    getNameAndVersion,
+    groupPackagesByLicense
+} from "./analyzer";
 
 let commandFound = false;
 
@@ -155,8 +161,16 @@ function printLicenseInfo(allLicenses: LicenseSummary, paddingLeft: number): voi
     }
 
     console.log(`Licenses:`);
-    for (const [license, count] of summary) {
-        console.log(`${``.padStart(paddingLeft)}${count}x ${license}`);
+    for (const { license, names } of groupPackagesByLicense(allLicenses)) {
+        let threshold = 4;
+        let samples: string[] = names.slice(0, threshold);
+
+        if (names.length >= threshold)
+            console.log(
+                `${``.padStart(paddingLeft)}${license} - [${samples.join(", ")}, +${names.length -
+                    threshold} more]`
+            );
+        else console.log(`${``.padStart(paddingLeft)}${license} - [${samples.join(", ")}]`);
     }
 
     /*let longestLine = 0;
