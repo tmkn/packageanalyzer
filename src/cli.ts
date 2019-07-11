@@ -89,6 +89,7 @@ async function cliResolveName(pkgName: string | undefined): Promise<void> {
 
 function printStatistics(pa: PackageAnalytics): void {
     const padding = 40;
+    const paddingLeft = 4;
 
     console.log(`Statistics for ${pa.fullName}\n`);
 
@@ -97,8 +98,22 @@ function printStatistics(pa: PackageAnalytics): void {
     console.log(`${`Distinct dependencies:`.padEnd(padding)}${pa.distinctDependenciesCount}`);
     printMostReferred(pa.mostReferred, padding);
     printMostDependencies(pa.mostDependencies, padding);
-    printMostVersion(pa.mostVersions, padding);
-    printLicenseInfo(pa.licenses);
+    printMostVersion(pa.mostVersions, padding, paddingLeft);
+    printLoops(pa.loops, padding, paddingLeft);
+    printLicenseInfo(pa.licenses, paddingLeft);
+}
+
+function printLoops(loops: PackageAnalytics[], padding: number, paddingLeft: number): void {
+    console.log(`${`Loops:`.padEnd(padding)}${loops.length}`);
+
+    if (loops.length > 0) {
+        let [first] = loops.map(l => l.pathString).sort();
+
+        console.log(`    e.g. ${first}`);
+
+        if (loops.length > 1)
+            console.log(`${``.padStart(paddingLeft)}+${loops.length - 1} additional loops`);
+    }
 }
 
 function printMostDependencies(pa: PackageAnalytics, padding: number): void {
@@ -113,15 +128,15 @@ function printMostReferred(arg: [string, number], padding: number): void {
     console.log(`${`Most referred package:`.padEnd(padding)}${arg[1]}x "${arg[0]}"`);
 }
 
-function printMostVersion(mostVerions: VersionSummary, padding: number): void {
+function printMostVersion(mostVerions: VersionSummary, padding: number, paddingLeft: number): void {
     console.log(`${`Package(s) with most versions:`.padEnd(padding)}`);
 
     for (const [name, versions] of mostVerions) {
-        console.log(`    ${name} [${[...versions].join(", ")}]`);
+        console.log(`${``.padStart(paddingLeft)}${name} [${[...versions].join(", ")}]`);
     }
 }
 
-function printLicenseInfo(allLicenses: LicenseSummary): void {
+function printLicenseInfo(allLicenses: LicenseSummary, paddingLeft: number): void {
     let summary = new Map<string, number>();
     let longestLine = 0;
 
@@ -141,7 +156,7 @@ function printLicenseInfo(allLicenses: LicenseSummary): void {
 
     console.log(`Licenses:`);
     for (const [license, count] of summary) {
-        console.log(`    ${count}x ${license}`);
+        console.log(`${``.padStart(paddingLeft)}${count}x ${license}`);
     }
 
     /*let longestLine = 0;

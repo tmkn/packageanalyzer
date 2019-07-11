@@ -68,11 +68,10 @@ export class OnlinePackageProvider implements IPackageProvider {
             this._cache.set(name, info);
         }
 
-        let versions: string[] = Object.keys(info.versions);
-        let resolvedVersion: string | null = semver.maxSatisfying(
-            versions,
-            typeof version !== "undefined" ? version : info["dist-tags"].latest
-        );
+        let allVersions: string[] = Object.keys(info.versions);
+        const versionToResolve =
+            typeof version !== "undefined" ? version : info["dist-tags"].latest;
+        let resolvedVersion: string | null = semver.maxSatisfying(allVersions, versionToResolve);
 
         if (resolvedVersion === null) {
             throw new Error(`Couldn't resolve version ${version} for "${name}"`);

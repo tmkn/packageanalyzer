@@ -14,16 +14,18 @@ interface IAsyncPackageStatistics {
 interface IPackageStatistics {
     all: PackageAnalytics[];
     transitiveDependenciesCount: number;
+    //todo split distinct -> by name | by name & version
     distinctDependenciesCount: number;
     path: Array<[string, string]>;
-    mostReferencedPackage: PackageAnalytics;
-    packagesWithMultipleVersions: Array<PackageAnalytics[]>;
-    getLoops: PackageAnalytics[];
+    mostReferred: [string, number];
+    mostDependencies: PackageAnalytics;
+    mostVersions: VersionSummary;
+    loops: PackageAnalytics[];
     licenses: LicenseSummary;
-    async: IAsyncPackageStatistics;
+    async?: IAsyncPackageStatistics;
 }
 
-export class PackageAnalytics /*implements IPackageStatistics*/ {
+export class PackageAnalytics implements IPackageStatistics {
     parent: PackageAnalytics | null = null;
     isLoop: boolean = false;
     private readonly _dependencies: PackageAnalytics[] = [];
@@ -229,6 +231,49 @@ export class PackageAnalytics /*implements IPackageStatistics*/ {
         }, true);
 
         return cost;
+    }
+
+    get path(): Array<[string, string]> {
+        const path: Array<[string, string]> = [];
+        let current: PackageAnalytics | null = this;
+
+        while (current.parent !== null) {
+            path.push([current.name, current.version]);
+
+            current = current.parent;
+        }
+
+        path.push([current.name, current.version]);
+
+        return path.reverse();
+    }
+
+    get pathString(): string {
+        let levels: string[] = [];
+
+        for (let [name, version] of this.path) {
+            levels.push(`${name}@${version}`);
+        }
+
+        return levels.join(" -> ");
+    }
+
+    get all(): PackageAnalytics[] {
+        let all: PackageAnalytics[] = [];
+
+        this.visit(d => all.push(d), true);
+
+        return all;
+    }
+
+    get loops(): PackageAnalytics[] {
+        let loops: PackageAnalytics[] = [];
+
+        this.visit(d => {
+            if (d.isLoop) loops.push(d);
+        }, true);
+
+        return loops;
     }
 }
 

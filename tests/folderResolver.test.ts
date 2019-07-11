@@ -38,4 +38,8 @@ describe(`resolveFromFolder Tests`, () => {
 
         assert.equal(hasThrown, true, `Did not throw on invalid path`);
     });
+
+    it(`Check loops`, () => {
+        assert.equal(pa.loops.length, 50);
+    });
 });

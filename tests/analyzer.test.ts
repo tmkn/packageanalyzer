@@ -134,6 +134,45 @@ describe(`PackageAnalytics Tests`, () => {
     it.skip(`Checks cost`, () => {
         let cost = pa.cost;
     });
+
+    it(`Check path for root`, () => {
+        let path = pa.path;
+        let [[name, version]] = path;
+
+        assert.equal(path.length, 1);
+        assert.equal(name, "testproject1");
+        assert.equal(version, "1.0.0");
+    });
+
+    it(`Check path for specific package`, () => {
+        let pa2 = pa.getPackageByName("loose-envify", "1.4.0");
+
+        if (pa2) {
+            let path = pa2.path;
+            let [[name1, version1], [name2, version2], [name3, version3]] = path;
+
+            assert.equal(path.length, 3);
+
+            assert.equal(name1, "testproject1");
+            assert.equal(version1, "1.0.0");
+
+            assert.equal(name2, "react");
+            assert.equal(version2, "16.8.6");
+
+            assert.equal(name3, "loose-envify");
+            assert.equal(version3, "1.4.0");
+        } else {
+            assert.fail(`Couldn't find package`);
+        }
+    });
+
+    it(`Check all`, () => {
+        assert.equal(pa.all.length, 14);
+    });
+
+    it(`Check loops`, () => {
+        assert.equal(pa.loops.length, 0);
+    });
 });
 
 describe(`Checks Name and Version extraction`, () => {
