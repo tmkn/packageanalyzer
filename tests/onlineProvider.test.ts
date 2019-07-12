@@ -8,7 +8,7 @@ import { INpmPackageInfo } from "../src/npm";
 import { resolveFromName } from "../src/resolvers/nameResolver";
 import { OnlinePackageProvider } from "../src/providers/onlineProvider";
 
-describe.only(`OnlineProvider Tests`, () => {
+describe(`OnlineProvider Tests`, () => {
     let server: MockNpmServer;
 
     before(() => {
