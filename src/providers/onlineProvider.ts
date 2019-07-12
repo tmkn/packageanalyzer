@@ -10,9 +10,9 @@ export class OnlinePackageProvider implements IPackageProvider {
 
     constructor(private _url: string, private _max = 3) {}
 
-    setMaxConcurrent(newMax: number): void {
+    /*setMaxConcurrent(newMax: number): void {
         this._max = newMax;
-    }
+    }*/
 
     get size(): number {
         let size = 0;

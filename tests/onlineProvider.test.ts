@@ -3,20 +3,23 @@ import * as path from "path";
 import * as fs from "fs";
 import { Server } from "http";
 import * as express from "express";
-import { downloadHttpJson } from "../src/requests";
+
 import { INpmPackageInfo } from "../src/npm";
 import { resolveFromName } from "../src/resolvers/nameResolver";
 import { OnlinePackageProvider } from "../src/providers/onlineProvider";
 
-describe(`OnlineProvider Tests`, () => {
+describe.only(`OnlineProvider Tests`, () => {
     let server: MockNpmServer;
-    
+
     before(() => {
         server = new MockNpmServer();
     });
 
     it(`resolveFromName Tests`, async () => {
-        let pa = await resolveFromName(["react", "16.8.1"], new OnlinePackageProvider(`http://localhost:3000`));
+        let pa = await resolveFromName(
+            ["react", "16.8.1"],
+            new OnlinePackageProvider(`http://localhost:3000`)
+        );
 
         assert.equal(pa.name, "react");
         assert.equal(pa.version, "16.8.1");
@@ -27,6 +30,12 @@ describe(`OnlineProvider Tests`, () => {
 
         assert.equal(pa.name, "react");
         assert.equal(pa.version, "16.8.6");
+    });
+
+    it(`Check size`, () => {
+        const mock = new OnlinePackageProvider(`http://localhost:3000`);
+
+        assert.equal(mock.size, 0);
     });
 
     after(() => {
@@ -46,32 +55,29 @@ class MockNpmServer {
         this._populateCache();
 
         app.get(`/:name/:version`, (req, res) => {
-            let {name, version} = req.params;
-            let data = this._cache.get(name)
+            let { name, version } = req.params;
+            let data = this._cache.get(name);
 
-            if(typeof data === "undefined") {
+            if (typeof data === "undefined") {
                 res.status(404).send("Not found");
-            }
-            else {
+            } else {
                 let versionData = data.versions[version];
 
-                if(typeof versionData === "undefined") {
+                if (typeof versionData === "undefined") {
                     res.status(404).send(`version not found: ${version}`);
-                }
-                else {
+                } else {
                     res.json(versionData);
                 }
             }
         });
 
         app.get(`/:name`, (req, res) => {
-            let {name} = req.params;
-            let data = this._cache.get(name)
+            let { name } = req.params;
+            let data = this._cache.get(name);
 
-            if(typeof data === "undefined") {
-                res.status(404).send({error: "Not found"});
-            }
-            else {
+            if (typeof data === "undefined") {
+                res.status(404).send({ error: "Not found" });
+            } else {
                 res.json(data);
             }
         });
@@ -82,7 +88,7 @@ class MockNpmServer {
     private _populateCache(): void {
         const files = fs.readdirSync(this._dataPath).map(f => path.join(this._dataPath, f));
 
-        for(const file of files) {
+        for (const file of files) {
             const name = path.basename(file, `.json`);
 
             this._cache.set(name, JSON.parse(fs.readFileSync(file, "utf8")));
