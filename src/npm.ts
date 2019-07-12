@@ -53,7 +53,7 @@ export interface INpmPackageInfo {
     readme: string;
     readmeFilename: string;
     repository: INpmRepository;
-    time: INpmKeyValue[];
+    time: INpmKeyValue;
     users: { [index: string]: boolean };
     versions: { [index: string]: INpmPackage };
 }

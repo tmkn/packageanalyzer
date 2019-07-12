@@ -2,6 +2,7 @@ import { INpmPackage, INpmKeyValue } from "../npm";
 import { PackageAnalytics } from "../analyzer";
 import { logLastLine } from "../logger";
 import { IPackageProvider } from "../providers/folderProvider";
+import { OnlinePackageProvider } from "../providers/onlineProvider";
 
 //resolves dependencies based on the package name
 //will load latest, if no version is specified
@@ -9,30 +10,32 @@ export async function resolveFromName(
     args: string | [string, string],
     provider: IPackageProvider
 ): Promise<PackageAnalytics> {
-    let root: PackageAnalytics;
-    let name: string;
-    let version: string | undefined = undefined;
-    let depth: string[] = [];
-
-    Array.isArray(args) ? ([name, version] = args) : (name = args);
-
-    let rootPkg: INpmPackage = await provider.getPackageByVersion(name, version);
-
-    if (typeof rootPkg === "undefined") throw `Couldn't find root package ${name}@${version}`;
-
-    root = new PackageAnalytics(rootPkg);
-
     try {
-        console.log(`Resolving dependencies for ${root.fullName}`);
-        await walkDependencies(provider, root, rootPkg.dependencies, depth);
+        let name: string;
+        let version: string | undefined = undefined;
+        let depth: string[] = [];
+
+        Array.isArray(args) ? ([name, version] = args) : (name = args);
+
+        let rootPkg: INpmPackage = await provider.getPackageByVersion(name, version);
+        let root: PackageAnalytics = new PackageAnalytics(rootPkg);
+
+        await addPublished(root, provider);
+
+        try {
+            console.log(`Resolving dependencies for ${root.fullName}`);
+            await walkDependencies(provider, root, rootPkg.dependencies, depth);
+        } catch (e) {
+            console.log(`Error evaluating dependencies`);
+            throw e;
+        }
+
+        console.log(`Done\n`);
+
+        return root;
     } catch (e) {
-        console.log(`Error evaluating dependencies`);
-        console.log(e);
+        throw e;
     }
-
-    console.log(`Done\n`);
-
-    return root;
 }
 
 export async function walkDependencies(
@@ -53,6 +56,7 @@ export async function walkDependencies(
         for (const p of packages) {
             let dependency = new PackageAnalytics(p);
 
+            await addPublished(dependency, npm);
             parent.addDependency(dependency);
 
             if (depth.includes(dependency.fullName)) {
@@ -70,4 +74,21 @@ export async function walkDependencies(
         depth.pop();
         throw e;
     }
+}
+
+async function addPublished(pa: PackageAnalytics, provider: IPackageProvider): Promise<void> {
+    if (!(provider instanceof OnlinePackageProvider)) {
+        return;
+    }
+
+    let info = await provider.getPackageInfo(pa.name);
+
+    if (!info) return;
+
+    let time = info.time;
+    let released = time[pa.version];
+
+    if (!released) return;
+
+    pa.published = new Date(released);
 }

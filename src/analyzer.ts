@@ -14,8 +14,8 @@ interface IAsyncPackageStatistics {
 interface IPackageStatistics {
     all: PackageAnalytics[];
     transitiveDependenciesCount: number;
-    //todo split distinct -> by name | by name & version
-    distinctDependenciesCount: number;
+    distinctByNameCount: number;
+    distinctByVersionCount: number;
     path: Array<[string, string]>;
     mostReferred: [string, number];
     mostDependencies: PackageAnalytics;
@@ -42,6 +42,43 @@ export class PackageAnalytics implements IPackageStatistics {
 
     get fullName(): string {
         return `${this.name}@${this.version}`;
+    }
+
+    published: Date | undefined;
+    get oldest(): PackageAnalytics | undefined {
+        let oldest: PackageAnalytics | undefined = undefined;
+
+        if (this.published) oldest = this;
+
+        this.visit(d => {
+            if (oldest) {
+                if (d.published && oldest.published) {
+                    if (d.published < oldest.published) oldest = d;
+                }
+            } else {
+                if (d.published) oldest = d;
+            }
+        }, false);
+
+        return oldest;
+    }
+
+    get newest(): PackageAnalytics | undefined {
+        let newest: PackageAnalytics | undefined = undefined;
+
+        if (this.published) newest = this;
+
+        this.visit(d => {
+            if (newest) {
+                if (d.published && newest.published) {
+                    if (d.published > newest.published) newest = d;
+                }
+            } else {
+                if (d.published) newest = d;
+            }
+        }, false);
+
+        return newest;
     }
 
     get license(): string {
@@ -122,14 +159,6 @@ export class PackageAnalytics implements IPackageStatistics {
         this.visit(d => count++);
 
         return count;
-    }
-
-    get distinctDependenciesCount(): number {
-        let distinctPkgs = new Set<string>();
-
-        this.visit(d => distinctPkgs.add(d.name));
-
-        return distinctPkgs.size;
     }
 
     get licenses(): LicenseSummary {
@@ -274,6 +303,22 @@ export class PackageAnalytics implements IPackageStatistics {
         }, true);
 
         return loops;
+    }
+
+    get distinctByNameCount(): number {
+        let packageNames: Set<string> = new Set();
+
+        this.visit(d => packageNames.add(d.name));
+
+        return packageNames.size;
+    }
+
+    get distinctByVersionCount(): number {
+        let packageNames: Set<string> = new Set();
+
+        this.visit(d => packageNames.add(d.fullName));
+
+        return packageNames.size;
     }
 }
 

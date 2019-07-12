@@ -99,14 +99,49 @@ function printStatistics(pa: PackageAnalytics): void {
 
     console.log(`Statistics for ${pa.fullName}\n`);
 
+    printPublished(pa, padding);
+    printOldest(pa.oldest, padding);
+    printNewest(pa.newest, padding);
     console.log(`${`Direct dependencies:`.padEnd(padding)}${pa.directDependencyCount}`);
     console.log(`${`Transitive dependencies:`.padEnd(padding)}${pa.transitiveDependenciesCount}`);
-    console.log(`${`Distinct dependencies:`.padEnd(padding)}${pa.distinctDependenciesCount}`);
+    printDistinctDependencies(pa.distinctByNameCount, pa.distinctByVersionCount, paddingLeft);
     printMostReferred(pa.mostReferred, padding);
     printMostDependencies(pa.mostDependencies, padding);
     printMostVersion(pa.mostVersions, padding, paddingLeft);
     printLoops(pa.loops, padding, paddingLeft);
     printLicenseInfo(pa.licenses, paddingLeft);
+}
+
+function printNewest(newest: PackageAnalytics | undefined, padding: number): void {
+    if (newest && newest.published) {
+        console.log(
+            `${`Newest:`.padEnd(padding)}${newest.fullName} - ${newest.published.toUTCString()}`
+        );
+    }
+}
+
+function printOldest(oldest: PackageAnalytics | undefined, padding: number): void {
+    if (oldest && oldest.published) {
+        console.log(
+            `${`Oldest:`.padEnd(padding)}${oldest.fullName} - ${oldest.published.toUTCString()}`
+        );
+    }
+}
+
+function printPublished(pa: PackageAnalytics, padding: number): void {
+    if (!pa.published) return;
+
+    console.log(`${`Published:`.padEnd(padding)}${pa.published.toUTCString()}`);
+}
+
+function printDistinctDependencies(
+    byName: number,
+    byNameAndVersion: number,
+    paddingLeft: number
+): void {
+    console.log(`Distinct dependencies:`);
+    console.log(`${``.padStart(paddingLeft)}${byName}: distinct name`);
+    console.log(`${``.padStart(paddingLeft)}${byNameAndVersion}: distinct name and version`);
 }
 
 function printLoops(loops: PackageAnalytics[], padding: number, paddingLeft: number): void {
@@ -124,14 +159,12 @@ function printLoops(loops: PackageAnalytics[], padding: number, paddingLeft: num
 
 function printMostDependencies(pa: PackageAnalytics, padding: number): void {
     console.log(
-        `${`Package with most direct dependencies:`.padEnd(padding)}${pa.directDependencyCount} "${
-            pa.name
-        }"`
+        `${`Most direct dependencies:`.padEnd(padding)}"${pa.name}": ${pa.directDependencyCount}`
     );
 }
 
 function printMostReferred(arg: [string, number], padding: number): void {
-    console.log(`${`Most referred package:`.padEnd(padding)}${arg[1]}x "${arg[0]}"`);
+    console.log(`${`Most referred package:`.padEnd(padding)}"${arg[0]}": ${arg[1]}x`);
 }
 
 function printMostVersion(mostVerions: VersionSummary, padding: number, paddingLeft: number): void {

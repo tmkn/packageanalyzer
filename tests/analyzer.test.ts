@@ -173,6 +173,10 @@ describe(`PackageAnalytics Tests`, () => {
     it(`Check loops`, () => {
         assert.equal(pa.loops.length, 0);
     });
+
+    it(`Checks published`, () => {
+        assert.equal(pa.published, undefined);
+    });
 });
 
 describe(`Checks Name and Version extraction`, () => {

@@ -35,8 +35,12 @@ describe(`resolveFromFolder Tests`, () => {
         assert.equal(pa.transitiveDependenciesCount, 4279);
     });
 
-    it(`Checks distinct dependencies`, () => {
-        assert.equal(pa.distinctDependenciesCount, 308);
+    it(`Checks distinct dependencies by name`, () => {
+        assert.equal(pa.distinctByNameCount, 308);
+    });
+
+    it(`Checks distinct dependencies by name and version`, () => {
+        assert.equal(pa.distinctByVersionCount, 333);
     });
 
     it(`Checks visit method`, () => {
@@ -138,5 +142,17 @@ describe(`resolveFromFolder Tests`, () => {
 
         assert.equal(rest[0].license, "ISC");
         assert.equal(rest[0].names.length, 51);
+    });
+
+    it(`Test published`, () => {
+        assert.equal(pa.published, undefined);
+    });
+
+    it(`Test oldest`, () => {
+        assert.equal(pa.oldest, undefined);
+    });
+
+    it(`Test newest`, () => {
+        assert.equal(pa.newest, undefined);
     });
 });
