@@ -10,32 +10,28 @@ import { OnlinePackageProvider } from "../src/providers/onlineProvider";
 
 describe(`OnlineProvider Tests`, () => {
     let server: MockNpmServer;
+    const provider = new OnlinePackageProvider(`http://localhost:3000`);
 
     before(() => {
         server = new MockNpmServer();
     });
 
-    it(`resolveFromName Tests`, async () => {
-        let pa = await resolveFromName(
-            ["react", "16.8.1"],
-            new OnlinePackageProvider(`http://localhost:3000`)
-        );
+    it(`resolveFromName with name and version`, async () => {
+        let pa = await resolveFromName(["react", "16.8.1"], provider);
 
         assert.equal(pa.name, "react");
         assert.equal(pa.version, "16.8.1");
     });
 
-    it(`resolveFromName Tests 2`, async () => {
-        let pa = await resolveFromName("react", new OnlinePackageProvider(`http://localhost:3000`));
+    it(`resolveFromName with name`, async () => {
+        let pa = await resolveFromName("react", provider);
 
         assert.equal(pa.name, "react");
         assert.equal(pa.version, "16.8.6");
     });
 
     it(`Check size`, () => {
-        const mock = new OnlinePackageProvider(`http://localhost:3000`);
-
-        assert.equal(mock.size, 0);
+        assert.equal(provider.size, 406);
     });
 
     after(() => {

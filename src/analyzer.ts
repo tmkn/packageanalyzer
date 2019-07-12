@@ -3,14 +3,6 @@ import { INpmPackage } from "./npm";
 export type LicenseSummary = Map<string /*name*/, Map<string /*version*/, string /*license*/>>;
 export type VersionSummary = Map<string /*name*/, Set<string> /*versions*/>;
 
-//statistics that need internet as that info is not available locally
-interface IAsyncPackageStatistics {
-    size: number;
-    oldestPackage: PackageAnalytics; //npm show ${name} time
-    newestPackage: PackageAnalytics;
-    timeSpan: number; //time between oldest and newest package
-}
-
 interface IPackageStatistics {
     all: PackageAnalytics[];
     transitiveDependenciesCount: number;
@@ -22,7 +14,10 @@ interface IPackageStatistics {
     mostVersions: VersionSummary;
     loops: PackageAnalytics[];
     licenses: LicenseSummary;
-    async?: IAsyncPackageStatistics;
+    newest: PackageAnalytics | undefined;
+    oldest: PackageAnalytics | undefined;
+    timeSpan: number | undefined;
+    size: number | undefined;
 }
 
 export class PackageAnalytics implements IPackageStatistics {
@@ -79,6 +74,14 @@ export class PackageAnalytics implements IPackageStatistics {
         }, false);
 
         return newest;
+    }
+
+    get timeSpan(): number | undefined {
+        throw "Not Implemented";
+    }
+
+    get size(): number | undefined {
+        throw "Not Implemented";
     }
 
     get license(): string {

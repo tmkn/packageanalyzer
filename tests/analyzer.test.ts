@@ -177,6 +177,14 @@ describe(`PackageAnalytics Tests`, () => {
     it(`Checks published`, () => {
         assert.equal(pa.published, undefined);
     });
+
+    it(`Checks timeSpan`, () => {
+        assert.throws(() => pa.timeSpan);
+    });
+
+    it(`Checks size`, () => {
+        assert.throws(() => pa.size);
+    });
 });
 
 describe(`Checks Name and Version extraction`, () => {
