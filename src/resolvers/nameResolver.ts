@@ -1,6 +1,5 @@
 import { INpmPackage, INpmKeyValue } from "../npm";
 import { PackageAnalytics } from "../analyzer";
-import { logLastLine } from "../logger";
 import { IPackageProvider } from "../providers/folderProvider";
 import { OnlinePackageProvider } from "../providers/onlineProvider";
 
@@ -56,8 +55,6 @@ export async function walkDependencies(
             parent.addDependency(dependency);
 
             if (depth.includes(dependency.fullName)) {
-                logLastLine(`loop detected: ${dependency.fullName}`);
-
                 dependency.isLoop = true;
             } else {
                 depth.push(dependency.fullName);

@@ -2,6 +2,8 @@
 
 const pkg = require("./../../package.json");
 
+import * as dayjs from "dayjs";
+
 import { resolveFromFolder } from "./resolvers/folderResolver";
 import { resolveFromName } from "./resolvers/nameResolver";
 import { npmOnline } from "./providers/onlineProvider";
@@ -115,7 +117,9 @@ function printStatistics(pa: PackageAnalytics): void {
 function printNewest(newest: PackageAnalytics | undefined, padding: number): void {
     if (newest && newest.published) {
         console.log(
-            `${`Newest:`.padEnd(padding)}${newest.fullName} - ${newest.published.toUTCString()}`
+            `${`Newest:`.padEnd(padding)}${
+                newest.fullName
+            } - ${newest.published.toUTCString()} ${daysAgo(newest.published)}`
         );
     }
 }
@@ -123,15 +127,23 @@ function printNewest(newest: PackageAnalytics | undefined, padding: number): voi
 function printOldest(oldest: PackageAnalytics | undefined, padding: number): void {
     if (oldest && oldest.published) {
         console.log(
-            `${`Oldest:`.padEnd(padding)}${oldest.fullName} - ${oldest.published.toUTCString()}`
+            `${`Oldest:`.padEnd(padding)}${
+                oldest.fullName
+            } - ${oldest.published.toUTCString()} ${daysAgo(oldest.published)}`
         );
     }
+}
+
+function daysAgo(date: number | Date): string {
+    return `(${dayjs(new Date()).diff(date, "day")} days ago)`;
 }
 
 function printPublished(pa: PackageAnalytics, padding: number): void {
     if (!pa.published) return;
 
-    console.log(`${`Published:`.padEnd(padding)}${pa.published.toUTCString()}`);
+    console.log(
+        `${`Published:`.padEnd(padding)}${pa.published.toUTCString()} ${daysAgo(pa.published)}`
+    );
 }
 
 function printDistinctDependencies(
