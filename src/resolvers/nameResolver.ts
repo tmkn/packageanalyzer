@@ -1,3 +1,5 @@
+import * as ora from "ora";
+
 import { INpmPackage, INpmKeyValue } from "../npm";
 import { PackageAnalytics } from "../analyzer";
 import { IPackageProvider } from "../providers/folderProvider";
@@ -12,6 +14,7 @@ export async function resolveFromName(
     let name: string;
     let version: string | undefined = undefined;
     let depth: string[] = [];
+    const logger = ora('Fetching').start();
 
     Array.isArray(args) ? ([name, version] = args) : (name = args);
 
@@ -21,14 +24,17 @@ export async function resolveFromName(
     await addPublished(root, provider);
 
     try {
-        console.log(`Resolving dependencies for ${root.fullName}`);
-        await walkDependencies(provider, root, rootPkg.dependencies, depth);
+        await walkDependencies(provider, root, rootPkg.dependencies, depth, logger);
     } catch (e) {
-        console.log(`Error evaluating dependencies`);
+        logger.stopAndPersist({
+            symbol: "❌ ",
+            text: "Error evaluating dependencies"
+        });
+
         throw e;
     }
 
-    console.log(`Done\n`);
+    logger.stop();
 
     return root;
 }
@@ -37,7 +43,8 @@ export async function walkDependencies(
     npm: IPackageProvider,
     parent: PackageAnalytics,
     dependencies: INpmKeyValue | undefined,
-    depth: string[]
+    depth: string[],
+    logger: ora.Ora
 ): Promise<void> {
     try {
         let dependencyList = typeof dependencies !== "undefined" ? dependencies : [];
@@ -51,6 +58,7 @@ export async function walkDependencies(
         for (const p of packages) {
             let dependency = new PackageAnalytics(p);
 
+            logger.text = `Fetched ${p.name}`;
             await addPublished(dependency, npm);
             parent.addDependency(dependency);
 
@@ -59,7 +67,7 @@ export async function walkDependencies(
             } else {
                 depth.push(dependency.fullName);
 
-                await walkDependencies(npm, dependency, p.dependencies, depth);
+                await walkDependencies(npm, dependency, p.dependencies, depth, logger);
             }
         }
         depth.pop();

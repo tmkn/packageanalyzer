@@ -30,8 +30,6 @@ export class OnlinePackageProvider implements IPackageProvider {
         if (typeof cachedInfo !== "undefined") {
             return cachedInfo;
         } else {
-            console.log(`Fetching ${name}`);
-
             let data = await downloadHttpJson<INpmPackageInfo>(
                 `${this._url}/${encodeURIComponent(name)}`
             );

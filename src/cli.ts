@@ -117,7 +117,7 @@ function printStatistics(pa: PackageAnalytics): void {
 function printNewest(newest: PackageAnalytics | undefined, padding: number): void {
     if (newest && newest.published) {
         console.log(
-            `${`Newest:`.padEnd(padding)}${
+            `${`Newest package:`.padEnd(padding)}${
                 newest.fullName
             } - ${newest.published.toUTCString()} ${daysAgo(newest.published)}`
         );
@@ -127,7 +127,7 @@ function printNewest(newest: PackageAnalytics | undefined, padding: number): voi
 function printOldest(oldest: PackageAnalytics | undefined, padding: number): void {
     if (oldest && oldest.published) {
         console.log(
-            `${`Oldest:`.padEnd(padding)}${
+            `${`Oldest package:`.padEnd(padding)}${
                 oldest.fullName
             } - ${oldest.published.toUTCString()} ${daysAgo(oldest.published)}`
         );

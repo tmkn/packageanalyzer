@@ -1,5 +1,6 @@
 import * as path from "path";
 import * as fs from "fs";
+import * as ora from "ora";
 
 import { INpmPackage } from "../npm";
 import { PackageAnalytics } from "../analyzer";
@@ -9,6 +10,7 @@ import { walkDependencies } from "./nameResolver";
 //resolves dependencies based on a package.json
 export async function resolveFromFolder(rootPath: string): Promise<PackageAnalytics> {
     let depth: string[] = [];
+    const logger = ora('Fetching').start();
 
     try {
         const packageJsonPath = path.join(rootPath, `package.json`);
@@ -27,18 +29,23 @@ export async function resolveFromFolder(rootPath: string): Promise<PackageAnalyt
         let root = new PackageAnalytics(rootPackageJson);
 
         try {
-            console.log(`Resolving dependencies for ${root.fullName}`);
-            await walkDependencies(npm, root, rootPackageJson.dependencies, depth);
+            logger.text = `Resolving dependencies for ${root.fullName}`;
+            await walkDependencies(npm, root, rootPackageJson.dependencies, depth, logger);
         } catch (e) {
-            console.log(`Error evaluating dependencies`);
-            console.log(e);
+            logger.stopAndPersist({
+                symbol: "❌ ",
+                text: `${e}`
+            });
         }
 
-        console.log(`Done\n`);
+        logger.stop();
 
         return root;
     } catch (e) {
-        console.log(e);
+        logger.stopAndPersist({
+            symbol: "❌ ",
+            text: `${e}`
+        });
 
         throw e;
     }
