@@ -11,32 +11,39 @@ export async function resolveFromName(
     args: string | [string, string],
     provider: IPackageProvider
 ): Promise<PackageAnalytics> {
-    let name: string;
-    let version: string | undefined = undefined;
-    let depth: string[] = [];
-    const logger = ora('Fetching').start();
-
-    Array.isArray(args) ? ([name, version] = args) : (name = args);
-
-    let rootPkg: INpmPackage = await provider.getPackageByVersion(name, version);
-    let root: PackageAnalytics = new PackageAnalytics(rootPkg);
-
-    await addPublished(root, provider);
+    const logger = ora("Fetching").start();
 
     try {
-        await walkDependencies(provider, root, rootPkg.dependencies, depth, logger);
+        let name: string;
+        let version: string | undefined = undefined;
+        let depth: string[] = [];
+
+        Array.isArray(args) ? ([name, version] = args) : (name = args);
+
+        let rootPkg: INpmPackage = await provider.getPackageByVersion(name, version);
+        let root: PackageAnalytics = new PackageAnalytics(rootPkg);
+
+        await addPublished(root, provider);
+
+        try {
+            await walkDependencies(provider, root, rootPkg.dependencies, depth, logger);
+        } catch (e) {
+            logger.stopAndPersist({
+                symbol: "❌ ",
+                text: "Error evaluating dependencies"
+            });
+
+            throw e;
+        }
+
+        logger.stop();
+
+        return root;
     } catch (e) {
-        logger.stopAndPersist({
-            symbol: "❌ ",
-            text: "Error evaluating dependencies"
-        });
+        logger.stop();
 
         throw e;
     }
-
-    logger.stop();
-
-    return root;
 }
 
 export async function walkDependencies(

@@ -10,7 +10,7 @@ import { walkDependencies } from "./nameResolver";
 //resolves dependencies based on a package.json
 export async function resolveFromFolder(rootPath: string): Promise<PackageAnalytics> {
     let depth: string[] = [];
-    const logger = ora('Fetching').start();
+    const logger = ora("Fetching").start();
 
     try {
         const packageJsonPath = path.join(rootPath, `package.json`);
