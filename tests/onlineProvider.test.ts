@@ -4,7 +4,7 @@ import * as fs from "fs";
 import { Server } from "http";
 import * as express from "express";
 
-import { INpmPackageInfo } from "../src/npm";
+import { INpmPackageInfo, isUnpublished } from "../src/npm";
 import { resolveFromName } from "../src/resolvers/nameResolver";
 import { OnlinePackageProvider } from "../src/providers/onlineProvider";
 
@@ -32,6 +32,16 @@ describe(`OnlineProvider Tests`, () => {
 
     it(`Check size`, () => {
         assert.equal(provider.size, 406);
+    });
+
+    it(`Should throw on unpublished`, async () => {
+        try {
+            await provider.getPackageByVersion("unpublished");
+
+            assert.fail(`Did not throw`);
+        } catch (e) {
+            assert.ok(`Did throw`);
+        }
     });
 
     after(() => {
@@ -69,12 +79,27 @@ class MockNpmServer {
 
         app.get(`/:name`, (req, res) => {
             let { name } = req.params;
-            let data = this._cache.get(name);
 
-            if (typeof data === "undefined") {
-                res.status(404).send({ error: "Not found" });
-            } else {
+            if (name === "unpublished") {
+                let data = {
+                    name: "unpublished",
+                    time: {
+                        unpublished: {
+                            maintainers: [],
+                            name: isUnpublished
+                        }
+                    }
+                };
+
                 res.json(data);
+            } else {
+                let data = this._cache.get(name);
+
+                if (typeof data === "undefined") {
+                    res.status(404).send({ error: "Not found" });
+                } else {
+                    res.json(data);
+                }
             }
         });
 

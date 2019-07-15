@@ -13,7 +13,11 @@ A tool to analyze your Node.js project.
 Stats are fun!
 
 ## Install
-`npm install -g packageanalyzer`
+```
+git clone https://github.com/tmkn/packageanalyzer.git
+npm install
+npm link
+```
 
 ## Usage
 ### Analyze latest version of a package

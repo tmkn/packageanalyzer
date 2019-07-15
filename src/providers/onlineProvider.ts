@@ -1,7 +1,13 @@
 import * as semver from "semver";
 
 import { IPackageProvider } from "./folderProvider";
-import { INpmPackageInfo, INpmPackage, PackageVersion } from "../npm";
+import {
+    INpmPackageInfo,
+    INpmPackage,
+    PackageVersion,
+    IUnpublishedNpmPackage,
+    isUnpublished
+} from "../npm";
 import { downloadHttpJson } from "../requests";
 
 //loads npm data from the web
@@ -24,7 +30,7 @@ export class OnlinePackageProvider implements IPackageProvider {
         return size;
     }
 
-    async getPackageInfo(name: string): Promise<INpmPackageInfo | null> {
+    async getPackageInfo(name: string): Promise<INpmPackageInfo | IUnpublishedNpmPackage | null> {
         const cachedInfo = this._cache.get(name);
 
         if (typeof cachedInfo !== "undefined") {
@@ -51,7 +57,7 @@ export class OnlinePackageProvider implements IPackageProvider {
         name: string,
         version: string | undefined = undefined
     ): Promise<INpmPackage> {
-        let info: INpmPackageInfo | null;
+        let info: INpmPackageInfo | IUnpublishedNpmPackage | null;
 
         if (this._cache.has(name)) {
             info = this._cache.get(name)!;
@@ -61,6 +67,10 @@ export class OnlinePackageProvider implements IPackageProvider {
             if (!info) {
                 let _version: string = typeof version !== "undefined" ? `@${version}` : ``;
                 throw `Couldn't get package "${name}${_version}"`;
+            }
+
+            if (isUnpublished(info)) {
+                throw `Package "${name}" was unpublished`;
             }
 
             this._cache.set(name, info);

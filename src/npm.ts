@@ -18,6 +18,18 @@ export interface INpmPackage {
     version: string;
 }
 
+export interface IUnpublishedNpmPackage {
+    name: string;
+    time: INpmKeyValue & IUnpublishedInfo;
+}
+
+interface IUnpublishedInfo {
+    maintainers: INpmUser[];
+    name: string;
+    time: string;
+    versions: string[];
+}
+
 export interface INpmUser {
     name: string;
     email: string;
@@ -87,3 +99,13 @@ interface INpmPackageRow {
 }
 
 export type PackageVersion = [string, string | undefined];
+
+export function isUnpublished(data: any): data is IUnpublishedNpmPackage {
+    if (typeof data === "object" && data !== null) {
+        if ("time" in data) {
+            if ("unpublished" in data.time) return true;
+        }
+    }
+
+    return false;
+}
