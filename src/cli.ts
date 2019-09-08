@@ -4,15 +4,15 @@ const pkg = require("./../../package.json");
 
 import * as dayjs from "dayjs";
 
-import { resolveFromFolder } from "./resolvers/folderResolver";
-import { resolveFromName } from "./resolvers/nameResolver";
-import { npmOnline } from "./providers/onlineProvider";
+import { resolveFromFolder } from "./resolvers/folder";
+import { resolveFromName } from "./resolvers/name";
+import { npmOnline } from "./providers/online";
 import {
     PackageAnalytics,
     LicenseSummary,
     VersionSummary,
     GroupedLicenseSummary
-} from "./analyzer";
+} from "./analyzers/package";
 import { getNameAndVersion } from "./npm";
 
 let commandFound = false;

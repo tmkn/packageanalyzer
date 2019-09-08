@@ -1,7 +1,7 @@
 import * as assert from "assert";
 import * as path from "path";
 
-import { NodeModulesProvider } from "../src/providers/folderProvider";
+import { NodeModulesProvider } from "../src/providers/folder";
 
 describe(`NodeModulesProvider Tests`, () => {
     let provider: NodeModulesProvider;

@@ -1,9 +1,9 @@
 import * as assert from "assert";
 import * as path from "path";
 
-import { NodeModulesProvider } from "../src/providers/folderProvider";
-import { PackageAnalytics } from "../src/analyzer";
-import { resolveFromName } from "../src/resolvers/nameResolver";
+import { NodeModulesProvider } from "../src/providers/folder";
+import { PackageAnalytics } from "../src/analyzers/package";
+import { resolveFromName } from "../src/resolvers/name";
 
 describe(`resolveFromFolder Tests`, () => {
     let pa: PackageAnalytics;

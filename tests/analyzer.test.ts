@@ -1,8 +1,8 @@
 import * as path from "path";
 import * as assert from "assert";
 
-import { PackageAnalytics } from "../src/analyzer";
-import { resolveFromFolder } from "../src/resolvers/folderResolver";
+import { PackageAnalytics } from "../src/analyzers/package";
+import { resolveFromFolder } from "../src/resolvers/folder";
 import { getNameAndVersion } from "../src/npm";
 
 describe(`PackageAnalytics Tests`, () => {

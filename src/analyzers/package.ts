@@ -1,4 +1,4 @@
-import { INpmPackage } from "./npm";
+import { INpmPackage } from "../npm";
 
 export type LicenseSummary = Map<string /*name*/, Map<string /*version*/, string /*license*/>>;
 export type GroupedLicenseSummary = Array<{ license: string; names: string[] }>;

@@ -1,9 +1,9 @@
 import * as ora from "ora";
 
 import { INpmPackage, INpmKeyValue } from "../npm";
-import { PackageAnalytics } from "../analyzer";
-import { IPackageProvider } from "../providers/folderProvider";
-import { OnlinePackageProvider } from "../providers/onlineProvider";
+import { PackageAnalytics } from "../analyzers/package";
+import { IPackageProvider } from "../providers/folder";
+import { OnlinePackageProvider } from "../providers/online";
 
 //resolves dependencies based on the package name
 //will load latest, if no version is specified

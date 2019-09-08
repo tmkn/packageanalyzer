@@ -3,9 +3,9 @@ import * as fs from "fs";
 import * as ora from "ora";
 
 import { INpmPackage } from "../npm";
-import { PackageAnalytics } from "../analyzer";
-import { NodeModulesProvider } from "../providers/folderProvider";
-import { walkDependencies } from "./nameResolver";
+import { PackageAnalytics } from "../analyzers/package";
+import { NodeModulesProvider } from "../providers/folder";
+import { walkDependencies } from "./name";
 
 //resolves dependencies based on a package.json
 export async function resolveFromFolder(rootPath: string): Promise<PackageAnalytics> {

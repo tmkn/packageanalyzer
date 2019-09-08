@@ -5,8 +5,8 @@ import { Server } from "http";
 import * as express from "express";
 
 import { INpmPackageInfo, isUnpublished } from "../src/npm";
-import { resolveFromName } from "../src/resolvers/nameResolver";
-import { OnlinePackageProvider } from "../src/providers/onlineProvider";
+import { resolveFromName } from "../src/resolvers/name";
+import { OnlinePackageProvider } from "../src/providers/online";
 
 describe(`OnlineProvider Tests`, () => {
     let server: MockNpmServer;

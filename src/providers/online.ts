@@ -1,6 +1,6 @@
 import * as semver from "semver";
 
-import { IPackageProvider } from "./folderProvider";
+import { IPackageProvider } from "./folder";
 import {
     INpmPackageInfo,
     INpmPackage,
