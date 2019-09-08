@@ -2,7 +2,7 @@ import * as assert from "assert";
 import * as path from "path";
 
 import { NodeModulesProvider } from "../src/providers/folderProvider";
-import { PackageAnalytics, groupPackagesByLicense } from "../src/analyzer";
+import { PackageAnalytics } from "../src/analyzer";
 import { resolveFromName } from "../src/resolvers/nameResolver";
 
 describe(`resolveFromFolder Tests`, () => {
@@ -135,7 +135,7 @@ describe(`resolveFromFolder Tests`, () => {
     });
 
     it(`Test group packages by license`, () => {
-        let [{ license, names }, ...rest] = groupPackagesByLicense(pa.licenses);
+        let [{ license, names }, ...rest] = pa.licensesByGroup;
 
         assert.equal(license, "MIT");
         assert.equal(names.length, 239);

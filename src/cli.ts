@@ -11,9 +11,9 @@ import {
     PackageAnalytics,
     LicenseSummary,
     VersionSummary,
-    getNameAndVersion,
-    groupPackagesByLicense
+    GroupedLicenseSummary
 } from "./analyzer";
+import { getNameAndVersion } from "./npm";
 
 let commandFound = false;
 
@@ -111,7 +111,7 @@ function printStatistics(pa: PackageAnalytics): void {
     printMostDependencies(pa.mostDependencies, padding);
     printMostVersion(pa.mostVersions, padding, paddingLeft);
     printLoops(pa.loops, padding, paddingLeft);
-    printLicenseInfo(pa.licenses, paddingLeft);
+    printLicenseInfo(pa.licensesByGroup, paddingLeft);
 }
 
 function printNewest(newest: PackageAnalytics | undefined, padding: number): void {
@@ -187,26 +187,9 @@ function printMostVersion(mostVerions: VersionSummary, padding: number, paddingL
     }
 }
 
-function printLicenseInfo(allLicenses: LicenseSummary, paddingLeft: number): void {
-    let summary = new Map<string, number>();
-    let longestLine = 0;
-
-    for (const [, licenses] of allLicenses) {
-        for (const [, license] of licenses) {
-            let specificLicense = summary.get(license);
-
-            if (!specificLicense) {
-                summary.set(license, 1);
-            } else {
-                summary.set(license, specificLicense + 1);
-            }
-
-            if (license.length > longestLine) longestLine = license.length;
-        }
-    }
-
+function printLicenseInfo(groupedLicenses: GroupedLicenseSummary, paddingLeft: number): void {
     console.log(`Licenses:`);
-    for (const { license, names } of groupPackagesByLicense(allLicenses)) {
+    for (const { license, names } of groupedLicenses) {
         let threshold = 4;
         let samples: string[] = names.slice(0, threshold);
 
@@ -217,21 +200,4 @@ function printLicenseInfo(allLicenses: LicenseSummary, paddingLeft: number): voi
             );
         else console.log(`${``.padStart(paddingLeft)}${license} - [${samples.join(", ")}]`);
     }
-
-    /*let longestLine = 0;
-
-    for(const [name, licenses] of allLicenses) {
-        for(const [version, license] of licenses) {
-            let fullName = `${name}@${version}`;
-
-            if(fullName.length > longestLine)
-                longestLine = fullName.length;
-        }
-    }
-
-    for(const [name, licenses] of allLicenses) {
-        for(const [version, license] of licenses) {
-            console.log(`${`${name}@${version}`.padEnd(longestLine + 1)}${license}`.padStart(8));
-        }
-    }*/
 }

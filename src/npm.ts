@@ -109,3 +109,27 @@ export function isUnpublished(data: any): data is IUnpublishedNpmPackage {
 
     return false;
 }
+
+export function getNameAndVersion(name: string): [string, string?] {
+    if (name.startsWith(`@`)) {
+        const parts = name.slice(1).split("@");
+
+        if (parts.length === 1) {
+            return [`@${parts[0]}`, undefined];
+        } else if (parts.length === 2) {
+            if (parts[1].trim() !== "") return [`@${parts[0]}`, parts[1]];
+        }
+
+        throw `Unable to determine version from "${name}"`;
+    } else {
+        const parts = name.split("@");
+
+        if (parts.length === 1) {
+            return [`${parts[0]}`, undefined];
+        } else if (parts.length === 2) {
+            if (parts[1].trim() !== "") return [`${parts[0]}`, parts[1]];
+        }
+
+        throw `Unable to determine version from "${name}"`;
+    }
+}

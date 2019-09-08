@@ -1,6 +1,7 @@
 import { INpmPackage } from "./npm";
 
 export type LicenseSummary = Map<string /*name*/, Map<string /*version*/, string /*license*/>>;
+export type GroupedLicenseSummary = Array<{ license: string; names: string[] }>;
 export type VersionSummary = Map<string /*name*/, Set<string> /*versions*/>;
 
 interface IPackageStatistics {
@@ -14,6 +15,7 @@ interface IPackageStatistics {
     mostVersions: VersionSummary;
     loops: PackageAnalytics[];
     licenses: LicenseSummary;
+    licensesByGroup: GroupedLicenseSummary;
     newest: PackageAnalytics | undefined;
     oldest: PackageAnalytics | undefined;
     timeSpan: number | undefined;
@@ -180,6 +182,33 @@ export class PackageAnalytics implements IPackageStatistics {
         return licenseMap;
     }
 
+    get licensesByGroup(): GroupedLicenseSummary {
+        const licenses = this.licenses;
+        let sorted: Map<string, Set<string>> = new Map();
+        const grouped: GroupedLicenseSummary = [];
+
+        for (const [name, versions] of licenses) {
+            for (const license of versions.values()) {
+                let entry = sorted.get(license);
+
+                if (entry) {
+                    entry.add(name);
+                } else {
+                    sorted.set(license, new Set([name]));
+                }
+            }
+        }
+
+        for (const [license, names] of sorted) {
+            grouped.push({
+                license: license,
+                names: [...new Set([...names.values()].sort())]
+            });
+        }
+
+        return grouped.sort((a, b) => b.names.length - a.names.length);
+    }
+
     get sorted(): Map<string, Map<string, PackageAnalytics>> {
         let sorted: Map<string, Map<string, PackageAnalytics>> = new Map();
 
@@ -323,58 +352,4 @@ export class PackageAnalytics implements IPackageStatistics {
 
         return packageNames.size;
     }
-}
-
-export function getNameAndVersion(name: string): [string, string?] {
-    if (name.startsWith(`@`)) {
-        const parts = name.slice(1).split("@");
-
-        if (parts.length === 1) {
-            return [`@${parts[0]}`, undefined];
-        } else if (parts.length === 2) {
-            if (parts[1].trim() !== "") return [`@${parts[0]}`, parts[1]];
-        }
-
-        throw `Unable to determine version from "${name}"`;
-    } else {
-        const parts = name.split("@");
-
-        if (parts.length === 1) {
-            return [`${parts[0]}`, undefined];
-        } else if (parts.length === 2) {
-            if (parts[1].trim() !== "") return [`${parts[0]}`, parts[1]];
-        }
-
-        throw `Unable to determine version from "${name}"`;
-    }
-}
-
-export function groupPackagesByLicense(
-    licenses: LicenseSummary
-): Array<{ license: string; names: string[] }> {
-    let sorted: Map<string, Set<string>> = new Map();
-    const grouped: Array<{ license: string; names: string[] }> = [];
-
-    for (const [name, versions] of licenses) {
-        for (const license of versions.values()) {
-            let entry = sorted.get(license);
-
-            if (entry) {
-                entry.add(name);
-            } else {
-                sorted.set(license, new Set([name]));
-            }
-        }
-    }
-
-    for (const [license, names] of sorted) {
-        sorted.set(license, new Set([...names.values()].sort()));
-
-        grouped.push({
-            license: license,
-            names: [...new Set([...names.values()].sort())]
-        });
-    }
-
-    return grouped.sort((a, b) => b.names.length - a.names.length);
 }
