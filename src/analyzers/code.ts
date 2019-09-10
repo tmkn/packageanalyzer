@@ -1,55 +1,6 @@
 import * as ts from "typescript";
 
-let example1 = `
-module.exports = typeof queueMicrotask === 'function'
-  ? queueMicrotask
-  : typeof Promise === 'function'
-    ? cb => Promise.resolve().then(cb)
-    : cb => setTimeout(cb, 0) // fallback for Node 10 and old browsers
-`;
-
-let example2 = `
-'use strict';
-
-module.exports = function(num) {
-  if (typeof num === 'number') {
-    return num - num === 0;
-  }
-  if (typeof num === 'string' && num.trim() !== '') {
-    return Number.isFinite ? Number.isFinite(+num) : isFinite(+num);
-  }
-  return false;
-};
-`;
-
-let example3 = `
-module.exports.sayHelloInEnglish = function() {
-    return "HELLO";
-    };
-    
-    module.exports.sayHelloInSpanish = function() {
-    return "Hola";
-    };
-`;
-
-let example4 = `
-'use strict';
-
-const get = require('get-value');
-const has = require('has-values');
-
-module.exports = function(obj, path, options) {
-  if (isObject(obj) && (typeof path === 'string' || Array.isArray(path))) {
-    return has(get(obj, path, options));
-  }
-  return false;
-};
-
-function isObject(val) {
-  return val != null && (typeof val === 'object' || typeof val === 'function' || Array.isArray(val));
-}
-`;
-
+//istanbul ignore next
 class InMemoryCompilerHost implements ts.CompilerHost {
     public files = new Map<string, string>();
 
@@ -102,6 +53,18 @@ export class CodeAnalyzer {
     private _imports = 0;
     private _exports = 0;
 
+    get imports(): number {
+        return this._imports;
+    }
+
+    get exports(): number {
+        return this._exports;
+    }
+
+    get statements(): number {
+        return this._statements;
+    }
+
     private constructor(private _src: string) {
         this._sourceFile = ts.createSourceFile(`_filename`, _src, ts.ScriptTarget.ESNext, true);
 
@@ -142,6 +105,7 @@ export class CodeAnalyzer {
         return new CodeAnalyzer(src);
     }
 
+    //istanbul ignore next
     public statistics(): void {
         console.log(`todo statistics`);
         console.log(`Statements:`, this._statements);
@@ -149,7 +113,3 @@ export class CodeAnalyzer {
         console.log(`Exports:`, this._exports);
     }
 }
-
-let test = CodeAnalyzer.FromString(example4);
-
-test.statistics();
