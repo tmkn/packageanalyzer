@@ -9,14 +9,6 @@ module.exports = typeof queueMicrotask === 'function'
 `;
 
 let example2 = `
- 
-/*!
- * is-number <https://github.com/jonschlinkert/is-number>
- *
- * Copyright (c) 2014-present, Jon Schlinkert.
- * Released under the MIT License.
- */
-
 'use strict';
 
 module.exports = function(num) {
@@ -38,6 +30,24 @@ module.exports.sayHelloInEnglish = function() {
     module.exports.sayHelloInSpanish = function() {
     return "Hola";
     };
+`;
+
+let example4 = `
+'use strict';
+
+const get = require('get-value');
+const has = require('has-values');
+
+module.exports = function(obj, path, options) {
+  if (isObject(obj) && (typeof path === 'string' || Array.isArray(path))) {
+    return has(get(obj, path, options));
+  }
+  return false;
+};
+
+function isObject(val) {
+  return val != null && (typeof val === 'object' || typeof val === 'function' || Array.isArray(val));
+}
 `;
 
 class InMemoryCompilerHost implements ts.CompilerHost {
@@ -89,6 +99,8 @@ class InMemoryCompilerHost implements ts.CompilerHost {
 export class CodeAnalyzer {
     private _sourceFile: ts.SourceFile;
     private _statements = 0;
+    private _imports = 0;
+    private _exports = 0;
 
     private constructor(private _src: string) {
         this._sourceFile = ts.createSourceFile(`_filename`, _src, ts.ScriptTarget.ESNext, true);
@@ -101,11 +113,18 @@ export class CodeAnalyzer {
             this._statements++;
 
             if (node.kind === ts.SyntaxKind.PropertyAccessExpression) {
-                const _node = node as ts.PropertyAccessExpression;
-                const [first, , third] = _node.getChildren();
+                const [first, , third] = node.getChildren();
 
                 if (first.getText() === `module` && third.getText() === `exports`) {
-                    console.log(`export found!`);
+                    this._exports++;
+                }
+            }
+
+            if(node.kind === ts.SyntaxKind.CallExpression) {
+                const [first] = node.getChildren();
+
+                if(first.getText() === `require`) {
+                    this._imports++;
                 }
             }
 
@@ -126,9 +145,11 @@ export class CodeAnalyzer {
     public statistics(): void {
         console.log(`todo statistics`);
         console.log(`Statements:`, this._statements);
+        console.log(`Imports:`, this._imports);
+        console.log(`Exports:`, this._exports);
     }
 }
 
-let test = CodeAnalyzer.FromString(example3);
+let test = CodeAnalyzer.FromString(example4);
 
 test.statistics();

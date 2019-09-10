@@ -31,6 +31,7 @@ describe(`Request Tests`, () => {
             setTimeout(() => res.json({ hello: "world" }), artificalDelay);
         });
         app.get("/notjson", (req, res) => res.send("not json"));
+        app.get("/forbidden", (req, res) => res.status(401).json({ message: "forbidden" }));
 
         server = app.listen(port, () => console.log(`Started server`));
     });
@@ -65,6 +66,12 @@ describe(`Request Tests`, () => {
 
     it(`Returns null if response is not json`, async () => {
         let response = await downloadHttpJson(`http://localhost:${port}/notjson`, threshold);
+
+        assert.equal(response, null);
+    });
+
+    it(`Returns null if status code is not 200`, async () => {
+        let response = await downloadHttpJson(`http://localhost:${port}/forbidden`);
 
         assert.equal(response, null);
     });

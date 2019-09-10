@@ -4,7 +4,7 @@ import * as ora from "ora";
 
 import { INpmPackage } from "../npm";
 import { PackageAnalytics } from "../analyzers/package";
-import { NodeModulesProvider } from "../providers/folder";
+import { FileSystemPackageProvider } from "../providers/folder";
 import { walkDependencies } from "./name";
 
 //resolves dependencies based on a package.json
@@ -25,7 +25,7 @@ export async function resolveFromFolder(rootPath: string): Promise<PackageAnalyt
             throw `node_modules folder doesn't exist, did you run npm install?`;
         }
 
-        const npm = new NodeModulesProvider(nodeModulesPath);
+        const npm = new FileSystemPackageProvider(nodeModulesPath);
         let root = new PackageAnalytics(rootPackageJson);
 
         try {

@@ -1,7 +1,7 @@
 import * as assert from "assert";
 import * as path from "path";
 
-import { NodeModulesProvider } from "../src/providers/folder";
+import { FileSystemPackageProvider } from "../src/providers/folder";
 import { PackageAnalytics } from "../src/analyzers/package";
 import { resolveFromName } from "../src/resolvers/name";
 
@@ -10,7 +10,7 @@ describe(`resolveFromFolder Tests`, () => {
 
     before(async () => {
         const destination = path.join("tests", "data", "testproject2", "node_modules");
-        const provider: NodeModulesProvider = new NodeModulesProvider(destination);
+        const provider: FileSystemPackageProvider = new FileSystemPackageProvider(destination);
 
         pa = await resolveFromName(`webpack`, provider);
     });

@@ -19,11 +19,7 @@ function downloadHttp(url: string, timeoutLimit: number): Promise<string> {
                     data += chunk;
                 });
                 res.on("end", () => {
-                    try {
-                        resolve(data);
-                    } catch {
-                        reject();
-                    }
+                    resolve(data);
                     clearTimeout(id);
                 });
             } catch (e) {

@@ -1,14 +1,14 @@
 import * as assert from "assert";
 import * as path from "path";
 
-import { NodeModulesProvider } from "../src/providers/folder";
+import { FileSystemPackageProvider } from "../src/providers/folder";
 
 describe(`NodeModulesProvider Tests`, () => {
-    let provider: NodeModulesProvider;
+    let provider: FileSystemPackageProvider;
 
     before(() => {
         const destination = path.join("tests", "data", "testproject1", "node_modules");
-        provider = new NodeModulesProvider(destination);
+        provider = new FileSystemPackageProvider(destination);
     });
 
     it(`Found all dependencies`, () => {

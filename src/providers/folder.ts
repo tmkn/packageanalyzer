@@ -10,11 +10,11 @@ export interface IPackageProvider {
     size: number;
     getPackageByVersion: (name: string, version?: string) => Promise<INpmPackage>;
     getPackagesByVersion: (modules: PackageVersion[]) => AsyncIterableIterator<INpmPackage[]>;
-    //getPackageInfo(name: string) => Promise<INpmPackageInfo | null>;
+    //getMainFile: (name: string, version: string) => Promise<string>;
 }
 
 //gathers packages from a node_modules folder
-export class NodeModulesProvider implements IPackageProvider {
+export class FileSystemPackageProvider implements IPackageProvider {
     private _paths: Set<string> = new Set();
     private readonly _cache: Map<string, Map<string, INpmPackage>> = new Map();
 
@@ -74,9 +74,7 @@ export class NodeModulesProvider implements IPackageProvider {
         let size = 0;
 
         for (let [, versions] of this._cache) {
-            for (let version of versions) {
-                size++;
-            }
+            size += versions.size;
         }
 
         return size;
