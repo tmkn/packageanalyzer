@@ -34,6 +34,28 @@ describe(`OnlineProvider Tests`, () => {
         assert.equal(provider.size, 406);
     });
 
+    it(`Check oldest package`, async () => {
+        let pa = await resolveFromName(["react", "16.8.1"], provider);
+        let oldestPackage = pa.oldest;
+
+        if (oldestPackage) {
+            assert.equal(oldestPackage.name, "object-assign");
+        } else {
+            assert.fail(`Couldn't find oldest package`);
+        }
+    });
+
+    it(`Check newest package`, async () => {
+        let pa = await resolveFromName(["react", "16.8.1"], provider);
+        let newestPackage = pa.newest;
+
+        if (newestPackage) {
+            assert.equal(newestPackage.name, "scheduler");
+        } else {
+            assert.fail(`Couldn't find newest package`);
+        }
+    });
+
     it(`Should throw on unpublished`, async () => {
         try {
             await provider.getPackageByVersion("unpublished");

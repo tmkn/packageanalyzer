@@ -83,10 +83,10 @@ export class CodeAnalyzer {
                 }
             }
 
-            if(node.kind === ts.SyntaxKind.CallExpression) {
+            if (node.kind === ts.SyntaxKind.CallExpression) {
                 const [first] = node.getChildren();
 
-                if(first.getText() === `require`) {
+                if (first.getText() === `require`) {
                     this._imports++;
                 }
             }

@@ -131,8 +131,24 @@ describe(`PackageAnalytics Tests`, () => {
         }
     });
 
-    it.skip(`Checks cost`, () => {
+    it(`Checks cost`, () => {
         let cost = pa.cost;
+
+        assert.equal(cost, 0, `Cost didn't match`);
+    });
+
+    it(`Checks path string`, () => {
+        let react = pa.getPackageByName("react");
+
+        if (react) {
+            let path = react.pathString;
+
+            console.log(path);
+
+            assert.equal(path, `testproject1@1.0.0 -> react@16.8.6`, `Path string didn't match`);
+        } else {
+            assert.fail(`Couldn't find package`);
+        }
     });
 
     it(`Check path for root`, () => {

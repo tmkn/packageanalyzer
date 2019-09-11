@@ -286,9 +286,9 @@ export class PackageAnalytics implements IPackageStatistics {
         this.visit(d => {
             const dist = d.getData("dist");
 
-            if (typeof dist !== "undefined") {
-                cost += dist.unpackedSize ? dist.unpackedSize : 0;
-            } else console.log(`${d.fullName} doesn't contain a dist key`);
+            if (typeof dist !== "undefined" && typeof dist.unpackedSize !== "undefined") {
+                cost += dist.unpackedSize;
+            }
         }, true);
 
         return cost;

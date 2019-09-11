@@ -37,10 +37,10 @@ describe(`CodeAnalyzer Tests`, () => {
     });
 
     it(`Analzye example code 2`, () => {
-      let test = CodeAnalyzer.FromString(example2);
+        let test = CodeAnalyzer.FromString(example2);
 
-      assert.equal(test.statements, 94, `Wrong amount of statements`);
-      assert.equal(test.exports, 1, `Wrong amount of exports`);
-      assert.equal(test.imports, 2, `Wrong amount of imports`);
-  });
+        assert.equal(test.statements, 94, `Wrong amount of statements`);
+        assert.equal(test.exports, 1, `Wrong amount of exports`);
+        assert.equal(test.imports, 2, `Wrong amount of imports`);
+    });
 });
