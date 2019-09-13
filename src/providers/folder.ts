@@ -19,7 +19,7 @@ export class FileSystemPackageProvider implements IPackageProvider {
     private readonly _cache: Map<string, Map<string, INpmPackage>> = new Map();
 
     constructor(_folder: string) {
-        let matches = this._findPackageJson(_folder);
+        const matches = this._findPackageJson(_folder);
 
         this._paths = new Set([...matches].sort());
         this._load();
@@ -27,13 +27,13 @@ export class FileSystemPackageProvider implements IPackageProvider {
 
     private _findPackageJson(folder: string): string[] {
         try {
-            let pkgs: string[] = [];
+            const pkgs: string[] = [];
 
-            let folderEntries = fs
+            const folderEntries = fs
                 .readdirSync(folder, "utf8")
                 .map(entry => path.join(folder, entry));
 
-            for (let entry of folderEntries) {
+            for (const entry of folderEntries) {
                 if (fs.statSync(entry).isDirectory()) {
                     pkgs.push(...this._findPackageJson(entry));
                 } else if (entry.endsWith(`package.json`)) {
@@ -50,12 +50,12 @@ export class FileSystemPackageProvider implements IPackageProvider {
     }
 
     private _load(): void {
-        let failedPaths: string[] = [];
+        const failedPaths: string[] = [];
 
-        for (let pkgPath of this._paths) {
+        for (const pkgPath of this._paths) {
             try {
-                let content = fs.readFileSync(pkgPath, "utf8");
-                let pkg: INpmPackage = JSON.parse(content);
+                const content = fs.readFileSync(pkgPath, "utf8");
+                const pkg: INpmPackage = JSON.parse(content);
 
                 this.addPackage(pkg);
             } catch (e) {
@@ -73,7 +73,7 @@ export class FileSystemPackageProvider implements IPackageProvider {
     get size(): number {
         let size = 0;
 
-        for (let [, versions] of this._cache) {
+        for (const [, versions] of this._cache) {
             size += versions.size;
         }
 
@@ -81,13 +81,13 @@ export class FileSystemPackageProvider implements IPackageProvider {
     }
 
     addPackage(pkg: INpmPackage): void {
-        let { name, version } = pkg;
-        let versions = this._cache.get(name);
+        const { name, version } = pkg;
+        const versions = this._cache.get(name);
 
         if (typeof versions === "undefined") {
             this._cache.set(name, new Map([[version, pkg]]));
         } else {
-            let specificVersion = versions.get(version);
+            const specificVersion = versions.get(version);
 
             if (typeof specificVersion === "undefined") {
                 versions.set(version, pkg);
@@ -96,7 +96,7 @@ export class FileSystemPackageProvider implements IPackageProvider {
     }
 
     async *getPackagesByVersion(modules: PackageVersion[]): AsyncIterableIterator<INpmPackage[]> {
-        let packages: INpmPackage[] = [];
+        const packages: INpmPackage[] = [];
 
         for (const pkgVersion of modules) {
             packages.push(await this.getPackageByVersion(...pkgVersion));
@@ -106,7 +106,7 @@ export class FileSystemPackageProvider implements IPackageProvider {
     }
 
     async getPackageByVersion(name: string, version?: string | undefined): Promise<INpmPackage> {
-        let versions = this._cache.get(name);
+        const versions = this._cache.get(name);
         let pkg: INpmPackage;
 
         if (typeof versions === "undefined") {
@@ -115,8 +115,8 @@ export class FileSystemPackageProvider implements IPackageProvider {
 
         //load latest available version
         if (typeof version === "undefined") {
-            let [latestVersion] = [...versions.keys()].slice(-1);
-            let specificVersion = versions.get(latestVersion);
+            const [latestVersion] = [...versions.keys()].slice(-1);
+            const specificVersion = versions.get(latestVersion);
 
             //should never happen..
             if (typeof specificVersion === "undefined")
@@ -124,14 +124,14 @@ export class FileSystemPackageProvider implements IPackageProvider {
 
             pkg = specificVersion;
         } else {
-            let availableVersions: string[] = [...versions.keys()];
-            let resolvedVersion = semver.maxSatisfying(availableVersions, version);
+            const availableVersions: string[] = [...versions.keys()];
+            const resolvedVersion = semver.maxSatisfying(availableVersions, version);
 
             if (resolvedVersion === null) {
                 throw `Couldn't resolve ${version} for ${name}`;
             }
 
-            let specificVersion = versions.get(resolvedVersion);
+            const specificVersion = versions.get(resolvedVersion);
 
             if (typeof specificVersion === "undefined")
                 throw `Couldn't find package ${name}@${version}`;

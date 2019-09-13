@@ -100,7 +100,9 @@ interface INpmPackageRow {
 
 export type PackageVersion = [string, string | undefined];
 
-export function isUnpublished(data: any): data is IUnpublishedNpmPackage {
+export function isUnpublished(
+    data: IUnpublishedNpmPackage | INpmPackageInfo
+): data is IUnpublishedNpmPackage {
     if (typeof data === "object" && data !== null) {
         if ("time" in data) {
             if ("unpublished" in data.time) return true;

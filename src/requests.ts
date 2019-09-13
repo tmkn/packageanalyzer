@@ -1,12 +1,10 @@
 import * as http from "http";
-import * as https from "https";
-import { INpmSingleStatistic, INpmRangeStatistic, INpmAllPackagesResponse } from "./npm";
 
 function downloadHttp(url: string, timeoutLimit: number): Promise<string> {
     const promise = new Promise<string>((resolve, reject) => {
         http.get(url, res => {
             try {
-                let { statusCode } = res;
+                const { statusCode } = res;
                 let data = "";
 
                 if (statusCode !== 200) {
@@ -26,7 +24,7 @@ function downloadHttp(url: string, timeoutLimit: number): Promise<string> {
                 reject();
             }
         })
-            .on("error", e => {
+            .on("error", () => {
                 reject();
                 clearTimeout(id);
             })
@@ -35,7 +33,7 @@ function downloadHttp(url: string, timeoutLimit: number): Promise<string> {
                 clearTimeout(id);
             });
 
-        let id = setTimeout(() => {
+        const id = setTimeout(() => {
             reject(`Timeout 2 '${url}'`);
             clearTimeout(id);
         }, timeoutLimit);
@@ -53,8 +51,8 @@ export async function downloadHttpJson<T extends object>(
 
     while (retries < maxRetries) {
         try {
-            let response = await downloadHttp(url, timeoutLimit);
-            let data: T = JSON.parse(response);
+            const response = await downloadHttp(url, timeoutLimit);
+            const data: T = JSON.parse(response);
 
             return data;
         } catch (e) {

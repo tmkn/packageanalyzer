@@ -1,62 +1,22 @@
 import * as path from "path";
 import * as fs from "fs";
-import * as ora from "ora";
 
 import { INpmPackage } from "../npm";
-import { PackageAnalytics } from "../analyzers/package";
-import { FileSystemPackageProvider } from "../providers/folder";
-import { walkDependencies } from "./name";
+import { EntryPackage } from "./resolver";
 
-//resolves dependencies based on a package.json
-export async function resolveFromFolder(rootPath: string): Promise<PackageAnalytics> {
-    let depth: string[] = [];
-    const logger = ora("Fetching").start();
+function getVersionFromPackageJson(rootPath: string): [string, string] {
+    const packageJsonPath = path.join(rootPath, `package.json`);
 
     try {
-        const packageJsonPath = path.join(rootPath, `package.json`);
-        const rootPackageJson = loadPackageJson(packageJsonPath);
-        const nodeModulesPath = path.join(rootPath, `node_modules`);
+        const content = fs.readFileSync(packageJsonPath, "utf8");
+        const pkg: INpmPackage = JSON.parse(content);
 
-        if (rootPackageJson === null) {
-            throw `Couldn't find package.json in "${packageJsonPath}"`;
-        }
-
-        if (!fs.existsSync(nodeModulesPath)) {
-            throw `node_modules folder doesn't exist, did you run npm install?`;
-        }
-
-        const npm = new FileSystemPackageProvider(nodeModulesPath);
-        let root = new PackageAnalytics(rootPackageJson);
-
-        try {
-            logger.text = `Resolving dependencies for ${root.fullName}`;
-            await walkDependencies(npm, root, rootPackageJson.dependencies, depth, logger);
-        } catch (e) {
-            logger.stopAndPersist({
-                symbol: "❌ ",
-                text: `${e}`
-            });
-        }
-
-        logger.stop();
-
-        return root;
+        return [pkg.name, pkg.version];
     } catch (e) {
-        logger.stopAndPersist({
-            symbol: "❌ ",
-            text: `${e}`
-        });
-
-        throw e;
+        throw new Error(`Couldn't find package.json in ${rootPath}`);
     }
 }
 
-function loadPackageJson(path: string): INpmPackage | null {
-    try {
-        const content = fs.readFileSync(path, "utf8");
-
-        return JSON.parse(content);
-    } catch (e) {
-        return null;
-    }
+export function fromFolder(rootPath: string): EntryPackage {
+    return getVersionFromPackageJson.bind(null, rootPath);
 }

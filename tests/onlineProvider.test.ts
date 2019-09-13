@@ -5,8 +5,9 @@ import { Server } from "http";
 import * as express from "express";
 
 import { INpmPackageInfo, isUnpublished } from "../src/npm";
-import { resolveFromName } from "../src/resolvers/name";
 import { OnlinePackageProvider } from "../src/providers/online";
+import { Resolver } from "../src/resolvers/resolver";
+import { OraLogger } from "../src/logger";
 
 describe(`OnlineProvider Tests`, () => {
     let server: MockNpmServer;
@@ -17,14 +18,16 @@ describe(`OnlineProvider Tests`, () => {
     });
 
     it(`resolveFromName with name and version`, async () => {
-        let pa = await resolveFromName(["react", "16.8.1"], provider);
+        const resolver = new Resolver(() => ["react", "16.8.1"], provider, new OraLogger());
+        const pa = await resolver.resolve();
 
         assert.equal(pa.name, "react");
         assert.equal(pa.version, "16.8.1");
     });
 
     it(`resolveFromName with name`, async () => {
-        let pa = await resolveFromName("react", provider);
+        const resolver = new Resolver(() => "react", provider, new OraLogger());
+        const pa = await resolver.resolve();
 
         assert.equal(pa.name, "react");
         assert.equal(pa.version, "16.8.6");
@@ -35,8 +38,9 @@ describe(`OnlineProvider Tests`, () => {
     });
 
     it(`Check oldest package`, async () => {
-        let pa = await resolveFromName(["react", "16.8.1"], provider);
-        let oldestPackage = pa.oldest;
+        const resolver = new Resolver(() => ["react", "16.8.1"], provider, new OraLogger());
+        const pa = await resolver.resolve();
+        const oldestPackage = pa.oldest;
 
         if (oldestPackage) {
             assert.equal(oldestPackage.name, "object-assign");
@@ -46,8 +50,9 @@ describe(`OnlineProvider Tests`, () => {
     });
 
     it(`Check newest package`, async () => {
-        let pa = await resolveFromName(["react", "16.8.1"], provider);
-        let newestPackage = pa.newest;
+        const resolver = new Resolver(() => ["react", "16.8.1"], provider, new OraLogger());
+        const pa = await resolver.resolve();
+        const newestPackage = pa.newest;
 
         if (newestPackage) {
             assert.equal(newestPackage.name, "scheduler");
@@ -83,13 +88,13 @@ class MockNpmServer {
         this._populateCache();
 
         app.get(`/:name/:version`, (req, res) => {
-            let { name, version } = req.params;
-            let data = this._cache.get(name);
+            const { name, version } = req.params;
+            const data = this._cache.get(name);
 
             if (typeof data === "undefined") {
                 res.status(404).send("Not found");
             } else {
-                let versionData = data.versions[version];
+                const versionData = data.versions[version];
 
                 if (typeof versionData === "undefined") {
                     res.status(404).send(`version not found: ${version}`);
@@ -100,10 +105,10 @@ class MockNpmServer {
         });
 
         app.get(`/:name`, (req, res) => {
-            let { name } = req.params;
+            const { name } = req.params;
 
             if (name === "unpublished") {
-                let data = {
+                const data = {
                     name: "unpublished",
                     time: {
                         unpublished: {
@@ -115,7 +120,7 @@ class MockNpmServer {
 
                 res.json(data);
             } else {
-                let data = this._cache.get(name);
+                const data = this._cache.get(name);
 
                 if (typeof data === "undefined") {
                     res.status(404).send({ error: "Not found" });

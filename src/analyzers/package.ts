@@ -24,7 +24,7 @@ interface IPackageStatistics {
 
 export class PackageAnalytics implements IPackageStatistics {
     parent: PackageAnalytics | null = null;
-    isLoop: boolean = false;
+    isLoop = false;
     private readonly _dependencies: PackageAnalytics[] = [];
 
     constructor(private readonly _data: Readonly<INpmPackage>) {}
@@ -116,14 +116,14 @@ export class PackageAnalytics implements IPackageStatistics {
     ): void {
         if (includeSelf) callback(this);
 
-        for (let child of start._dependencies) {
+        for (const child of start._dependencies) {
             callback(child);
             this.visit(callback, false, child);
         }
     }
 
     getPackagesBy(filter: (pkg: PackageAnalytics) => boolean): PackageAnalytics[] {
-        let matches: PackageAnalytics[] = [];
+        const matches: PackageAnalytics[] = [];
 
         this.visit(
             d => {
@@ -137,7 +137,7 @@ export class PackageAnalytics implements IPackageStatistics {
     }
 
     getPackagesByName(name: string, version?: string): PackageAnalytics[] {
-        let matches: PackageAnalytics[] = [];
+        const matches: PackageAnalytics[] = [];
 
         this.visit(d => {
             if (typeof version === "undefined") {
@@ -151,7 +151,7 @@ export class PackageAnalytics implements IPackageStatistics {
     }
 
     getPackageByName(name: string, version?: string): PackageAnalytics | null {
-        let matches: PackageAnalytics[] = this.getPackagesByName(name, version);
+        const matches: PackageAnalytics[] = this.getPackagesByName(name, version);
 
         if (matches.length > 0) return matches[0];
 
@@ -161,16 +161,16 @@ export class PackageAnalytics implements IPackageStatistics {
     get transitiveDependenciesCount(): number {
         let count = 0;
 
-        this.visit(d => count++);
+        this.visit(() => count++);
 
         return count;
     }
 
     get licenses(): LicenseSummary {
-        let licenseMap: LicenseSummary = new Map();
+        const licenseMap: LicenseSummary = new Map();
 
         this.visit(d => {
-            let packageKey = licenseMap.get(d.name);
+            const packageKey = licenseMap.get(d.name);
 
             if (!packageKey) {
                 licenseMap.set(d.name, new Map([[d.version, d.license]]));
@@ -184,12 +184,12 @@ export class PackageAnalytics implements IPackageStatistics {
 
     get licensesByGroup(): GroupedLicenseSummary {
         const licenses = this.licenses;
-        let sorted: Map<string, Set<string>> = new Map();
+        const sorted: Map<string, Set<string>> = new Map();
         const grouped: GroupedLicenseSummary = [];
 
         for (const [name, versions] of licenses) {
             for (const license of versions.values()) {
-                let entry = sorted.get(license);
+                const entry = sorted.get(license);
 
                 if (entry) {
                     entry.add(name);
@@ -210,10 +210,10 @@ export class PackageAnalytics implements IPackageStatistics {
     }
 
     get sorted(): Map<string, Map<string, PackageAnalytics>> {
-        let sorted: Map<string, Map<string, PackageAnalytics>> = new Map();
+        const sorted: Map<string, Map<string, PackageAnalytics>> = new Map();
 
         this.visit(d => {
-            let packageName = sorted.get(d.name);
+            const packageName = sorted.get(d.name);
 
             if (packageName) {
                 packageName.set(d.version, d);
@@ -240,12 +240,12 @@ export class PackageAnalytics implements IPackageStatistics {
 
     //todo possible multiple matches
     get mostReferred(): [string, number] {
-        let mostReferred: Map<string, number> = new Map();
+        const mostReferred: Map<string, number> = new Map();
         let max = 0;
         let name = "";
 
         this.visit(d => {
-            let entry = mostReferred.get(d.name);
+            const entry = mostReferred.get(d.name);
 
             if (entry) {
                 mostReferred.set(d.name, entry + 1);
@@ -310,9 +310,9 @@ export class PackageAnalytics implements IPackageStatistics {
     }
 
     get pathString(): string {
-        let levels: string[] = [];
+        const levels: string[] = [];
 
-        for (let [name, version] of this.path) {
+        for (const [name, version] of this.path) {
             levels.push(`${name}@${version}`);
         }
 
@@ -320,7 +320,7 @@ export class PackageAnalytics implements IPackageStatistics {
     }
 
     get all(): PackageAnalytics[] {
-        let all: PackageAnalytics[] = [];
+        const all: PackageAnalytics[] = [];
 
         this.visit(d => all.push(d), true);
 
@@ -328,7 +328,7 @@ export class PackageAnalytics implements IPackageStatistics {
     }
 
     get loops(): PackageAnalytics[] {
-        let loops: PackageAnalytics[] = [];
+        const loops: PackageAnalytics[] = [];
 
         this.visit(d => {
             if (d.isLoop) loops.push(d);
@@ -338,7 +338,7 @@ export class PackageAnalytics implements IPackageStatistics {
     }
 
     get distinctByNameCount(): number {
-        let packageNames: Set<string> = new Set();
+        const packageNames: Set<string> = new Set();
 
         this.visit(d => packageNames.add(d.name));
 
@@ -346,7 +346,7 @@ export class PackageAnalytics implements IPackageStatistics {
     }
 
     get distinctByVersionCount(): number {
-        let packageNames: Set<string> = new Set();
+        const packageNames: Set<string> = new Set();
 
         this.visit(d => packageNames.add(d.fullName));
 

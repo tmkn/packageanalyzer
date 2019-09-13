@@ -3,7 +3,8 @@ import * as path from "path";
 
 import { FileSystemPackageProvider } from "../src/providers/folder";
 import { PackageAnalytics } from "../src/analyzers/package";
-import { resolveFromName } from "../src/resolvers/name";
+import { Resolver } from "../src/resolvers/resolver";
+import { OraLogger } from "../src/logger";
 
 describe(`resolveFromFolder Tests`, () => {
     let pa: PackageAnalytics;
@@ -12,7 +13,8 @@ describe(`resolveFromFolder Tests`, () => {
         const destination = path.join("tests", "data", "testproject2", "node_modules");
         const provider: FileSystemPackageProvider = new FileSystemPackageProvider(destination);
 
-        pa = await resolveFromName(`webpack`, provider);
+        const resolver = new Resolver(() => "webpack", provider, new OraLogger());
+        pa = await resolver.resolve();
     });
 
     it(`Checks name`, () => {
@@ -46,7 +48,7 @@ describe(`resolveFromFolder Tests`, () => {
     it(`Checks visit method`, () => {
         let count = 0;
 
-        pa.visit(d => count++);
+        pa.visit(() => count++);
 
         assert.equal(count, 4279);
     });
@@ -54,13 +56,13 @@ describe(`resolveFromFolder Tests`, () => {
     it(`Checks visit method with self`, () => {
         let count = 0;
 
-        pa.visit(d => count++, true);
+        pa.visit(() => count++, true);
 
         assert.equal(count, 4280);
     });
 
     it(`Test getPackagesBy`, () => {
-        let matches = pa.getPackagesBy(p => p.name === "@webassemblyjs/wast-parser");
+        const matches = pa.getPackagesBy(p => p.name === "@webassemblyjs/wast-parser");
 
         assert.equal(matches.length, 25);
 
@@ -70,7 +72,7 @@ describe(`resolveFromFolder Tests`, () => {
     });
 
     it(`Test getPackagesByName`, () => {
-        let matches = pa.getPackagesByName("has-value");
+        const matches = pa.getPackagesByName("has-value");
 
         assert.equal(matches.length, 32);
 
@@ -80,7 +82,7 @@ describe(`resolveFromFolder Tests`, () => {
     });
 
     it(`Test getPackagesByName with version`, () => {
-        let matches = pa.getPackagesByName("has-value", "1.0.0");
+        const matches = pa.getPackagesByName("has-value", "1.0.0");
 
         assert.equal(matches.length, 16);
 
@@ -90,52 +92,56 @@ describe(`resolveFromFolder Tests`, () => {
     });
 
     it(`Test getPackageByName`, () => {
-        let match = pa.getPackageByName("has-value");
+        const match = pa.getPackageByName("has-value");
 
         assert.notEqual(match, null);
-        assert.equal(match!.name, "has-value");
+        assert.equal(match!.name, "has-value"); //eslint-disable-line
     });
 
     it(`Test getPackageByName with version`, () => {
-        let match = pa.getPackageByName("has-value", "1.0.0");
+        const match = pa.getPackageByName("has-value", "1.0.0");
 
         assert.notEqual(match, null);
-        assert.equal(match!.name, "has-value");
-        assert.equal(match!.version, "1.0.0");
+        assert.equal(match!.name, "has-value"); //eslint-disable-line
+        assert.equal(match!.version, "1.0.0"); //eslint-disable-line
     });
 
     it(`Test getPackageByName with version`, () => {
-        let match = pa.getPackageByName("has-value", "123.456.789");
+        const match = pa.getPackageByName("has-value", "123.456.789");
 
         assert.equal(match, null);
     });
 
     it(`Test getPackageByName with non existant package`, () => {
-        let match = pa.getPackageByName("doesntexist");
+        const match = pa.getPackageByName("doesntexist");
 
         assert.equal(match, null);
     });
 
     it(`Test getPackageByName with non existant package and version`, () => {
-        let match = pa.getPackageByName("doesntexist", "1.0.0");
+        const match = pa.getPackageByName("doesntexist", "1.0.0");
 
         assert.equal(match, null);
     });
 
     it(`Test getData`, () => {
-        let name = pa.getData("name");
-        let version = pa.getData("version");
-        let dependencies = pa.getData("dependencies");
-        let license = pa.getData("license");
+        const name = pa.getData("name");
+        const version = pa.getData("version");
+        const dependencies = pa.getData("dependencies");
+        const license = pa.getData("license");
 
-        assert.equal(name, "webpack");
-        assert.equal(version, "4.35.2");
-        assert.equal(Object.keys(dependencies!).length, 24);
-        assert.equal(license, "MIT");
+        if (dependencies) {
+            assert.equal(name, "webpack");
+            assert.equal(version, "4.35.2");
+            assert.equal(Object.keys(dependencies).length, 24);
+            assert.equal(license, "MIT");
+        } else {
+            assert.fail(`dependencies is undefined`);
+        }
     });
 
     it(`Test group packages by license`, () => {
-        let [{ license, names }, ...rest] = pa.licensesByGroup;
+        const [{ license, names }, ...rest] = pa.licensesByGroup;
 
         assert.equal(license, "MIT");
         assert.equal(names.length, 239);

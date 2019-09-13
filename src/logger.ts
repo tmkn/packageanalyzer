@@ -1,16 +1,31 @@
-import * as process from "process";
-import * as readline from "readline";
+import * as ora from "ora";
 
-export function log(msg: string): void {
-    process.stdout.write(msg);
+export interface ILogger {
+    start: () => void;
+    stop: () => void;
+    log: (msg: string) => void;
+    error: (msg: string) => void;
 }
 
-export function clearLastLine(): void {
-    readline.clearLine(process.stdout, 0);
-    readline.cursorTo(process.stdout, 0, undefined);
-}
+export class OraLogger implements ILogger {
+    private _logger: ora.Ora = ora();
 
-export function logLastLine(msg: string): void {
-    clearLastLine();
-    log(msg);
+    start() {
+        this._logger.start();
+    }
+
+    stop() {
+        this._logger.stop();
+    }
+
+    log(msg: string): void {
+        this._logger.text = msg;
+    }
+
+    error(msg: string): void {
+        this._logger.stopAndPersist({
+            symbol: "❌ ",
+            text: msg
+        });
+    }
 }

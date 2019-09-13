@@ -2,14 +2,21 @@ import * as path from "path";
 import * as assert from "assert";
 
 import { PackageAnalytics } from "../src/analyzers/package";
-import { resolveFromFolder } from "../src/resolvers/folder";
 import { getNameAndVersion } from "../src/npm";
+import { fromFolder } from "../src/resolvers/folder";
+import { FileSystemPackageProvider } from "../src/providers/folder";
+import { Resolver } from "../src/resolvers/resolver";
+import { OraLogger } from "../src/logger";
 
 describe(`PackageAnalytics Tests`, () => {
     let pa: PackageAnalytics;
 
     before(async () => {
-        pa = await resolveFromFolder(path.join("tests", "data", "testproject1"));
+        const rootPath = path.join("tests", "data", "testproject1");
+        const provider = new FileSystemPackageProvider(rootPath);
+        const resolver = new Resolver(fromFolder(rootPath), provider, new OraLogger());
+
+        pa = await resolver.resolve();
     });
 
     it(`Check licenses`, () => {
@@ -75,9 +82,10 @@ describe(`PackageAnalytics Tests`, () => {
     });
 
     it(`Checks for package with most versions`, async () => {
-        let pa: PackageAnalytics = await resolveFromFolder(
-            path.join("tests", "data", "testproject2")
-        );
+        const rootPath = path.join("tests", "data", "testproject2");
+        const provider = new FileSystemPackageProvider(rootPath);
+        const resolver = new Resolver(fromFolder(rootPath), provider, new OraLogger());
+        const pa: PackageAnalytics = await resolver.resolve();
 
         for (const [name, versions] of pa.mostVersions) {
             assert.equal(name, "kind-of");
@@ -132,16 +140,16 @@ describe(`PackageAnalytics Tests`, () => {
     });
 
     it(`Checks cost`, () => {
-        let cost = pa.cost;
+        const cost = pa.cost;
 
         assert.equal(cost, 0, `Cost didn't match`);
     });
 
     it(`Checks path string`, () => {
-        let react = pa.getPackageByName("react");
+        const react = pa.getPackageByName("react");
 
         if (react) {
-            let path = react.pathString;
+            const path = react.pathString;
 
             console.log(path);
 
@@ -152,8 +160,8 @@ describe(`PackageAnalytics Tests`, () => {
     });
 
     it(`Check path for root`, () => {
-        let path = pa.path;
-        let [[name, version]] = path;
+        const path = pa.path;
+        const [[name, version]] = path;
 
         assert.equal(path.length, 1);
         assert.equal(name, "testproject1");
@@ -161,11 +169,11 @@ describe(`PackageAnalytics Tests`, () => {
     });
 
     it(`Check path for specific package`, () => {
-        let pa2 = pa.getPackageByName("loose-envify", "1.4.0");
+        const pa2 = pa.getPackageByName("loose-envify", "1.4.0");
 
         if (pa2) {
-            let path = pa2.path;
-            let [[name1, version1], [name2, version2], [name3, version3]] = path;
+            const path = pa2.path;
+            const [[name1, version1], [name2, version2], [name3, version3]] = path;
 
             assert.equal(path.length, 3);
 
@@ -205,28 +213,28 @@ describe(`PackageAnalytics Tests`, () => {
 
 describe(`Checks Name and Version extraction`, () => {
     it(`Finds name and version`, () => {
-        let [name, version] = getNameAndVersion(`foo@1.2.3`);
+        const [name, version] = getNameAndVersion(`foo@1.2.3`);
 
         assert.equal(name, "foo");
         assert.equal(version, "1.2.3");
     });
 
     it(`Finds name and version for local package`, () => {
-        let [name, version] = getNameAndVersion(`@foo@1.2.3`);
+        const [name, version] = getNameAndVersion(`@foo@1.2.3`);
 
         assert.equal(name, "@foo");
         assert.equal(version, "1.2.3");
     });
 
     it(`Finds only name`, () => {
-        let [name, version] = getNameAndVersion(`foo`);
+        const [name, version] = getNameAndVersion(`foo`);
 
         assert.equal(name, "foo");
         assert.equal(version, undefined);
     });
 
     it(`Finds only name for local package`, () => {
-        let [name, version] = getNameAndVersion(`@foo`);
+        const [name, version] = getNameAndVersion(`@foo`);
 
         assert.equal(name, "@foo");
         assert.equal(version, undefined);

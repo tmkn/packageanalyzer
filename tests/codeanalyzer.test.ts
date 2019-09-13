@@ -1,7 +1,7 @@
 import * as assert from "assert";
 import { CodeAnalyzer } from "../src/analyzers/code";
 
-let example1 = `
+const example1 = `
 module.exports = typeof queueMicrotask === 'function'
   ? queueMicrotask
   : typeof Promise === 'function'
@@ -9,7 +9,7 @@ module.exports = typeof queueMicrotask === 'function'
     : cb => setTimeout(cb, 0) // fallback for Node 10 and old browsers
 `;
 
-let example2 = `
+const example2 = `
 'use strict';
 
 const get = require('get-value');
@@ -29,7 +29,7 @@ function isObject(val) {
 
 describe(`CodeAnalyzer Tests`, () => {
     it(`Analzye example code 1`, () => {
-        let test = CodeAnalyzer.FromString(example1);
+        const test = CodeAnalyzer.FromString(example1);
 
         assert.equal(test.statements, 45, `Wrong amount of statements`);
         assert.equal(test.exports, 1, `Wrong amount of exports`);
@@ -37,7 +37,7 @@ describe(`CodeAnalyzer Tests`, () => {
     });
 
     it(`Analzye example code 2`, () => {
-        let test = CodeAnalyzer.FromString(example2);
+        const test = CodeAnalyzer.FromString(example2);
 
         assert.equal(test.statements, 94, `Wrong amount of statements`);
         assert.equal(test.exports, 1, `Wrong amount of exports`);

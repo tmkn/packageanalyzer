@@ -18,7 +18,9 @@
     "test:clean": "node build/tests/clean.js",
     "prettier": "prettier --write \"{src,tests,utility}/**/{*.ts,*.js}\"",
     "cli": "node build/src/cli.js",
-    "preview": "npm pack && tar -xvzf *.tgz && rm -rf package *.tgz"
+    "preview": "npm pack && tar -xvzf *.tgz && rm -rf package *.tgz",
+    "lint": "eslint \"src/**\" \"tests/**\"",
+    "lint:fix": "eslint \"src/**\" \"tests/**\" --fix"
   },
   "author": "tmkn",
   "license": "MIT",
@@ -27,6 +29,9 @@
     "@types/mocha": "^5.2.6",
     "@types/node": "^11.13.2",
     "@types/semver": "^6.0.0",
+    "@typescript-eslint/eslint-plugin": "^2.2.0",
+    "@typescript-eslint/parser": "^2.2.0",
+    "eslint": "^6.3.0",
     "express": "^4.17.1",
     "mocha": "^6.1.4",
     "nyc": "^14.1.1",

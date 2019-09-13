@@ -2,16 +2,21 @@ import * as assert from "assert";
 import * as path from "path";
 
 import { PackageAnalytics } from "../src/analyzers/package";
-import { resolveFromFolder } from "../src/resolvers/folder";
-import { resolveFromName } from "../src/resolvers/name";
-import { IPackageProvider } from "../src/providers/folder";
+import { fromFolder } from "../src/resolvers/folder";
+import { IPackageProvider, FileSystemPackageProvider } from "../src/providers/folder";
 import { INpmPackage } from "../src/npm";
+import { Resolver } from "../src/resolvers/resolver";
+import { OraLogger } from "../src/logger";
 
 describe(`resolveFromFolder Tests`, () => {
     let pa: PackageAnalytics;
 
     before(async () => {
-        pa = await resolveFromFolder(path.join("tests", "data", "testproject2"));
+        const rootPath = path.join("tests", "data", "testproject2");
+        const provider = new FileSystemPackageProvider(rootPath);
+        const resolver = new Resolver(fromFolder(rootPath), provider, new OraLogger());
+
+        pa = await resolver.resolve();
     });
 
     it(`Checks name`, () => {
@@ -34,7 +39,11 @@ describe(`resolveFromFolder Tests`, () => {
         let hasThrown = false;
 
         try {
-            await resolveFromFolder(`folderdoesntexist`);
+            const rootPath = `folderdoesntexist`;
+            const provider = new FileSystemPackageProvider(rootPath);
+            const resolver = new Resolver(fromFolder(rootPath), provider, new OraLogger());
+
+            await resolver.resolve();
         } catch {
             hasThrown = true;
         }
@@ -57,12 +66,15 @@ describe(`resolveFromName Error Handling`, () => {
     class MockProvider implements IPackageProvider {
         size = 0;
 
-        getPackageByVersion(name: string, version?: string | undefined): Promise<INpmPackage> {
+        getPackageByVersion(
+            name: string /* eslint-disable-line */,
+            version?: string | undefined /* eslint-disable-line */
+        ): Promise<INpmPackage> {
             throw new CustomError(`getPackageByVersion not implemented`);
         }
 
         getPackagesByVersion(
-            modules: [string, string | undefined][]
+            modules: [string, string | undefined][] /* eslint-disable-line */
         ): AsyncIterableIterator<INpmPackage[]> {
             throw new Error(`getPackagesByVersion not implemented`);
         }
@@ -70,7 +82,8 @@ describe(`resolveFromName Error Handling`, () => {
 
     it(`Correctly propagates an exception`, async () => {
         try {
-            await resolveFromName("wurscht", new MockProvider());
+            const resolver = new Resolver(() => "wurscht", new MockProvider(), new OraLogger());
+            await resolver.resolve();
 
             assert.fail(`Should have thrown an exception`);
         } catch (e) {

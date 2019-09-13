@@ -23,7 +23,7 @@ export class OnlinePackageProvider implements IPackageProvider {
     get size(): number {
         let size = 0;
 
-        for (let [, info] of this._cache) {
+        for (const [, info] of this._cache) {
             size += Object.keys(info.versions).length;
         }
 
@@ -36,7 +36,7 @@ export class OnlinePackageProvider implements IPackageProvider {
         if (typeof cachedInfo !== "undefined") {
             return cachedInfo;
         } else {
-            let data = await downloadHttpJson<INpmPackageInfo>(
+            const data = await downloadHttpJson<INpmPackageInfo>(
                 `${this._url}/${encodeURIComponent(name)}`
             );
 
@@ -46,8 +46,10 @@ export class OnlinePackageProvider implements IPackageProvider {
 
     async *getPackagesByVersion(modules: PackageVersion[]): AsyncIterableIterator<INpmPackage[]> {
         for (let i = 0; i < modules.length; i = i + this._max) {
-            let chunk = modules.slice(i, i + this._max);
-            let promises = chunk.map(([name, version]) => this.getPackageByVersion(name, version));
+            const chunk = modules.slice(i, i + this._max);
+            const promises = chunk.map(([name, version]) =>
+                this.getPackageByVersion(name, version)
+            );
 
             yield await Promise.all([...promises]);
         }
@@ -57,15 +59,15 @@ export class OnlinePackageProvider implements IPackageProvider {
         name: string,
         version: string | undefined = undefined
     ): Promise<INpmPackage> {
-        let info: INpmPackageInfo | IUnpublishedNpmPackage | null;
+        let info: INpmPackageInfo | IUnpublishedNpmPackage | undefined | null = this._cache.get(
+            name
+        );
 
-        if (this._cache.has(name)) {
-            info = this._cache.get(name)!;
-        } else {
+        if (!info) {
             info = await this.getPackageInfo(name);
 
             if (!info) {
-                let _version: string = typeof version !== "undefined" ? `@${version}` : ``;
+                const _version: string = typeof version !== "undefined" ? `@${version}` : ``;
                 throw `Couldn't get package "${name}${_version}"`;
             }
 
@@ -76,10 +78,10 @@ export class OnlinePackageProvider implements IPackageProvider {
             this._cache.set(name, info);
         }
 
-        let allVersions: string[] = Object.keys(info.versions);
+        const allVersions: string[] = Object.keys(info.versions);
         const versionToResolve =
             typeof version !== "undefined" ? version : info["dist-tags"].latest;
-        let resolvedVersion: string | null = semver.maxSatisfying(allVersions, versionToResolve);
+        const resolvedVersion: string | null = semver.maxSatisfying(allVersions, versionToResolve);
 
         if (resolvedVersion === null) {
             throw new Error(`Couldn't resolve version ${version} for "${name}"`);

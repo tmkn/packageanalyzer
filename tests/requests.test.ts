@@ -37,7 +37,7 @@ describe(`Request Tests`, () => {
     });
 
     it(`Returns json`, async () => {
-        let response = await downloadHttpJson(`http://localhost:${port}/echo`, threshold);
+        const response = await downloadHttpJson(`http://localhost:${port}/echo`, threshold);
 
         if (!response) {
             assert.fail(`response is null`);
@@ -47,31 +47,31 @@ describe(`Request Tests`, () => {
     });
 
     it(`Auto retries after a timeout`, async () => {
-        let response = await downloadHttpJson(`http://localhost:${port}/stall`, threshold);
+        const response = await downloadHttpJson(`http://localhost:${port}/stall`, threshold);
 
         assert.deepEqual(response, { worked: "after all" });
     });
 
     it(`Returns null after all retries have been exhausted`, async () => {
-        let response = await downloadHttpJson(`http://localhost:${port}/stall2`, threshold);
+        const response = await downloadHttpJson(`http://localhost:${port}/stall2`, threshold);
 
         assert.equal(response, null);
     });
 
     it(`Returns null on server not found`, async () => {
-        let response = await downloadHttpJson("http://localhost:4785/foo", threshold);
+        const response = await downloadHttpJson("http://localhost:4785/foo", threshold);
 
         assert.equal(response, null);
     });
 
     it(`Returns null if response is not json`, async () => {
-        let response = await downloadHttpJson(`http://localhost:${port}/notjson`, threshold);
+        const response = await downloadHttpJson(`http://localhost:${port}/notjson`, threshold);
 
         assert.equal(response, null);
     });
 
     it(`Returns null if status code is not 200`, async () => {
-        let response = await downloadHttpJson(`http://localhost:${port}/forbidden`);
+        const response = await downloadHttpJson(`http://localhost:${port}/forbidden`);
 
         assert.equal(response, null);
     });

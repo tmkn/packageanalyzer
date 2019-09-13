@@ -1,19 +1,17 @@
 #!/usr/bin/env node
 
+// eslint-disable-next-line
 const pkg = require("./../../package.json");
 
 import * as dayjs from "dayjs";
 
-import { resolveFromFolder } from "./resolvers/folder";
-import { resolveFromName } from "./resolvers/name";
 import { npmOnline } from "./providers/online";
-import {
-    PackageAnalytics,
-    LicenseSummary,
-    VersionSummary,
-    GroupedLicenseSummary
-} from "./analyzers/package";
+import { PackageAnalytics, VersionSummary, GroupedLicenseSummary } from "./analyzers/package";
 import { getNameAndVersion } from "./npm";
+import { Resolver } from "./resolvers/resolver";
+import { FileSystemPackageProvider } from "./providers/folder";
+import { fromFolder } from "./resolvers/folder";
+import { OraLogger } from "./logger";
 
 let commandFound = false;
 
@@ -25,12 +23,12 @@ process.argv.forEach((arg, i) => {
         showHelp();
         commandFound = true;
     } else if (arg === "-f" && !commandFound) {
-        let folder = process.argv[i + 1];
+        const folder = process.argv[i + 1];
 
         cliResolveFolder(folder);
         commandFound = true;
     } else if (arg === "-o" && !commandFound) {
-        let name = process.argv[i + 1];
+        const name = process.argv[i + 1];
 
         cliResolveName(name);
         commandFound = true;
@@ -66,7 +64,9 @@ async function cliResolveFolder(folder: string | undefined): Promise<void> {
     }
 
     try {
-        let pa: PackageAnalytics = await resolveFromFolder(folder);
+        const provider = new FileSystemPackageProvider(folder);
+        const resolver = new Resolver(fromFolder(folder), provider, new OraLogger());
+        const pa: PackageAnalytics = await resolver.resolve();
 
         printStatistics(pa);
     } catch (e) {
@@ -86,8 +86,15 @@ async function cliResolveName(pkgName: string | undefined): Promise<void> {
         const [name, version] = getNameAndVersion(pkgName);
         let pa: PackageAnalytics;
 
-        if (typeof version === "undefined") pa = await resolveFromName(name, npmOnline);
-        else pa = await resolveFromName([name, version], npmOnline);
+        if (typeof version === "undefined") {
+            const resolver = new Resolver(() => name, npmOnline, new OraLogger());
+
+            pa = await resolver.resolve();
+        } else {
+            const resolver = new Resolver(() => [name, version], npmOnline, new OraLogger());
+
+            pa = await resolver.resolve();
+        }
 
         printStatistics(pa);
     } catch (e) {
@@ -160,7 +167,7 @@ function printLoops(loops: PackageAnalytics[], padding: number, paddingLeft: num
     console.log(`${`Loops:`.padEnd(padding)}${loops.length}`);
 
     if (loops.length > 0) {
-        let [first] = loops.map(l => l.pathString).sort();
+        const [first] = loops.map(l => l.pathString).sort();
 
         console.log(`    e.g. ${first}`);
 
@@ -190,8 +197,8 @@ function printMostVersion(mostVerions: VersionSummary, padding: number, paddingL
 function printLicenseInfo(groupedLicenses: GroupedLicenseSummary, paddingLeft: number): void {
     console.log(`Licenses:`);
     for (const { license, names } of groupedLicenses) {
-        let threshold = 4;
-        let samples: string[] = names.slice(0, threshold);
+        const threshold = 4;
+        const samples: string[] = names.slice(0, threshold);
 
         if (names.length >= threshold)
             console.log(
