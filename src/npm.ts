@@ -135,3 +135,20 @@ export function getNameAndVersion(name: string): [string, string?] {
         throw `Unable to determine version from "${name}"`;
     }
 }
+
+interface INpmLockFile {
+    name: string;
+    version: string;
+    lockfileVersion: number;
+    requires: boolean;
+    dependencies?: Record<string, INpmLockFileDependency>;
+}
+
+interface INpmLockFileDependency {
+    version: string;
+    resolved: string;
+    integrity: string;
+    dev: boolean;
+    requires?: Record<string, string>;
+    dependencies?: Record<string, INpmLockFileDependency>;
+}
