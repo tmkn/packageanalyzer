@@ -1,4 +1,4 @@
-import { INpmPackage } from "../npm";
+import { INpmPackage, IMalformedLicenseField } from "../npm";
 
 export type LicenseSummary = Map<string /*name*/, Map<string /*version*/, string /*license*/>>;
 export type GroupedLicenseSummary = Array<{ license: string; names: string[] }>;
@@ -87,12 +87,37 @@ export class PackageAnalytics implements IPackageStatistics {
     }
 
     get license(): string {
-        if (typeof this._data.license !== "undefined") return this._data.license;
-        else if (typeof this._data.licenses !== "undefined")
-            return this._data.licenses.map(l => l.type).join(",");
-        else {
-            return `No license found for ${this.fullName}`;
+        try {
+            const { license } = this._data;
+
+            //check if license field is set
+            if (typeof license !== "undefined") {
+                if (typeof license === "string") {
+                    return license;
+                } else if (this._isLicenseObject(license)) {
+                    return license.type;
+                } else {
+                    return JSON.stringify(license);
+                }
+                //fallback to licenses field
+            } else if (typeof this._data.licenses !== "undefined")
+                return this._data.licenses.map(l => l.type).join(",");
+            //weird format | not set -> fail
+            else {
+                throw new Error(`Unable to parse license`);
+            }
+        } catch {
+            return `PARSE ERROR: ${this.fullName}`;
         }
+    }
+
+    //even though license should be string some packages contain json objects...
+    private _isLicenseObject(data: unknown): data is IMalformedLicenseField {
+        if (typeof data === "object" && data !== null) {
+            return "type" in data && "url" in data;
+        }
+
+        return false;
     }
 
     get directDependencyCount(): number {

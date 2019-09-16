@@ -7,7 +7,7 @@ export interface INpmPackage {
     dist: INpmDist;
     homepage: string;
     keywords: string[];
-    license?: string;
+    license?: unknown;
     licenses?: INpmRepository[]; //legacy
     maintainers: INpmUser[];
     name: string;
@@ -49,6 +49,12 @@ interface INpmDist {
 }
 
 interface INpmRepository {
+    type: string;
+    url: string;
+}
+
+//deep-is uses this format
+export interface IMalformedLicenseField {
     type: string;
     url: string;
 }

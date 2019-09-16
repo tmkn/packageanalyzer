@@ -1,0 +1,10 @@
+{
+  "license": {
+    "foo": {
+      "bar": "MIT"
+    }
+  },
+  "main": "index.js",
+  "name": "wronglicense",
+  "version": "16.8.6"
+}
