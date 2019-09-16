@@ -122,5 +122,3 @@ describe(`NodeModulesProvider Tests`, () => {
         }
     });
 });
-
-
