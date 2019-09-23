@@ -20,6 +20,7 @@ interface IPackageStatistics {
     oldest: PackageAnalytics | undefined;
     timeSpan: number | undefined;
     size: number | undefined;
+    directDependencies: PackageAnalytics[];
 }
 
 export class PackageAnalytics implements IPackageStatistics {
@@ -376,5 +377,11 @@ export class PackageAnalytics implements IPackageStatistics {
         this.visit(d => packageNames.add(d.fullName));
 
         return packageNames.size;
+    }
+
+    get directDependencies(): PackageAnalytics[] {
+        const depth = this.path.length;
+
+        return this.getPackagesBy(pkg => pkg.path.length === depth + 1);
     }
 }
