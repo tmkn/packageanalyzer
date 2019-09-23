@@ -54,6 +54,22 @@ describe(`resolveFromFolder Tests`, () => {
     it(`Check loops`, () => {
         assert.equal(pa.loops.length, 50);
     });
+
+    it(`Check direct dependecies`, async () => {
+        const rootPath = path.join("tests", "data", "testproject1");
+        const provider = new FileSystemPackageProvider(rootPath);
+        const resolver = new Resolver(fromFolder(rootPath), provider, new OraLogger());
+
+        pa = await resolver.resolve();
+        const dependencies = pa.directDependencies;
+
+        assert.equal(dependencies.length, 1);
+        assert.equal(dependencies[0].fullName, `react@16.8.6`);
+
+        const reactDependencies = dependencies[0].directDependencies;
+
+        assert.equal(reactDependencies.length, 4);
+    });
 });
 
 describe(`resolveFromName Error Handling`, () => {
