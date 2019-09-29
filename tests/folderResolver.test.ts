@@ -74,7 +74,7 @@ describe(`resolveFromName Error Handling`, () => {
         }
 
         getPackagesByVersion(
-            modules: [string, string | undefined][] /* eslint-disable-line */
+            modules: [string, string?][] /* eslint-disable-line */
         ): AsyncIterableIterator<INpmPackage[]> {
             throw new Error(`getPackagesByVersion not implemented`);
         }
