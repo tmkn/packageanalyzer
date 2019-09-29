@@ -104,7 +104,13 @@ interface INpmPackageRow {
     };
 }
 
-export type PackageVersion = [string, string | undefined];
+export interface INpmDumpRow {
+    doc: INpmPackageInfo;
+    id: string;
+    key: string;
+}
+
+export type PackageVersion = [string, string?];
 
 export function isUnpublished(
     data: IUnpublishedNpmPackage | INpmPackageInfo
