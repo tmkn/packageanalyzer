@@ -24,23 +24,23 @@ export class FlatFolderProvider implements IPackageProvider {
     async getPackageByVersion(name: string, version?: string): Promise<INpmPackage> {
         const packagePath = path.join(this._folder, this._getSHA1Filename(name));
 
-        if (!fs.existsSync(packagePath)) throw `Couldn't find package "${name}"`;
+        if (!fs.existsSync(packagePath)) throw new Error(`Couldn't find package "${name}"`);
 
-        const packageInfo: INpmPackageInfo = JSON.parse(fs.readFileSync(packagePath, "utf8"));
+        const packageInfo: INpmPackageInfo = (JSON.parse(fs.readFileSync(packagePath, "utf8"))).doc;
         const availableVersions: string[] = [...Object.keys(packageInfo.versions)];
 
         if (typeof version === "undefined") {
             const version = packageInfo["dist-tags"].latest;
 
             if (typeof packageInfo.versions[version] === "undefined")
-                throw `Error extracting latest package ${name}@${version}`;
+                throw new Error(`Error extracting latest package ${name}@${version}`);
 
             return packageInfo.versions[version];
         } else {
             const resolvedVersion = semver.maxSatisfying(availableVersions, version);
 
             if (resolvedVersion === null) {
-                throw `Couldn't resolve ${version} for ${name}`;
+                throw new Error(`Couldn't resolve ${version} for ${name}`);
             }
 
             return packageInfo.versions[resolvedVersion];
@@ -48,12 +48,9 @@ export class FlatFolderProvider implements IPackageProvider {
     }
 
     async *getPackagesByVersion(modules: PackageVersion[]): AsyncIterableIterator<INpmPackage[]> {
-        const sha1Modules: PackageVersion[] = modules.map(([name, version]) => {
-            return [this._getSHA1Filename(name), version];
-        });
         const packages: INpmPackage[] = [];
 
-        for (const version of sha1Modules) {
+        for (const version of modules) {
             packages.push(await this.getPackageByVersion(...version));
         }
 
