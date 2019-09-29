@@ -12,6 +12,10 @@ describe(`flatFolderProvider Tests`, () => {
         provider = new FlatFolderProvider(destination);
     });
 
+    it(`Check size`, async () => {
+        assert.equal(provider.size, -1);
+    });
+
     it(`Resolves a package`, async () => {
         let pkg = await provider.getPackageByVersion(`typescript`);
 
@@ -34,8 +38,8 @@ describe(`flatFolderProvider Tests`, () => {
 
     it(`Resolves multiple packages`, async () => {
         let names: PackageVersion[] = [
-            ["typescript", undefined],
-            ["react", undefined]
+            ["typescript", `3.5.2`],
+            ["react"]
         ];
 
         for await(const pkgs of provider.getPackagesByVersion(names)) {

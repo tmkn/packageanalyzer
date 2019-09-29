@@ -3,13 +3,13 @@ import * as path from "path";
 import * as fs from "fs";
 
 import { IPackageProvider } from "./folder";
-import { INpmPackage, PackageVersion, INpmPackageInfo } from "../npm";
+import { INpmPackage, PackageVersion, INpmPackageInfo, INpmDumpRow } from "../npm";
 import * as semver from "semver";
 
 //load data from a folder where the filename is the sha1 hash of the package name
 export class FlatFolderProvider implements IPackageProvider {
     get size(): number {
-        return 0;
+        return -1;
     }
 
     constructor(private _folder: string) {}
@@ -26,7 +26,8 @@ export class FlatFolderProvider implements IPackageProvider {
 
         if (!fs.existsSync(packagePath)) throw new Error(`Couldn't find package "${name}"`);
 
-        const packageInfo: INpmPackageInfo = (JSON.parse(fs.readFileSync(packagePath, "utf8"))).doc;
+        const dump: INpmDumpRow = JSON.parse(fs.readFileSync(packagePath, "utf8"));
+        const packageInfo: INpmPackageInfo = dump.doc;
         const availableVersions: string[] = [...Object.keys(packageInfo.versions)];
 
         if (typeof version === "undefined") {
