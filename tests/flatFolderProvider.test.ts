@@ -37,12 +37,9 @@ describe(`flatFolderProvider Tests`, () => {
     });
 
     it(`Resolves multiple packages`, async () => {
-        let names: PackageVersion[] = [
-            ["typescript", `3.5.2`],
-            ["react"]
-        ];
+        let names: PackageVersion[] = [["typescript", `3.5.2`], ["react"]];
 
-        for await(const pkgs of provider.getPackagesByVersion(names)) {
+        for await (const pkgs of provider.getPackagesByVersion(names)) {
             assert.equal(pkgs.length, 2);
             assert.equal(pkgs[0].name, `typescript`);
             assert.equal(pkgs[1].name, `react`);
@@ -50,6 +47,10 @@ describe(`flatFolderProvider Tests`, () => {
     });
 
     it(`Throws on not existant package`, () => {
-        assert.rejects(() => provider.getPackageByVersion(`abdfoodoesn'texist`), Error, `Correctly threw an error`);
+        assert.rejects(
+            () => provider.getPackageByVersion(`abdfoodoesn'texist`),
+            Error,
+            `Correctly threw an error`
+        );
     });
 });
