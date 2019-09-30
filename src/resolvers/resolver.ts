@@ -64,7 +64,7 @@ export const Resolver: IResolverConstructor = class Resolver implements IPackage
             const packages: INpmPackage[] = [];
 
             for await (const subPackages of this._provider.getPackagesByVersion(libs)) {
-                packages.push(...subPackages);
+                packages.push(subPackages);
             }
 
             for (const p of packages) {

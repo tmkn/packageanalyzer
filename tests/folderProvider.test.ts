@@ -2,6 +2,7 @@ import * as assert from "assert";
 import * as path from "path";
 
 import { FileSystemPackageProvider } from "../src/providers/folder";
+import { INpmPackage } from "../src/npm";
 
 describe(`NodeModulesProvider Tests`, () => {
     let provider: FileSystemPackageProvider;
@@ -94,12 +95,15 @@ describe(`NodeModulesProvider Tests`, () => {
                 ["scheduler", "0.13.6"],
                 ["react", "16.8.6"]
             ];
+            const pkgs: INpmPackage[] = [];
 
-            for await (const pkgs of provider.getPackagesByVersion(wanted)) {
-                assert.equal(pkgs.length, 2);
-                assert.equal(pkgs[0].name, "scheduler");
-                assert.equal(pkgs[1].name, "react");
+            for await (const pkg of provider.getPackagesByVersion(wanted)) {
+                pkgs.push(pkg);
             }
+
+            assert.equal(pkgs.length, 2);
+            assert.equal(pkgs[0].name, "scheduler");
+            assert.equal(pkgs[1].name, "react");
         } catch {
             assert.equal(false, true);
         }

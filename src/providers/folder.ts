@@ -9,7 +9,7 @@ export interface IPackageProvider {
     //load version specific data, loads latest version if no version is specified
     size: number;
     getPackageByVersion: (name: string, version?: string) => Promise<INpmPackage>;
-    getPackagesByVersion: (modules: PackageVersion[]) => AsyncIterableIterator<INpmPackage[]>;
+    getPackagesByVersion: (modules: PackageVersion[]) => AsyncIterableIterator<INpmPackage>;
     //getMainFile: (name: string, version: string) => Promise<string>;
 }
 
@@ -95,14 +95,10 @@ export class FileSystemPackageProvider implements IPackageProvider {
         }
     }
 
-    async *getPackagesByVersion(modules: PackageVersion[]): AsyncIterableIterator<INpmPackage[]> {
-        const packages: INpmPackage[] = [];
-
+    async *getPackagesByVersion(modules: PackageVersion[]): AsyncIterableIterator<INpmPackage> {
         for (const pkgVersion of modules) {
-            packages.push(await this.getPackageByVersion(...pkgVersion));
+            yield this.getPackageByVersion(...pkgVersion);
         }
-
-        yield packages;
     }
 
     async getPackageByVersion(name: string, version?: string | undefined): Promise<INpmPackage> {

@@ -30,7 +30,9 @@ export class OnlinePackageProvider implements IPackageProvider {
         return size;
     }
 
-    async getPackageInfo(name: string): Promise<INpmPackageInfo | IUnpublishedNpmPackage | null> {
+    async getPackageInfo(
+        name: string
+    ): Promise<INpmPackageInfo | IUnpublishedNpmPackage | undefined> {
         const cachedInfo = this._cache.get(name);
 
         if (typeof cachedInfo !== "undefined") {
@@ -40,18 +42,13 @@ export class OnlinePackageProvider implements IPackageProvider {
                 `${this._url}/${encodeURIComponent(name)}`
             );
 
-            return data;
+            return data === null ? undefined : data;
         }
     }
 
-    async *getPackagesByVersion(modules: PackageVersion[]): AsyncIterableIterator<INpmPackage[]> {
-        for (let i = 0; i < modules.length; i = i + this._max) {
-            const chunk = modules.slice(i, i + this._max);
-            const promises = chunk.map(([name, version]) =>
-                this.getPackageByVersion(name, version)
-            );
-
-            yield await Promise.all([...promises]);
+    async *getPackagesByVersion(modules: PackageVersion[]): AsyncIterableIterator<INpmPackage> {
+        for (const [name, version] of modules) {
+            yield this.getPackageByVersion(name, version);
         }
     }
 
@@ -59,9 +56,7 @@ export class OnlinePackageProvider implements IPackageProvider {
         name: string,
         version: string | undefined = undefined
     ): Promise<INpmPackage> {
-        let info: INpmPackageInfo | IUnpublishedNpmPackage | undefined | null = this._cache.get(
-            name
-        );
+        let info: INpmPackageInfo | IUnpublishedNpmPackage | undefined = this._cache.get(name);
 
         if (!info) {
             info = await this.getPackageInfo(name);

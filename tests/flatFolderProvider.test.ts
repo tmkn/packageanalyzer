@@ -2,7 +2,7 @@ import * as path from "path";
 
 import * as assert from "assert";
 import { FlatFolderProvider } from "../src/providers/flatFolder";
-import { PackageVersion } from "../src/npm";
+import { PackageVersion, INpmPackage } from "../src/npm";
 
 describe(`flatFolderProvider Tests`, () => {
     const destination = path.join("tests", "data", "flatfolder");
@@ -38,12 +38,15 @@ describe(`flatFolderProvider Tests`, () => {
 
     it(`Resolves multiple packages`, async () => {
         let names: PackageVersion[] = [["typescript", `3.5.2`], ["react"]];
+        let pkgs: INpmPackage[] = [];
 
-        for await (const pkgs of provider.getPackagesByVersion(names)) {
-            assert.equal(pkgs.length, 2);
-            assert.equal(pkgs[0].name, `typescript`);
-            assert.equal(pkgs[1].name, `react`);
+        for await (const pkg of provider.getPackagesByVersion(names)) {
+            pkgs.push(pkg);
         }
+
+        assert.equal(pkgs.length, 2);
+        assert.equal(pkgs[0].name, `typescript`);
+        assert.equal(pkgs[1].name, `react`);
     });
 
     it(`Throws on not existant package`, () => {

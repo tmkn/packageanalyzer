@@ -48,13 +48,9 @@ export class FlatFolderProvider implements IPackageProvider {
         }
     }
 
-    async *getPackagesByVersion(modules: PackageVersion[]): AsyncIterableIterator<INpmPackage[]> {
-        const packages: INpmPackage[] = [];
-
-        for (const version of modules) {
-            packages.push(await this.getPackageByVersion(...version));
+    async *getPackagesByVersion(modules: PackageVersion[]): AsyncIterableIterator<INpmPackage> {
+        for (const [name, version] of modules) {
+            yield this.getPackageByVersion(name, version);
         }
-
-        yield packages;
     }
 }
