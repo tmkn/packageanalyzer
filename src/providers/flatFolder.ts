@@ -31,12 +31,12 @@ export class FlatFolderProvider implements IPackageProvider {
         const availableVersions: string[] = [...Object.keys(packageInfo.versions)];
 
         if (typeof version === "undefined") {
-            const version = packageInfo["dist-tags"].latest;
+            const latestVersion = packageInfo["dist-tags"].latest;
 
-            if (typeof packageInfo.versions[version] === "undefined")
-                throw new Error(`Error extracting latest package ${name}@${version}`);
+            if (typeof packageInfo.versions[latestVersion] === "undefined")
+                throw new Error(`Error extracting latest package ${name}@${latestVersion}`);
 
-            return packageInfo.versions[version];
+            return packageInfo.versions[latestVersion];
         } else {
             const resolvedVersion = semver.maxSatisfying(availableVersions, version);
 

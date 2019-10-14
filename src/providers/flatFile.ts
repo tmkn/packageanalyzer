@@ -89,6 +89,7 @@ export class FlatFileProvider implements IPackageProvider {
         const buffer = Buffer.alloc(length);
 
         fs.readSync(fd, buffer, 0, length, offset);
+        fs.closeSync(fd);
 
         const json: INpmDumpRow = JSON.parse(buffer.toString());
 
