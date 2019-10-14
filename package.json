@@ -12,8 +12,8 @@
   "scripts": {
     "build": "node utility/clean.js && tsc",
     "dev": "tsc --watch",
-    "test": "mocha --timeout 10000 ./build/tests/**/*.test.js",
-    "test:watch": "tsc && mocha --timeout 10000 --watch ./build/tests/**/*.test.js",
+    "test": "mocha",
+    "test:watch": "tsc && mocha --watch",
     "test:coverage": "nyc npm test",
     "test:clean": "node build/tests/clean.js",
     "prettier": "prettier --write \"{src,tests,utility}/**/{*.ts,*.js}\"",

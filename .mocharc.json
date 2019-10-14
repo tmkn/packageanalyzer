@@ -1,0 +1,4 @@
+{
+    "timeout": 10000,
+    "spec": "./build/tests/**/*.test.js"
+}
