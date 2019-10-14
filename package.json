@@ -10,7 +10,7 @@
     "npa": "./build/src/cli.js"
   },
   "scripts": {
-    "build": "node utility/clean.js && tsc",
+    "build": "tsc",
     "dev": "tsc --watch",
     "test": "mocha",
     "test:watch": "tsc && mocha --watch",
