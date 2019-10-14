@@ -6,8 +6,20 @@
 trigger:
 - master
 
+pr:
+- master
+
+strategy:
+  matrix:
+    linux:
+      imageName: 'ubuntu-latest'
+    mac:
+      imageName: 'macOS-latest'
+    windows:
+      imageName: 'windows-latest'
+
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: $(imageName)
 
 steps:
 - task: NodeTool@0
@@ -28,4 +40,5 @@ steps:
     npm install -g codecov
     npm run test:coverage
     codecov -t $(CODECOV_TOKEN)
+  condition: eq( variables['Agent.OS'], 'Linux' )
   displayName: 'Generate code coverage'
