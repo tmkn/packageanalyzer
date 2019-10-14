@@ -17,28 +17,28 @@ describe(`flatFolderProvider Tests`, () => {
     });
 
     it(`Resolves a package`, async () => {
-        let pkg = await provider.getPackageByVersion(`typescript`);
+        const pkg = await provider.getPackageByVersion(`typescript`);
 
         assert.equal(pkg.name, `typescript`);
     });
 
     it(`Resolves a package with version`, async () => {
-        let pkg = await provider.getPackageByVersion(`typescript`, `3.5.1`);
+        const pkg = await provider.getPackageByVersion(`typescript`, `3.5.1`);
 
         assert.equal(pkg.name, `typescript`);
         assert.equal(pkg.version, `3.5.1`);
     });
 
     it(`Resolves a package with semantic version syntax`, async () => {
-        let pkg = await provider.getPackageByVersion(`typescript`, `^3.5.1`);
+        const pkg = await provider.getPackageByVersion(`typescript`, `^3.5.1`);
 
         assert.equal(pkg.name, `typescript`);
         assert.equal(pkg.version, `3.5.2`);
     });
 
     it(`Resolves multiple packages`, async () => {
-        let names: PackageVersion[] = [["typescript", `3.5.2`], ["react"]];
-        let pkgs: INpmPackage[] = [];
+        const names: PackageVersion[] = [["typescript", `3.5.2`], ["react"]];
+        const pkgs: INpmPackage[] = [];
 
         for await (const pkg of provider.getPackagesByVersion(names)) {
             pkgs.push(pkg);
