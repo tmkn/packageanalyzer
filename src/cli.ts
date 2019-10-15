@@ -3,6 +3,8 @@
 // eslint-disable-next-line
 const pkg = require("./../../package.json");
 
+import * as path from "path";
+
 import * as dayjs from "dayjs";
 
 import { npmOnline } from "./providers/online";
@@ -12,6 +14,7 @@ import { Resolver } from "./resolvers/resolver";
 import { FileSystemPackageProvider } from "./providers/folder";
 import { fromFolder } from "./resolvers/folder";
 import { OraLogger } from "./logger";
+import { FlatFileProvider } from "./providers/flatFile";
 
 let commandFound = false;
 
@@ -22,7 +25,7 @@ process.argv.forEach((arg, i) => {
     } else if (arg === "-h" && !commandFound) {
         showHelp();
         commandFound = true;
-    } else if (arg === "-f" && !commandFound) {
+    } else if (arg === "-l" && !commandFound) {
         const folder = process.argv[i + 1];
 
         cliResolveFolder(folder);
@@ -31,6 +34,12 @@ process.argv.forEach((arg, i) => {
         const name = process.argv[i + 1];
 
         cliResolveName(name);
+        commandFound = true;
+    } else if (arg === "-f") {
+        const npmFile = process.argv[i + 1];
+        const name = process.argv[i + 2];
+
+        cliResolveFile(name, npmFile);
         commandFound = true;
     }
 });
@@ -92,6 +101,31 @@ async function cliResolveName(pkgName: string | undefined): Promise<void> {
             pa = await resolver.resolve();
         } else {
             const resolver = new Resolver(() => [name, version], npmOnline, new OraLogger());
+
+            pa = await resolver.resolve();
+        }
+
+        printStatistics(pa);
+    } catch (e) {
+        console.log(e);
+    }
+}
+
+async function cliResolveFile(pkgName: string, file: string): Promise<void> {
+    try {
+        const baseName = path.basename(file, path.extname(file));
+        const folder = path.dirname(file);
+        const lookupFile = path.join(folder, `${baseName}.lookup.txt`);
+        const provider = new FlatFileProvider(file, lookupFile);
+        const [name, version] = getNameAndVersion(pkgName);
+        let pa: PackageAnalytics;
+
+        if (typeof version === "undefined") {
+            const resolver = new Resolver(() => name, provider, new OraLogger());
+
+            pa = await resolver.resolve();
+        } else {
+            const resolver = new Resolver(() => [name, version], provider, new OraLogger());
 
             pa = await resolver.resolve();
         }
