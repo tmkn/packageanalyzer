@@ -31,7 +31,7 @@ steps:
   displayName: 'npm install'
 
 - script: npm run build
-  displayName: 'npm build'
+  displayName: 'Build'
 
 - script: |
     npm run test
