@@ -4,7 +4,7 @@ import * as fs from "fs";
 import { Server } from "http";
 import * as express from "express";
 
-import { INpmPackageInfo, isUnpublished } from "../src/npm";
+import { INpmPackage, isUnpublished } from "../src/npm";
 import { OnlinePackageProvider } from "../src/providers/online";
 import { Resolver } from "../src/resolvers/resolver";
 import { OraLogger } from "../src/logger";
@@ -80,7 +80,7 @@ class MockNpmServer {
     private _server: Server;
     private readonly _port = 3000;
     private _dataPath = path.join("tests", "data", "mockserverdata");
-    private _cache: Map<string, INpmPackageInfo> = new Map();
+    private _cache: Map<string, INpmPackage> = new Map();
 
     constructor() {
         const app = express();

@@ -1,13 +1,13 @@
-import { IPackageProvider } from "../providers/folder";
+import { IPackageVersionProvider } from "../providers/folder";
 import { PackageAnalytics } from "../analyzers/package";
-import { INpmKeyValue, INpmPackage } from "../npm";
+import { INpmKeyValue, INpmPackageVersion } from "../npm";
 import { ILogger } from "../logger";
-import { OnlinePackageProvider } from "../providers/online";
+import { OnlinePackageProvider, PackageProvider } from "../providers/online";
 
 export type EntryPackage = () => string | [string, string];
 
 interface IResolverConstructor {
-    new (entry: EntryPackage, provider: IPackageProvider, logger: ILogger): IPackageResolver;
+    new (entry: EntryPackage, provider: IPackageVersionProvider, logger: ILogger): IPackageResolver;
 }
 
 interface IPackageResolver {
@@ -19,7 +19,7 @@ export const Resolver: IResolverConstructor = class Resolver implements IPackage
 
     constructor(
         private _entry: EntryPackage,
-        private _provider: IPackageProvider,
+        private _provider: IPackageVersionProvider,
         private _logger: ILogger
     ) {}
 
@@ -61,7 +61,7 @@ export const Resolver: IResolverConstructor = class Resolver implements IPackage
         try {
             const dependencyList = typeof dependencies !== "undefined" ? dependencies : [];
             const libs = Object.entries(dependencyList);
-            const packages: INpmPackage[] = [];
+            const packages: INpmPackageVersion[] = [];
 
             for await (const subPackages of this._provider.getPackagesByVersion(libs)) {
                 packages.push(subPackages);
@@ -93,9 +93,9 @@ export const Resolver: IResolverConstructor = class Resolver implements IPackage
 
 export async function addPublished(
     pa: PackageAnalytics,
-    provider: IPackageProvider
+    provider: IPackageVersionProvider
 ): Promise<void> {
-    if (!(provider instanceof OnlinePackageProvider)) {
+    if (!(provider instanceof PackageProvider)) {
         return;
     }
 

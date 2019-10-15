@@ -3,28 +3,44 @@ import * as fs from "fs";
 import * as os from "os";
 import * as semver from "semver";
 
-import { IPackageProvider } from "./folder";
-import { INpmPackage, PackageVersion, INpmPackageInfo, INpmDumpRow } from "../npm";
+import { OraLogger } from "../logger";
+
+import { IPackageVersionProvider } from "./folder";
+import {
+    INpmPackageVersion,
+    PackageVersion,
+    INpmPackage,
+    INpmDumpRow,
+    IUnpublishedNpmPackage
+} from "../npm";
+import { PackageProvider } from "./online";
 
 //parses npm data from https://replicate.npmjs.com/_all_docs?limit=4&include_docs=true
 //needs a lookup file
-export class FlatFileProvider implements IPackageProvider {
+export class FlatFileProvider extends PackageProvider implements IPackageVersionProvider {
     private _lookup: Map<string, ILookupInfo> = new Map();
     private _initialized = false;
+    private _logger = new OraLogger();
 
     get size(): number {
         return this._lookup.size;
     }
 
-    constructor(private _file: string, private _lookupFile: string) {}
+    constructor(private _file: string, private _lookupFile: string) {
+        super();
+    }
 
-    async getPackageByVersion(name: string, version?: string): Promise<INpmPackage> {
+    async getPackageInfo(name: string): Promise<INpmPackage | IUnpublishedNpmPackage | undefined> {
+        return this._getPackage(name);
+    }
+
+    async getPackageByVersion(name: string, version?: string): Promise<INpmPackageVersion> {
         if (!this._initialized) {
             await this.parseLookupFile();
             this._initialized = true;
         }
 
-        const pkgInfo = this._getPackageInfo(name);
+        const pkgInfo = this._getPackage(name);
 
         //get latest version
         if (typeof version === "undefined") {
@@ -45,7 +61,9 @@ export class FlatFileProvider implements IPackageProvider {
         }
     }
 
-    async *getPackagesByVersion(modules: PackageVersion[]): AsyncIterableIterator<INpmPackage> {
+    async *getPackagesByVersion(
+        modules: PackageVersion[]
+    ): AsyncIterableIterator<INpmPackageVersion> {
         for (const [name, version] of modules) {
             yield this.getPackageByVersion(name, version);
         }
@@ -56,15 +74,31 @@ export class FlatFileProvider implements IPackageProvider {
             input: fs.createReadStream(this._lookupFile),
             crlfDelay: Infinity
         });
+        const fileSize = fs.statSync(this._lookupFile).size;
+        const newlineLength = os.platform() !== "win32" ? 1 : 2;
+        let parsedBytes = 0;
 
         this._lookup.clear();
+        this._logger.start();
 
         for await (const line of rl) {
-            this._addToLookup(line);
+            parsedBytes += Buffer.byteLength(line, "utf8") + newlineLength;
+            const name = this._addToLookup(line);
+
+            this._logger.log(
+                `Parsing Lookup [${this._getLookupProgress(parsedBytes, fileSize)}%] ${name}`
+            );
         }
+        this._logger.stop();
     }
 
-    private _addToLookup(line: string): void {
+    private _getLookupProgress(current: number, total: number): string {
+        const progress: number = (current / total) * 100;
+
+        return `${progress.toFixed(2).padStart(6)}`;
+    }
+
+    private _addToLookup(line: string): string {
         const [name, offset, length] = line.split(" ").map(l => l.trim());
         const _offset: number = parseInt(offset);
         const _length: number = parseInt(length);
@@ -72,14 +106,17 @@ export class FlatFileProvider implements IPackageProvider {
         //lookup file was generated on windows
         //win -> \r\n -> 2char, *nix -> \n -> 1char
         const correctedOffset = os.platform() !== "win32" ? _offset - this.size - 1 : _offset;
-
-        this._lookup.set(name, {
+        const lookup: ILookupInfo = {
             offset: correctedOffset,
             length: _length
-        });
+        };
+
+        this._lookup.set(name, lookup);
+
+        return name;
     }
 
-    private _getPackageInfo(name: string): INpmPackageInfo {
+    private _getPackage(name: string): INpmPackage {
         const lookupInfo = this._lookup.get(name);
 
         if (typeof lookupInfo === "undefined") throw new Error(`Couldn't finde package "${name}"`);

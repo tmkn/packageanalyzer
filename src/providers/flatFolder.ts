@@ -2,12 +2,12 @@ import * as crypto from "crypto";
 import * as path from "path";
 import * as fs from "fs";
 
-import { IPackageProvider } from "./folder";
-import { INpmPackage, PackageVersion, INpmPackageInfo, INpmDumpRow } from "../npm";
+import { IPackageVersionProvider } from "./folder";
+import { INpmPackageVersion, PackageVersion, INpmPackage, INpmDumpRow } from "../npm";
 import * as semver from "semver";
 
 //load data from a folder where the filename is the sha1 hash of the package name
-export class FlatFolderProvider implements IPackageProvider {
+export class FlatFolderProvider implements IPackageVersionProvider {
     get size(): number {
         return -1;
     }
@@ -21,13 +21,13 @@ export class FlatFolderProvider implements IPackageProvider {
         return `${sha1.digest("hex")}.json`;
     }
 
-    async getPackageByVersion(name: string, version?: string): Promise<INpmPackage> {
+    async getPackageByVersion(name: string, version?: string): Promise<INpmPackageVersion> {
         const packagePath = path.join(this._folder, this._getSHA1Filename(name));
 
         if (!fs.existsSync(packagePath)) throw new Error(`Couldn't find package "${name}"`);
 
         const dump: INpmDumpRow = JSON.parse(fs.readFileSync(packagePath, "utf8"));
-        const packageInfo: INpmPackageInfo = dump.doc;
+        const packageInfo: INpmPackage = dump.doc;
         const availableVersions: string[] = [...Object.keys(packageInfo.versions)];
 
         if (typeof version === "undefined") {
@@ -48,7 +48,9 @@ export class FlatFolderProvider implements IPackageProvider {
         }
     }
 
-    async *getPackagesByVersion(modules: PackageVersion[]): AsyncIterableIterator<INpmPackage> {
+    async *getPackagesByVersion(
+        modules: PackageVersion[]
+    ): AsyncIterableIterator<INpmPackageVersion> {
         for (const [name, version] of modules) {
             yield this.getPackageByVersion(name, version);
         }

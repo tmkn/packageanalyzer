@@ -1,4 +1,4 @@
-export interface INpmPackage {
+export interface INpmPackageVersion {
     author: INpmUser;
     dependencies?: INpmKeyValue;
     description: string;
@@ -59,7 +59,7 @@ export interface IMalformedLicenseField {
     url: string;
 }
 
-export interface INpmPackageInfo {
+export interface INpmPackage {
     author: INpmUser;
     description: string;
     "dist-tags": INpmKeyValue[] & { latest: string };
@@ -73,7 +73,7 @@ export interface INpmPackageInfo {
     repository: INpmRepository;
     time: INpmKeyValue;
     users: { [index: string]: boolean };
-    versions: { [index: string]: INpmPackage };
+    versions: { [index: string]: INpmPackageVersion };
 }
 
 interface INpmBaseStatistic {
@@ -105,7 +105,7 @@ interface INpmPackageRow {
 }
 
 export interface INpmDumpRow {
-    doc: INpmPackageInfo;
+    doc: INpmPackage;
     id: string;
     key: string;
 }
@@ -113,7 +113,7 @@ export interface INpmDumpRow {
 export type PackageVersion = [string, string?];
 
 export function isUnpublished(
-    data: IUnpublishedNpmPackage | INpmPackageInfo
+    data: IUnpublishedNpmPackage | INpmPackage
 ): data is IUnpublishedNpmPackage {
     if (typeof data === "object" && data !== null) {
         if ("time" in data) {

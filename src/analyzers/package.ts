@@ -1,4 +1,4 @@
-import { INpmPackage, IMalformedLicenseField } from "../npm";
+import { INpmPackageVersion, IMalformedLicenseField } from "../npm";
 
 export type LicenseSummary = Map<string /*name*/, Map<string /*version*/, string /*license*/>>;
 export type GroupedLicenseSummary = Array<{ license: string; names: string[] }>;
@@ -27,7 +27,7 @@ export class PackageAnalytics implements IPackageStatistics {
     isLoop = false;
     private readonly _dependencies: PackageAnalytics[] = [];
 
-    constructor(private readonly _data: Readonly<INpmPackage>) {}
+    constructor(private readonly _data: Readonly<INpmPackageVersion>) {}
 
     get name(): string {
         return this._data.name;
@@ -124,7 +124,9 @@ export class PackageAnalytics implements IPackageStatistics {
         return this._dependencies.length;
     }
 
-    getData<T extends keyof INpmPackage = keyof INpmPackage>(key: T): INpmPackage[T] {
+    getData<T extends keyof INpmPackageVersion = keyof INpmPackageVersion>(
+        key: T
+    ): INpmPackageVersion[T] {
         return this._data[key];
     }
 

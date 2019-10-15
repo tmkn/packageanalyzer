@@ -1,7 +1,7 @@
 import * as path from "path";
 import * as fs from "fs";
 
-import { INpmPackage } from "../npm";
+import { INpmPackageVersion } from "../npm";
 import { EntryPackage } from "./resolver";
 
 function getVersionFromPackageJson(rootPath: string): [string, string] {
@@ -9,7 +9,7 @@ function getVersionFromPackageJson(rootPath: string): [string, string] {
 
     try {
         const content = fs.readFileSync(packageJsonPath, "utf8");
-        const pkg: INpmPackage = JSON.parse(content);
+        const pkg: INpmPackageVersion = JSON.parse(content);
 
         return [pkg.name, pkg.version];
     } catch (e) {

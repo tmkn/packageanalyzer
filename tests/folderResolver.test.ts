@@ -3,8 +3,8 @@ import * as path from "path";
 
 import { PackageAnalytics } from "../src/analyzers/package";
 import { fromFolder } from "../src/resolvers/folder";
-import { IPackageProvider, FileSystemPackageProvider } from "../src/providers/folder";
-import { INpmPackage } from "../src/npm";
+import { IPackageVersionProvider, FileSystemPackageProvider } from "../src/providers/folder";
+import { INpmPackageVersion } from "../src/npm";
 import { Resolver } from "../src/resolvers/resolver";
 import { OraLogger } from "../src/logger";
 
@@ -63,19 +63,19 @@ describe(`resolveFromName Error Handling`, () => {
         }
     }
 
-    class MockProvider implements IPackageProvider {
+    class MockProvider implements IPackageVersionProvider {
         size = 0;
 
         getPackageByVersion(
             name: string /* eslint-disable-line */,
             version?: string | undefined /* eslint-disable-line */
-        ): Promise<INpmPackage> {
+        ): Promise<INpmPackageVersion> {
             throw new CustomError(`getPackageByVersion not implemented`);
         }
 
         getPackagesByVersion(
             modules: [string, string?][] /* eslint-disable-line */
-        ): AsyncIterableIterator<INpmPackage> {
+        ): AsyncIterableIterator<INpmPackageVersion> {
             throw new Error(`getPackagesByVersion not implemented`);
         }
     }

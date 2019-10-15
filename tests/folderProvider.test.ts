@@ -2,7 +2,7 @@ import * as assert from "assert";
 import * as path from "path";
 
 import { FileSystemPackageProvider } from "../src/providers/folder";
-import { INpmPackage } from "../src/npm";
+import { INpmPackageVersion } from "../src/npm";
 
 describe(`NodeModulesProvider Tests`, () => {
     let provider: FileSystemPackageProvider;
@@ -95,7 +95,7 @@ describe(`NodeModulesProvider Tests`, () => {
                 ["scheduler", "0.13.6"],
                 ["react", "16.8.6"]
             ];
-            const pkgs: INpmPackage[] = [];
+            const pkgs: INpmPackageVersion[] = [];
 
             for await (const pkg of provider.getPackagesByVersion(wanted)) {
                 pkgs.push(pkg);

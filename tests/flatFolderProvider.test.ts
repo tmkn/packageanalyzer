@@ -2,7 +2,7 @@ import * as path from "path";
 
 import * as assert from "assert";
 import { FlatFolderProvider } from "../src/providers/flatFolder";
-import { PackageVersion, INpmPackage } from "../src/npm";
+import { PackageVersion, INpmPackageVersion } from "../src/npm";
 
 describe(`flatFolderProvider Tests`, () => {
     const destination = path.join("tests", "data", "flatfolder");
@@ -38,7 +38,7 @@ describe(`flatFolderProvider Tests`, () => {
 
     it(`Resolves multiple packages`, async () => {
         const names: PackageVersion[] = [["typescript", `3.5.2`], ["react"]];
-        const pkgs: INpmPackage[] = [];
+        const pkgs: INpmPackageVersion[] = [];
 
         for await (const pkg of provider.getPackagesByVersion(names)) {
             pkgs.push(pkg);
