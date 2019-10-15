@@ -6,8 +6,20 @@
 trigger:
 - master
 
+pr:
+- master
+
+strategy:
+  matrix:
+    linux:
+      imageName: 'ubuntu-latest'
+    mac:
+      imageName: 'macOS-latest'
+    windows:
+      imageName: 'windows-latest'
+
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: $(imageName)
 
 steps:
 - task: NodeTool@0
@@ -15,10 +27,11 @@ steps:
     versionSpec: '10.x'
   displayName: 'Install Node.js'
 
-- script: |
-    npm install
-    npm run build
-  displayName: 'npm install and build'
+- script: npm install
+  displayName: 'npm install'
+
+- script: npm run build
+  displayName: 'Build'
 
 - script: |
     npm run test
@@ -28,4 +41,5 @@ steps:
     npm install -g codecov
     npm run test:coverage
     codecov -t $(CODECOV_TOKEN)
+  condition: eq( variables['Agent.OS'], 'Linux' )
   displayName: 'Generate code coverage'
