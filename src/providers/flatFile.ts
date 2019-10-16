@@ -85,17 +85,9 @@ export class FlatFileProvider extends PackageProvider implements IPackageVersion
             parsedBytes += Buffer.byteLength(line, "utf8") + newlineLength;
             const name = this._addToLookup(line);
 
-            this._logger.log(
-                `Parsing Lookup [${this._getLookupProgress(parsedBytes, fileSize)}%] ${name}`
-            );
+            this._logger.log(`Parsing Lookup [${getPercentage(parsedBytes, fileSize)}%] ${name}`);
         }
         this._logger.stop();
-    }
-
-    private _getLookupProgress(current: number, total: number): string {
-        const progress: number = (current / total) * 100;
-
-        return `${progress.toFixed(2).padStart(6)}`;
     }
 
     private _addToLookup(line: string): string {
@@ -137,4 +129,10 @@ export class FlatFileProvider extends PackageProvider implements IPackageVersion
 interface ILookupInfo {
     readonly offset: number;
     readonly length: number;
+}
+
+export function getPercentage(current: number, total: number): string {
+    const progress: number = (current / total) * 100;
+
+    return `${progress.toFixed(2).padStart(6)}`;
 }
