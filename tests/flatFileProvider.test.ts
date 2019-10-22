@@ -1,10 +1,8 @@
 import * as path from "path";
 import * as assert from "assert";
-import * as fs from "fs";
 
 import { FlatFileProvider } from "../src/providers/flatFile";
-import { PackageVersion, INpmDumpRow } from "../src/npm";
-import { LookupFileCreator, ILookupEntry } from "../src/lookup";
+import { PackageVersion } from "../src/npm";
 
 describe(`flatFileProvider Tests`, () => {
     const destination = path.join("tests", "data", "npmdump");
@@ -71,51 +69,15 @@ describe(`flatFileProvider Tests`, () => {
             else if (pkg.name === `ux-copy-job-page`) assert.equal(pkg.version, `2.0.48`);
         }
     });
-});
 
-describe(`Lookup Creator Tests`, async () => {
-    const destination = path.join("tests", "data", "npmdump");
-    const file = path.join(destination, `test.json`);
-    let lookups: readonly ILookupEntry[] = [];
-
-    before(async () => {
-        const creator = new LookupFileCreator(file);
-        await creator.parse();
-        lookups = creator.lookups;
+    it(`Get size`, async () => {
+        assert.equal(provider.size, 10);
     });
 
-    it(`Correctly identified all packages`, async () => {
-        assert.equal(lookups.length, 10);
-    });
+    it(`Get package info`, async () => {
+        const pkgInfo = await provider.getPackageInfo(`ux-company-announcement`);
 
-    it(`Correctly parsed the first package`, () => {
-        const [{ name, length, offset }] = lookups;
-
-        assert.equal(name, `ux-com-paging-break`, `Name didn't match`);
-        assert.equal(length, 9865, `Length didn't match`);
-        assert.equal(offset, 49, `Offset didn't match`);
-    });
-
-    it(`Correctly parsed the last package`, () => {
-        const { name, length, offset } = lookups[lookups.length - 1];
-
-        assert.equal(name, `ux-custom-ocean-compon`, `Name didn't match`);
-        assert.equal(length, 42999, `Length didn't match`);
-        assert.equal(offset, 617793, `Offset didn't match`);
-    });
-
-    it(`Correctly looks up a package`, async () => {
-        const fd = fs.openSync(file, "r");
-        const index = 5;
-        const { name, offset, length } = lookups[index];
-        const buffer = Buffer.alloc(length);
-
-        //fixme calculate correct offset values
-        fs.readSync(fd, buffer, 0, length, offset - index - 1);
-        fs.closeSync(fd);
-
-        const { doc: pkg }: INpmDumpRow = JSON.parse(buffer.toString());
-
-        assert.equal(pkg.name, name);
+        if (pkgInfo) assert.equal(pkgInfo.name, `ux-company-announcement`);
+        else assert.equal(true, false, `package info was undefined`);
     });
 });

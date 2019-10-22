@@ -1,16 +1,17 @@
 import * as path from "path";
 import * as fs from "fs";
 import * as readline from "readline";
-//import * as os from "os";
+import * as os from "os";
 import { INpmDumpRow } from "./npm";
 import { getPercentage } from "./providers/flatFile";
 
-const newLine = "\r\n";
+const newLine = "\n";
 
 export interface ILookupEntry {
     name: string;
     offset: number;
     length: number;
+    line: number;
 }
 
 export class LookupFileCreator {
@@ -28,13 +29,13 @@ export class LookupFileCreator {
             crlfDelay: Infinity
         });
         const fileSize = fs.statSync(this._filePath).size;
-        //const newlineLength = os.platform() !== "win32" ? 1 : 2;
         let parsedBytes = 0;
         const startToken = `{"id":"`;
 
         console.log(
             `[${getPercentage(parsedBytes, fileSize)}%] Creating lookup for ${this._filePath}`
         );
+        let i = 0;
 
         for await (const line of rl) {
             const lineByteLength = Buffer.byteLength(line, "utf8");
@@ -47,13 +48,15 @@ export class LookupFileCreator {
                 this._lookups.push({
                     name: pkg.name,
                     offset: parsedBytes,
-                    length: length
+                    length: length,
+                    line: i
                 });
 
                 console.log(`[${getPercentage(parsedBytes, fileSize)}%] ${pkg.name}`);
             }
 
             parsedBytes += lineByteLength + newLine.length;
+            i++;
         }
 
         console.log(`[${getPercentage(parsedBytes, fileSize)}%] Done`);
@@ -77,16 +80,22 @@ export async function testLookup(file: string): Promise<void> {
         );
     }
 
-    function testLookup({ name, offset, length }: ILookupEntry): string {
-        
+    /*const writer = new LookupFileWriter("foobar.txt", creator.lookups);
+    writer.write();*/
+
+    function testLookup({ name, offset, length, line }: ILookupEntry): string {
         const fd = fs.openSync(file, "r");
         const buffer = Buffer.alloc(length);
+
+        if (os.platform() === "win32") {
+            offset += line;
+        }
 
         fs.readSync(fd, buffer, 0, length, offset);
         fs.closeSync(fd);
 
         const str = buffer.toString();
-        const parsedOk: string = couldParse(str) ? "[ok]" : "[failed]"
+        const parsedOk: string = couldParse(str) ? "[ok]" : "[failed]";
 
         return `${parsedOk.padStart(8)} | ${str.slice(0, 32)} ... ${str.slice(str.length - 32)}`;
     }
@@ -96,8 +105,7 @@ export async function testLookup(file: string): Promise<void> {
             JSON.parse(data);
 
             return true;
-        }
-        catch(e) {
+        } catch (e) {
             return false;
         }
     }
@@ -105,16 +113,16 @@ export async function testLookup(file: string): Promise<void> {
 
 /* istanbul ignore next */
 export class LookupFileWriter {
-    constructor(private _file: string, private _data: ReadonlyArray<ILookupEntry>) {}
+    constructor(private _targetFile: string, private _lookups: ReadonlyArray<ILookupEntry>) {}
 
     static getLine({ name, offset, length }: ILookupEntry): string {
         return `${name} ${offset} ${length}${newLine}`;
     }
 
     write(): void {
-        const fd = fs.openSync(this._file, "w");
+        const fd = fs.openSync(this._targetFile, "w");
 
-        for (const lookup of this._data) {
+        for (const lookup of this._lookups) {
             fs.writeSync(fd, LookupFileWriter.getLine(lookup));
         }
 
