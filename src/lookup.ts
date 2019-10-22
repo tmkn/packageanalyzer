@@ -75,7 +75,7 @@ export async function testLookup(file: string): Promise<void> {
             l.offset.toString().padStart(10),
             l.length.toString().padStart(10),
             `|`,
-            testLookup(l),
+            doLookup(l),
             `\n\n`
         );
     }
@@ -83,7 +83,7 @@ export async function testLookup(file: string): Promise<void> {
     /*const writer = new LookupFileWriter("foobar.txt", creator.lookups);
     writer.write();*/
 
-    function testLookup({ name, offset, length, line }: ILookupEntry): string {
+    function doLookup({ name, offset, length, line }: ILookupEntry): string {
         const fd = fs.openSync(file, "r");
         const buffer = Buffer.alloc(length);
 
