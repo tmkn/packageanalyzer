@@ -69,4 +69,15 @@ describe(`flatFileProvider Tests`, () => {
             else if (pkg.name === `ux-copy-job-page`) assert.equal(pkg.version, `2.0.48`);
         }
     });
+
+    it(`Get size`, async () => {
+        assert.equal(provider.size, 10);
+    });
+
+    it(`Get package info`, async () => {
+        const pkgInfo = await provider.getPackageInfo(`ux-company-announcement`);
+
+        if (pkgInfo) assert.equal(pkgInfo.name, `ux-company-announcement`);
+        else assert.equal(true, false, `package info was undefined`);
+    });
 });

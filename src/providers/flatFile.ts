@@ -75,37 +75,28 @@ export class FlatFileProvider extends PackageProvider implements IPackageVersion
             crlfDelay: Infinity
         });
         const fileSize = fs.statSync(this._lookupFile).size;
-        const newlineLength = os.platform() !== "win32" ? 1 : 2;
         let parsedBytes = 0;
+        let lineNum = 0;
 
         this._lookup.clear();
         this._logger.start();
 
         for await (const line of rl) {
-            parsedBytes += Buffer.byteLength(line, "utf8") + newlineLength;
-            const name = this._addToLookup(line);
+            parsedBytes += Buffer.byteLength(line, "utf8");
+            const name = this._parseLine(line, ++lineNum);
 
-            this._logger.log(
-                `Parsing Lookup [${this._getLookupProgress(parsedBytes, fileSize)}%] ${name}`
-            );
+            this._logger.log(`Parsing Lookup [${getPercentage(parsedBytes, fileSize)}%] ${name}`);
         }
         this._logger.stop();
     }
 
-    private _getLookupProgress(current: number, total: number): string {
-        const progress: number = (current / total) * 100;
-
-        return `${progress.toFixed(2).padStart(6)}`;
-    }
-
-    private _addToLookup(line: string): string {
+    private _parseLine(line: string, lineNum: number): string {
         const [name, offset, length] = line.split(" ").map(l => l.trim());
         const _offset: number = parseInt(offset);
         const _length: number = parseInt(length);
         //due to the way newlines are interpreted between different os, we need to correct the offset
-        //lookup file was generated on windows
-        //win -> \r\n -> 2char, *nix -> \n -> 1char
-        const correctedOffset = os.platform() !== "win32" ? _offset - this.size - 1 : _offset;
+        //basically if win add +1 for every newline since win -> \r\n -> 2char, *nix -> \n -> 1char
+        const correctedOffset = os.platform() !== "win32" ? _offset : _offset + lineNum;
         const lookup: ILookupInfo = {
             offset: correctedOffset,
             length: _length
@@ -137,4 +128,10 @@ export class FlatFileProvider extends PackageProvider implements IPackageVersion
 interface ILookupInfo {
     readonly offset: number;
     readonly length: number;
+}
+
+export function getPercentage(current: number, total: number): string {
+    const progress: number = (current / total) * 100;
+
+    return `${progress.toFixed(2).padStart(6)}`;
 }

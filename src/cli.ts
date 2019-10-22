@@ -4,6 +4,7 @@
 const pkg = require("./../../package.json");
 
 import * as path from "path";
+import * as fs from "fs";
 
 import * as dayjs from "dayjs";
 
@@ -15,6 +16,7 @@ import { FileSystemPackageProvider } from "./providers/folder";
 import { fromFolder } from "./resolvers/folder";
 import { OraLogger } from "./logger";
 import { FlatFileProvider } from "./providers/flatFile";
+import { LookupFileCreator, ILookupEntry, testLookup } from "./lookup";
 
 let commandFound = false;
 
@@ -41,6 +43,11 @@ process.argv.forEach((arg, i) => {
 
         cliResolveFile(name, npmFile);
         commandFound = true;
+    } else if (arg === "-lookup") {
+        const filePath = path.join(`tests`, `data`, `npmdump`, `test.json`);
+
+        cliLookupTest(filePath);
+        commandFound = true;
     }
 });
 
@@ -62,6 +69,10 @@ function showHelp(): void {
     );
     console.log(`${`-v`.padEnd(10)} ${`Prints version`.padEnd(60)}`);
     console.log(`${`-h`.padEnd(10)} ${`Display help`.padEnd(60)}`);
+}
+
+async function cliLookupTest(file: string): Promise<void> {
+    await testLookup(file);
 }
 
 async function cliResolveFolder(folder: string | undefined): Promise<void> {
