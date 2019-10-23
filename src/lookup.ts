@@ -2,16 +2,17 @@ import * as path from "path";
 import * as fs from "fs";
 import * as readline from "readline";
 import * as os from "os";
+
 import { INpmDumpRow } from "./npm";
 import { getPercentage } from "./providers/flatFile";
 
 const newLine = "\n";
 
 export interface ILookupEntry {
-    name: string;
-    offset: number;
-    length: number;
-    line: number;
+    readonly name: string;
+    readonly offset: number;
+    readonly length: number;
+    readonly line: number;
 }
 
 export class LookupFileCreator {
@@ -64,27 +65,73 @@ export class LookupFileCreator {
 }
 
 /* istanbul ignore next */
-export async function testLookup(file: string): Promise<void> {
-    const creator = new LookupFileCreator(file);
+export async function createLookupFile(srcFile: string): Promise<void> {
+    try {
+        if (!fs.existsSync(srcFile)) {
+            throw new Error(`Couldn't find lookup file: "${path.resolve(srcFile)}"`);
+        }
 
-    await creator.parse();
+        const lookupFile = getLookupFilePath(srcFile);
+        const creator = new LookupFileCreator(srcFile);
 
-    for (const l of creator.lookups) {
-        console.log(
-            l.name.padEnd(32),
-            l.offset.toString().padStart(10),
-            l.length.toString().padStart(10),
-            `|`,
-            doLookup(l),
-            `\n\n`
-        );
+        await creator.parse();
+        verifyLookups(srcFile, creator.lookups);
+        saveLookupFile(lookupFile, creator.lookups);
+
+        console.log(`Done`);
+    } catch (e) {
+        console.log(e.message);
+    }
+}
+
+/* istanbul ignore next */
+function getLookupFilePath(srcFile: string): string {
+    const folder = path.dirname(srcFile);
+    const name = path.basename(srcFile, path.extname(srcFile));
+
+    return path.join(folder, `${name}.lookup.txt`);
+}
+
+/* istanbul ignore next */
+function saveLookupFile(lookupFile: string, lookups: ReadonlyArray<ILookupEntry>): void {
+    if (fs.existsSync(lookupFile)) {
+        const absolutePath = path.resolve(lookupFile);
+
+        throw new Error(`Lookup "${absolutePath}" already exits, delete to recreate`);
     }
 
-    /*const writer = new LookupFileWriter("foobar.txt", creator.lookups);
-    writer.write();*/
+    const writer = new LookupFileWriter(lookupFile, lookups);
 
-    function doLookup({ name, offset, length, line }: ILookupEntry): string {
-        const fd = fs.openSync(file, "r");
+    writer.write();
+
+    console.log(`Created lookupfile "${path.resolve(lookupFile)}"`);
+}
+
+/* istanbul ignore next */
+function random(max: number) {
+    return Math.floor(Math.random() * Math.floor(max));
+}
+
+/* istanbul ignore next */
+function verifyLookups(srcFile: string, lookups: ReadonlyArray<ILookupEntry>): void {
+    const tests: number[] = [
+        random(lookups.length),
+        random(lookups.length),
+        random(lookups.length)
+    ];
+
+    for (const i of tests) {
+        verifySingleLookup(srcFile, lookups[i]);
+    }
+}
+
+/* istanbul ignore next */
+function verifySingleLookup(
+    srcFile: string,
+    { name, offset, length, line }: Readonly<ILookupEntry>
+): void {
+    try {
+        const fd = fs.openSync(srcFile, "r");
         const buffer = Buffer.alloc(length);
 
         if (os.platform() === "win32") {
@@ -95,23 +142,18 @@ export async function testLookup(file: string): Promise<void> {
         fs.closeSync(fd);
 
         const str = buffer.toString();
-        const parsedOk: string = couldParse(str) ? "[ok]" : "[failed]";
+        const { doc: pkg }: INpmDumpRow = JSON.parse(str);
 
-        return `${parsedOk.padStart(8)} | ${str.slice(0, 32)} ... ${str.slice(str.length - 32)}`;
-    }
-
-    function couldParse(data: string): boolean {
-        try {
-            JSON.parse(data);
-
-            return true;
-        } catch (e) {
-            return false;
+        if (pkg.name === name) {
+            console.log(`Correctly looked up random package "${name}"`);
+        } else {
+            throw new Error(`Package name didn't match [${name}/${pkg.name}]`);
         }
+    } catch (e) {
+        throw new Error(`Couldn't verify lookup`);
     }
 }
 
-/* istanbul ignore next */
 export class LookupFileWriter {
     constructor(private _targetFile: string, private _lookups: ReadonlyArray<ILookupEntry>) {}
 
@@ -119,6 +161,7 @@ export class LookupFileWriter {
         return `${name} ${offset} ${length}${newLine}`;
     }
 
+    /* istanbul ignore next */
     write(): void {
         const fd = fs.openSync(this._targetFile, "w");
 

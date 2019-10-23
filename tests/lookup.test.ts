@@ -4,7 +4,7 @@ import * as fs from "fs";
 import * as os from "os";
 
 import { INpmDumpRow } from "../src/npm";
-import { LookupFileCreator, ILookupEntry } from "../src/lookup";
+import { LookupFileCreator, ILookupEntry, LookupFileWriter } from "../src/lookup";
 
 describe(`Lookup Creator Tests`, async () => {
     const destination = path.join("tests", "data", "npmdump");
@@ -55,5 +55,19 @@ describe(`Lookup Creator Tests`, async () => {
         const { doc: pkg }: INpmDumpRow = JSON.parse(buffer.toString());
 
         assert.equal(pkg.name, name);
+    });
+});
+
+describe(`LookupFileWriter Tests`, () => {
+    it(`Correctly formats lookup for lookup file`, () => {
+        const lookup: ILookupEntry = {
+            name: "foo",
+            length: 1337,
+            offset: 0,
+            line: 1
+        };
+        const line = `${lookup.name} ${lookup.offset} ${lookup.length}\n`;
+
+        assert.equal(LookupFileWriter.getLine(lookup), line);
     });
 });
