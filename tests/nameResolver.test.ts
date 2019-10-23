@@ -9,7 +9,7 @@ import { OraLogger } from "../src/logger";
 describe(`resolveFromFolder Tests`, () => {
     let pa: PackageAnalytics;
 
-    before(async () => {
+    beforeAll(async () => {
         const destination = path.join("tests", "data", "testproject2", "node_modules");
         const provider: FileSystemPackageProvider = new FileSystemPackageProvider(destination);
 

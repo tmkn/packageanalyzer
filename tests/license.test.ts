@@ -7,7 +7,7 @@ import { PackageAnalytics } from "../src/analyzers/package";
 describe(`License Tests`, async () => {
     let provider: FileSystemPackageProvider;
 
-    before(() => {
+    beforeAll(() => {
         const destination = path.join("tests", "data", "licensetests");
         provider = new FileSystemPackageProvider(destination);
     });

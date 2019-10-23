@@ -8,7 +8,7 @@ describe(`flatFolderProvider Tests`, () => {
     const destination = path.join("tests", "data", "flatfolder");
     let provider: FlatFolderProvider;
 
-    before(() => {
+    beforeAll(() => {
         provider = new FlatFolderProvider(destination);
     });
 

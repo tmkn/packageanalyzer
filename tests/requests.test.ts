@@ -16,7 +16,7 @@ describe(`Request Tests`, () => {
         );
     }
 
-    before(() => {
+    beforeAll(() => {
         const app = express();
         let stallCalls = 0;
 
@@ -76,7 +76,7 @@ describe(`Request Tests`, () => {
         assert.equal(response, null);
     });
 
-    after(() => {
+    afterAll(() => {
         server.close(e => {
             if (e) console.log(e);
         });

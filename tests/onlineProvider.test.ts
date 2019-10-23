@@ -13,7 +13,7 @@ describe(`OnlineProvider Tests`, () => {
     let server: MockNpmServer;
     const provider = new OnlinePackageProvider(`http://localhost:3000`);
 
-    before(() => {
+    beforeAll(() => {
         server = new MockNpmServer();
     });
 
@@ -71,7 +71,7 @@ describe(`OnlineProvider Tests`, () => {
         }
     });
 
-    after(() => {
+    afterAll(() => {
         server.close();
     });
 });

@@ -7,7 +7,7 @@ import { INpmPackageVersion } from "../src/npm";
 describe(`NodeModulesProvider Tests`, () => {
     let provider: FileSystemPackageProvider;
 
-    before(() => {
+    beforeAll(() => {
         const destination = path.join("tests", "data", "testproject1", "node_modules");
         provider = new FileSystemPackageProvider(destination);
     });

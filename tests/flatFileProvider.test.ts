@@ -10,7 +10,7 @@ describe(`flatFileProvider Tests`, () => {
     const lookupFile = path.join(destination, `test.lookup.txt`);
     let provider: FlatFileProvider;
 
-    before(() => {
+    beforeAll(() => {
         provider = new FlatFileProvider(file, lookupFile);
     });
 

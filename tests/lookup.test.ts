@@ -11,7 +11,7 @@ describe(`Lookup Creator Tests`, async () => {
     const file = path.join(destination, `test.json`);
     let lookups: readonly ILookupEntry[] = [];
 
-    before(async () => {
+    beforeAll(async () => {
         const creator = new LookupFileCreator(file);
         await creator.parse();
         lookups = creator.lookups;
