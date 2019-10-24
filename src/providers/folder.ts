@@ -111,7 +111,7 @@ export class FileSystemPackageProvider implements IPackageVersionProvider {
         let pkg: INpmPackageVersion;
 
         if (typeof versions === "undefined") {
-            throw `Couldn't find package ${name}`;
+            throw new Error(`Couldn't find package ${name}`);
         }
 
         //load latest available version
@@ -121,7 +121,7 @@ export class FileSystemPackageProvider implements IPackageVersionProvider {
 
             //should never happen..
             if (typeof specificVersion === "undefined")
-                throw `Error extracting latest package ${name}@${version}`;
+                throw new Error(`Error extracting latest package ${name}@${version}`);
 
             pkg = specificVersion;
         } else {
@@ -129,13 +129,13 @@ export class FileSystemPackageProvider implements IPackageVersionProvider {
             const resolvedVersion = semver.maxSatisfying(availableVersions, version);
 
             if (resolvedVersion === null) {
-                throw `Couldn't resolve ${version} for ${name}`;
+                throw new Error(`Couldn't resolve ${version} for ${name}`);
             }
 
             const specificVersion = versions.get(resolvedVersion);
 
             if (typeof specificVersion === "undefined")
-                throw `Couldn't find package ${name}@${version}`;
+                throw new Error(`Couldn't find package ${name}@${version}`);
 
             pkg = specificVersion;
         }

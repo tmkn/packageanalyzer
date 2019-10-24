@@ -1,43 +1,42 @@
 import * as path from "path";
-import * as assert from "assert";
 import * as fs from "fs";
 import * as os from "os";
 
 import { INpmDumpRow } from "../src/npm";
 import { LookupFileCreator, ILookupEntry, LookupFileWriter } from "../src/lookup";
 
-describe(`Lookup Creator Tests`, async () => {
+describe(`Lookup Creator Tests`, () => {
     const destination = path.join("tests", "data", "npmdump");
     const file = path.join(destination, `test.json`);
     let lookups: readonly ILookupEntry[] = [];
 
-    before(async () => {
+    beforeAll(async () => {
         const creator = new LookupFileCreator(file);
         await creator.parse();
         lookups = creator.lookups;
     });
 
-    it(`Correctly identified all packages`, async () => {
-        assert.equal(lookups.length, 10);
+    test(`Correctly identified all packages`, async () => {
+        expect(lookups.length).toBe(10);
     });
 
-    it(`Correctly parsed the first package`, () => {
+    test(`Correctly parsed the first package`, () => {
         const [{ name, length, offset }] = lookups;
 
-        assert.equal(name, `ux-com-paging-break`, `Name didn't match`);
-        assert.equal(length, 9865, `Length didn't match`);
-        assert.equal(offset, 48, `Offset didn't match`);
+        expect(name).toBe(`ux-com-paging-break`);
+        expect(length).toBe(9865);
+        expect(offset).toBe(48);
     });
 
-    it(`Correctly parsed the last package`, () => {
+    test(`Correctly parsed the last package`, () => {
         const { name, length, offset } = lookups[lookups.length - 1];
 
-        assert.equal(name, `ux-custom-ocean-compon`, `Name didn't match`);
-        assert.equal(length, 42999, `Length didn't match`);
-        assert.equal(offset, 617783, `Offset didn't match`);
+        expect(name).toBe(`ux-custom-ocean-compon`);
+        expect(length).toBe(42999);
+        expect(offset).toBe(617783);
     });
 
-    it(`Correctly looks up a package`, async () => {
+    test(`Correctly looks up a package`, async () => {
         const fd = fs.openSync(file, "r");
         const index = 5;
         let { name, offset, length } = lookups[index];
@@ -54,12 +53,12 @@ describe(`Lookup Creator Tests`, async () => {
 
         const { doc: pkg }: INpmDumpRow = JSON.parse(buffer.toString());
 
-        assert.equal(pkg.name, name);
+        expect(pkg.name).toBe(name);
     });
 });
 
 describe(`LookupFileWriter Tests`, () => {
-    it(`Correctly formats lookup for lookup file`, () => {
+    test(`Correctly formats lookup for lookup file`, () => {
         const lookup: ILookupEntry = {
             name: "foo",
             length: 1337,
@@ -68,6 +67,6 @@ describe(`LookupFileWriter Tests`, () => {
         };
         const line = `${lookup.name} ${lookup.offset} ${lookup.length}\n`;
 
-        assert.equal(LookupFileWriter.getLine(lookup), line);
+        expect(LookupFileWriter.getLine(lookup)).toBe(line);
     });
 });
