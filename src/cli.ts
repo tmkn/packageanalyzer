@@ -21,7 +21,7 @@ let commandFound = false;
 
 process.argv.forEach((arg, i) => {
     if (arg === "-v" && !commandFound) {
-        console.log(`Version ${pkg.version}`);
+        console.log(`${pkg.version}`);
         commandFound = true;
     } else if (arg === "-h" && !commandFound) {
         showHelp();

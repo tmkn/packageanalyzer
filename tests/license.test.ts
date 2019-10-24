@@ -1,10 +1,9 @@
-import * as assert from "assert";
 import * as path from "path";
 
 import { FileSystemPackageProvider } from "../src/providers/folder";
 import { PackageAnalytics } from "../src/analyzers/package";
 
-describe(`License Tests`, async () => {
+describe.only(`License Tests`, () => {
     let provider: FileSystemPackageProvider;
 
     beforeAll(() => {
@@ -12,31 +11,31 @@ describe(`License Tests`, async () => {
         provider = new FileSystemPackageProvider(destination);
     });
 
-    it(`Check react license`, async () => {
+    test(`Check react license`, async () => {
         const dep = await provider.getPackageByVersion("react");
         const pa = new PackageAnalytics(dep);
 
-        assert.equal(pa.license, `MIT`);
+        expect(pa.license).toBe(`MIT`);
     });
 
-    it(`Check deep-is license`, async () => {
+    test(`Check deep-is license`, async () => {
         const dep = await provider.getPackageByVersion("deep-is");
         const pa = new PackageAnalytics(dep);
 
-        assert.equal(pa.license, `MIT`);
+        expect(pa.license).toBe(`MIT`);
     });
 
-    it(`Check license for complex type`, async () => {
+    test(`Check license for complex type`, async () => {
         const dep = await provider.getPackageByVersion("wronglicense");
         const pa = new PackageAnalytics(dep);
 
-        assert.equal(pa.license, `{"foo":{"bar":"MIT"}}`);
+        expect(pa.license).toEqual(`{"foo":{"bar":"MIT"}}`);
     });
 
-    it(`No license check`, async () => {
+    test(`No license check`, async () => {
         const dep = await provider.getPackageByVersion("wronglicense2");
         const pa = new PackageAnalytics(dep);
 
-        assert.equal(pa.license.startsWith(`PARSE ERROR`), true);
+        expect(pa.license.startsWith(`PARSE ERROR`)).toBe(true);
     });
 });

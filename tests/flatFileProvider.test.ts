@@ -1,5 +1,4 @@
 import * as path from "path";
-import * as assert from "assert";
 
 import { FlatFileProvider } from "../src/providers/flatFile";
 import { PackageVersion } from "../src/npm";
@@ -14,70 +13,63 @@ describe(`flatFileProvider Tests`, () => {
         provider = new FlatFileProvider(file, lookupFile);
     });
 
-    it(`Get latest version`, async () => {
+    test(`Get latest version`, async () => {
         const pkg = await provider.getPackageByVersion(`ux-company-announcement`);
 
-        assert.equal(pkg.version, "1.4.1");
+        expect(pkg.version).toBe("1.4.1");
     });
 
-    it(`Get specific version`, async () => {
+    test(`Get specific version`, async () => {
         const pkg = await provider.getPackageByVersion(`ux-company-announcement`, `1.1.1`);
 
-        assert.equal(pkg.version, "1.1.1");
+        expect(pkg.version).toBe("1.1.1");
     });
 
-    it(`Get by semantic version`, async () => {
+    test(`Get by semantic version`, async () => {
         const pkg = await provider.getPackageByVersion(`ux-company-announcement`, `^2.0.0`);
 
-        assert.equal(pkg.version, "2.1.2");
+        expect(pkg.version).toBe("2.1.2");
     });
 
-    it(`Get non existant version`, async () => {
-        let thrown = false;
+    test(`Get non existant version`, async () => {
+        expect.assertions(1);
 
         try {
             await provider.getPackageByVersion(`ux-company-announcement`, `9.1.1`);
         } catch (e) {
-            thrown = true;
-            assert.ok(e instanceof Error, `catch var is not of type Error`);
+            expect(e).toBeInstanceOf(Error);
         }
-
-        assert.equal(thrown, true, `Should have thrown an error on non existant version`);
     });
 
-    it(`Get non existant package`, async () => {
-        let thrown = false;
+    test(`Get non existant package`, async () => {
+        expect.assertions(1);
 
         try {
             await provider.getPackageByVersion(`doesntexist`);
         } catch (e) {
-            thrown = true;
-            assert.ok(e instanceof Error, `catch var is not of type Error`);
+            expect(e).toBeInstanceOf(Error);
         }
-
-        assert.equal(thrown, true, `Should have thrown an error on non existant package`);
     });
 
-    it(`Get packages`, async () => {
+    test(`Get packages`, async () => {
         const packages: PackageVersion[] = [
             [`ux-company-announcement`, `1.1.1`],
             [`ux-copy-job-page`]
         ];
 
         for await (const pkg of provider.getPackagesByVersion(packages)) {
-            if (pkg.name === `ux-company-announcement`) assert.equal(pkg.version, `1.1.1`);
-            else if (pkg.name === `ux-copy-job-page`) assert.equal(pkg.version, `2.0.48`);
+            if (pkg.name === `ux-company-announcement`) expect(pkg.version).toBe(`1.1.1`);
+            else if (pkg.name === `ux-copy-job-page`) expect(pkg.version).toBe(`2.0.48`);
         }
     });
 
-    it(`Get size`, async () => {
-        assert.equal(provider.size, 10);
+    test(`Get size`, async () => {
+        expect(provider.size).toBe(10);
     });
 
-    it(`Get package info`, async () => {
+    test(`Get package info`, async () => {
         const pkgInfo = await provider.getPackageInfo(`ux-company-announcement`);
 
-        if (pkgInfo) assert.equal(pkgInfo.name, `ux-company-announcement`);
-        else assert.equal(true, false, `package info was undefined`);
+        expect(pkgInfo).not.toBe(undefined);
     });
 });

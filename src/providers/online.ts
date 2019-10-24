@@ -71,11 +71,11 @@ export class OnlinePackageProvider extends PackageProvider implements IPackageVe
 
             if (!info) {
                 const _version: string = typeof version !== "undefined" ? `@${version}` : ``;
-                throw `Couldn't get package "${name}${_version}"`;
+                throw new Error(`Couldn't get package "${name}${_version}"`);
             }
 
             if (isUnpublished(info)) {
-                throw `Package "${name}" was unpublished`;
+                throw new Error(`Package "${name}" was unpublished`);
             }
 
             this._cache.set(name, info);

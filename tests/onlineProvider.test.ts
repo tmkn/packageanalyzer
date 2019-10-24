@@ -1,4 +1,3 @@
-import * as assert from "assert";
 import * as path from "path";
 import * as fs from "fs";
 import { Server } from "http";
@@ -9,65 +8,67 @@ import { OnlinePackageProvider } from "../src/providers/online";
 import { Resolver } from "../src/resolvers/resolver";
 import { OraLogger } from "../src/logger";
 
-describe(`OnlineProvider Tests`, () => {
+describe.only(`OnlineProvider Tests`, () => {
     let server: MockNpmServer;
-    const provider = new OnlinePackageProvider(`http://localhost:3000`);
+    let provider: OnlinePackageProvider;
+    const port = 3000;
 
     beforeAll(() => {
-        server = new MockNpmServer();
+        provider = new OnlinePackageProvider(`http://localhost:${port}`);
+        server = new MockNpmServer(port);
     });
 
-    it(`resolveFromName with name and version`, async () => {
+    test(`resolveFromName with name and version`, async () => {
         const resolver = new Resolver(() => ["react", "16.8.1"], provider, new OraLogger());
         const pa = await resolver.resolve();
 
-        assert.equal(pa.name, "react");
-        assert.equal(pa.version, "16.8.1");
+        expect(pa.name).toBe("react");
+        expect(pa.version).toBe("16.8.1");
     });
 
-    it(`resolveFromName with name`, async () => {
+    test(`resolveFromName with name`, async () => {
         const resolver = new Resolver(() => "react", provider, new OraLogger());
         const pa = await resolver.resolve();
 
-        assert.equal(pa.name, "react");
-        assert.equal(pa.version, "16.8.6");
+        expect(pa.name).toBe("react");
+        expect(pa.version).toBe("16.8.6");
     });
 
-    it(`Check size`, () => {
-        assert.equal(provider.size, 406);
+    test(`Check size`, () => {
+        expect(provider.size).toBe(406);
     });
 
-    it(`Check oldest package`, async () => {
+    test(`Check oldest package`, async () => {
         const resolver = new Resolver(() => ["react", "16.8.1"], provider, new OraLogger());
         const pa = await resolver.resolve();
         const oldestPackage = pa.oldest;
 
+        expect.assertions(1);
+
         if (oldestPackage) {
-            assert.equal(oldestPackage.name, "object-assign");
-        } else {
-            assert.fail(`Couldn't find oldest package`);
+            expect(oldestPackage.name).toBe("object-assign");
         }
     });
 
-    it(`Check newest package`, async () => {
+    test(`Check newest package`, async () => {
         const resolver = new Resolver(() => ["react", "16.8.1"], provider, new OraLogger());
         const pa = await resolver.resolve();
         const newestPackage = pa.newest;
 
+        expect.assertions(1);
+
         if (newestPackage) {
-            assert.equal(newestPackage.name, "scheduler");
-        } else {
-            assert.fail(`Couldn't find newest package`);
+            expect(newestPackage.name).toBe("scheduler");
         }
     });
 
-    it(`Should throw on unpublished`, async () => {
+    test(`Should throw on unpublished`, async () => {
+        expect.assertions(1);
+
         try {
             await provider.getPackageByVersion("unpublished");
-
-            assert.fail(`Did not throw`);
         } catch (e) {
-            assert.ok(`Did throw`);
+            expect(e).toBeInstanceOf(Error);
         }
     });
 
@@ -78,11 +79,10 @@ describe(`OnlineProvider Tests`, () => {
 
 class MockNpmServer {
     private _server: Server;
-    private readonly _port = 3000;
     private _dataPath = path.join("tests", "data", "mockserverdata");
     private _cache: Map<string, INpmPackage> = new Map();
 
-    constructor() {
+    constructor(private readonly _port: number) {
         const app = express();
 
         this._populateCache();
