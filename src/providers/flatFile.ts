@@ -19,6 +19,7 @@ import { PackageProvider } from "./online";
 //needs a lookup file
 export class FlatFileProvider extends PackageProvider implements IPackageVersionProvider {
     private _lookup: Map<string, ILookupInfo> = new Map();
+    private _cache: Map<string, INpmPackage> = new Map();
     private _initialized = false;
     private _logger = new OraLogger();
 
@@ -108,9 +109,18 @@ export class FlatFileProvider extends PackageProvider implements IPackageVersion
     }
 
     private _getPackage(name: string): INpmPackage {
-        const lookupInfo = this._lookup.get(name);
+        const cachedPkg = this._getFromCache(name);
 
-        if (typeof lookupInfo === "undefined") throw new Error(`Couldn't finde package "${name}"`);
+        if (typeof cachedPkg !== "undefined") return cachedPkg;
+
+        return this._getFromLookup(name);
+    }
+
+    private _getFromLookup(pkgName: string): INpmPackage {
+        const lookupInfo = this._lookup.get(pkgName);
+
+        if (typeof lookupInfo === "undefined")
+            throw new Error(`Couldn't finde package "${pkgName}"`);
 
         const { offset, length } = lookupInfo;
         const fd = fs.openSync(this._file, "r");
@@ -119,9 +129,15 @@ export class FlatFileProvider extends PackageProvider implements IPackageVersion
         fs.readSync(fd, buffer, 0, length, offset);
         fs.closeSync(fd);
 
-        const json: INpmDumpRow = JSON.parse(buffer.toString());
+        const { doc: pkg }: INpmDumpRow = JSON.parse(buffer.toString());
 
-        return json.doc;
+        this._cache.set(pkgName, pkg);
+
+        return pkg;
+    }
+
+    private _getFromCache(pkgName: string): INpmPackage | undefined {
+        return this._cache.get(pkgName);
     }
 }
 

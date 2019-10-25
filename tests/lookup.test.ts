@@ -39,16 +39,17 @@ describe(`Lookup Creator Tests`, () => {
     test(`Correctly looks up a package`, async () => {
         const fd = fs.openSync(file, "r");
         const index = 5;
-        let { name, offset, length } = lookups[index];
+        const { name, offset, length } = lookups[index];
         const buffer = Buffer.alloc(length);
+        let actualOffset = offset;
 
         if (os.platform() === "win32") {
             const lineOffset = index + 1; //+1 because of 0 based index
 
-            offset += lineOffset;
+            actualOffset += lineOffset;
         }
 
-        fs.readSync(fd, buffer, 0, length, offset);
+        fs.readSync(fd, buffer, 0, length, actualOffset);
         fs.closeSync(fd);
 
         const { doc: pkg }: INpmDumpRow = JSON.parse(buffer.toString());

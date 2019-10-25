@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
-// eslint-disable-next-line
-const pkg = require("./../../package.json");
+import * as pkg from "./../package.json";
 
 import * as path from "path";
 
@@ -46,7 +45,7 @@ process.argv.forEach((arg, i) => {
         const file = process.argv[i + 1];
         const filePath = path.join(`tests`, `data`, `npmdump`, `test.json`);
 
-        cliLookupTest(file ? file : filePath);
+        cliCreateLookup(file ? file : filePath);
         commandFound = true;
     }
 });
@@ -71,7 +70,7 @@ function showHelp(): void {
     console.log(`${`-h`.padEnd(10)} ${`Display help`.padEnd(60)}`);
 }
 
-async function cliLookupTest(file: string): Promise<void> {
+async function cliCreateLookup(file: string): Promise<void> {
     await createLookupFile(file);
 }
 

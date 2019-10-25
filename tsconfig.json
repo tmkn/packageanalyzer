@@ -4,7 +4,8 @@
         "outDir": "build",
         "sourceMap": true,
         "target": "esnext",
-        "module": "commonjs"
+        "module": "commonjs",
+        "resolveJsonModule": true
     },
     "include": ["src", "tests"]
 

@@ -77,8 +77,6 @@ export async function createLookupFile(srcFile: string): Promise<void> {
         await creator.parse();
         verifyLookups(srcFile, creator.lookups);
         saveLookupFile(lookupFile, creator.lookups);
-
-        console.log(`Done`);
     } catch (e) {
         console.log(e.message);
     }
@@ -103,8 +101,6 @@ function saveLookupFile(lookupFile: string, lookups: ReadonlyArray<ILookupEntry>
     const writer = new LookupFileWriter(lookupFile, lookups);
 
     writer.write();
-
-    console.log(`Created lookupfile "${path.resolve(lookupFile)}"`);
 }
 
 /* istanbul ignore next */
@@ -145,7 +141,7 @@ function verifySingleLookup(
         const { doc: pkg }: INpmDumpRow = JSON.parse(str);
 
         if (pkg.name === name) {
-            console.log(`Correctly looked up random package "${name}"`);
+            console.log(`Correctly verified random package "${name}"`);
         } else {
             throw new Error(`Package name didn't match [${name}/${pkg.name}]`);
         }
@@ -164,11 +160,17 @@ export class LookupFileWriter {
     /* istanbul ignore next */
     write(): void {
         const fd = fs.openSync(this._targetFile, "w");
+        const size = this._lookups.length;
+        const fullPath = path.resolve(this._targetFile);
+        let i = 0;
 
+        console.log(`Creating lookup file "${fullPath}"`);
         for (const lookup of this._lookups) {
+            console.log(`[${getPercentage(++i, size)}%] added ${lookup.name}`);
             fs.writeSync(fd, LookupFileWriter.getLine(lookup));
         }
 
         fs.closeSync(fd);
+        console.log(`Done, Created lookup file at "${fullPath}"`);
     }
 }

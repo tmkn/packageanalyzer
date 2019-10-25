@@ -2,7 +2,7 @@ import { IPackageVersionProvider } from "../providers/folder";
 import { PackageAnalytics } from "../analyzers/package";
 import { INpmKeyValue, INpmPackageVersion } from "../npm";
 import { ILogger } from "../logger";
-import { OnlinePackageProvider, PackageProvider } from "../providers/online";
+import { PackageProvider } from "../providers/online";
 
 export type EntryPackage = () => string | [string, string];
 

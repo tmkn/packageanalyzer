@@ -79,11 +79,11 @@ export class PackageAnalytics implements IPackageStatistics {
     }
 
     get timeSpan(): number | undefined {
-        throw "Not Implemented";
+        throw new Error("Not Implemented");
     }
 
     get size(): number | undefined {
-        throw "Not Implemented";
+        throw new Error("Not Implemented");
     }
 
     get license(): string {
