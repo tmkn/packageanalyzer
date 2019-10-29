@@ -38,7 +38,7 @@ steps:
   displayName: 'Run tests'
 
 - script: |
-    yarn global add codecov
+    npm install -g codecov
     yarn test:coverage
     codecov -t $(CODECOV_TOKEN)
   condition: eq( variables['Agent.OS'], 'Linux' )
