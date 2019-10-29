@@ -27,19 +27,19 @@ steps:
     versionSpec: '10.x'
   displayName: 'Install Node.js'
 
-- script: npm install
-  displayName: 'npm install'
+- script: yarn install
+  displayName: 'yarn install'
 
-- script: npm run build
+- script: yarn build
   displayName: 'Build'
 
 - script: |
-    npm run test
+    yarn test
   displayName: 'Run tests'
 
 - script: |
-    npm install -g codecov
-    npm run test:coverage
+    yarn global add codecov
+    yarn test:coverage
     codecov -t $(CODECOV_TOKEN)
   condition: eq( variables['Agent.OS'], 'Linux' )
   displayName: 'Generate code coverage'
