@@ -1,3 +1,5 @@
+import { downloadJsonHttps } from "./requests";
+
 export interface INpmPackageVersion {
     author: INpmUser;
     dependencies?: INpmKeyValue;
@@ -76,18 +78,26 @@ export interface INpmPackage {
     versions: { [index: string]: INpmPackageVersion };
 }
 
-interface INpmBaseStatistic {
+//https://github.com/npm/registry/blob/master/docs/download-counts.md
+interface INpmDownloadBaseStatistic {
     end: string;
     start: string;
     package: string;
 }
 
-export interface INpmSingleStatistic extends INpmBaseStatistic {
+export interface INpmDownloadStatistic extends INpmDownloadBaseStatistic {
     downloads: number;
 }
 
-export interface INpmRangeStatistic extends INpmBaseStatistic {
+export interface INpmDownloadRangeStatistic extends INpmDownloadBaseStatistic {
     downloads: Array<{ downloads: number; day: string }>;
+}
+
+/* istanbul ignore next */
+export function getDownloadsLastWeek(name: string): Promise<INpmDownloadStatistic> {
+    return downloadJsonHttps(
+        `https://api.npmjs.org/downloads/point/last-week/${encodeURIComponent(name)}`
+    );
 }
 
 export interface INpmAllPackagesResponse {

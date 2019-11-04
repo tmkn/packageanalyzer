@@ -8,7 +8,7 @@ import * as dayjs from "dayjs";
 
 import { npmOnline } from "./providers/online";
 import { PackageAnalytics, VersionSummary, GroupedLicenseSummary } from "./analyzers/package";
-import { getNameAndVersion } from "./npm";
+import { getNameAndVersion, getDownloadsLastWeek } from "./npm";
 import { Resolver } from "./resolvers/resolver";
 import { FileSystemPackageProvider } from "./providers/folder";
 import { fromFolder } from "./resolvers/folder";
@@ -47,6 +47,11 @@ process.argv.forEach((arg, i) => {
 
         cliCreateLookup(file ? file : filePath);
         commandFound = true;
+    } else if (arg === "-downloads") {
+        const pkg = process.argv[i + 1];
+
+        cliDownloads(pkg);
+        commandFound = true;
     }
 });
 
@@ -68,6 +73,16 @@ function showHelp(): void {
     );
     console.log(`${`-v`.padEnd(10)} ${`Prints version`.padEnd(60)}`);
     console.log(`${`-h`.padEnd(10)} ${`Display help`.padEnd(60)}`);
+}
+
+async function cliDownloads(pkg: string): Promise<void> {
+    try {
+        const downloads = await getDownloadsLastWeek(pkg);
+
+        console.log(`${pkg}: ${downloads.downloads} Downloads`);
+    } catch {
+        console.log(`Couldn't get downloads for ${pkg}`);
+    }
 }
 
 async function cliCreateLookup(file: string): Promise<void> {
