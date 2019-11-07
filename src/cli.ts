@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import * as pkg from "./../package.json";
+import * as packageJson from "./../package.json";
 
 import * as path from "path";
 
@@ -20,7 +20,7 @@ let commandFound = false;
 
 process.argv.forEach((arg, i) => {
     if (arg === "-v" && !commandFound) {
-        console.log(`${pkg.version}`);
+        console.log(`${packageJson.version}`);
         commandFound = true;
     } else if (arg === "-h" && !commandFound) {
         showHelp();
@@ -61,15 +61,25 @@ if (!commandFound) {
 }
 
 function showHelp(): void {
-    console.log(`Package Analyzer ${pkg.version}`);
+    console.log(`Package Analyzer ${packageJson.version}`);
     console.log(`Options:`);
     console.log(
-        `${`-f`.padEnd(10)} ${`Analyze a local folder`.padEnd(60)} e.g. "npa -f path/to/project"`
+        `${`-l`.padEnd(10)} ${`Analyze a local folder`.padEnd(60)} e.g. "npa -f path/to/project"`
     );
     console.log(
         `${`-o`.padEnd(10)} ${`Analyze a package, version optional, default latest`.padEnd(
             60
         )} e.g. "npa -o typescript(@3.5.1)"`
+    );
+    console.log(
+        `${`-f`.padEnd(10)} ${`Analyze a package from a npm dump`.padEnd(
+            60
+        )} e.g. "npa -f path/to/npmdump typescript(@3.5.1)"`
+    );
+    console.log(
+        `${`-downloads`.padEnd(10)} ${`Get number of downloads from last week`.padEnd(
+            60
+        )} e.g. "npa -downloads typescript(@3.5.1)"`
     );
     console.log(`${`-v`.padEnd(10)} ${`Prints version`.padEnd(60)}`);
     console.log(`${`-h`.padEnd(10)} ${`Display help`.padEnd(60)}`);
@@ -136,12 +146,12 @@ async function cliResolveName(pkgName: string | undefined): Promise<void> {
     }
 }
 
-async function cliResolveFile(pkgName: string, file: string): Promise<void> {
+async function cliResolveFile(pkgName: string, npmFile: string): Promise<void> {
     try {
-        const baseName = path.basename(file, path.extname(file));
-        const folder = path.dirname(file);
+        const baseName = path.basename(npmFile, path.extname(npmFile));
+        const folder = path.dirname(npmFile);
         const lookupFile = path.join(folder, `${baseName}.lookup.txt`);
-        const provider = new FlatFileProvider(file, lookupFile);
+        const provider = new FlatFileProvider(npmFile, lookupFile);
         const [name, version] = getNameAndVersion(pkgName);
         let pa: PackageAnalytics;
 
