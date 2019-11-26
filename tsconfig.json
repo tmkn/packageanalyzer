@@ -3,7 +3,7 @@
         "strict": true,
         "outDir": "build",
         "sourceMap": true,
-        "target": "esnext",
+        "target": "es6",
         "module": "commonjs",
         "resolveJsonModule": true
     },

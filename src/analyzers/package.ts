@@ -1,8 +1,12 @@
 import { INpmPackageVersion, IMalformedLicenseField } from "../npm";
 
-export type LicenseSummary = Map<string /*name*/, Map<string /*version*/, string /*license*/>>;
+type Name = string;
+type Version = string;
+type License = string;
+
+export type LicenseSummary = Map<Name, Map<Version, License>>;
 export type GroupedLicenseSummary = Array<{ license: string; names: string[] }>;
-export type VersionSummary = Map<string /*name*/, Set<string> /*versions*/>;
+export type VersionSummary = Map<Name, Set<Version>>;
 
 interface IPackageStatistics {
     all: PackageAnalytics[];
@@ -313,7 +317,7 @@ export class PackageAnalytics implements IPackageStatistics {
         this.visit(d => {
             const dist = d.getData("dist");
 
-            if (typeof dist !== "undefined" && typeof dist.unpackedSize !== "undefined") {
+            if (dist?.unpackedSize) {
                 cost += dist.unpackedSize;
             }
         }, true);

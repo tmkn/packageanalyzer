@@ -19,7 +19,7 @@ describe.only(`OnlineProvider Tests`, () => {
     });
 
     test(`resolveFromName with name and version`, async () => {
-        const resolver = new Resolver(() => ["react", "16.8.1"], provider, new OraLogger());
+        const resolver = new Resolver(["react", "16.8.1"], provider, new OraLogger());
         const pa = await resolver.resolve();
 
         expect(pa.name).toBe("react");
@@ -27,7 +27,7 @@ describe.only(`OnlineProvider Tests`, () => {
     });
 
     test(`resolveFromName with name`, async () => {
-        const resolver = new Resolver(() => "react", provider, new OraLogger());
+        const resolver = new Resolver(["react"], provider, new OraLogger());
         const pa = await resolver.resolve();
 
         expect(pa.name).toBe("react");
@@ -39,7 +39,7 @@ describe.only(`OnlineProvider Tests`, () => {
     });
 
     test(`Check oldest package`, async () => {
-        const resolver = new Resolver(() => ["react", "16.8.1"], provider, new OraLogger());
+        const resolver = new Resolver(["react", "16.8.1"], provider, new OraLogger());
         const pa = await resolver.resolve();
         const oldestPackage = pa.oldest;
 
@@ -51,7 +51,7 @@ describe.only(`OnlineProvider Tests`, () => {
     });
 
     test(`Check newest package`, async () => {
-        const resolver = new Resolver(() => ["react", "16.8.1"], provider, new OraLogger());
+        const resolver = new Resolver(["react", "16.8.1"], provider, new OraLogger());
         const pa = await resolver.resolve();
         const newestPackage = pa.newest;
 

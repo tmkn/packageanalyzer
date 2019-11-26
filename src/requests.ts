@@ -71,7 +71,7 @@ export function downloadJsonHttps<T extends object>(url: string): Promise<T> {
     return new Promise<T>((resolve, reject) => {
         https
             .get(url, res => {
-                let { statusCode } = res;
+                const { statusCode } = res;
                 let data = "";
 
                 if (statusCode !== 200) {

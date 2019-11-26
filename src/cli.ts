@@ -11,7 +11,7 @@ import { PackageAnalytics, VersionSummary, GroupedLicenseSummary } from "./analy
 import { getNameAndVersion, getDownloadsLastWeek } from "./npm";
 import { Resolver } from "./resolvers/resolver";
 import { FileSystemPackageProvider } from "./providers/folder";
-import { fromFolder } from "./resolvers/folder";
+import { getPackageJson } from "./resolvers/folder";
 import { OraLogger } from "./logger";
 import { FlatFileProvider } from "./providers/flatFile";
 import { createLookupFile } from "./lookup";
@@ -64,7 +64,7 @@ function showHelp(): void {
     console.log(`Package Analyzer ${packageJson.version}`);
     console.log(`Options:`);
     console.log(
-        `${`-l`.padEnd(10)} ${`Analyze a local folder`.padEnd(60)} e.g. "npa -f path/to/project"`
+        `${`-l`.padEnd(10)} ${`Analyze a local folder`.padEnd(60)} e.g. "npa -l path/to/project"`
     );
     console.log(
         `${`-o`.padEnd(10)} ${`Analyze a package, version optional, default latest`.padEnd(
@@ -109,7 +109,7 @@ async function cliResolveFolder(folder: string | undefined): Promise<void> {
 
     try {
         const provider = new FileSystemPackageProvider(folder);
-        const resolver = new Resolver(fromFolder(folder), provider, new OraLogger());
+        const resolver = new Resolver(getPackageJson(folder), provider, new OraLogger());
         const pa: PackageAnalytics = await resolver.resolve();
 
         printStatistics(pa);
@@ -127,18 +127,8 @@ async function cliResolveName(pkgName: string | undefined): Promise<void> {
     }
 
     try {
-        const [name, version] = getNameAndVersion(pkgName);
-        let pa: PackageAnalytics;
-
-        if (typeof version === "undefined") {
-            const resolver = new Resolver(() => name, npmOnline, new OraLogger());
-
-            pa = await resolver.resolve();
-        } else {
-            const resolver = new Resolver(() => [name, version], npmOnline, new OraLogger());
-
-            pa = await resolver.resolve();
-        }
+        const resolver = new Resolver(getNameAndVersion(pkgName), npmOnline, new OraLogger());
+        const pa = await resolver.resolve();
 
         printStatistics(pa);
     } catch (e) {
@@ -152,18 +142,8 @@ async function cliResolveFile(pkgName: string, npmFile: string): Promise<void> {
         const folder = path.dirname(npmFile);
         const lookupFile = path.join(folder, `${baseName}.lookup.txt`);
         const provider = new FlatFileProvider(npmFile, lookupFile);
-        const [name, version] = getNameAndVersion(pkgName);
-        let pa: PackageAnalytics;
-
-        if (typeof version === "undefined") {
-            const resolver = new Resolver(() => name, provider, new OraLogger());
-
-            pa = await resolver.resolve();
-        } else {
-            const resolver = new Resolver(() => [name, version], provider, new OraLogger());
-
-            pa = await resolver.resolve();
-        }
+        const resolver = new Resolver(getNameAndVersion(pkgName), provider, new OraLogger());
+        const pa = await resolver.resolve();
 
         printStatistics(pa);
     } catch (e) {

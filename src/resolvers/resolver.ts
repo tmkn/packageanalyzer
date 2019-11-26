@@ -1,13 +1,15 @@
 import { IPackageVersionProvider } from "../providers/folder";
 import { PackageAnalytics } from "../analyzers/package";
-import { INpmKeyValue, INpmPackageVersion } from "../npm";
+import { INpmKeyValue, INpmPackageVersion, PackageVersion } from "../npm";
 import { ILogger } from "../logger";
 import { PackageProvider } from "../providers/online";
 
-export type EntryPackage = () => string | [string, string];
-
 interface IResolverConstructor {
-    new (entry: EntryPackage, provider: IPackageVersionProvider, logger: ILogger): IPackageResolver;
+    new (
+        entry: PackageVersion,
+        provider: IPackageVersionProvider,
+        logger: ILogger
+    ): IPackageResolver;
 }
 
 interface IPackageResolver {
@@ -15,20 +17,18 @@ interface IPackageResolver {
 }
 
 export const Resolver: IResolverConstructor = class Resolver implements IPackageResolver {
-    private _depth: string[] = [];
+    private _depthStack: string[] = [];
 
     constructor(
-        private _entry: EntryPackage,
+        private readonly _entry: PackageVersion,
         private _provider: IPackageVersionProvider,
         private _logger: ILogger
     ) {}
 
     async resolve(): Promise<PackageAnalytics> {
         try {
-            const entry = this._entry();
-            const rootPkg = Array.isArray(entry)
-                ? await this._provider.getPackageByVersion(entry[0], entry[1])
-                : await this._provider.getPackageByVersion(entry);
+            const [name, version] = this._entry;
+            const rootPkg = await this._provider.getPackageByVersion(name, version);
             const root: PackageAnalytics = new PackageAnalytics(rootPkg);
 
             this._logger.start();
@@ -59,7 +59,7 @@ export const Resolver: IResolverConstructor = class Resolver implements IPackage
         dependencies: INpmKeyValue | undefined
     ): Promise<void> {
         try {
-            const dependencyList = typeof dependencies !== "undefined" ? dependencies : [];
+            const dependencyList = typeof dependencies !== "undefined" ? dependencies : {};
             const libs = Object.entries(dependencyList);
             const packages: INpmPackageVersion[] = [];
 
@@ -74,17 +74,17 @@ export const Resolver: IResolverConstructor = class Resolver implements IPackage
                 await addPublished(dependency, this._provider);
                 parent.addDependency(dependency);
 
-                if (this._depth.includes(dependency.fullName)) {
+                if (this._depthStack.includes(dependency.fullName)) {
                     dependency.isLoop = true;
                 } else {
-                    this._depth.push(dependency.fullName);
+                    this._depthStack.push(dependency.fullName);
 
                     await this.walkDependencies(dependency, p.dependencies);
                 }
             }
-            this._depth.pop();
+            this._depthStack.pop();
         } catch (e) {
-            this._depth.pop();
+            this._depthStack.pop();
 
             throw e;
         }

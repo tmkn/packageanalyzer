@@ -2,7 +2,7 @@ import * as path from "path";
 
 import { PackageAnalytics } from "../src/analyzers/package";
 import { getNameAndVersion } from "../src/npm";
-import { fromFolder } from "../src/resolvers/folder";
+import { getPackageJson } from "../src/resolvers/folder";
 import { FileSystemPackageProvider } from "../src/providers/folder";
 import { Resolver } from "../src/resolvers/resolver";
 import { OraLogger } from "../src/logger";
@@ -13,7 +13,7 @@ describe(`PackageAnalytics Tests`, () => {
     beforeAll(async () => {
         const rootPath = path.join("tests", "data", "testproject1");
         const provider = new FileSystemPackageProvider(rootPath);
-        const resolver = new Resolver(fromFolder(rootPath), provider, new OraLogger());
+        const resolver = new Resolver(getPackageJson(rootPath), provider, new OraLogger());
 
         pa = await resolver.resolve();
     });
@@ -70,7 +70,7 @@ describe(`PackageAnalytics Tests`, () => {
     test(`Checks for package with most versions`, async () => {
         const rootPath = path.join("tests", "data", "testproject2");
         const provider = new FileSystemPackageProvider(rootPath);
-        const resolver = new Resolver(fromFolder(rootPath), provider, new OraLogger());
+        const resolver = new Resolver(getPackageJson(rootPath), provider, new OraLogger());
         const pa: PackageAnalytics = await resolver.resolve();
 
         for (const [name, versions] of pa.mostVersions) {

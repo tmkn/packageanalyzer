@@ -1,7 +1,7 @@
 import * as path from "path";
 
 import { PackageAnalytics } from "../src/analyzers/package";
-import { fromFolder } from "../src/resolvers/folder";
+import { getPackageJson } from "../src/resolvers/folder";
 import { IPackageVersionProvider, FileSystemPackageProvider } from "../src/providers/folder";
 import { INpmPackageVersion } from "../src/npm";
 import { Resolver } from "../src/resolvers/resolver";
@@ -13,7 +13,7 @@ describe(`resolveFromFolder Tests`, () => {
     beforeAll(async () => {
         const rootPath = path.join("tests", "data", "testproject2");
         const provider = new FileSystemPackageProvider(rootPath);
-        const resolver = new Resolver(fromFolder(rootPath), provider, new OraLogger());
+        const resolver = new Resolver(getPackageJson(rootPath), provider, new OraLogger());
 
         pa = await resolver.resolve();
     });
@@ -40,7 +40,7 @@ describe(`resolveFromFolder Tests`, () => {
         try {
             const rootPath = `folderdoesntexist`;
             const provider = new FileSystemPackageProvider(rootPath);
-            const resolver = new Resolver(fromFolder(rootPath), provider, new OraLogger());
+            const resolver = new Resolver(getPackageJson(rootPath), provider, new OraLogger());
 
             await resolver.resolve();
         } catch (e) {
@@ -81,7 +81,7 @@ describe(`resolveFromName Error Handling`, () => {
         expect.assertions(1);
 
         try {
-            const resolver = new Resolver(() => "wurscht", new MockProvider(), new OraLogger());
+            const resolver = new Resolver(["wurscht"], new MockProvider(), new OraLogger());
             await resolver.resolve();
         } catch (e) {
             expect(e).toBeInstanceOf(CustomError);

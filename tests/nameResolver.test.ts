@@ -12,7 +12,7 @@ describe(`resolveFromFolder Tests`, () => {
         const destination = path.join("tests", "data", "testproject2", "node_modules");
         const provider: FileSystemPackageProvider = new FileSystemPackageProvider(destination);
 
-        const resolver = new Resolver(() => "webpack", provider, new OraLogger());
+        const resolver = new Resolver(["webpack"], provider, new OraLogger());
         pa = await resolver.resolve();
     });
 
