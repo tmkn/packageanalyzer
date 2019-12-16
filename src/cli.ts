@@ -138,10 +138,7 @@ async function cliResolveName(pkgName: string | undefined): Promise<void> {
 
 async function cliResolveFile(pkgName: string, npmFile: string): Promise<void> {
     try {
-        const baseName = path.basename(npmFile, path.extname(npmFile));
-        const folder = path.dirname(npmFile);
-        const lookupFile = path.join(folder, `${baseName}.lookup.txt`);
-        const provider = new FlatFileProvider(npmFile, lookupFile);
+        const provider = new FlatFileProvider(npmFile);
         const resolver = new Resolver(getNameAndVersion(pkgName), provider, new OraLogger());
         const pa = await resolver.resolve();
 
