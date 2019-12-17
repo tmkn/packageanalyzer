@@ -41,6 +41,6 @@
   "dependencies": {
     "dayjs": "^1.8.17",
     "ora": "^4.0.3",
-    "semver": "^7.0.0"
+    "semver": "^7.1.0"
   }
 }
