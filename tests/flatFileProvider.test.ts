@@ -2,7 +2,6 @@ import * as path from "path";
 
 import { FlatFileProvider } from "../src/providers/flatFile";
 import { PackageVersion } from "../src/npm";
-import { Extractor } from "../src/extractor";
 
 describe(`flatFileProvider Tests`, () => {
     const destination = path.join("tests", "data", "npmdump");
@@ -71,26 +70,5 @@ describe(`flatFileProvider Tests`, () => {
         const pkgInfo = await provider.getPackageInfo(`ux-company-announcement`);
 
         expect(pkgInfo).not.toBe(undefined);
-    });
-});
-
-//todo
-describe(`Extractor Tests`, async () => {
-    const destination = path.join("tests", "data", "extractor");
-    const file = path.join(destination, `test.json`);
-    const inputFile = path.join(destination, `input.json`);
-    let extractor: Extractor;
-
-    beforeAll(() => {
-        extractor = new Extractor(inputFile, file);
-    });
-
-    test(`foo`, async () => {
-        try {
-            extractor.extract();
-        }
-        catch(e) {
-            console.log(e);
-        }
     });
 });
