@@ -13,8 +13,8 @@ export class Extractor {
     private _versions: PackageVersion[] = [];
     private _analytics: PackageAnalytics[] = [];
 
-    //istanbul ignore next
-    async Extract(
+    /* istanbul ignore next */
+    static async Extract(
         inputFile: string,
         npmFile: string,
         target: string,
@@ -23,15 +23,15 @@ export class Extractor {
         const extractor = new Extractor(inputFile, npmFile);
 
         await extractor.extract();
-        extractor.save(formatter, async (data, pa, i) => {
+        extractor.save(formatter, async (data, pa, i, max) => {
             const exists = fs.existsSync(target);
-            const padding = `${i + 1}`.padStart(this._analytics.toString().length);
+            const padding = `${i + 1}`.padStart(max.toString().length);
 
             if (!exists) fs.mkdirSync(target, { recursive: true });
 
             const fileName = `${pa.name}@${pa.version}.json`;
 
-            console.log(`[${padding}/${this._analytics.length}] ${fileName}`);
+            console.log(`[${padding}/${max}] ${fileName}`);
             fs.writeFileSync(target, data, "utf8");
         });
     }
@@ -77,15 +77,16 @@ export class Extractor {
         }
     }
 
+    /* istanbul ignore next */
     async save<T extends object = object>(
         formatter: (pa: PackageAnalytics) => T,
-        saveCallback: (data: T, pa: PackageAnalytics, i: number) => Promise<void>
+        saveCallback: (data: T, pa: PackageAnalytics, i: number, max: number) => Promise<void>
     ): Promise<void> {
         try {
             for (const [i, pa] of this._analytics.entries()) {
                 const jsonData = formatter(pa);
 
-                await saveCallback(jsonData, pa, i);
+                await saveCallback(jsonData, pa, i, this._analytics.length);
             }
         } catch (e) {
             throw new Error(`Couldn't save`);
