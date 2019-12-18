@@ -39,7 +39,7 @@
     "typescript": "3.7.3"
   },
   "dependencies": {
-    "dayjs": "^1.8.17",
+    "dayjs": "^1.8.18",
     "ora": "^4.0.3",
     "semver": "^7.1.1"
   }
