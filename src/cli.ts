@@ -43,7 +43,7 @@ process.argv.forEach((arg, i) => {
         commandFound = true;
     } else if (arg === "-lookup") {
         const file = process.argv[i + 1];
-        const filePath = path.join(`tests`, `data`, `npmdump`, `test.json`);
+        const filePath = path.join(`tests`, `data`, `extractor`, `data.json`);
 
         cliCreateLookup(file ? file : filePath);
         commandFound = true;
@@ -75,6 +75,11 @@ function showHelp(): void {
         `${`-f`.padEnd(10)} ${`Analyze a package from a npm dump`.padEnd(
             60
         )} e.g. "npa -f path/to/npmdump typescript(@3.5.1)"`
+    );
+    console.log(
+        `${`-lookup`.padEnd(10)} ${`Create a lookup file from a npm dump`.padEnd(
+            60
+        )} e.g. "npa -lookup path/to/npmdump"`
     );
     console.log(
         `${`-downloads`.padEnd(10)} ${`Get number of downloads from last week`.padEnd(
@@ -138,10 +143,7 @@ async function cliResolveName(pkgName: string | undefined): Promise<void> {
 
 async function cliResolveFile(pkgName: string, npmFile: string): Promise<void> {
     try {
-        const baseName = path.basename(npmFile, path.extname(npmFile));
-        const folder = path.dirname(npmFile);
-        const lookupFile = path.join(folder, `${baseName}.lookup.txt`);
-        const provider = new FlatFileProvider(npmFile, lookupFile);
+        const provider = new FlatFileProvider(npmFile);
         const resolver = new Resolver(getNameAndVersion(pkgName), provider, new OraLogger());
         const pa = await resolver.resolve();
 

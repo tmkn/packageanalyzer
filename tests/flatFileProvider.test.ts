@@ -6,11 +6,10 @@ import { PackageVersion } from "../src/npm";
 describe(`flatFileProvider Tests`, () => {
     const destination = path.join("tests", "data", "npmdump");
     const file = path.join(destination, `test.json`);
-    const lookupFile = path.join(destination, `test.lookup.txt`);
     let provider: FlatFileProvider;
 
     beforeAll(() => {
-        provider = new FlatFileProvider(file, lookupFile);
+        provider = new FlatFileProvider(file);
     });
 
     test(`Get latest version`, async () => {

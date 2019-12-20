@@ -1,6 +1,7 @@
 import * as readline from "readline";
 import * as fs from "fs";
 import * as os from "os";
+import * as path from "path";
 import * as semver from "semver";
 
 import { OraLogger } from "../logger";
@@ -19,16 +20,30 @@ import { PackageProvider } from "./online";
 //needs a lookup file
 export class FlatFileProvider extends PackageProvider implements IPackageVersionProvider {
     private _lookup: Map<string, ILookupInfo> = new Map();
+    private _lookupFile: string;
     private _cache: Map<string, INpmPackage> = new Map();
     private _initialized = false;
     private _logger = new OraLogger();
+
+    public static getLookupFile(npmFile: string): string {
+        try {
+            const baseName = path.basename(npmFile, path.extname(npmFile));
+            const folder = path.dirname(npmFile);
+
+            return path.join(folder, `${baseName}.lookup.txt`);
+        } catch (e) {
+            throw new Error(`Couldn't find lookup file for ${npmFile}`);
+        }
+    }
 
     get size(): number {
         return this._lookup.size;
     }
 
-    constructor(private _file: string, private _lookupFile: string) {
+    constructor(private _file: string) {
         super();
+
+        this._lookupFile = FlatFileProvider.getLookupFile(this._file);
     }
 
     async getPackageInfo(name: string): Promise<INpmPackage | IUnpublishedNpmPackage | undefined> {
