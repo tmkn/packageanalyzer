@@ -43,38 +43,30 @@ export class Extractor {
     }
 
     private _parseInputFile(): void {
-        try {
-            const content = fs.readFileSync(this._inputFile, "utf8");
-            const modules: string[] = JSON.parse(content);
+        const content = fs.readFileSync(this._inputFile, "utf8");
+        const modules: string[] = JSON.parse(content);
 
-            if (!Array.isArray(modules)) throw new Error(`input data is not an array!`);
+        if (!Array.isArray(modules)) throw new Error(`input data is not an array!`);
 
-            this._versions = [];
-            for (const module of modules) {
-                this._versions.push(getNameAndVersion(module));
-            }
-        } catch (e) {
-            console.log(e);
+        this._versions = [];
+        for (const module of modules) {
+            this._versions.push(getNameAndVersion(module));
         }
     }
 
     async extract(): Promise<ReadonlyArray<PackageAnalytics>> {
-        try {
-            this._analytics = [];
+        this._analytics = [];
 
-            for (const [name, version] of this._versions) {
-                console.log(`Fetching ${name}@${version ? version : `latest`}`);
+        for (const [name, version] of this._versions) {
+            console.log(`Fetching ${name}@${version ? version : `latest`}`);
 
-                const resolver = new Resolver([name, version], this._provider, new OraLogger());
-                const pa: PackageAnalytics = await resolver.resolve();
+            const resolver = new Resolver([name, version], this._provider, new OraLogger());
+            const pa: PackageAnalytics = await resolver.resolve();
 
-                this._analytics.push(pa);
-            }
-
-            return this._analytics;
-        } catch (e) {
-            throw e;
+            this._analytics.push(pa);
         }
+
+        return this._analytics;
     }
 
     /* istanbul ignore next */
