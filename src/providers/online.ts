@@ -1,20 +1,28 @@
 import * as semver from "semver";
 
-import { IPackageProvider } from "./folder";
+import { IPackageVersionProvider } from "./folder";
 import {
-    INpmPackageInfo,
     INpmPackage,
+    INpmPackageVersion,
     PackageVersion,
     IUnpublishedNpmPackage,
     isUnpublished
 } from "../npm";
 import { downloadHttpJson } from "../requests";
 
-//loads npm data from the web
-export class OnlinePackageProvider implements IPackageProvider {
-    private readonly _cache: Map<string, INpmPackageInfo> = new Map();
+export abstract class PackageProvider {
+    abstract getPackageInfo(
+        name: string
+    ): Promise<INpmPackage | IUnpublishedNpmPackage | undefined>;
+}
 
-    constructor(private _url: string, private _max = 3) {}
+//loads npm data from the web
+export class OnlinePackageProvider extends PackageProvider implements IPackageVersionProvider {
+    private readonly _cache: Map<string, INpmPackage> = new Map();
+
+    constructor(private _url: string, private _max = 3) {
+        super();
+    }
 
     /*setMaxConcurrent(newMax: number): void {
         this._max = newMax;
@@ -30,49 +38,44 @@ export class OnlinePackageProvider implements IPackageProvider {
         return size;
     }
 
-    async getPackageInfo(name: string): Promise<INpmPackageInfo | IUnpublishedNpmPackage | null> {
+    async getPackageInfo(name: string): Promise<INpmPackage | IUnpublishedNpmPackage | undefined> {
         const cachedInfo = this._cache.get(name);
 
         if (typeof cachedInfo !== "undefined") {
             return cachedInfo;
         } else {
-            const data = await downloadHttpJson<INpmPackageInfo>(
+            const data = await downloadHttpJson<INpmPackage>(
                 `${this._url}/${encodeURIComponent(name)}`
             );
 
-            return data;
+            return data === null ? undefined : data;
         }
     }
 
-    async *getPackagesByVersion(modules: PackageVersion[]): AsyncIterableIterator<INpmPackage[]> {
-        for (let i = 0; i < modules.length; i = i + this._max) {
-            const chunk = modules.slice(i, i + this._max);
-            const promises = chunk.map(([name, version]) =>
-                this.getPackageByVersion(name, version)
-            );
-
-            yield await Promise.all([...promises]);
+    async *getPackagesByVersion(
+        modules: PackageVersion[]
+    ): AsyncIterableIterator<INpmPackageVersion> {
+        for (const [name, version] of modules) {
+            yield this.getPackageByVersion(name, version);
         }
     }
 
     async getPackageByVersion(
         name: string,
         version: string | undefined = undefined
-    ): Promise<INpmPackage> {
-        let info: INpmPackageInfo | IUnpublishedNpmPackage | undefined | null = this._cache.get(
-            name
-        );
+    ): Promise<INpmPackageVersion> {
+        let info: INpmPackage | IUnpublishedNpmPackage | undefined = this._cache.get(name);
 
         if (!info) {
             info = await this.getPackageInfo(name);
 
             if (!info) {
                 const _version: string = typeof version !== "undefined" ? `@${version}` : ``;
-                throw `Couldn't get package "${name}${_version}"`;
+                throw new Error(`Couldn't get package "${name}${_version}"`);
             }
 
             if (isUnpublished(info)) {
-                throw `Package "${name}" was unpublished`;
+                throw new Error(`Package "${name}" was unpublished`);
             }
 
             this._cache.set(name, info);

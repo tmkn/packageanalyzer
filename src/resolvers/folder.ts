@@ -1,22 +1,17 @@
 import * as path from "path";
 import * as fs from "fs";
 
-import { INpmPackage } from "../npm";
-import { EntryPackage } from "./resolver";
+import { INpmPackageVersion, PackageVersion } from "../npm";
 
-function getVersionFromPackageJson(rootPath: string): [string, string] {
-    const packageJsonPath = path.join(rootPath, `package.json`);
+export function getPackageJson(folder: string): PackageVersion {
+    const packageJsonPath = path.join(folder, `package.json`);
 
     try {
         const content = fs.readFileSync(packageJsonPath, "utf8");
-        const pkg: INpmPackage = JSON.parse(content);
+        const pkg: INpmPackageVersion = JSON.parse(content);
 
         return [pkg.name, pkg.version];
     } catch (e) {
-        throw new Error(`Couldn't find package.json in ${rootPath}`);
+        throw new Error(`Couldn't find package.json in ${folder}`);
     }
-}
-
-export function fromFolder(rootPath: string): EntryPackage {
-    return getVersionFromPackageJson.bind(null, rootPath);
 }

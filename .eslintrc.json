@@ -16,6 +16,7 @@
         "@typescript-eslint"
     ],
     "rules": {
+        "no-throw-literal": 2,
         "@typescript-eslint/interface-name-prefix": ["error" ,{ "prefixWithI": "always" }],
         "@typescript-eslint/no-use-before-define": "off",
         "@typescript-eslint/explicit-function-return-type": "off",

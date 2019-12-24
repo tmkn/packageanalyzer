@@ -1,28 +1,31 @@
 #!/usr/bin/env node
 
-// eslint-disable-next-line
-const pkg = require("./../../package.json");
+import * as packageJson from "./../package.json";
+
+import * as path from "path";
 
 import * as dayjs from "dayjs";
 
 import { npmOnline } from "./providers/online";
 import { PackageAnalytics, VersionSummary, GroupedLicenseSummary } from "./analyzers/package";
-import { getNameAndVersion } from "./npm";
+import { getNameAndVersion, getDownloadsLastWeek } from "./npm";
 import { Resolver } from "./resolvers/resolver";
 import { FileSystemPackageProvider } from "./providers/folder";
-import { fromFolder } from "./resolvers/folder";
+import { getPackageJson } from "./resolvers/folder";
 import { OraLogger } from "./logger";
+import { FlatFileProvider } from "./providers/flatFile";
+import { createLookupFile } from "./lookup";
 
 let commandFound = false;
 
 process.argv.forEach((arg, i) => {
     if (arg === "-v" && !commandFound) {
-        console.log(`Version ${pkg.version}`);
+        console.log(`${packageJson.version}`);
         commandFound = true;
     } else if (arg === "-h" && !commandFound) {
         showHelp();
         commandFound = true;
-    } else if (arg === "-f" && !commandFound) {
+    } else if (arg === "-l" && !commandFound) {
         const folder = process.argv[i + 1];
 
         cliResolveFolder(folder);
@@ -31,6 +34,23 @@ process.argv.forEach((arg, i) => {
         const name = process.argv[i + 1];
 
         cliResolveName(name);
+        commandFound = true;
+    } else if (arg === "-f") {
+        const npmFile = process.argv[i + 1];
+        const name = process.argv[i + 2];
+
+        cliResolveFile(name, npmFile);
+        commandFound = true;
+    } else if (arg === "-lookup") {
+        const file = process.argv[i + 1];
+        const filePath = path.join(`tests`, `data`, `extractor`, `data.json`);
+
+        cliCreateLookup(file ? file : filePath);
+        commandFound = true;
+    } else if (arg === "-downloads") {
+        const pkg = process.argv[i + 1];
+
+        cliDownloads(pkg);
         commandFound = true;
     }
 });
@@ -41,18 +61,47 @@ if (!commandFound) {
 }
 
 function showHelp(): void {
-    console.log(`Package Analyzer ${pkg.version}`);
+    console.log(`Package Analyzer ${packageJson.version}`);
     console.log(`Options:`);
     console.log(
-        `${`-f`.padEnd(10)} ${`Analyze a local folder`.padEnd(60)} e.g. "npa -f path/to/project"`
+        `${`-l`.padEnd(10)} ${`Analyze a local folder`.padEnd(60)} e.g. "npa -l path/to/project"`
     );
     console.log(
         `${`-o`.padEnd(10)} ${`Analyze a package, version optional, default latest`.padEnd(
             60
         )} e.g. "npa -o typescript(@3.5.1)"`
     );
+    console.log(
+        `${`-f`.padEnd(10)} ${`Analyze a package from a npm dump`.padEnd(
+            60
+        )} e.g. "npa -f path/to/npmdump typescript(@3.5.1)"`
+    );
+    console.log(
+        `${`-lookup`.padEnd(10)} ${`Create a lookup file from a npm dump`.padEnd(
+            60
+        )} e.g. "npa -lookup path/to/npmdump"`
+    );
+    console.log(
+        `${`-downloads`.padEnd(10)} ${`Get number of downloads from last week`.padEnd(
+            60
+        )} e.g. "npa -downloads typescript(@3.5.1)"`
+    );
     console.log(`${`-v`.padEnd(10)} ${`Prints version`.padEnd(60)}`);
     console.log(`${`-h`.padEnd(10)} ${`Display help`.padEnd(60)}`);
+}
+
+async function cliDownloads(pkg: string): Promise<void> {
+    try {
+        const downloads = await getDownloadsLastWeek(pkg);
+
+        console.log(`${pkg}: ${downloads.downloads} Downloads`);
+    } catch {
+        console.log(`Couldn't get downloads for ${pkg}`);
+    }
+}
+
+async function cliCreateLookup(file: string): Promise<void> {
+    await createLookupFile(file);
 }
 
 async function cliResolveFolder(folder: string | undefined): Promise<void> {
@@ -65,7 +114,7 @@ async function cliResolveFolder(folder: string | undefined): Promise<void> {
 
     try {
         const provider = new FileSystemPackageProvider(folder);
-        const resolver = new Resolver(fromFolder(folder), provider, new OraLogger());
+        const resolver = new Resolver(getPackageJson(folder), provider, new OraLogger());
         const pa: PackageAnalytics = await resolver.resolve();
 
         printStatistics(pa);
@@ -83,18 +132,20 @@ async function cliResolveName(pkgName: string | undefined): Promise<void> {
     }
 
     try {
-        const [name, version] = getNameAndVersion(pkgName);
-        let pa: PackageAnalytics;
+        const resolver = new Resolver(getNameAndVersion(pkgName), npmOnline, new OraLogger());
+        const pa = await resolver.resolve();
 
-        if (typeof version === "undefined") {
-            const resolver = new Resolver(() => name, npmOnline, new OraLogger());
+        printStatistics(pa);
+    } catch (e) {
+        console.log(e);
+    }
+}
 
-            pa = await resolver.resolve();
-        } else {
-            const resolver = new Resolver(() => [name, version], npmOnline, new OraLogger());
-
-            pa = await resolver.resolve();
-        }
+async function cliResolveFile(pkgName: string, npmFile: string): Promise<void> {
+    try {
+        const provider = new FlatFileProvider(npmFile);
+        const resolver = new Resolver(getNameAndVersion(pkgName), provider, new OraLogger());
+        const pa = await resolver.resolve();
 
         printStatistics(pa);
     } catch (e) {

@@ -1,58 +1,55 @@
-import * as assert from "assert";
 import * as path from "path";
 
 import { PackageAnalytics } from "../src/analyzers/package";
-import { fromFolder } from "../src/resolvers/folder";
-import { IPackageProvider, FileSystemPackageProvider } from "../src/providers/folder";
-import { INpmPackage } from "../src/npm";
+import { getPackageJson } from "../src/resolvers/folder";
+import { IPackageVersionProvider, FileSystemPackageProvider } from "../src/providers/folder";
+import { INpmPackageVersion } from "../src/npm";
 import { Resolver } from "../src/resolvers/resolver";
 import { OraLogger } from "../src/logger";
 
 describe(`resolveFromFolder Tests`, () => {
     let pa: PackageAnalytics;
 
-    before(async () => {
+    beforeAll(async () => {
         const rootPath = path.join("tests", "data", "testproject2");
         const provider = new FileSystemPackageProvider(rootPath);
-        const resolver = new Resolver(fromFolder(rootPath), provider, new OraLogger());
+        const resolver = new Resolver(getPackageJson(rootPath), provider, new OraLogger());
 
         pa = await resolver.resolve();
     });
 
-    it(`Checks name`, () => {
-        assert.equal(`testproject2`, pa.name);
+    test(`Checks name`, () => {
+        expect(`testproject2`).toBe(pa.name);
     });
 
-    it(`Checks version`, () => {
-        assert.equal(`1.0.0`, pa.version);
+    test(`Checks version`, () => {
+        expect(`1.0.0`).toBe(pa.version);
     });
 
-    it(`Checks fullName`, () => {
-        assert.equal(`${pa.name}@${pa.version}`, pa.fullName);
+    test(`Checks fullName`, () => {
+        expect(`${pa.name}@${pa.version}`).toBe(pa.fullName);
     });
 
-    it(`Checks license`, () => {
-        assert.equal(`ISC`, pa.license);
+    test(`Checks license`, () => {
+        expect(`ISC`).toBe(pa.license);
     });
 
-    it(`Throws on missing package.json`, async () => {
-        let hasThrown = false;
+    test(`Throws on missing package.json`, async () => {
+        expect.assertions(1);
 
         try {
             const rootPath = `folderdoesntexist`;
             const provider = new FileSystemPackageProvider(rootPath);
-            const resolver = new Resolver(fromFolder(rootPath), provider, new OraLogger());
+            const resolver = new Resolver(getPackageJson(rootPath), provider, new OraLogger());
 
             await resolver.resolve();
-        } catch {
-            hasThrown = true;
+        } catch (e) {
+            expect(e).toBeInstanceOf(Error);
         }
-
-        assert.equal(hasThrown, true, `Did not throw on invalid path`);
     });
 
-    it(`Check loops`, () => {
-        assert.equal(pa.loops.length, 50);
+    test(`Check loops`, () => {
+        expect(pa.loops.length).toBe(50);
     });
 
     it(`Check direct dependecies`, async () => {
@@ -79,35 +76,31 @@ describe(`resolveFromName Error Handling`, () => {
         }
     }
 
-    class MockProvider implements IPackageProvider {
+    class MockProvider implements IPackageVersionProvider {
         size = 0;
 
         getPackageByVersion(
             name: string /* eslint-disable-line */,
             version?: string | undefined /* eslint-disable-line */
-        ): Promise<INpmPackage> {
+        ): Promise<INpmPackageVersion> {
             throw new CustomError(`getPackageByVersion not implemented`);
         }
 
         getPackagesByVersion(
             modules: [string, string?][] /* eslint-disable-line */
-        ): AsyncIterableIterator<INpmPackage[]> {
+        ): AsyncIterableIterator<INpmPackageVersion> {
             throw new Error(`getPackagesByVersion not implemented`);
         }
     }
 
-    it(`Correctly propagates an exception`, async () => {
-        try {
-            const resolver = new Resolver(() => "wurscht", new MockProvider(), new OraLogger());
-            await resolver.resolve();
+    test(`Correctly propagates an exception`, async () => {
+        expect.assertions(1);
 
-            assert.fail(`Should have thrown an exception`);
+        try {
+            const resolver = new Resolver(["wurscht"], new MockProvider(), new OraLogger());
+            await resolver.resolve();
         } catch (e) {
-            if (e instanceof CustomError) {
-                assert.ok(e, `Correctly propagated the exception: ${e}`);
-            } else {
-                assert.fail(`Wrong Exception type`);
-            }
+            expect(e).toBeInstanceOf(CustomError);
         }
     });
 });

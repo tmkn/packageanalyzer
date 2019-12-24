@@ -1,4 +1,5 @@
 import * as http from "http";
+import * as https from "https";
 
 function downloadHttp(url: string, timeoutLimit: number): Promise<string> {
     const promise = new Promise<string>((resolve, reject) => {
@@ -65,11 +66,12 @@ export async function downloadHttpJson<T extends object>(
     return null;
 }
 
-/*function downloadJsonHttps<T extends object>(url: string): Promise<T> {
+/* istanbul ignore next */
+export function downloadJsonHttps<T extends object>(url: string): Promise<T> {
     return new Promise<T>((resolve, reject) => {
         https
             .get(url, res => {
-                let { statusCode } = res;
+                const { statusCode } = res;
                 let data = "";
 
                 if (statusCode !== 200) {
@@ -95,13 +97,7 @@ export async function downloadHttpJson<T extends object>(
     });
 }
 
-export function numberOfDownloadsLastWeek(name: string): Promise<INpmSingleStatistic> {
-    return downloadJsonHttps(
-        `https://api.npmjs.org/downloads/point/last-week/${encodeURIComponent(name)}`
-    );
-}
-
-export function numberOfDownloadsRange(
+/*export function numberOfDownloadsRange(
     name: string,
     from: string,
     to: string

@@ -1,13 +1,15 @@
-import { IPackageProvider } from "../providers/folder";
+import { IPackageVersionProvider } from "../providers/folder";
 import { PackageAnalytics } from "../analyzers/package";
-import { INpmKeyValue, INpmPackage } from "../npm";
+import { INpmKeyValue, INpmPackageVersion, PackageVersion } from "../npm";
 import { ILogger } from "../logger";
-import { OnlinePackageProvider } from "../providers/online";
-
-export type EntryPackage = () => string | [string, string];
+import { PackageProvider } from "../providers/online";
 
 interface IResolverConstructor {
-    new (entry: EntryPackage, provider: IPackageProvider, logger: ILogger): IPackageResolver;
+    new (
+        entry: PackageVersion,
+        provider: IPackageVersionProvider,
+        logger: ILogger
+    ): IPackageResolver;
 }
 
 interface IPackageResolver {
@@ -15,20 +17,18 @@ interface IPackageResolver {
 }
 
 export const Resolver: IResolverConstructor = class Resolver implements IPackageResolver {
-    private _depth: string[] = [];
+    private _depthStack: string[] = [];
 
     constructor(
-        private _entry: EntryPackage,
-        private _provider: IPackageProvider,
+        private readonly _entry: PackageVersion,
+        private _provider: IPackageVersionProvider,
         private _logger: ILogger
     ) {}
 
     async resolve(): Promise<PackageAnalytics> {
         try {
-            const entry = this._entry();
-            const rootPkg = Array.isArray(entry)
-                ? await this._provider.getPackageByVersion(entry[0], entry[1])
-                : await this._provider.getPackageByVersion(entry);
+            const [name, version] = this._entry;
+            const rootPkg = await this._provider.getPackageByVersion(name, version);
             const root: PackageAnalytics = new PackageAnalytics(rootPkg);
 
             this._logger.start();
@@ -59,12 +59,12 @@ export const Resolver: IResolverConstructor = class Resolver implements IPackage
         dependencies: INpmKeyValue | undefined
     ): Promise<void> {
         try {
-            const dependencyList = typeof dependencies !== "undefined" ? dependencies : [];
+            const dependencyList = typeof dependencies !== "undefined" ? dependencies : {};
             const libs = Object.entries(dependencyList);
-            const packages: INpmPackage[] = [];
+            const packages: INpmPackageVersion[] = [];
 
             for await (const subPackages of this._provider.getPackagesByVersion(libs)) {
-                packages.push(...subPackages);
+                packages.push(subPackages);
             }
 
             for (const p of packages) {
@@ -74,17 +74,17 @@ export const Resolver: IResolverConstructor = class Resolver implements IPackage
                 await addPublished(dependency, this._provider);
                 parent.addDependency(dependency);
 
-                if (this._depth.includes(dependency.fullName)) {
+                if (this._depthStack.includes(dependency.fullName)) {
                     dependency.isLoop = true;
                 } else {
-                    this._depth.push(dependency.fullName);
+                    this._depthStack.push(dependency.fullName);
 
                     await this.walkDependencies(dependency, p.dependencies);
                 }
             }
-            this._depth.pop();
+            this._depthStack.pop();
         } catch (e) {
-            this._depth.pop();
+            this._depthStack.pop();
 
             throw e;
         }
@@ -93,9 +93,9 @@ export const Resolver: IResolverConstructor = class Resolver implements IPackage
 
 export async function addPublished(
     pa: PackageAnalytics,
-    provider: IPackageProvider
+    provider: IPackageVersionProvider
 ): Promise<void> {
-    if (!(provider instanceof OnlinePackageProvider)) {
+    if (!(provider instanceof PackageProvider)) {
         return;
     }
 

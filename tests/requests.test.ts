@@ -1,5 +1,4 @@
 import { Server } from "http";
-import * as assert from "assert";
 
 import * as express from "express";
 import { downloadHttpJson } from "../src/requests";
@@ -8,7 +7,7 @@ describe(`Request Tests`, () => {
     let server: Server;
     const threshold = 200;
     const artificalDelay = 2000;
-    const port = 3000;
+    const port = 3001;
 
     if (threshold >= artificalDelay) {
         console.log(
@@ -16,7 +15,7 @@ describe(`Request Tests`, () => {
         );
     }
 
-    before(() => {
+    beforeAll(() => {
         const app = express();
         let stallCalls = 0;
 
@@ -36,47 +35,43 @@ describe(`Request Tests`, () => {
         server = app.listen(port, () => console.log(`Started server`));
     });
 
-    it(`Returns json`, async () => {
+    test(`Returns json`, async () => {
         const response = await downloadHttpJson(`http://localhost:${port}/echo`, threshold);
 
-        if (!response) {
-            assert.fail(`response is null`);
-        } else {
-            assert.deepEqual(response, { hello: "world" });
-        }
+        expect(response).toEqual({ hello: "world" });
     });
 
-    it(`Auto retries after a timeout`, async () => {
+    test(`Auto retries after a timeout`, async () => {
         const response = await downloadHttpJson(`http://localhost:${port}/stall`, threshold);
 
-        assert.deepEqual(response, { worked: "after all" });
+        expect(response).toEqual({ worked: "after all" });
     });
 
-    it(`Returns null after all retries have been exhausted`, async () => {
+    test(`Returns null after all retries have been exhausted`, async () => {
         const response = await downloadHttpJson(`http://localhost:${port}/stall2`, threshold);
 
-        assert.equal(response, null);
+        expect(response).toBe(null);
     });
 
-    it(`Returns null on server not found`, async () => {
+    test(`Returns null on server not found`, async () => {
         const response = await downloadHttpJson("http://localhost:4785/foo", threshold);
 
-        assert.equal(response, null);
+        expect(response).toBe(null);
     });
 
-    it(`Returns null if response is not json`, async () => {
+    test(`Returns null if response is not json`, async () => {
         const response = await downloadHttpJson(`http://localhost:${port}/notjson`, threshold);
 
-        assert.equal(response, null);
+        expect(response).toBe(null);
     });
 
-    it(`Returns null if status code is not 200`, async () => {
+    test(`Returns null if status code is not 200`, async () => {
         const response = await downloadHttpJson(`http://localhost:${port}/forbidden`);
 
-        assert.equal(response, null);
+        expect(response).toBe(null);
     });
 
-    after(() => {
+    afterAll(() => {
         server.close(e => {
             if (e) console.log(e);
         });

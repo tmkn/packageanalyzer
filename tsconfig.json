@@ -3,8 +3,9 @@
         "strict": true,
         "outDir": "build",
         "sourceMap": true,
-        "target": "esnext",
-        "module": "commonjs"
+        "target": "es6",
+        "module": "commonjs",
+        "resolveJsonModule": true
     },
     "include": ["src", "tests"]
 

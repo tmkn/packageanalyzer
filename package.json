@@ -1,6 +1,6 @@
 {
   "name": "packageanalyzer",
-  "version": "1.0.0-beta0",
+  "version": "0.9.0-beta0",
   "description": "A tool to analyze a Node.js project/package",
   "main": "./build/src/cli.js",
   "files": [
@@ -10,11 +10,11 @@
     "npa": "./build/src/cli.js"
   },
   "scripts": {
-    "build": "node utility/clean.js && tsc",
+    "build": "tsc",
     "dev": "tsc --watch",
-    "test": "mocha --timeout 10000 ./build/tests/**/*.test.js",
-    "test:watch": "tsc && mocha --timeout 10000 --watch ./build/tests/**/*.test.js",
-    "test:coverage": "nyc npm test",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
     "test:clean": "node build/tests/clean.js",
     "prettier": "prettier --write \"{src,tests,utility}/**/{*.ts,*.js}\"",
     "cli": "node build/src/cli.js",
@@ -25,22 +25,22 @@
   "author": "tmkn",
   "license": "MIT",
   "devDependencies": {
-    "@types/express": "^4.17.0",
-    "@types/mocha": "^5.2.6",
-    "@types/node": "^11.13.2",
+    "@types/express": "^4.17.2",
+    "@types/jest": "^24.0.24",
+    "@types/node": "^13.1.0",
     "@types/semver": "^6.0.0",
-    "@typescript-eslint/eslint-plugin": "^2.2.0",
-    "@typescript-eslint/parser": "^2.2.0",
-    "eslint": "^6.3.0",
+    "@typescript-eslint/eslint-plugin": "^2.13.0",
+    "@typescript-eslint/parser": "^2.13.0",
+    "eslint": "^6.8.0",
     "express": "^4.17.1",
-    "mocha": "^6.1.4",
-    "nyc": "^14.1.1",
-    "prettier": "^1.18.2",
-    "typescript": "^3.6.2"
+    "jest": "^24.9.0",
+    "prettier": "^1.19.1",
+    "ts-jest": "^24.2.0",
+    "typescript": "3.7.4"
   },
   "dependencies": {
-    "dayjs": "^1.8.15",
-    "ora": "^3.4.0",
-    "semver": "^6.0.0"
+    "dayjs": "^1.8.18",
+    "ora": "^4.0.3",
+    "semver": "^7.1.1"
   }
 }

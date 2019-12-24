@@ -1,4 +1,3 @@
-import * as assert from "assert";
 import { CodeAnalyzer } from "../src/analyzers/code";
 
 const example1 = `
@@ -28,19 +27,19 @@ function isObject(val) {
 `;
 
 describe(`CodeAnalyzer Tests`, () => {
-    it(`Analzye example code 1`, () => {
+    test(`Analzye example code 1`, () => {
         const test = CodeAnalyzer.FromString(example1);
 
-        assert.equal(test.statements, 45, `Wrong amount of statements`);
-        assert.equal(test.exports, 1, `Wrong amount of exports`);
-        assert.equal(test.imports, 0, `Wrong amount of imports`);
+        expect(test.statements).toBe(45);
+        expect(test.exports).toBe(1);
+        expect(test.imports).toBe(0);
     });
 
-    it(`Analzye example code 2`, () => {
+    test(`Analzye example code 2`, () => {
         const test = CodeAnalyzer.FromString(example2);
 
-        assert.equal(test.statements, 94, `Wrong amount of statements`);
-        assert.equal(test.exports, 1, `Wrong amount of exports`);
-        assert.equal(test.imports, 2, `Wrong amount of imports`);
+        expect(test.statements).toBe(94);
+        expect(test.exports).toBe(1);
+        expect(test.imports).toBe(2);
     });
 });

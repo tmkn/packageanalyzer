@@ -15,17 +15,17 @@ Stats are fun!
 ## Install
 ```
 git clone https://github.com/tmkn/packageanalyzer.git
-npm install
-npm link
+yarn install
+yarn build
 ```
 
 ## Usage
 ### Analyze latest version of a package
-`npa -o typescript`
+`node build/src/cli.js -o typescript`
 ### Analyze specific version of a package
-`npa -o typescript@3.5.1`
+`node build/src/cli.js -o typescript@3.5.1`
 ### Analyze local folder
-`npa -f path/to/folder`
+`node build/src/cli.js -f path/to/folder`
 
 ## Prints various statistics:
 * Number of transitive dependencies
@@ -37,14 +37,14 @@ npm link
 
 ## Development
 ### Watch mode
-`npm run dev`
+`yarn dev`
 ### Build
-`npm run build`
+`yarn build`
 ## Tests
 ### Run tests
-`npm run test`
+`yarn test`
 ### Watch tests
-`npm run test:watch`
+`yarn test:watch`
 
 ## Ideas
 * Make available as API

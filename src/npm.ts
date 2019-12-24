@@ -1,4 +1,6 @@
-export interface INpmPackage {
+import { downloadJsonHttps } from "./requests";
+
+export interface INpmPackageVersion {
     author: INpmUser;
     dependencies?: INpmKeyValue;
     description: string;
@@ -59,7 +61,7 @@ export interface IMalformedLicenseField {
     url: string;
 }
 
-export interface INpmPackageInfo {
+export interface INpmPackage {
     author: INpmUser;
     description: string;
     "dist-tags": INpmKeyValue[] & { latest: string };
@@ -73,21 +75,29 @@ export interface INpmPackageInfo {
     repository: INpmRepository;
     time: INpmKeyValue;
     users: { [index: string]: boolean };
-    versions: { [index: string]: INpmPackage };
+    versions: { [index: string]: INpmPackageVersion };
 }
 
-interface INpmBaseStatistic {
+//https://github.com/npm/registry/blob/master/docs/download-counts.md
+interface INpmDownloadBaseStatistic {
     end: string;
     start: string;
     package: string;
 }
 
-export interface INpmSingleStatistic extends INpmBaseStatistic {
+export interface INpmDownloadStatistic extends INpmDownloadBaseStatistic {
     downloads: number;
 }
 
-export interface INpmRangeStatistic extends INpmBaseStatistic {
+export interface INpmDownloadRangeStatistic extends INpmDownloadBaseStatistic {
     downloads: Array<{ downloads: number; day: string }>;
+}
+
+/* istanbul ignore next */
+export function getDownloadsLastWeek(name: string): Promise<INpmDownloadStatistic> {
+    return downloadJsonHttps(
+        `https://api.npmjs.org/downloads/point/last-week/${encodeURIComponent(name)}`
+    );
 }
 
 export interface INpmAllPackagesResponse {
@@ -105,7 +115,7 @@ interface INpmPackageRow {
 }
 
 export interface INpmDumpRow {
-    doc: INpmPackageInfo;
+    doc: INpmPackage;
     id: string;
     key: string;
 }
@@ -113,7 +123,7 @@ export interface INpmDumpRow {
 export type PackageVersion = [string, string?];
 
 export function isUnpublished(
-    data: IUnpublishedNpmPackage | INpmPackageInfo
+    data: IUnpublishedNpmPackage | INpmPackage
 ): data is IUnpublishedNpmPackage {
     if (typeof data === "object" && data !== null) {
         if ("time" in data) {
@@ -134,7 +144,7 @@ export function getNameAndVersion(name: string): [string, string?] {
             if (parts[1].trim() !== "") return [`@${parts[0]}`, parts[1]];
         }
 
-        throw `Unable to determine version from "${name}"`;
+        throw new Error(`Unable to determine version from "${name}"`);
     } else {
         const parts = name.split("@");
 
@@ -144,7 +154,7 @@ export function getNameAndVersion(name: string): [string, string?] {
             if (parts[1].trim() !== "") return [`${parts[0]}`, parts[1]];
         }
 
-        throw `Unable to determine version from "${name}"`;
+        throw new Error(`Unable to determine version from "${name}"`);
     }
 }
 

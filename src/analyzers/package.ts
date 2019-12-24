@@ -1,8 +1,12 @@
-import { INpmPackage, IMalformedLicenseField } from "../npm";
+import { INpmPackageVersion, IMalformedLicenseField } from "../npm";
 
-export type LicenseSummary = Map<string /*name*/, Map<string /*version*/, string /*license*/>>;
+type Name = string;
+type Version = string;
+type License = string;
+
+export type LicenseSummary = Map<Name, Map<Version, License>>;
 export type GroupedLicenseSummary = Array<{ license: string; names: string[] }>;
-export type VersionSummary = Map<string /*name*/, Set<string> /*versions*/>;
+export type VersionSummary = Map<Name, Set<Version>>;
 
 interface IPackageStatistics {
     all: PackageAnalytics[];
@@ -28,7 +32,7 @@ export class PackageAnalytics implements IPackageStatistics {
     isLoop = false;
     private readonly _dependencies: PackageAnalytics[] = [];
 
-    constructor(private readonly _data: Readonly<INpmPackage>) {}
+    constructor(private readonly _data: Readonly<INpmPackageVersion>) {}
 
     get name(): string {
         return this._data.name;
@@ -80,11 +84,11 @@ export class PackageAnalytics implements IPackageStatistics {
     }
 
     get timeSpan(): number | undefined {
-        throw "Not Implemented";
+        throw new Error("Not Implemented");
     }
 
     get size(): number | undefined {
-        throw "Not Implemented";
+        throw new Error("Not Implemented");
     }
 
     get license(): string {
@@ -125,7 +129,9 @@ export class PackageAnalytics implements IPackageStatistics {
         return this._dependencies.length;
     }
 
-    getData<T extends keyof INpmPackage = keyof INpmPackage>(key: T): INpmPackage[T] {
+    getData<T extends keyof INpmPackageVersion = keyof INpmPackageVersion>(
+        key: T
+    ): INpmPackageVersion[T] {
         return this._data[key];
     }
 
@@ -312,7 +318,7 @@ export class PackageAnalytics implements IPackageStatistics {
         this.visit(d => {
             const dist = d.getData("dist");
 
-            if (typeof dist !== "undefined" && typeof dist.unpackedSize !== "undefined") {
+            if (dist?.unpackedSize) {
                 cost += dist.unpackedSize;
             }
         }, true);
