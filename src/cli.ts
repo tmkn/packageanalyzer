@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 
-import * as packageJson from "./../package.json";
-
 import * as path from "path";
+import * as fs from "fs";
 
 import * as dayjs from "dayjs";
 
@@ -20,7 +19,7 @@ let commandFound = false;
 
 process.argv.forEach((arg, i) => {
     if (arg === "-v" && !commandFound) {
-        console.log(`${packageJson.version}`);
+        console.log(`${getVersion()}`);
         commandFound = true;
     } else if (arg === "-h" && !commandFound) {
         showHelp();
@@ -61,7 +60,7 @@ if (!commandFound) {
 }
 
 function showHelp(): void {
-    console.log(`Package Analyzer ${packageJson.version}`);
+    console.log(`Package Analyzer ${getVersion()}`);
     console.log(`Options:`);
     console.log(
         `${`-l`.padEnd(10)} ${`Analyze a local folder`.padEnd(60)} e.g. "npa -l path/to/project"`
@@ -257,5 +256,15 @@ function printLicenseInfo(groupedLicenses: GroupedLicenseSummary, paddingLeft: n
                     threshold} more]`
             );
         else console.log(`${``.padStart(paddingLeft)}${license} - [${samples.join(", ")}]`);
+    }
+}
+
+function getVersion(): string {
+    try {
+        const file = path.join(__dirname, "./../../package.json");
+
+        return JSON.parse(fs.readFileSync(file, "utf8")).version;
+    } catch (e) {
+        return "version parse error!";
     }
 }
