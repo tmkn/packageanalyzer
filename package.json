@@ -23,7 +23,8 @@
     "preview": "npm pack && tar -xvzf *.tgz && rm -rf package *.tgz",
     "lint": "eslint \"src/**\" \"tests/**\"",
     "lint:fix": "eslint \"src/**\" \"tests/**\" --fix",
-    "package:test": "npm publish --dry-run"
+    "publish": "npm publish --tag beta",
+    "publish:test": "npm publish --dry-run"
   },
   "author": "tmkn",
   "license": "MIT",
