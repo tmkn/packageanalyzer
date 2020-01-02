@@ -5,7 +5,7 @@ import { FlatFileProvider } from "./providers/flatFile";
 import { PackageVersion, getNameAndVersion } from "./npm";
 import { OraLogger } from "./logger";
 import { PackageAnalytics } from "./analyzers/package";
-import { Resolver } from "./resolvers/resolver";
+import { Visitor } from "./visitors/visitor";
 
 //extract packages from dump file
 export class Extractor {
@@ -60,8 +60,8 @@ export class Extractor {
         for (const [name, version] of this._versions) {
             console.log(`Fetching ${name}@${version ? version : `latest`}`);
 
-            const resolver = new Resolver([name, version], this._provider, new OraLogger());
-            const pa: PackageAnalytics = await resolver.resolve();
+            const visitor = new Visitor([name, version], this._provider, new OraLogger());
+            const pa: PackageAnalytics = await visitor.visit();
 
             this._analytics.push(pa);
         }

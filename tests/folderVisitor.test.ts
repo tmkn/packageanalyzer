@@ -1,21 +1,21 @@
 import * as path from "path";
 
 import { PackageAnalytics } from "../src/analyzers/package";
-import { getPackageJson } from "../src/resolvers/folder";
+import { getPackageJson } from "../src/visitors/folder";
 import { IPackageVersionProvider, FileSystemPackageProvider } from "../src/providers/folder";
 import { INpmPackageVersion } from "../src/npm";
-import { Resolver } from "../src/resolvers/resolver";
+import { Visitor } from "../src/visitors/visitor";
 import { OraLogger } from "../src/logger";
 
-describe(`resolveFromFolder Tests`, () => {
+describe(`visitFromFolder Tests`, () => {
     let pa: PackageAnalytics;
 
     beforeAll(async () => {
         const rootPath = path.join("tests", "data", "testproject2");
         const provider = new FileSystemPackageProvider(rootPath);
-        const resolver = new Resolver(getPackageJson(rootPath), provider, new OraLogger());
+        const visitor = new Visitor(getPackageJson(rootPath), provider, new OraLogger());
 
-        pa = await resolver.resolve();
+        pa = await visitor.visit();
     });
 
     test(`Checks name`, () => {
@@ -40,9 +40,9 @@ describe(`resolveFromFolder Tests`, () => {
         try {
             const rootPath = `folderdoesntexist`;
             const provider = new FileSystemPackageProvider(rootPath);
-            const resolver = new Resolver(getPackageJson(rootPath), provider, new OraLogger());
+            const visitor = new Visitor(getPackageJson(rootPath), provider, new OraLogger());
 
-            await resolver.resolve();
+            await visitor.visit();
         } catch (e) {
             expect(e).toBeInstanceOf(Error);
         }
@@ -53,7 +53,7 @@ describe(`resolveFromFolder Tests`, () => {
     });
 });
 
-describe(`resolveFromName Error Handling`, () => {
+describe(`visitFromName Error Handling`, () => {
     class CustomError extends Error {
         constructor(msg: string) {
             super(msg);
@@ -81,8 +81,8 @@ describe(`resolveFromName Error Handling`, () => {
         expect.assertions(1);
 
         try {
-            const resolver = new Resolver(["wurscht"], new MockProvider(), new OraLogger());
-            await resolver.resolve();
+            const visitor = new Visitor(["wurscht"], new MockProvider(), new OraLogger());
+            await visitor.visit();
         } catch (e) {
             expect(e).toBeInstanceOf(CustomError);
         }

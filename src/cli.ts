@@ -8,9 +8,9 @@ import * as dayjs from "dayjs";
 import { npmOnline } from "./providers/online";
 import { PackageAnalytics, VersionSummary, GroupedLicenseSummary } from "./analyzers/package";
 import { getNameAndVersion, getDownloadsLastWeek } from "./npm";
-import { Resolver } from "./resolvers/resolver";
+import { Visitor } from "./visitors/visitor";
 import { FileSystemPackageProvider } from "./providers/folder";
-import { getPackageJson } from "./resolvers/folder";
+import { getPackageJson } from "./visitors/folder";
 import { OraLogger } from "./logger";
 import { FlatFileProvider } from "./providers/flatFile";
 import { createLookupFile } from "./lookup";
@@ -113,8 +113,8 @@ async function cliResolveFolder(folder: string | undefined): Promise<void> {
 
     try {
         const provider = new FileSystemPackageProvider(folder);
-        const resolver = new Resolver(getPackageJson(folder), provider, new OraLogger());
-        const pa: PackageAnalytics = await resolver.resolve();
+        const visitor = new Visitor(getPackageJson(folder), provider, new OraLogger());
+        const pa: PackageAnalytics = await visitor.visit();
 
         printStatistics(pa);
     } catch (e) {
@@ -131,8 +131,8 @@ async function cliResolveName(pkgName: string | undefined): Promise<void> {
     }
 
     try {
-        const resolver = new Resolver(getNameAndVersion(pkgName), npmOnline, new OraLogger());
-        const pa = await resolver.resolve();
+        const visitor = new Visitor(getNameAndVersion(pkgName), npmOnline, new OraLogger());
+        const pa = await visitor.visit();
 
         printStatistics(pa);
     } catch (e) {
@@ -143,8 +143,8 @@ async function cliResolveName(pkgName: string | undefined): Promise<void> {
 async function cliResolveFile(pkgName: string, npmFile: string): Promise<void> {
     try {
         const provider = new FlatFileProvider(npmFile);
-        const resolver = new Resolver(getNameAndVersion(pkgName), provider, new OraLogger());
-        const pa = await resolver.resolve();
+        const visitor = new Visitor(getNameAndVersion(pkgName), provider, new OraLogger());
+        const pa = await visitor.visit();
 
         printStatistics(pa);
     } catch (e) {

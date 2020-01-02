@@ -5,7 +5,7 @@ import * as express from "express";
 
 import { INpmPackage, isUnpublished } from "../src/npm";
 import { OnlinePackageProvider } from "../src/providers/online";
-import { Resolver } from "../src/resolvers/resolver";
+import { Visitor } from "../src/visitors/visitor";
 import { OraLogger } from "../src/logger";
 
 describe.only(`OnlineProvider Tests`, () => {
@@ -19,16 +19,16 @@ describe.only(`OnlineProvider Tests`, () => {
     });
 
     test(`resolveFromName with name and version`, async () => {
-        const resolver = new Resolver(["react", "16.8.1"], provider, new OraLogger());
-        const pa = await resolver.resolve();
+        const visitor = new Visitor(["react", "16.8.1"], provider, new OraLogger());
+        const pa = await visitor.visit();
 
         expect(pa.name).toBe("react");
         expect(pa.version).toBe("16.8.1");
     });
 
     test(`resolveFromName with name`, async () => {
-        const resolver = new Resolver(["react"], provider, new OraLogger());
-        const pa = await resolver.resolve();
+        const visitor = new Visitor(["react"], provider, new OraLogger());
+        const pa = await visitor.visit();
 
         expect(pa.name).toBe("react");
         expect(pa.version).toBe("16.8.6");
@@ -39,8 +39,8 @@ describe.only(`OnlineProvider Tests`, () => {
     });
 
     test(`Check oldest package`, async () => {
-        const resolver = new Resolver(["react", "16.8.1"], provider, new OraLogger());
-        const pa = await resolver.resolve();
+        const visitor = new Visitor(["react", "16.8.1"], provider, new OraLogger());
+        const pa = await visitor.visit();
         const oldestPackage = pa.oldest;
 
         expect.assertions(1);
@@ -51,8 +51,8 @@ describe.only(`OnlineProvider Tests`, () => {
     });
 
     test(`Check newest package`, async () => {
-        const resolver = new Resolver(["react", "16.8.1"], provider, new OraLogger());
-        const pa = await resolver.resolve();
+        const visitor = new Visitor(["react", "16.8.1"], provider, new OraLogger());
+        const pa = await visitor.visit();
         const newestPackage = pa.newest;
 
         expect.assertions(1);

@@ -4,19 +4,19 @@ import { INpmKeyValue, INpmPackageVersion, PackageVersion } from "../npm";
 import { ILogger } from "../logger";
 import { PackageProvider } from "../providers/online";
 
-interface IResolverConstructor {
+interface IVisitorConstructor {
     new (
         entry: PackageVersion,
         provider: IPackageVersionProvider,
         logger: ILogger
-    ): IPackageResolver;
+    ): IPackageVisitor;
 }
 
-interface IPackageResolver {
-    resolve: () => Promise<PackageAnalytics>;
+interface IPackageVisitor {
+    visit: () => Promise<PackageAnalytics>;
 }
 
-export const Resolver: IResolverConstructor = class Resolver implements IPackageResolver {
+export const Visitor: IVisitorConstructor = class Visitor implements IPackageVisitor {
     private _depthStack: string[] = [];
 
     constructor(
@@ -25,7 +25,7 @@ export const Resolver: IResolverConstructor = class Resolver implements IPackage
         private _logger: ILogger
     ) {}
 
-    async resolve(): Promise<PackageAnalytics> {
+    async visit(): Promise<PackageAnalytics> {
         try {
             const [name, version] = this._entry;
             const rootPkg = await this._provider.getPackageByVersion(name, version);
@@ -37,7 +37,7 @@ export const Resolver: IResolverConstructor = class Resolver implements IPackage
             await addPublished(root, this._provider);
 
             try {
-                await this.walkDependencies(root, rootPkg.dependencies);
+                await this.visitDependencies(root, rootPkg.dependencies);
             } catch (e) {
                 this._logger.error("Error evaluating dependencies");
 
@@ -54,7 +54,7 @@ export const Resolver: IResolverConstructor = class Resolver implements IPackage
         }
     }
 
-    private async walkDependencies(
+    private async visitDependencies(
         parent: PackageAnalytics,
         dependencies: INpmKeyValue | undefined
     ): Promise<void> {
@@ -79,7 +79,7 @@ export const Resolver: IResolverConstructor = class Resolver implements IPackage
                 } else {
                     this._depthStack.push(dependency.fullName);
 
-                    await this.walkDependencies(dependency, p.dependencies);
+                    await this.visitDependencies(dependency, p.dependencies);
                 }
             }
             this._depthStack.pop();

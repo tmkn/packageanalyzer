@@ -2,9 +2,9 @@ import * as path from "path";
 
 import { PackageAnalytics } from "../src/analyzers/package";
 import { getNameAndVersion } from "../src/npm";
-import { getPackageJson } from "../src/resolvers/folder";
+import { getPackageJson } from "../src/visitors/folder";
 import { FileSystemPackageProvider } from "../src/providers/folder";
-import { Resolver } from "../src/resolvers/resolver";
+import { Visitor } from "../src/visitors/visitor";
 import { OraLogger } from "../src/logger";
 
 describe(`PackageAnalytics Tests`, () => {
@@ -13,9 +13,9 @@ describe(`PackageAnalytics Tests`, () => {
     beforeAll(async () => {
         const rootPath = path.join("tests", "data", "testproject1");
         const provider = new FileSystemPackageProvider(rootPath);
-        const resolver = new Resolver(getPackageJson(rootPath), provider, new OraLogger());
+        const visitor = new Visitor(getPackageJson(rootPath), provider, new OraLogger());
 
-        pa = await resolver.resolve();
+        pa = await visitor.visit();
     });
 
     test(`Check licenses`, () => {
@@ -70,8 +70,8 @@ describe(`PackageAnalytics Tests`, () => {
     test(`Checks for package with most versions`, async () => {
         const rootPath = path.join("tests", "data", "testproject2");
         const provider = new FileSystemPackageProvider(rootPath);
-        const resolver = new Resolver(getPackageJson(rootPath), provider, new OraLogger());
-        const pa: PackageAnalytics = await resolver.resolve();
+        const visitor = new Visitor(getPackageJson(rootPath), provider, new OraLogger());
+        const pa: PackageAnalytics = await visitor.visit();
 
         for (const [name, versions] of pa.mostVersions) {
             expect(name).toBe("kind-of");
