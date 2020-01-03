@@ -51,6 +51,11 @@ process.argv.forEach((arg, i) => {
 
         cliDownloads(pkg);
         commandFound = true;
+    } else if (arg === "-loops") {
+        const pkg = process.argv[i + 1];
+
+        cliLoops(pkg);
+        commandFound = true;
     }
 });
 
@@ -63,27 +68,32 @@ function showHelp(): void {
     console.log(`Package Analyzer ${getVersion()}`);
     console.log(`Options:`);
     console.log(
-        `${`-l`.padEnd(10)} ${`Analyze a local folder`.padEnd(60)} e.g. "npa -l path/to/project"`
+        `${`-l`.padEnd(10)} ${`Analyze a local folder`.padEnd(60)} e.g. "pa -l path/to/project"`
     );
     console.log(
         `${`-o`.padEnd(10)} ${`Analyze a package, version optional, default latest`.padEnd(
             60
-        )} e.g. "npa -o typescript(@3.5.1)"`
+        )} e.g. "pa -o typescript(@3.5.1)"`
     );
     console.log(
         `${`-f`.padEnd(10)} ${`Analyze a package from a npm dump`.padEnd(
             60
-        )} e.g. "npa -f path/to/npmdump typescript(@3.5.1)"`
+        )} e.g. "pa -f path/to/npmdump typescript(@3.5.1)"`
     );
     console.log(
         `${`-lookup`.padEnd(10)} ${`Create a lookup file from a npm dump`.padEnd(
             60
-        )} e.g. "npa -lookup path/to/npmdump"`
+        )} e.g. "pa -lookup path/to/npmdump"`
     );
     console.log(
         `${`-downloads`.padEnd(10)} ${`Get number of downloads from last week`.padEnd(
             60
-        )} e.g. "npa -downloads typescript(@3.5.1)"`
+        )} e.g. "pa -downloads typescript(@3.5.1)"`
+    );
+    console.log(
+        `${`-loops`.padEnd(10)} ${`Show dependency loops`.padEnd(
+            60
+        )} e.g. "pa -loops typescript(@3.5.1)"`
     );
     console.log(`${`-v`.padEnd(10)} ${`Prints version`.padEnd(60)}`);
     console.log(`${`-h`.padEnd(10)} ${`Display help`.padEnd(60)}`);
@@ -118,7 +128,48 @@ async function cliResolveFolder(folder: string | undefined): Promise<void> {
 
         printStatistics(pa);
     } catch (e) {
-        //console.log(e);
+        console.log(e);
+    }
+}
+
+async function cliLoops(pkgName: string | undefined): Promise<void> {
+    if (typeof pkgName === "undefined") {
+        console.log(`Missing package name\n`);
+        showHelp();
+
+        return;
+    }
+
+    try {
+        const visitor = new Visitor(getNameAndVersion(pkgName), npmOnline, new OraLogger());
+        const pa = await visitor.visit();
+        const loopPathMap = pa.loopPathMap;
+        const distinctCount: number = [...loopPathMap].reduce((i, [, loops]) => i + loops.size, 0);
+        const loopPadding = ("" + distinctCount).length;
+        let total = 0;
+
+        console.log(`=== ${distinctCount} Loop(s) found for ${pa.fullName} ===\n`);
+        if (distinctCount > 0) {
+            console.log(`Affected Packages:`);
+            for (const [pkgName, loopsForPkg] of loopPathMap) {
+                console.log(`- ${`${loopsForPkg.size}x`.padStart(5)} ${pkgName}`);
+            }
+
+            for (const [pkgName, loopsForPkg] of loopPathMap) {
+                console.log(`\n== ${loopsForPkg.size} Loop(s) found for ${pkgName} ==`);
+
+                let i = 0;
+                for (const loop of loopsForPkg) {
+                    console.log(
+                        `[${`${total + i++ + 1}`.padStart(loopPadding)}/${distinctCount}] ${loop}`
+                    );
+                }
+
+                total += loopsForPkg.size;
+            }
+        }
+    } catch (e) {
+        console.log(e);
     }
 }
 
@@ -156,7 +207,7 @@ function printStatistics(pa: PackageAnalytics): void {
     const padding = 40;
     const paddingLeft = 4;
 
-    console.log(`Statistics for ${pa.fullName}\n`);
+    console.log(`=== Statistics for ${pa.fullName} ===\n`);
 
     printPublished(pa, padding);
     printOldest(pa.oldest, padding);
@@ -167,7 +218,7 @@ function printStatistics(pa: PackageAnalytics): void {
     printMostReferred(pa.mostReferred, padding);
     printMostDependencies(pa.mostDependencies, padding);
     printMostVersion(pa.mostVersions, padding, paddingLeft);
-    printLoops(pa.loops, padding, paddingLeft);
+    printLoops(pa, padding, paddingLeft);
     printLicenseInfo(pa.licensesByGroup, paddingLeft);
 }
 
@@ -178,6 +229,7 @@ function printNewest(newest: PackageAnalytics | undefined, padding: number): voi
                 newest.fullName
             } - ${newest.published.toUTCString()} ${daysAgo(newest.published)}`
         );
+        console.log(`${`Newest package path:`.padEnd(padding)}${newest.pathString}`);
     }
 }
 
@@ -188,6 +240,7 @@ function printOldest(oldest: PackageAnalytics | undefined, padding: number): voi
                 oldest.fullName
             } - ${oldest.published.toUTCString()} ${daysAgo(oldest.published)}`
         );
+        console.log(`${`Oldest package path:`.padEnd(padding)}${oldest.pathString}`);
     }
 }
 
@@ -213,12 +266,15 @@ function printDistinctDependencies(
     console.log(`${``.padStart(paddingLeft)}${byNameAndVersion}: distinct name and version`);
 }
 
-function printLoops(loops: PackageAnalytics[], padding: number, paddingLeft: number): void {
-    console.log(`${`Loops:`.padEnd(padding)}${loops.length}`);
+function printLoops(pa: PackageAnalytics, padding: number, paddingLeft: number): void {
+    const { loops, loopPathMap, distinctLoopCount } = pa;
 
-    if (loops.length > 0) {
+    console.log(`${`Loops:`.padEnd(padding)}${loops.length} (${distinctLoopCount} distinct)`);
+
+    if (distinctLoopCount > 0) {
         const [first] = loops.map(l => l.pathString).sort();
 
+        console.log(`    affected Packages: [${[...loopPathMap.keys()].join(", ")}]`);
         console.log(`    e.g. ${first}`);
 
         if (loops.length > 1)

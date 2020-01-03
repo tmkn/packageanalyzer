@@ -51,6 +51,31 @@ describe(`visitFromFolder Tests`, () => {
     test(`Check loops`, () => {
         expect(pa.loops.length).toBe(50);
     });
+
+    test(`Check loopPathMap`, () => {
+        const expected: string[] = [
+            "@webassemblyjs/ast",
+            "@webassemblyjs/wast-parser",
+            "@webassemblyjs/helper-module-context",
+            "@webassemblyjs/wast-printer"
+        ];
+
+        expect([...pa.loopPathMap.keys()].sort()).toEqual(expected.sort());
+    });
+
+    test(`Check distinct loop count`, () => {
+        expect(pa.distinctLoopCount).toBe(8);
+    });
+
+    test(`Check loopPathString`, () => {
+        const { loopPathMap } = pa;
+        const [pkgName] = [...pa.loopPathMap.keys()];
+        const [loopPath] = [...loopPathMap.get(pkgName)!].sort();
+        const expectedLoopPath =
+            "@webassemblyjs/ast@1.8.5 -> @webassemblyjs/helper-module-context@1.8.5 -> @webassemblyjs/ast@1.8.5";
+
+        expect(loopPath).toEqual(expectedLoopPath);
+    });
 });
 
 describe(`visitFromName Error Handling`, () => {
