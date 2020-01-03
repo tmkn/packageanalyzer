@@ -132,8 +132,8 @@ async function cliResolveFolder(folder: string | undefined): Promise<void> {
     }
 }
 
-async function cliLoops(pkgName: string | undefined): Promise<void> {
-    if (typeof pkgName === "undefined") {
+async function cliLoops(pkgString: string | undefined): Promise<void> {
+    if (typeof pkgString === "undefined") {
         console.log(`Missing package name\n`);
         showHelp();
 
@@ -141,7 +141,7 @@ async function cliLoops(pkgName: string | undefined): Promise<void> {
     }
 
     try {
-        const visitor = new Visitor(getNameAndVersion(pkgName), npmOnline, new OraLogger());
+        const visitor = new Visitor(getNameAndVersion(pkgString), npmOnline, new OraLogger());
         const pa = await visitor.visit();
         const loopPathMap = pa.loopPathMap;
         const distinctCount: number = [...loopPathMap].reduce((i, [, loops]) => i + loops.size, 0);
