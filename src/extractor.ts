@@ -32,7 +32,7 @@ export class Extractor {
             const fileName = `${pa.name}@${pa.version}.json`;
 
             console.log(`[${padding}/${max}] ${fileName}`);
-            fs.writeFileSync(target, data, "utf8");
+            fs.writeFileSync(path.join(target, fileName), data, "utf8");
         });
     }
 
@@ -81,6 +81,7 @@ export class Extractor {
                 await saveCallback(jsonData, pa, i, this._analytics.length);
             }
         } catch (e) {
+            console.log(e);
             throw new Error(`Couldn't save`);
         }
     }
