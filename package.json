@@ -1,6 +1,6 @@
 {
   "name": "@tmkn/packageanalyzer",
-  "version": "0.9.0-beta.1",
+  "version": "0.9.0-beta.3",
   "description": "A tool to analyze a Node.js project/package",
   "main": "./build/src/index.js",
   "types": "./build/src/index.d.ts",

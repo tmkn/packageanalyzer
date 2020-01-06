@@ -18,7 +18,7 @@ export class Extractor {
         inputFile: string,
         npmFile: string,
         target: string,
-        formatter: (pa: PackageAnalytics) => object
+        formatter: (pa: PackageAnalytics) => string
     ): Promise<void> {
         const extractor = new Extractor(inputFile, npmFile);
 
@@ -70,9 +70,9 @@ export class Extractor {
     }
 
     /* istanbul ignore next */
-    async save<T extends object = object>(
-        formatter: (pa: PackageAnalytics) => T,
-        saveCallback: (data: T, pa: PackageAnalytics, i: number, max: number) => Promise<void>
+    async save(
+        formatter: (pa: PackageAnalytics) => string,
+        saveCallback: (data: string, pa: PackageAnalytics, i: number, max: number) => Promise<void>
     ): Promise<void> {
         try {
             for (const [i, pa] of this._analytics.entries()) {
