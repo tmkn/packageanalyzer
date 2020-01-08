@@ -7,33 +7,62 @@ import { OraLogger } from "./logger";
 import { PackageAnalytics } from "./analyzers/package";
 import { Visitor } from "./visitors/visitor";
 
+type Formatter = <T extends object>(pa: PackageAnalytics) => T;
+type ExtractCallback = (
+    data: string,
+    pa: PackageAnalytics,
+    i: number,
+    max: number
+) => Promise<void>;
+
 //extract packages from dump file
 export class Extractor {
     private _provider: FlatFileProvider;
     private _versions: PackageVersion[] = [];
     private _analytics: PackageAnalytics[] = [];
+    private _resolvedVersions: Set<string> = new Set();
 
     /* istanbul ignore next */
     static async Extract(
         inputFile: string,
         npmFile: string,
-        target: string,
-        formatter: (pa: PackageAnalytics) => string
+        targetDir: string,
+        formatter: Formatter
     ): Promise<void> {
         const extractor = new Extractor(inputFile, npmFile);
 
         await extractor.extract();
+        if (!fs.existsSync(targetDir)) fs.mkdirSync(targetDir, { recursive: true });
+
         extractor.save(formatter, async (data, pa, i, max) => {
-            const exists = fs.existsSync(target);
             const padding = `${i + 1}`.padStart(max.toString().length);
+            const partialDir = Extractor.PackageNameToDir(pa.fullName);
+            const packageDir = path.join(targetDir, partialDir);
 
-            if (!exists) fs.mkdirSync(target, { recursive: true });
+            if (!fs.existsSync(packageDir)) fs.mkdirSync(packageDir, { recursive: true });
 
-            const fileName = `${pa.name}@${pa.version}.json`;
+            const filePath = path.join(packageDir, pa.fullName, `.json`);
 
-            console.log(`[${padding}/${max}] ${fileName}`);
-            fs.writeFileSync(path.join(target, fileName), data, "utf8");
+            if (fs.existsSync(filePath)) {
+                console.log(`[${padding}/${max}] ${filePath} - Skipped`);
+            } else {
+                console.log(`[${padding}/${max}] ${filePath}`);
+                fs.writeFileSync(filePath, data, "utf8");
+            }
         });
+
+        extractor.writeLookupFile(path.join(targetDir, `lookup.txt`));
+    }
+
+    //get the dir part from a pkg name to save it correctly
+    static PackageNameToDir(pkgName: string): string {
+        const [name] = getNameAndVersion(pkgName);
+
+        if (name.startsWith(`@`)) {
+            return name.split("/")[0];
+        }
+
+        return "";
     }
 
     constructor(private readonly _inputFile: string, private readonly _npmFile: string) {
@@ -64,21 +93,44 @@ export class Extractor {
             const pa: PackageAnalytics = await visitor.visit();
 
             this._analytics.push(pa);
+
+            this._resolvedVersions.add(pa.fullName);
         }
 
         return this._analytics;
     }
 
     /* istanbul ignore next */
-    async save(
-        formatter: (pa: PackageAnalytics) => string,
-        saveCallback: (data: string, pa: PackageAnalytics, i: number, max: number) => Promise<void>
-    ): Promise<void> {
-        try {
-            for (const [i, pa] of this._analytics.entries()) {
-                const jsonData = formatter(pa);
+    writeLookupFile(outDir: string): void {
+        const file = path.join(outDir, `lookup.txt`);
+        const fd = fs.openSync(file, "w");
 
-                await saveCallback(jsonData, pa, i, this._analytics.length);
+        console.log(`Writing lookup file...`);
+
+        for (const entry of this._resolvedVersions) {
+            fs.writeSync(fd, `${entry}\n`, null, "utf8");
+        }
+
+        fs.closeSync(fd);
+
+        console.log(`Generated lookup file at ${outDir}`);
+    }
+
+    /* istanbul ignore next */
+    async save(formatter: Formatter, saveCallback: ExtractCallback): Promise<void> {
+        try {
+            const allDependencyCount = [...this._analytics].reduce<number>(
+                (prev, pa) => (prev += pa.transitiveDependenciesCount),
+                0
+            );
+            let i = 0;
+
+            for (const pa of this._analytics) {
+                pa.visit(async _pa => {
+                    const jsonData = JSON.stringify(formatter(_pa));
+
+                    await saveCallback(jsonData, pa, i++, allDependencyCount);
+                }, true);
             }
         } catch (e) {
             console.log(e);

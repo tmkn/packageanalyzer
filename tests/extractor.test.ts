@@ -36,7 +36,38 @@ describe(`Extractor Tests`, () => {
             const extractor = new Extractor(wrongInputFile, file);
         } catch (e) {
             expect(e).toBeInstanceOf(Error);
-            console.log(e);
         }
+    });
+
+    test(`Get dir from package`, () => {
+        const input = `typescript`;
+        const inputResult: ReturnType<typeof Extractor.PackageNameToDir> = "";
+        const result = Extractor.PackageNameToDir(input);
+
+        expect(result).toEqual(inputResult);
+    });
+
+    test(`Get dir from package with version`, () => {
+        const input = `typescript@1.2.3`;
+        const inputResult: ReturnType<typeof Extractor.PackageNameToDir> = "";
+        const result = Extractor.PackageNameToDir(input);
+
+        expect(result).toEqual(inputResult);
+    });
+
+    test(`Get dir from local package`, () => {
+        const input = `@tmkn/packageanalyzer`;
+        const inputResult: ReturnType<typeof Extractor.PackageNameToDir> = "@tmkn";
+        const result = Extractor.PackageNameToDir(input);
+
+        expect(result).toEqual(inputResult);
+    });
+
+    test(`Get dir from local package with version`, () => {
+        const input = `@tmkn/packageanalyzer@1.2.3`;
+        const inputResult: ReturnType<typeof Extractor.PackageNameToDir> = "@tmkn";
+        const result = Extractor.PackageNameToDir(input);
+
+        expect(result).toEqual(inputResult);
     });
 });
