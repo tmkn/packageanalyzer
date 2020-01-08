@@ -41,7 +41,7 @@ export class Extractor {
 
             if (!fs.existsSync(packageDir)) fs.mkdirSync(packageDir, { recursive: true });
 
-            const filePath = path.join(packageDir, pa.fullName, `.json`);
+            const filePath = path.join(packageDir, `${pa.fullName}.json`);
 
             if (fs.existsSync(filePath)) {
                 console.log(`[${padding}/${max}] ${filePath} - Skipped`);
@@ -101,9 +101,8 @@ export class Extractor {
     }
 
     /* istanbul ignore next */
-    writeLookupFile(outDir: string): void {
-        const file = path.join(outDir, `lookup.txt`);
-        const fd = fs.openSync(file, "w");
+    writeLookupFile(lookupDestination: string): void {
+        const fd = fs.openSync(lookupDestination, "w");
 
         console.log(`Writing lookup file...`);
 
@@ -113,14 +112,14 @@ export class Extractor {
 
         fs.closeSync(fd);
 
-        console.log(`Generated lookup file at ${outDir}`);
+        console.log(`Generated lookup file at ${lookupDestination}`);
     }
 
     /* istanbul ignore next */
     async save(formatter: Formatter, saveCallback: ExtractCallback): Promise<void> {
         try {
             const allDependencyCount = [...this._analytics].reduce<number>(
-                (prev, pa) => (prev += pa.transitiveDependenciesCount),
+                (prev, pa) => (prev += pa.transitiveDependenciesCount + 1),
                 0
             );
             let i = 0;
@@ -129,7 +128,7 @@ export class Extractor {
                 pa.visit(async _pa => {
                     const jsonData = JSON.stringify(formatter(_pa));
 
-                    await saveCallback(jsonData, pa, i++, allDependencyCount);
+                    await saveCallback(jsonData, _pa, i++, allDependencyCount);
                 }, true);
             }
         } catch (e) {
