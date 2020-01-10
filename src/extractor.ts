@@ -7,7 +7,7 @@ import { OraLogger } from "./logger";
 import { PackageAnalytics } from "./analyzers/package";
 import { Visitor } from "./visitors/visitor";
 
-type Formatter = <T extends object>(pa: PackageAnalytics) => T;
+type Formatter = (pa: PackageAnalytics) => any;
 type ExtractCallback = (
     data: string,
     pa: PackageAnalytics,
@@ -37,16 +37,18 @@ export class Extractor {
             const padding = `${i + 1}`.padStart(max.toString().length);
             const partialDir = Extractor.PackageNameToDir(pa.fullName);
             const packageDir = path.join(targetDir, partialDir);
-            const filePath = path.join(packageDir, `${pa.fullName}.json`);
+            const fileName = partialDir.length > 0 ? `${pa.fullName}.json`.split(partialDir)[1] : `${pa.fullName}.json`;
+            const filePath = path.join(packageDir, fileName);
 
             if (!fs.existsSync(packageDir)) fs.mkdirSync(packageDir, { recursive: true });
 
-            if (fs.existsSync(filePath)) {
+            /*if (fs.existsSync(filePath)) {
                 console.log(`[${padding}/${max}] ${filePath} - Skipped`);
-            } else {
+            } else {*/
                 console.log(`[${padding}/${max}] ${filePath}`);
+                //console.log(filePath, pa.fullName);
                 fs.writeFileSync(filePath, data, "utf8");
-            }
+            //}
         });
 
         extractor.writeLookupFile(path.join(targetDir, `lookup.txt`));
