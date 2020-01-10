@@ -37,18 +37,16 @@ export class Extractor {
             const padding = `${i + 1}`.padStart(max.toString().length);
             const partialDir = Extractor.PackageNameToDir(pa.fullName);
             const packageDir = path.join(targetDir, partialDir);
-            const fileName = partialDir.length > 0 ? `${pa.fullName}.json`.split(partialDir)[1] : `${pa.fullName}.json`;
+            const fileName =
+                partialDir.length > 0
+                    ? `${pa.fullName}.json`.split(partialDir)[1]
+                    : `${pa.fullName}.json`;
             const filePath = path.join(packageDir, fileName);
 
             if (!fs.existsSync(packageDir)) fs.mkdirSync(packageDir, { recursive: true });
 
-            /*if (fs.existsSync(filePath)) {
-                console.log(`[${padding}/${max}] ${filePath} - Skipped`);
-            } else {*/
-                console.log(`[${padding}/${max}] ${filePath}`);
-                //console.log(filePath, pa.fullName);
-                fs.writeFileSync(filePath, data, "utf8");
-            //}
+            console.log(`[${padding}/${max}] ${filePath}`);
+            fs.writeFileSync(filePath, data, "utf8");
         });
 
         extractor.writeLookupFile(path.join(targetDir, `lookup.txt`));
@@ -92,12 +90,12 @@ export class Extractor {
             const visitor = new Visitor([name, version], this._provider, new OraLogger());
             const pa: PackageAnalytics = await visitor.visit();
 
-            if(!this._resolvedPackages.has(pa.fullName)) {
+            if (!this._resolvedPackages.has(pa.fullName)) {
                 this._resolvedPackages.set(pa.fullName, pa);
 
                 //add distinct dependencies
                 pa.visit(dep => {
-                    if(!this._resolvedPackages.has(dep.fullName))
+                    if (!this._resolvedPackages.has(dep.fullName))
                         this._resolvedPackages.set(dep.fullName, dep);
                 });
             }

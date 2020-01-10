@@ -12,7 +12,7 @@ describe(`Extractor Tests`, () => {
 
         try {
             const extractor = new Extractor(inputFile, file);
-            const [metarpheus, metaroute, metarhia] = await extractor.extract();
+            const [metarpheus, metaroute, metarhia] = (await extractor.extract()).values();
 
             expect(metarpheus.name).toEqual("metarpheus");
             expect(metarpheus.directDependencyCount).toEqual(0);
