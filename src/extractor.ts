@@ -19,8 +19,7 @@ type ExtractCallback = (
 export class Extractor {
     private _provider: FlatFileProvider;
     private _versions: PackageVersion[] = [];
-    private _analytics: PackageAnalytics[] = [];
-    private _resolvedVersions: Set<string> = new Set();
+    private _resolvedPackages: Map<string, PackageAnalytics> = new Map();
 
     /* istanbul ignore next */
     static async Extract(
@@ -38,10 +37,9 @@ export class Extractor {
             const padding = `${i + 1}`.padStart(max.toString().length);
             const partialDir = Extractor.PackageNameToDir(pa.fullName);
             const packageDir = path.join(targetDir, partialDir);
+            const filePath = path.join(packageDir, `${pa.fullName}.json`);
 
             if (!fs.existsSync(packageDir)) fs.mkdirSync(packageDir, { recursive: true });
-
-            const filePath = path.join(packageDir, `${pa.fullName}.json`);
 
             if (fs.existsSync(filePath)) {
                 console.log(`[${padding}/${max}] ${filePath} - Skipped`);
@@ -73,18 +71,18 @@ export class Extractor {
 
     private _parseInputFile(): void {
         const content = fs.readFileSync(this._inputFile, "utf8");
-        const modules: string[] = JSON.parse(content);
+        const packageNames: string[] = JSON.parse(content);
 
-        if (!Array.isArray(modules)) throw new Error(`input data is not an array!`);
+        if (!Array.isArray(packageNames)) throw new Error(`input data is not an array!`);
 
         this._versions = [];
-        for (const module of modules) {
-            this._versions.push(getNameAndVersion(module));
+        for (const name of packageNames) {
+            this._versions.push(getNameAndVersion(name));
         }
     }
 
-    async extract(): Promise<ReadonlyArray<PackageAnalytics>> {
-        this._analytics = [];
+    async extract(): Promise<ReadonlyMap<string, PackageAnalytics>> {
+        this._resolvedPackages = new Map();
 
         for (const [name, version] of this._versions) {
             console.log(`Fetching ${name}@${version ? version : `latest`}`);
@@ -92,12 +90,18 @@ export class Extractor {
             const visitor = new Visitor([name, version], this._provider, new OraLogger());
             const pa: PackageAnalytics = await visitor.visit();
 
-            this._analytics.push(pa);
+            if(!this._resolvedPackages.has(pa.fullName)) {
+                this._resolvedPackages.set(pa.fullName, pa);
 
-            this._resolvedVersions.add(pa.fullName);
+                //add distinct dependencies
+                pa.visit(dep => {
+                    if(!this._resolvedPackages.has(dep.fullName))
+                        this._resolvedPackages.set(dep.fullName, dep);
+                });
+            }
         }
 
-        return this._analytics;
+        return this._resolvedPackages;
     }
 
     /* istanbul ignore next */
@@ -106,7 +110,7 @@ export class Extractor {
 
         console.log(`Writing lookup file...`);
 
-        for (const entry of this._resolvedVersions) {
+        for (const entry of this._resolvedPackages.keys()) {
             fs.writeSync(fd, `${entry}\n`, null, "utf8");
         }
 
@@ -118,18 +122,12 @@ export class Extractor {
     /* istanbul ignore next */
     async save(formatter: Formatter, saveCallback: ExtractCallback): Promise<void> {
         try {
-            const allDependencyCount = [...this._analytics].reduce<number>(
-                (prev, pa) => (prev += pa.transitiveDependenciesCount + 1),
-                0
-            );
             let i = 0;
 
-            for (const pa of this._analytics) {
-                pa.visit(async _pa => {
-                    const jsonData = JSON.stringify(formatter(_pa));
+            for (const pa of this._resolvedPackages.values()) {
+                const jsonData = JSON.stringify(formatter(pa));
 
-                    await saveCallback(jsonData, _pa, i++, allDependencyCount);
-                }, true);
+                await saveCallback(jsonData, pa, i++, this._resolvedPackages.size);
             }
         } catch (e) {
             console.log(e);
