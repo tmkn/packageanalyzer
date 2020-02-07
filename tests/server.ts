@@ -5,6 +5,7 @@ import * as express from "express";
 
 import { INpmPackage, isUnpublished } from "../src/npm";
 
+/* istanbul ignore next */
 export class MockNpmServer {
     private _server: Server;
     private _dataPath = path.join("tests", "data", "mockserverdata");

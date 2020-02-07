@@ -44,6 +44,16 @@ describe(`Update Tests`, () => {
         }
     });
 
+    test(`Should throw on unknown package`, async () => {
+        expect.assertions(1);
+
+        try {
+            await updateCheck("doesntexist", "16.8.0", provider);
+        } catch (e) {
+            expect(e).toBeInstanceOf(Error);
+        }
+    });
+
     test(`Correctly creates bugfix version string`, () => {
         const baseVersion = `1.2.3`;
 

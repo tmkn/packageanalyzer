@@ -72,18 +72,14 @@ export async function updateCheck(
     version: string,
     provider: PackageProvider
 ): Promise<IReleaseInfo> {
-    try {
-        const pkgInfo = await getNpmPackage(name, provider);
-        const maxSatisfying = getMaxSatisfyingVersion(pkgInfo, version);
-        const releaseDate = getReleaseDate(pkgInfo, maxSatisfying);
+    const pkgInfo = await getNpmPackage(name, provider);
+    const maxSatisfying = getMaxSatisfyingVersion(pkgInfo, version);
+    const releaseDate = getReleaseDate(pkgInfo, maxSatisfying);
 
-        return {
-            version: maxSatisfying,
-            releaseDate: releaseDate
-        };
-    } catch (e) {
-        throw e; //todo remove try/catch
-    }
+    return {
+        version: maxSatisfying,
+        releaseDate: releaseDate
+    };
 }
 
 export async function updateInfo(
@@ -91,25 +87,21 @@ export async function updateInfo(
     version: string,
     provider: PackageProvider
 ): Promise<IUpdateResult> {
-    try {
-        const bugfixVersionString = getBugfixVersionString(version);
-        const minorVersionString = getMinorVersionString(version);
+    const bugfixVersionString = getBugfixVersionString(version);
+    const minorVersionString = getMinorVersionString(version);
 
-        const pkgInfo = await getNpmPackage(name, provider);
-        const semVerUpdate: IReleaseInfo = await updateCheck(name, version, provider);
-        const bugfixUpdate: IReleaseInfo = await updateCheck(name, bugfixVersionString, provider);
-        const minorUpdate: IReleaseInfo = await updateCheck(name, minorVersionString, provider);
-        const latestUpdate: IReleaseInfo = latestVersion(pkgInfo);
+    const pkgInfo = await getNpmPackage(name, provider);
+    const semVerUpdate: IReleaseInfo = await updateCheck(name, version, provider);
+    const bugfixUpdate: IReleaseInfo = await updateCheck(name, bugfixVersionString, provider);
+    const minorUpdate: IReleaseInfo = await updateCheck(name, minorVersionString, provider);
+    const latestUpdate: IReleaseInfo = latestVersion(pkgInfo);
 
-        return {
-            name,
-            version,
-            latestOverall: latestUpdate,
-            latestSemanticMatch: semVerUpdate,
-            latestBugfix: bugfixUpdate,
-            latestMinor: minorUpdate
-        };
-    } catch (e) {
-        throw e; //todo remove try/catch
-    }
+    return {
+        name,
+        version,
+        latestOverall: latestUpdate,
+        latestSemanticMatch: semVerUpdate,
+        latestBugfix: bugfixUpdate,
+        latestMinor: minorUpdate
+    };
 }
