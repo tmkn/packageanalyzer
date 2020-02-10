@@ -236,4 +236,8 @@ describe(`Checks Name and Version extraction`, () => {
     test(`Fails to parse, throws for package 2`, () => {
         expect(() => getNameAndVersion(`foo@2@ bla`)).toThrow();
     });
+
+    test(`Fails to parse, throws forr foo@`, () => {
+        expect(() => getNameAndVersion(`foo@`)).toThrow();
+    });
 });

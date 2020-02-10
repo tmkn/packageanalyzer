@@ -14,6 +14,7 @@ import { getPackageJson } from "./visitors/folder";
 import { OraLogger } from "./logger";
 import { FlatFileProvider } from "./providers/flatFile";
 import { createLookupFile } from "./lookup";
+import { updateInfo } from "./analyzers/update";
 
 let commandFound = false;
 
@@ -56,6 +57,11 @@ process.argv.forEach((arg, i) => {
 
         cliLoops(pkg);
         commandFound = true;
+    } else if (arg === "-u") {
+        const name = process.argv[i + 1];
+
+        cliUpdateInfo(name);
+        commandFound = true;
     }
 });
 
@@ -74,6 +80,11 @@ function showHelp(): void {
         `${`-o`.padEnd(10)} ${`Analyze a package, version optional, default latest`.padEnd(
             60
         )} e.g. "pa -o typescript(@3.5.1)"`
+    );
+    console.log(
+        `${`-u`.padEnd(10)} ${`Get update info for a package`.padEnd(
+            60
+        )} e.g. "pa -u typescript@3.5.1"`
     );
     console.log(
         `${`-f`.padEnd(10)} ${`Analyze a package from a npm dump`.padEnd(
@@ -244,7 +255,7 @@ function printOldest(oldest: PackageAnalytics | undefined, padding: number): voi
     }
 }
 
-function daysAgo(date: number | Date): string {
+function daysAgo(date: string | number | Date): string {
     return `(${dayjs(new Date()).diff(date, "day")} days ago)`;
 }
 
@@ -312,6 +323,45 @@ function printLicenseInfo(groupedLicenses: GroupedLicenseSummary, paddingLeft: n
                     threshold} more]`
             );
         else console.log(`${``.padStart(paddingLeft)}${license} - [${samples.join(", ")}]`);
+    }
+}
+
+async function cliUpdateInfo(token: string): Promise<void> {
+    try {
+        const [name, version] = getNameAndVersion(token);
+
+        if(typeof version === "undefined") {
+            console.log(`Version info is missing (${token})`);
+
+            return;
+        }
+
+        const data = await updateInfo(name, version, npmOnline);
+        const padding = 24;
+    
+        console.log(`========= Update Info for ${token} =========`);
+        console.log(
+            `Latest semantic match:`.padEnd(padding),
+            data.latestSemanticMatch.version,
+            daysAgo(data.latestSemanticMatch.releaseDate)
+        );
+        console.log(
+            `Latest bugfix:`.padEnd(padding),
+            data.latestBugfix.version,
+            daysAgo(data.latestBugfix.releaseDate)
+        );
+        console.log(
+            `Latest minor:`.padEnd(padding),
+            data.latestMinor.version,
+            daysAgo(data.latestMinor.releaseDate)
+        );
+        console.log(
+            `Latest version:`.padEnd(padding),
+            data.latestOverall.version,
+            daysAgo(data.latestOverall.releaseDate)
+        );
+    } catch (error) {
+        console.log(`Couldn't get update info for ${token}`);
     }
 }
 
