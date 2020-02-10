@@ -9,7 +9,7 @@ import { INpmPackage, isUnpublished } from "../src/npm";
 export class MockNpmServer {
     private _server: Server;
     private _dataPath = path.join("tests", "data", "mockserverdata");
-    private _cache: Map<string, INpmPackage> = new Map();
+    private _cache: Map<string, Readonly<INpmPackage>> = new Map();
 
     constructor(private readonly _port: number) {
         const app = express();
@@ -48,6 +48,17 @@ export class MockNpmServer {
                 };
 
                 res.json(data);
+            } else if (name === "missingdates") {
+                const data = this._cache.get("react");
+
+                if (typeof data === "undefined") res.status(404).send({ error: "Not found" });
+                else {
+                    const mock: INpmPackage = { ...data };
+
+                    mock.time = {};
+
+                    res.json(mock);
+                }
             } else {
                 const data = this._cache.get(name);
 

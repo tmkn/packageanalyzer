@@ -54,6 +54,26 @@ describe(`Update Tests`, () => {
         }
     });
 
+    test(`Should throw on unknown version`, async () => {
+        expect.assertions(1);
+
+        try {
+            await updateCheck("react", "169.8.0", provider);
+        } catch (e) {
+            expect(e).toBeInstanceOf(Error);
+        }
+    });
+
+    test(`Should throw on missing release data`, async () => {
+        expect.assertions(1);
+
+        try {
+            await updateCheck("missingdates", "16.8.0", provider);
+        } catch (e) {
+            expect(e).toBeInstanceOf(Error);
+        }
+    });
+
     test(`Correctly creates bugfix version string`, () => {
         const baseVersion = `1.2.3`;
 

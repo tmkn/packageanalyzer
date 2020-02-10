@@ -53,7 +53,8 @@ function getMaxSatisfyingVersion(pkgInfo: INpmPackage, version: string): string 
 function getReleaseDate(pkgInfo: INpmPackage, version: string): string {
     const releaseDate = pkgInfo.time[version];
 
-    if (typeof releaseDate === "undefined") throw new Error(`Couldn't find the releae date`);
+    if (typeof releaseDate === "undefined")
+        throw new Error(`Couldn't find a release date for ${pkgInfo.name}@${version}`);
 
     return releaseDate;
 }
