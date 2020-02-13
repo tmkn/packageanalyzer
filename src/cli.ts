@@ -330,7 +330,7 @@ async function cliUpdateInfo(token: string): Promise<void> {
     try {
         const [name, version] = getNameAndVersion(token);
 
-        if(typeof version === "undefined") {
+        if (typeof version === "undefined") {
             console.log(`Version info is missing (${token})`);
 
             return;
@@ -338,7 +338,7 @@ async function cliUpdateInfo(token: string): Promise<void> {
 
         const data = await updateInfo(name, version, npmOnline);
         const padding = 24;
-    
+
         console.log(`========= Update Info for ${token} =========`);
         console.log(
             `Latest semantic match:`.padEnd(padding),

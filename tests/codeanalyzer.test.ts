@@ -27,7 +27,7 @@ function isObject(val) {
 `;
 
 describe(`CodeAnalyzer Tests`, () => {
-    test(`Analzye example code 1`, () => {
+    test.skip(`Analzye example code 1`, () => {
         const test = CodeAnalyzer.FromString(example1);
 
         expect(test.statements).toBe(45);
@@ -35,11 +35,35 @@ describe(`CodeAnalyzer Tests`, () => {
         expect(test.imports).toBe(0);
     });
 
-    test(`Analzye example code 2`, () => {
+    test.skip(`Analzye example code 2`, () => {
         const test = CodeAnalyzer.FromString(example2);
 
         expect(test.statements).toBe(94);
         expect(test.exports).toBe(1);
         expect(test.imports).toBe(2);
     });
+});
+
+describe(`Import Statement Tests`, () => {
+    test(`import defaultExport from "module-name";`, () => {});
+
+    test(`import * as name from "module-name";`, () => {});
+
+    test(`import { export1 } from "module-name";`, () => {});
+
+    test(`import { export1 as alias1 } from "module-name";`, () => {});
+
+    test(`import { export1 , export2 } from "module-name";`, () => {});
+
+    test(`import { export1 , export2 as alias2 } from "module-name";`, () => {});
+
+    test(`import defaultExport, { export1 } from "module-name";`, () => {});
+
+    test(`import defaultExport, * as name from "module-name";`, () => {});
+
+    test(`import "module-name";`, () => {});
+
+    test(`var promise = import("module-name");`, () => {});
+
+    test(`let module = await import('/modules/my-module.js');`, () => {});
 });
