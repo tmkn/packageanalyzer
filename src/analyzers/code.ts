@@ -1,4 +1,6 @@
 import * as ts from "typescript";
+import { INpmPackageVersion } from "../npm";
+
 /* eslint-disable */
 //istanbul ignore next
 class InMemoryCompilerHost implements ts.CompilerHost {
@@ -45,7 +47,16 @@ class InMemoryCompilerHost implements ts.CompilerHost {
     readFile(fileName: string): string | undefined {
         return this.files.get(fileName);
     }
+    resolveModuleNames(moduleNames: string[], containingFile: string): ts.ResolvedModule[] {
+        console.log(13, moduleNames);
+
+        return moduleNames.map<ts.ResolvedModule>(n => ({
+            resolvedFileName: `${n}.js`,
+            isExternalLibraryImport: false
+        }));
+    }
 }
+
 /* eslint-enable */
 
 export class CodeAnalyzer {
@@ -55,6 +66,7 @@ export class CodeAnalyzer {
     private _exports = 0;
 
     get imports(): number {
+        //return getImports(this._sourceFile.getFullText()).size;
         return this._imports;
     }
 
@@ -98,10 +110,6 @@ export class CodeAnalyzer {
         walk(this._sourceFile);
     }
 
-    /*public static FromFile(filePath: string): CodeAnalyzer {
-        throw new Error(`Not Implemented`);
-    }*/
-
     public static FromString(src: string): CodeAnalyzer {
         return new CodeAnalyzer(src);
     }
@@ -113,4 +121,106 @@ export class CodeAnalyzer {
         console.log(`Imports:`, this._imports);
         console.log(`Exports:`, this._exports);
     }
+}
+
+interface ISingleCodeStatistic {
+    code: string;
+    imports: Set<string>;
+    permissions: Set<Permission>;
+}
+
+type CodeStatistics = Map<string, ISingleCodeStatistic>;
+
+function printPermissions(statistics: CodeStatistics): void {
+    const permissions: Set<Permission> = new Set(
+        ...[...statistics.values()].map(({ permissions }) => permissions)
+    );
+
+    for (const permission of permissions) {
+        console.log(getPermissionString(permission));
+    }
+}
+
+export function getImports(code: string): Set<string> {
+    const imports: Set<string> = new Set<string>();
+    const sourceFile = ts.createSourceFile(`_filename`, code, ts.ScriptTarget.ESNext, true);
+
+    function visit(node: ts.Node): void {
+        if (ts.isImportDeclaration(node)) {
+            for (const child of node.getChildren()) {
+                if (ts.isStringLiteral(child)) {
+                    imports.add(child.text);
+                }
+            }
+        } else if (ts.isCallExpression(node)) {
+            const [name, , syntaxList] = node.getChildren();
+
+            if (name.getText() === `import` || name.getText() === `require`) {
+                const [arg] = syntaxList.getChildren();
+
+                if (ts.isStringLiteral(arg)) {
+                    imports.add(arg.text);
+                }
+            }
+        }
+
+        ts.forEachChild(node, visit);
+    }
+
+    visit(sourceFile);
+
+    return imports;
+}
+
+function classifyImports(imports: Set<string>): Set<Permission> {
+    const permissions: Set<Permission> = new Set<Permission>();
+
+    for (const _import of imports) {
+        switch (_import) {
+            case "fs":
+                permissions.add(Permission.Filesystem);
+                break;
+            case "http":
+            case "http2":
+            case "https":
+            case "net":
+            case "tls":
+            case "dgram":
+                permissions.add(Permission.Network);
+                break;
+        }
+    }
+
+    return permissions;
+}
+
+function getPermissionString(permission: Permission): string {
+    let str: string = `Unknown permission ${permission.toString()}`;
+
+    switch (permission) {
+        case Permission.Filesystem:
+            str = `Filesystem Access`;
+            break;
+        case Permission.Network:
+            str = `Network Access`;
+            break;
+        default:
+            const unhandled: never = permission;
+    }
+
+    return str;
+}
+
+const enum Permission {
+    Filesystem,
+    Network
+}
+
+interface ICodeProviderResponse {
+    code: string;
+    context: INpmPackageVersion;
+}
+
+interface ICodeProvider {
+    resolve(path: string, context: INpmPackageVersion): Promise<ICodeProviderResponse>;
 }

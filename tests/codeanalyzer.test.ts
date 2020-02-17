@@ -1,4 +1,4 @@
-import { CodeAnalyzer } from "../src/analyzers/code";
+import { CodeAnalyzer, getImports } from "../src/analyzers/code";
 
 const example1 = `
 module.exports = typeof queueMicrotask === 'function'
@@ -27,7 +27,7 @@ function isObject(val) {
 `;
 
 describe(`CodeAnalyzer Tests`, () => {
-    test.skip(`Analzye example code 1`, () => {
+    test(`Analzye example code 1`, () => {
         const test = CodeAnalyzer.FromString(example1);
 
         expect(test.statements).toBe(45);
@@ -35,7 +35,7 @@ describe(`CodeAnalyzer Tests`, () => {
         expect(test.imports).toBe(0);
     });
 
-    test.skip(`Analzye example code 2`, () => {
+    test(`Analzye example code 2`, () => {
         const test = CodeAnalyzer.FromString(example2);
 
         expect(test.statements).toBe(94);
@@ -44,26 +44,100 @@ describe(`CodeAnalyzer Tests`, () => {
     });
 });
 
-describe(`Import Statement Tests`, () => {
-    test(`import defaultExport from "module-name";`, () => {});
+describe(`Find Import Statement Tests`, () => {
+    test(`import defaultExport from "module-name";`, () => {
+        const code = `import defaultExport from "module-name";`;
+        const imports = getImports(code);
 
-    test(`import * as name from "module-name";`, () => {});
+        expect(imports.has(`module-name`)).toEqual(true);
+        expect(imports.size).toEqual(1);
+    });
 
-    test(`import { export1 } from "module-name";`, () => {});
+    test(`import * as name from "module-name";`, () => {
+        const code = `import * as name from "module-name";`;
+        const imports = getImports(code);
 
-    test(`import { export1 as alias1 } from "module-name";`, () => {});
+        expect(imports.has(`module-name`)).toEqual(true);
+        expect(imports.size).toEqual(1);
+    });
 
-    test(`import { export1 , export2 } from "module-name";`, () => {});
+    test(`import { export1 } from "module-name";`, () => {
+        const code = `import { export1 } from "module-name";`;
+        const imports = getImports(code);
 
-    test(`import { export1 , export2 as alias2 } from "module-name";`, () => {});
+        expect(imports.has(`module-name`)).toEqual(true);
+        expect(imports.size).toEqual(1);
+    });
 
-    test(`import defaultExport, { export1 } from "module-name";`, () => {});
+    test(`import { export1 as alias1 } from "module-name";`, () => {
+        const code = `import { export1 as alias1 } from "module-name";`;
+        const imports = getImports(code);
 
-    test(`import defaultExport, * as name from "module-name";`, () => {});
+        expect(imports.has(`module-name`)).toEqual(true);
+        expect(imports.size).toEqual(1);
+    });
 
-    test(`import "module-name";`, () => {});
+    test(`import { export1 , export2 } from "module-name";`, () => {
+        const code = `import { export1 , export2 } from "module-name";`;
+        const imports = getImports(code);
 
-    test(`var promise = import("module-name");`, () => {});
+        expect(imports.has(`module-name`)).toEqual(true);
+        expect(imports.size).toEqual(1);
+    });
 
-    test(`let module = await import('/modules/my-module.js');`, () => {});
+    test(`import { export1 , export2 as alias2 } from "module-name";`, () => {
+        const code = `import { export1 , export2 as alias2 } from "module-name";`;
+        const imports = getImports(code);
+
+        expect(imports.has(`module-name`)).toEqual(true);
+        expect(imports.size).toEqual(1);
+    });
+
+    test(`import defaultExport, { export1 } from "module-name";`, () => {
+        const code = `import defaultExport, { export1 } from "module-name";`;
+        const imports = getImports(code);
+
+        expect(imports.has(`module-name`)).toEqual(true);
+        expect(imports.size).toEqual(1);
+    });
+
+    test(`import defaultExport, * as name from "module-name";`, () => {
+        const code = `import defaultExport, * as name from "module-name";`;
+        const imports = getImports(code);
+
+        expect(imports.has(`module-name`)).toEqual(true);
+        expect(imports.size).toEqual(1);
+    });
+
+    test(`import "module-name";`, () => {
+        const code = `import "module-name";`;
+        const imports = getImports(code);
+
+        expect(imports.has(`module-name`)).toEqual(true);
+        expect(imports.size).toEqual(1);
+    });
+
+    test(`var promise = import("module-name");`, () => {
+        const code = `var promise = import("module-name");`;
+        const imports = getImports(code);
+
+        expect(imports.has(`module-name`)).toEqual(true);
+        expect(imports.size).toEqual(1);
+    });
+
+    test(`let module = await import('/modules/my-module.js');`, () => {
+        const code = `let module = await import('/modules/my-module.js');`;
+        const imports = getImports(code);
+
+        expect(imports.has(`/modules/my-module.js`)).toEqual(true);
+        expect(imports.size).toEqual(1);
+    });
+
+    test(`const crypto = require('crypto');`, () => {
+        const code = `const crypto = require('crypto');`;
+        const imports = getImports(code);
+
+        expect(imports.has(`crypto`)).toEqual(true);
+        expect(imports.size).toEqual(1);
+    });
 });
