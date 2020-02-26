@@ -33,7 +33,7 @@ describe(`Extractor Tests`, () => {
         expect.assertions(1);
 
         try {
-            const extractor = new Extractor(wrongInputFile, file);
+            new Extractor(wrongInputFile, file);
         } catch (e) {
             expect(e).toBeInstanceOf(Error);
         }
