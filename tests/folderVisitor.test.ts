@@ -70,7 +70,7 @@ describe(`visitFromFolder Tests`, () => {
     test(`Check loopPathString`, () => {
         const { loopPathMap } = pa;
         const [pkgName] = [...pa.loopPathMap.keys()];
-        const [loopPath] = [...loopPathMap.get(pkgName)!].sort();
+        const [loopPath] = [...(loopPathMap.get(pkgName) ?? new Set())].sort();
         const expectedLoopPath =
             "@webassemblyjs/ast@1.8.5 -> @webassemblyjs/helper-module-context@1.8.5 -> @webassemblyjs/ast@1.8.5";
 

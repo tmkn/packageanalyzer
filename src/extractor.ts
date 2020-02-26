@@ -7,7 +7,7 @@ import { OraLogger } from "./logger";
 import { PackageAnalytics } from "./analyzers/package";
 import { Visitor } from "./visitors/visitor";
 
-type Formatter = (pa: PackageAnalytics) => any;
+type Formatter = (pa: PackageAnalytics) => object;
 type ExtractCallback = (
     data: string,
     pa: PackageAnalytics,
