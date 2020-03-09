@@ -10,13 +10,19 @@ export interface IPackageVersionProvider {
     size: number;
     getPackageByVersion: (name: string, version?: string) => Promise<INpmPackageVersion>;
     getPackagesByVersion: (modules: PackageVersion[]) => AsyncIterableIterator<INpmPackageVersion>;
+    //getOrigin(name: string, version: string): string;
     //getMainFile: (name: string, version: string) => Promise<string>;
+}
+
+interface ICacheData {
+    origin: string;
+    data: INpmPackageVersion;
 }
 
 //gathers packages from a node_modules folder
 export class FileSystemPackageProvider implements IPackageVersionProvider {
     private _paths: Set<string> = new Set();
-    private readonly _cache: Map<string, Map<string, INpmPackageVersion>> = new Map();
+    private readonly _cache: Map<string, Map<string, ICacheData>> = new Map();
 
     constructor(_folder: string) {
         const matches = this._findPackageJson(_folder);
@@ -57,7 +63,7 @@ export class FileSystemPackageProvider implements IPackageVersionProvider {
                 const content = fs.readFileSync(pkgPath, "utf8");
                 const pkg: INpmPackageVersion = JSON.parse(content);
 
-                this.addPackage(pkg);
+                this.addPackage(pkgPath, pkg);
             } catch (e) {
                 failedPaths.push(pkgPath);
 
@@ -80,17 +86,33 @@ export class FileSystemPackageProvider implements IPackageVersionProvider {
         return size;
     }
 
-    addPackage(pkg: INpmPackageVersion): void {
-        const { name, version } = pkg;
+    getOrigin(name: string, version: string): string {
         const versions = this._cache.get(name);
 
+        if (typeof versions === "undefined") throw new Error(`No versions found for ${name}`);
+
+        const data = versions.get(version);
+
+        if (typeof data === "undefined") throw new Error(`No data found for ${name}@${version}`);
+
+        return data.origin;
+    }
+
+    addPackage(origin: string, pkg: INpmPackageVersion): void {
+        const { name, version } = pkg;
+        const versions = this._cache.get(name);
+        const data: ICacheData = {
+            data: pkg,
+            origin
+        };
+
         if (typeof versions === "undefined") {
-            this._cache.set(name, new Map([[version, pkg]]));
+            this._cache.set(name, new Map([[version, data]]));
         } else {
             const specificVersion = versions.get(version);
 
             if (typeof specificVersion === "undefined") {
-                versions.set(version, pkg);
+                versions.set(version, data);
             }
         }
     }
@@ -123,7 +145,7 @@ export class FileSystemPackageProvider implements IPackageVersionProvider {
             if (typeof specificVersion === "undefined")
                 throw new Error(`Error extracting latest package ${name}@${version}`);
 
-            pkg = specificVersion;
+            pkg = specificVersion.data;
         } else {
             const availableVersions: string[] = [...versions.keys()];
             const resolvedVersion = semver.maxSatisfying(availableVersions, version);
@@ -137,7 +159,7 @@ export class FileSystemPackageProvider implements IPackageVersionProvider {
             if (typeof specificVersion === "undefined")
                 throw new Error(`Couldn't find package ${name}@${version}`);
 
-            pkg = specificVersion;
+            pkg = specificVersion.data;
         }
 
         return pkg;

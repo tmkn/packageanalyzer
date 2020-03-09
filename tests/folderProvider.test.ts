@@ -121,4 +121,34 @@ describe(`NodeModulesProvider Tests`, () => {
             expect(e).toBeInstanceOf(Error);
         }
     });
+
+    test(`Get origin for react`, () => {
+        expect.assertions(0);
+
+        const origin = provider.getOrigin(`react`, `16.8.6`);
+
+        console.log(origin);
+    });
+
+    test(`Origin throws on missing package`, () => {
+        expect.assertions(1);
+
+        try {
+            provider.getOrigin(`react2`, `16.8.6`);
+
+        } catch (e) {
+            expect(e).toBeInstanceOf(Error);
+        }
+    });
+
+    test(`Origin throws on missing version`, () => {
+        expect.assertions(1);
+
+        try {
+            provider.getOrigin(`react`, `1337`);
+
+        } catch (e) {
+            expect(e).toBeInstanceOf(Error);
+        }
+    });
 });

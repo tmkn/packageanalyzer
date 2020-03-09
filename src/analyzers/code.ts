@@ -1,5 +1,6 @@
 import * as ts from "typescript";
 import { INpmPackageVersion } from "../npm";
+import { FileSystemPackageProvider } from "../providers/folder";
 
 /* eslint-disable */
 //istanbul ignore next
@@ -123,13 +124,13 @@ export class CodeAnalyzer {
     }
 }
 
-interface ISingleCodeStatistic {
+interface ICodeStatistic {
     code: string;
     imports: Set<string>;
     permissions: Set<Permission>;
 }
 
-type CodeStatistics = Map<string, ISingleCodeStatistic>;
+type CodeStatistics = Map<string, ICodeStatistic>;
 
 function printPermissions(statistics: CodeStatistics): void {
     const permissions: Set<Permission> = new Set(
@@ -216,11 +217,6 @@ const enum Permission {
     Network
 }
 
-interface ICodeProviderResponse {
-    code: string;
-    context: INpmPackageVersion;
-}
-
-interface ICodeProvider {
-    resolve(path: string, context: INpmPackageVersion): Promise<ICodeProviderResponse>;
+function analyzePermissions(sourceCode: string, provider: FileSystemPackageProvider): void {
+    const result = CodeAnalyzer.FromString(sourceCode);
 }

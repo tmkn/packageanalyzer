@@ -6,6 +6,7 @@ import { IPackageVersionProvider } from "./folder";
 import { INpmPackageVersion, PackageVersion, INpmPackage, INpmDumpRow } from "../npm";
 import * as semver from "semver";
 
+//todo remove
 //load data from a folder where the filename is the sha1 hash of the package name
 export class FlatFolderProvider implements IPackageVersionProvider {
     get size(): number {

@@ -25,6 +25,10 @@ export class FlatFileProvider extends PackageProvider implements IPackageVersion
     private _initialized = false;
     private _logger = new OraLogger();
 
+    get origin(): string {
+        return this._file;
+    }
+
     public static getLookupFile(npmFile: string): string {
         try {
             const baseName = path.basename(npmFile, path.extname(npmFile));
