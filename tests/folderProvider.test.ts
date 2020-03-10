@@ -135,7 +135,6 @@ describe(`NodeModulesProvider Tests`, () => {
 
         try {
             provider.getOrigin(`react2`, `16.8.6`);
-
         } catch (e) {
             expect(e).toBeInstanceOf(Error);
         }
@@ -146,7 +145,6 @@ describe(`NodeModulesProvider Tests`, () => {
 
         try {
             provider.getOrigin(`react`, `1337`);
-
         } catch (e) {
             expect(e).toBeInstanceOf(Error);
         }

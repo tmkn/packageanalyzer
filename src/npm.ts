@@ -12,6 +12,7 @@ export interface INpmPackageVersion {
     license?: unknown;
     licenses?: INpmRepository[]; //legacy
     maintainers: INpmUser[];
+    main?: string;
     name: string;
     readme: string;
     readmeFilename: string;

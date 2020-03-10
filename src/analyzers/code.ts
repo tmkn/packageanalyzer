@@ -1,4 +1,8 @@
+import * as path from "path";
+import * as fs from "fs";
+
 import * as ts from "typescript";
+
 import { INpmPackageVersion } from "../npm";
 import { FileSystemPackageProvider } from "../providers/folder";
 
@@ -65,10 +69,16 @@ export class CodeAnalyzer {
     private _statements = 0;
     private _imports = 0;
     private _exports = 0;
+    private _importFiles: Set<string> = new Set();
 
     get imports(): number {
         //return getImports(this._sourceFile.getFullText()).size;
         return this._imports;
+    }
+
+    //todo refactor with imports()
+    get importFiles(): ReadonlyArray<string> {
+        return [...this._importFiles];
     }
 
     get exports(): number {
@@ -98,10 +108,12 @@ export class CodeAnalyzer {
             }
 
             if (node.kind === ts.SyntaxKind.CallExpression) {
-                const [first] = node.getChildren();
+                const [first, , syntaxList] = node.getChildren();
 
                 if (first.getText() === `require`) {
                     this._imports++;
+
+                    this._importFiles.add(syntaxList.getText().slice(1, -1));
                 }
             }
 
@@ -217,6 +229,176 @@ const enum Permission {
     Network
 }
 
-function analyzePermissions(sourceCode: string, provider: FileSystemPackageProvider): void {
-    const result = CodeAnalyzer.FromString(sourceCode);
+export async function analyzePermissions(
+    folder: string,
+    provider: FileSystemPackageProvider
+): Promise<string[]> {
+    try {
+        let files: string[] = [];
+
+        const packagePath = getPackageJsonPath(folder);
+        const packageJson = getPackageJson(packagePath);
+        const { code, origin } = getMainFile(packagePath);
+        const result = CodeAnalyzer.FromString(code);
+
+        files.push(origin);
+
+        for (const module of result.importFiles) {
+            if (!isNativeModule(module)) {
+                const [baseName, ...relative] = module.split("/");
+
+                const version = packageJson.dependencies
+                    ? packageJson.dependencies[baseName]
+                    : undefined;
+
+                if (typeof version == "undefined") {
+                    const filePath = path.join(folder, module);
+
+                    files.push(
+                        ...(await analyzeLocalFile(folder, filePath, packageJson, provider))
+                    );
+                } else {
+                    const pkg = await provider.getPackageByVersion(baseName, version);
+                    const origin = provider.getOrigin(pkg.name, pkg.version);
+
+                    if (relative.length > 0) {
+                        const filePath = path.join(
+                            path.dirname(origin),
+                            ...relative.slice(0, -1),
+                            `${relative[relative.length - 1]}.js`
+                        );
+
+                        files.push(
+                            ...(await analyzeLocalFile(
+                                path.dirname(origin),
+                                filePath,
+                                pkg,
+                                provider
+                            ))
+                        );
+                    } else {
+                        files.push(...(await analyzePermissions(path.dirname(origin), provider)));
+                    }
+                }
+            }
+        }
+
+        return files;
+    } catch (e) {
+        console.log(e);
+
+        return [];
+    }
+}
+
+async function analyzeLocalFile(
+    folder: string,
+    filePath: string,
+    packageJson: INpmPackageVersion,
+    provider: FileSystemPackageProvider
+): Promise<string[]> {
+    try {
+        let files: string[] = [];
+        const code = fs.readFileSync(filePath, "utf8");
+        const result = CodeAnalyzer.FromString(code);
+
+        files.push(filePath);
+        for (const module of result.importFiles) {
+            if (!isNativeModule(module)) {
+                const [baseName, ...relative] = module.split("/");
+
+                const version = packageJson.dependencies
+                    ? packageJson.dependencies[baseName]
+                    : undefined;
+
+                if (typeof version == "undefined") {
+                    const filePath = path.join(folder, `${module}.js`);
+
+                    files.push(
+                        ...(await analyzeLocalFile(folder, filePath, packageJson, provider))
+                    );
+                } else {
+                    const pkg = await provider.getPackageByVersion(baseName, version);
+                    const origin = provider.getOrigin(pkg.name, pkg.version);
+
+                    if (relative.length > 0) {
+                        const filePath = path.join(
+                            path.dirname(origin),
+                            ...relative.slice(0, -1),
+                            `${relative[relative.length - 1]}.js`
+                        );
+
+                        files.push(
+                            ...(await analyzeLocalFile(
+                                path.dirname(origin),
+                                filePath,
+                                pkg,
+                                provider
+                            ))
+                        );
+                    } else {
+                        files.push(...(await analyzePermissions(path.dirname(origin), provider)));
+                    }
+                }
+            }
+        }
+
+        return files;
+    } catch (e) {
+        console.log(e);
+
+        return [];
+    }
+}
+
+interface IMainFile {
+    code: string;
+    origin: string;
+}
+function getMainFile(packagePath: string): IMainFile {
+    const pkgJson: INpmPackageVersion = JSON.parse(fs.readFileSync(packagePath, "utf8"));
+
+    if (typeof pkgJson.main === "undefined") {
+        try {
+            //try index.js fallback
+            const indexJsPath = path.join(path.dirname(packagePath), `index.js`);
+
+            return {
+                code: fs.readFileSync(indexJsPath, "utf8"),
+                origin: indexJsPath
+            };
+        } catch (e) {
+            throw new Error(`Couldn't find main entry at ${packagePath}`);
+        }
+    } else {
+        const mainPath = path.join(path.dirname(packagePath), pkgJson.main);
+
+        return {
+            code: fs.readFileSync(mainPath, "utf8"),
+            origin: mainPath
+        };
+    }
+}
+
+function getPackageJsonPath(folder: string): string {
+    const packagePath = path.join(folder, `package.json`);
+
+    if (!fs.existsSync(packagePath))
+        throw new Error(`Couldn't find package.json at "${packagePath}"`);
+
+    return packagePath;
+}
+
+function getPackageJson(packagePath: string): INpmPackageVersion {
+    return JSON.parse(fs.readFileSync(packagePath, "utf8"));
+}
+
+export function isNativeModule(modulePath: string): boolean {
+    try {
+        const result = require.resolve(modulePath);
+
+        return result.endsWith(`.js`) ? false : true;
+    } catch {
+        return false;
+    }
 }

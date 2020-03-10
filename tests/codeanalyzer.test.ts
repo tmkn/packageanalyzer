@@ -1,4 +1,12 @@
-import { CodeAnalyzer, getImports } from "../src/analyzers/code";
+import * as path from "path";
+
+import {
+    CodeAnalyzer,
+    getImports,
+    isNativeModule,
+    analyzePermissions
+} from "../src/analyzers/code";
+import { FileSystemPackageProvider } from "../src/providers/folder";
 
 const example1 = `
 module.exports = typeof queueMicrotask === 'function'
@@ -139,5 +147,36 @@ describe(`Find Import Statement Tests`, () => {
 
         expect(imports.has(`crypto`)).toEqual(true);
         expect(imports.size).toEqual(1);
+    });
+});
+
+describe(`isNativeModule Tests`, () => {
+    test(`finds native modules`, () => {
+        expect(isNativeModule("fs")).toEqual(true);
+        expect(isNativeModule("path")).toEqual(true);
+    });
+
+    test(`returns false for missing modules`, () => {
+        expect(isNativeModule("./foo")).toEqual(false);
+    });
+
+    test(`returns false non native modules`, () => {
+        expect(isNativeModule("typescript")).toEqual(false);
+    });
+});
+
+describe(`Permission Analyzer Tests`, () => {
+    //const destination = path.join("tests", "data", "testproject1", "node_modules");
+    const destination = `/home/tom/Downloads/node_modules`;
+    let provider: FileSystemPackageProvider;
+
+    beforeAll(() => {
+        provider = new FileSystemPackageProvider(destination);
+    });
+
+    test.only(`simple`, async () => {
+        const result = await analyzePermissions(path.join(destination, "jest"), provider);
+
+        console.log(result);
     });
 });
