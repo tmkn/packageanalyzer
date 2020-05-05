@@ -369,6 +369,34 @@ export class PackageAnalytics implements IPackageStatistics {
         return loops;
     }
 
+    //returns the loop path e.g. c->d->c instead of the whole path a->b->c->d->c
+    get loopPathString(): string {
+        const split = this.pathString.indexOf(this.fullName);
+
+        return this.pathString.slice(split);
+    }
+
+    get loopPathMap(): ReadonlyMap<string, Set<string>> {
+        const map: Map<string, Set<string>> = new Map();
+        const loops = this.loops;
+
+        for (const loop of loops) {
+            const entry = map.get(loop.name);
+
+            if (entry) {
+                entry.add(loop.loopPathString);
+            } else {
+                map.set(loop.name, new Set([loop.loopPathString]));
+            }
+        }
+
+        return map;
+    }
+
+    get distinctLoopCount(): number {
+        return [...this.loopPathMap].reduce((i, [, loops]) => i + loops.size, 0);
+    }
+
     get distinctByNameCount(): number {
         const packageNames: Set<string> = new Set();
 

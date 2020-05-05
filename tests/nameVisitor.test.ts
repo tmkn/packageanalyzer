@@ -2,18 +2,18 @@ import * as path from "path";
 
 import { FileSystemPackageProvider } from "../src/providers/folder";
 import { PackageAnalytics } from "../src/analyzers/package";
-import { Resolver } from "../src/resolvers/resolver";
+import { Visitor } from "../src/visitors/visitor";
 import { OraLogger } from "../src/logger";
 
-describe(`resolveFromFolder Tests`, () => {
+describe(`visitFromFolder Tests`, () => {
     let pa: PackageAnalytics;
 
     beforeAll(async () => {
         const destination = path.join("tests", "data", "testproject2", "node_modules");
         const provider: FileSystemPackageProvider = new FileSystemPackageProvider(destination);
 
-        const resolver = new Resolver(["webpack"], provider, new OraLogger());
-        pa = await resolver.resolve();
+        const visitor = new Visitor(["webpack"], provider, new OraLogger());
+        pa = await visitor.visit();
     });
 
     test(`Checks name`, () => {

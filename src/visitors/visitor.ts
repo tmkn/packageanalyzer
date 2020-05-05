@@ -4,28 +4,33 @@ import { INpmKeyValue, INpmPackageVersion, PackageVersion } from "../npm";
 import { ILogger } from "../logger";
 import { PackageProvider } from "../providers/online";
 
-interface IResolverConstructor {
+interface IVisitorConstructor {
     new (
         entry: PackageVersion,
         provider: IPackageVersionProvider,
         logger: ILogger
-    ): IPackageResolver;
+    ): IPackageVisitor;
 }
 
-interface IPackageResolver {
-    resolve: () => Promise<PackageAnalytics>;
+interface IPackageVisitor {
+    visit: (depType?: DependencyProperties) => Promise<PackageAnalytics>;
 }
 
-export const Resolver: IResolverConstructor = class Resolver implements IPackageResolver {
+type DependencyProperties<T = Required<INpmPackageVersion>> = {
+    [K in keyof T]: T[K] extends INpmKeyValue ? K : never;
+}[keyof T];
+
+export const Visitor: IVisitorConstructor = class Visitor implements IPackageVisitor {
     private _depthStack: string[] = [];
+    private _depType: DependencyProperties = "dependencies";
 
     constructor(
         private readonly _entry: PackageVersion,
-        private _provider: IPackageVersionProvider,
-        private _logger: ILogger
+        private readonly _provider: IPackageVersionProvider,
+        private readonly _logger: ILogger
     ) {}
 
-    async resolve(): Promise<PackageAnalytics> {
+    async visit(depType = this._depType): Promise<PackageAnalytics> {
         try {
             const [name, version] = this._entry;
             const rootPkg = await this._provider.getPackageByVersion(name, version);
@@ -33,11 +38,12 @@ export const Resolver: IResolverConstructor = class Resolver implements IPackage
 
             this._logger.start();
             this._logger.log("Fetching");
+            this._depType = depType;
 
             await addPublished(root, this._provider);
 
             try {
-                await this.walkDependencies(root, rootPkg.dependencies);
+                await this.visitDependencies(root, rootPkg[depType]);
             } catch (e) {
                 this._logger.error("Error evaluating dependencies");
 
@@ -54,17 +60,17 @@ export const Resolver: IResolverConstructor = class Resolver implements IPackage
         }
     }
 
-    private async walkDependencies(
+    private async visitDependencies(
         parent: PackageAnalytics,
         dependencies: INpmKeyValue | undefined
     ): Promise<void> {
         try {
-            const dependencyList = typeof dependencies !== "undefined" ? dependencies : {};
-            const libs = Object.entries(dependencyList);
+            const dependencyField = typeof dependencies !== "undefined" ? dependencies : {};
+            const dependencyArray = Object.entries(dependencyField);
             const packages: INpmPackageVersion[] = [];
 
-            for await (const subPackages of this._provider.getPackagesByVersion(libs)) {
-                packages.push(subPackages);
+            for await (const dependencies of this._provider.getPackagesByVersion(dependencyArray)) {
+                packages.push(dependencies);
             }
 
             for (const p of packages) {
@@ -79,7 +85,7 @@ export const Resolver: IResolverConstructor = class Resolver implements IPackage
                 } else {
                     this._depthStack.push(dependency.fullName);
 
-                    await this.walkDependencies(dependency, p.dependencies);
+                    await this.visitDependencies(dependency, p[this._depType]);
                 }
             }
             this._depthStack.pop();

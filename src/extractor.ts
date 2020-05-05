@@ -5,35 +5,62 @@ import { FlatFileProvider } from "./providers/flatFile";
 import { PackageVersion, getNameAndVersion } from "./npm";
 import { OraLogger } from "./logger";
 import { PackageAnalytics } from "./analyzers/package";
-import { Resolver } from "./resolvers/resolver";
+import { Visitor } from "./visitors/visitor";
+
+type Formatter = (pa: PackageAnalytics) => object;
+type ExtractCallback = (
+    data: string,
+    pa: PackageAnalytics,
+    i: number,
+    max: number
+) => Promise<void>;
 
 //extract packages from dump file
 export class Extractor {
     private _provider: FlatFileProvider;
     private _versions: PackageVersion[] = [];
-    private _analytics: PackageAnalytics[] = [];
+    private _resolvedPackages: Map<string, PackageAnalytics> = new Map();
 
     /* istanbul ignore next */
     static async Extract(
         inputFile: string,
         npmFile: string,
-        target: string,
-        formatter: (pa: PackageAnalytics) => object
+        targetDir: string,
+        formatter: Formatter
     ): Promise<void> {
         const extractor = new Extractor(inputFile, npmFile);
 
         await extractor.extract();
+        if (!fs.existsSync(targetDir)) fs.mkdirSync(targetDir, { recursive: true });
+
         extractor.save(formatter, async (data, pa, i, max) => {
-            const exists = fs.existsSync(target);
             const padding = `${i + 1}`.padStart(max.toString().length);
+            const partialDir = Extractor.PackageNameToDir(pa.fullName);
+            const packageDir = path.join(targetDir, partialDir);
+            const fileName =
+                partialDir.length > 0
+                    ? `${pa.fullName}.json`.split(partialDir)[1]
+                    : `${pa.fullName}.json`;
+            const filePath = path.join(packageDir, fileName);
 
-            if (!exists) fs.mkdirSync(target, { recursive: true });
+            if (!fs.existsSync(packageDir)) fs.mkdirSync(packageDir, { recursive: true });
 
-            const fileName = `${pa.name}@${pa.version}.json`;
-
-            console.log(`[${padding}/${max}] ${fileName}`);
-            fs.writeFileSync(target, data, "utf8");
+            console.log(`[${padding}/${max}] ${filePath}`);
+            fs.writeFileSync(filePath, data, "utf8");
         });
+
+        extractor.writeLookupFile(path.join(targetDir, `lookup.txt`));
+    }
+
+    //get the dir part from a pkg name to save it correctly
+    static PackageNameToDir(pkgName: string): string {
+        const [name] = getNameAndVersion(pkgName);
+
+        if (name.startsWith(`@`)) {
+            return name.split("/")[0];
+        }
+
+        return "";
     }
 
     constructor(private readonly _inputFile: string, private readonly _npmFile: string) {
@@ -44,43 +71,66 @@ export class Extractor {
 
     private _parseInputFile(): void {
         const content = fs.readFileSync(this._inputFile, "utf8");
-        const modules: string[] = JSON.parse(content);
+        const packageNames: string[] = JSON.parse(content);
 
-        if (!Array.isArray(modules)) throw new Error(`input data is not an array!`);
+        if (!Array.isArray(packageNames)) throw new Error(`input data is not an array!`);
 
         this._versions = [];
-        for (const module of modules) {
-            this._versions.push(getNameAndVersion(module));
+        for (const name of packageNames) {
+            this._versions.push(getNameAndVersion(name));
         }
     }
 
-    async extract(): Promise<ReadonlyArray<PackageAnalytics>> {
-        this._analytics = [];
+    async extract(): Promise<ReadonlyMap<string, PackageAnalytics>> {
+        this._resolvedPackages = new Map();
 
         for (const [name, version] of this._versions) {
             console.log(`Fetching ${name}@${version ? version : `latest`}`);
 
-            const resolver = new Resolver([name, version], this._provider, new OraLogger());
-            const pa: PackageAnalytics = await resolver.resolve();
+            const visitor = new Visitor([name, version], this._provider, new OraLogger());
+            const pa: PackageAnalytics = await visitor.visit();
 
-            this._analytics.push(pa);
+            if (!this._resolvedPackages.has(pa.fullName)) {
+                this._resolvedPackages.set(pa.fullName, pa);
+
+                //add distinct dependencies
+                pa.visit(dep => {
+                    if (!this._resolvedPackages.has(dep.fullName))
+                        this._resolvedPackages.set(dep.fullName, dep);
+                });
+            }
         }
 
-        return this._analytics;
+        return this._resolvedPackages;
     }
 
     /* istanbul ignore next */
-    async save<T extends object = object>(
-        formatter: (pa: PackageAnalytics) => T,
-        saveCallback: (data: T, pa: PackageAnalytics, i: number, max: number) => Promise<void>
-    ): Promise<void> {
-        try {
-            for (const [i, pa] of this._analytics.entries()) {
-                const jsonData = formatter(pa);
+    writeLookupFile(lookupDestination: string): void {
+        const fd = fs.openSync(lookupDestination, "w");
 
-                await saveCallback(jsonData, pa, i, this._analytics.length);
+        console.log(`Writing lookup file...`);
+
+        for (const entry of this._resolvedPackages.keys()) {
+            fs.writeSync(fd, `${entry}\n`, null, "utf8");
+        }
+
+        fs.closeSync(fd);
+
+        console.log(`Generated lookup file at ${lookupDestination}`);
+    }
+
+    /* istanbul ignore next */
+    async save(formatter: Formatter, saveCallback: ExtractCallback): Promise<void> {
+        try {
+            let i = 0;
+
+            for (const pa of this._resolvedPackages.values()) {
+                const jsonData = JSON.stringify(formatter(pa));
+
+                await saveCallback(jsonData, pa, i++, this._resolvedPackages.size);
             }
         } catch (e) {
+            console.log(e);
             throw new Error(`Couldn't save`);
         }
     }

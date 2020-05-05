@@ -1,21 +1,21 @@
 import * as path from "path";
 
 import { PackageAnalytics } from "../src/analyzers/package";
-import { getPackageJson } from "../src/resolvers/folder";
+import { getPackageJson } from "../src/visitors/folder";
 import { IPackageVersionProvider, FileSystemPackageProvider } from "../src/providers/folder";
 import { INpmPackageVersion } from "../src/npm";
-import { Resolver } from "../src/resolvers/resolver";
+import { Visitor } from "../src/visitors/visitor";
 import { OraLogger } from "../src/logger";
 
-describe(`resolveFromFolder Tests`, () => {
+describe(`visitFromFolder Tests`, () => {
     let pa: PackageAnalytics;
 
     beforeAll(async () => {
         const rootPath = path.join("tests", "data", "testproject2");
         const provider = new FileSystemPackageProvider(rootPath);
-        const resolver = new Resolver(getPackageJson(rootPath), provider, new OraLogger());
+        const visitor = new Visitor(getPackageJson(rootPath), provider, new OraLogger());
 
-        pa = await resolver.resolve();
+        pa = await visitor.visit();
     });
 
     test(`Checks name`, () => {
@@ -40,9 +40,9 @@ describe(`resolveFromFolder Tests`, () => {
         try {
             const rootPath = `folderdoesntexist`;
             const provider = new FileSystemPackageProvider(rootPath);
-            const resolver = new Resolver(getPackageJson(rootPath), provider, new OraLogger());
+            const visitor = new Visitor(getPackageJson(rootPath), provider, new OraLogger());
 
-            await resolver.resolve();
+            await visitor.visit();
         } catch (e) {
             expect(e).toBeInstanceOf(Error);
         }
@@ -52,24 +52,44 @@ describe(`resolveFromFolder Tests`, () => {
         expect(pa.loops.length).toBe(50);
     });
 
-    it(`Check direct dependecies`, async () => {
-        const rootPath = path.join("tests", "data", "testproject1");
-        const provider = new FileSystemPackageProvider(rootPath);
-        const resolver = new Resolver(fromFolder(rootPath), provider, new OraLogger());
-
-        pa = await resolver.resolve();
+    test(`Check direct dependecies`, async () => {
         const dependencies = pa.directDependencies;
 
-        assert.equal(dependencies.length, 1);
-        assert.equal(dependencies[0].fullName, `react@16.8.6`);
+        expect(dependencies.length).toEqual(1);
+        expect(dependencies[0].fullName).toEqual(`webpack@4.35.2`);
 
-        const reactDependencies = dependencies[0].directDependencies;
+        const webpackDependencies = dependencies[0].directDependencies;
 
-        assert.equal(reactDependencies.length, 4);
+        expect(webpackDependencies.length).toEqual(24);
+    });
+
+    test(`Check loopPathMap`, () => {
+        const expected: string[] = [
+            "@webassemblyjs/ast",
+            "@webassemblyjs/wast-parser",
+            "@webassemblyjs/helper-module-context",
+            "@webassemblyjs/wast-printer"
+        ];
+
+        expect([...pa.loopPathMap.keys()].sort()).toEqual(expected.sort());
+    });
+
+    test(`Check distinct loop count`, () => {
+        expect(pa.distinctLoopCount).toBe(8);
+    });
+
+    test(`Check loopPathString`, () => {
+        const { loopPathMap } = pa;
+        const [pkgName] = [...pa.loopPathMap.keys()];
+        const [loopPath] = [...(loopPathMap.get(pkgName) ?? new Set())].sort();
+        const expectedLoopPath =
+            "@webassemblyjs/ast@1.8.5 -> @webassemblyjs/helper-module-context@1.8.5 -> @webassemblyjs/ast@1.8.5";
+
+        expect(loopPath).toEqual(expectedLoopPath);
     });
 });
 
-describe(`resolveFromName Error Handling`, () => {
+describe(`visitFromName Error Handling`, () => {
     class CustomError extends Error {
         constructor(msg: string) {
             super(msg);
@@ -97,8 +117,8 @@ describe(`resolveFromName Error Handling`, () => {
         expect.assertions(1);
 
         try {
-            const resolver = new Resolver(["wurscht"], new MockProvider(), new OraLogger());
-            await resolver.resolve();
+            const visitor = new Visitor(["wurscht"], new MockProvider(), new OraLogger());
+            await visitor.visit();
         } catch (e) {
             expect(e).toBeInstanceOf(CustomError);
         }
