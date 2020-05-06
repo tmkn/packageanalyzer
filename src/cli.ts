@@ -319,8 +319,9 @@ function printLicenseInfo(groupedLicenses: GroupedLicenseSummary, paddingLeft: n
 
         if (names.length >= threshold)
             console.log(
-                `${``.padStart(paddingLeft)}${license} - [${samples.join(", ")}, +${names.length -
-                    threshold} more]`
+                `${``.padStart(paddingLeft)}${license} - [${samples.join(", ")}, +${
+                    names.length - threshold
+                } more]`
             );
         else console.log(`${``.padStart(paddingLeft)}${license} - [${samples.join(", ")}]`);
     }
