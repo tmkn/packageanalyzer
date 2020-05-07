@@ -57,6 +57,11 @@ process.argv.forEach((arg, i) => {
 
         cliLoops(pkg);
         commandFound = true;
+    } else if (arg === "-tree") {
+        const pkg = process.argv[i + 1];
+
+        cliTree(pkg);
+        commandFound = true;
     } else if (arg === "-u") {
         const name = process.argv[i + 1];
 
@@ -106,6 +111,11 @@ function showHelp(): void {
             60
         )} e.g. "pa -loops typescript(@3.5.1)"`
     );
+    console.log(
+        `${`-tree`.padEnd(10)} ${`Print the dependency tree`.padEnd(
+            60
+        )} e.g. "pa -tree typescript(@3.5.1)" or "pa -tree /path/to/project"`
+    );
     console.log(`${`-v`.padEnd(10)} ${`Prints version`.padEnd(60)}`);
     console.log(`${`-h`.padEnd(10)} ${`Display help`.padEnd(60)}`);
 }
@@ -138,6 +148,32 @@ async function cliResolveFolder(folder: string | undefined): Promise<void> {
         const pa: PackageAnalytics = await visitor.visit();
 
         printStatistics(pa);
+    } catch (e) {
+        console.log(e);
+    }
+}
+
+async function cliTree(pkgString: string | undefined): Promise<void> {
+    if (typeof pkgString === "undefined") {
+        console.log(`Missing package name\n`);
+        showHelp();
+
+        return;
+    }
+
+    try {
+        if (fs.existsSync(pkgString)) {
+            const provider = new FileSystemPackageProvider(pkgString);
+            const visitor = new Visitor(getPackageJson(pkgString), provider, new OraLogger());
+            const pa: PackageAnalytics = await visitor.visit();
+
+            pa.printDependencyTree();
+        } else {
+            const visitor = new Visitor(getNameAndVersion(pkgString), npmOnline, new OraLogger());
+            const pa = await visitor.visit();
+
+            pa.printDependencyTree();
+        }
     } catch (e) {
         console.log(e);
     }
@@ -319,8 +355,9 @@ function printLicenseInfo(groupedLicenses: GroupedLicenseSummary, paddingLeft: n
 
         if (names.length >= threshold)
             console.log(
-                `${``.padStart(paddingLeft)}${license} - [${samples.join(", ")}, +${names.length -
-                    threshold} more]`
+                `${``.padStart(paddingLeft)}${license} - [${samples.join(", ")}, +${
+                    names.length - threshold
+                } more]`
             );
         else console.log(`${``.padStart(paddingLeft)}${license} - [${samples.join(", ")}]`);
     }

@@ -52,6 +52,17 @@ describe(`visitFromFolder Tests`, () => {
         expect(pa.loops.length).toBe(50);
     });
 
+    test(`Check direct dependecies`, async () => {
+        const dependencies = pa.directDependencies;
+
+        expect(dependencies.length).toEqual(1);
+        expect(dependencies[0].fullName).toEqual(`webpack@4.35.2`);
+
+        const webpackDependencies = dependencies[0].directDependencies;
+
+        expect(webpackDependencies.length).toEqual(24);
+    });
+
     test(`Check loopPathMap`, () => {
         const expected: string[] = [
             "@webassemblyjs/ast",

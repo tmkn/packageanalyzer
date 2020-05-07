@@ -186,6 +186,13 @@ describe(`PackageAnalytics Tests`, () => {
     test(`Checks size`, () => {
         expect(() => pa.size).toThrow();
     });
+
+    test(`Print dependency tree in console`, () => {
+        const spy = jest.spyOn(console, "log").mockImplementation();
+        pa.printDependencyTree()
+        expect(spy).toHaveBeenCalledTimes(14);
+        spy.mockRestore();
+    });
 });
 
 describe(`Checks Name and Version extraction`, () => {
