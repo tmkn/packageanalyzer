@@ -1,4 +1,5 @@
 import { INpmPackageVersion, IMalformedLicenseField } from "../npm";
+import { ITransformer, print } from "../tree";
 
 type Name = string;
 type Version = string;
@@ -25,6 +26,7 @@ interface IPackageStatistics {
     timeSpan: number | undefined;
     size: number | undefined;
     directDependencies: PackageAnalytics[];
+    printDependencyTree(): void;
 }
 
 export class PackageAnalytics implements IPackageStatistics {
@@ -417,5 +419,14 @@ export class PackageAnalytics implements IPackageStatistics {
         const depth = this.path.length;
 
         return this.getPackagesBy(pkg => pkg.path.length === depth + 1);
+    }
+
+    printDependencyTree(): void {
+        const converter: ITransformer<PackageAnalytics> = {
+            getLabel: data => `${data.fullName} (${data.transitiveDependenciesCount} dependencies)`,
+            getChildren: data => data.directDependencies
+        };
+
+        print<PackageAnalytics>(this, converter);
     }
 }

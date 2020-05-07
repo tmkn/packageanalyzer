@@ -1,11 +1,3 @@
-import * as path from "path";
-
-import { PackageAnalytics } from "./analyzers/package";
-import { FileSystemPackageProvider } from "./providers/folder";
-import { OraLogger } from "./logger";
-import { getPackageJson } from "./visitors/folder";
-import { Visitor } from "./visitors/visitor";
-
 enum Markup {
     Spacer = ` `,
     HorizontalLine = `─`,
@@ -17,7 +9,7 @@ const Leaf = `${Markup.VerticalLineLeaf}${Markup.HorizontalLine}${Markup.Horizon
 const NonLeaf = `${Markup.VerticalLine}${Markup.HorizontalLine}${Markup.HorizontalLine}${Markup.Spacer}`;
 
 export interface ITransformer<T> {
-    getLabel(data: T): string;
+    getLabel(data: T): string | string[];
     getChildren(data: T): T[];
 }
 
@@ -32,7 +24,17 @@ function visit<T>(entry: T, converter: ITransformer<T>, prefix: string, lines: s
     const label = converter.getLabel(entry);
     const children = converter.getChildren(entry);
 
-    lines.push(`${prefix}${label}`);
+    if (Array.isArray(label)) {
+        for (const [i, entry] of label.entries()) {
+            if (i === 0) {
+                lines.push(`${prefix}${entry}`);
+            } else {
+                lines.push(`${adaptPrefix(prefix)}${entry}`);
+            }
+        }
+    } else {
+        lines.push(`${prefix}${label}`);
+    }
 
     for (const [i, child] of children.entries()) {
         const identation = createIdentation(i + 1 === children.length);
