@@ -8,19 +8,19 @@ enum Markup {
 const Leaf = `${Markup.VerticalLineLeaf}${Markup.HorizontalLine}${Markup.HorizontalLine}${Markup.Spacer}`;
 const NonLeaf = `${Markup.VerticalLine}${Markup.HorizontalLine}${Markup.HorizontalLine}${Markup.Spacer}`;
 
-export interface ITransformer<T> {
+export interface ITreeFormatter<T> {
     getLabel(data: T): string | string[];
     getChildren(data: T): T[];
 }
 
-export function print<T>(entry: T, converter: ITransformer<T>): void {
+export function print<T>(entry: T, converter: ITreeFormatter<T>): void {
     const lines: string[] = [];
 
     visit(entry, converter, ``, lines);
     lines.forEach(line => console.log(line));
 }
 
-function visit<T>(entry: T, converter: ITransformer<T>, prefix: string, lines: string[]): void {
+function visit<T>(entry: T, converter: ITreeFormatter<T>, prefix: string, lines: string[]): void {
     const label = converter.getLabel(entry);
     const children = converter.getChildren(entry);
 

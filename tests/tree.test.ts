@@ -3,7 +3,7 @@ import { FileSystemPackageProvider } from "../src/providers/folder";
 import { Visitor } from "../src/visitors/visitor";
 import { getPackageJson } from "../src/visitors/folder";
 import { OraLogger } from "../src/logger";
-import { ITransformer, print } from "../src/tree";
+import { ITreeFormatter, print } from "../src/tree";
 import { PackageAnalytics } from "../src/analyzers/package";
 
 const output = `
@@ -65,7 +65,7 @@ describe(`Tree Tests`, () => {
         const visitor = new Visitor(getPackageJson(rootPath), provider, new OraLogger());
         const pa = await visitor.visit();
 
-        const converter: ITransformer<PackageAnalytics> = {
+        const converter: ITreeFormatter<PackageAnalytics> = {
             getLabel: data => data.fullName,
             getChildren: data => data.directDependencies
         };
@@ -84,7 +84,7 @@ describe(`Tree Tests`, () => {
         const visitor = new Visitor(getPackageJson(rootPath), provider, new OraLogger());
         const pa = await visitor.visit();
 
-        const converter: ITransformer<PackageAnalytics> = {
+        const converter: ITreeFormatter<PackageAnalytics> = {
             getLabel: data => [
                 `${data.fullName} (${data.transitiveDependenciesCount} dependencies)`,
                 `License: ${data.license}`
