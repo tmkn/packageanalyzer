@@ -189,7 +189,7 @@ describe(`PackageAnalytics Tests`, () => {
 
     test(`Print dependency tree in console`, () => {
         const spy = jest.spyOn(console, "log").mockImplementation();
-        pa.printDependencyTree()
+        pa.printDependencyTree();
         expect(spy).toHaveBeenCalledTimes(14);
         spy.mockRestore();
     });

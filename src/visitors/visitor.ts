@@ -13,16 +13,14 @@ interface IVisitorConstructor {
 }
 
 interface IPackageVisitor {
-    visit: (depType?: DependencyProperties) => Promise<PackageAnalytics>;
+    visit: (depType?: DependencyTypes) => Promise<PackageAnalytics>;
 }
 
-type DependencyProperties<T = Required<INpmPackageVersion>> = {
-    [K in keyof T]: T[K] extends INpmKeyValue ? K : never;
-}[keyof T];
+export type DependencyTypes = "dependencies" | "devDependencies";
 
 export const Visitor: IVisitorConstructor = class Visitor implements IPackageVisitor {
     private _depthStack: string[] = [];
-    private _depType: DependencyProperties = "dependencies";
+    private _depType: DependencyTypes = "dependencies";
 
     constructor(
         private readonly _entry: PackageVersion,
