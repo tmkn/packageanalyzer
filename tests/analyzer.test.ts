@@ -193,6 +193,32 @@ describe(`PackageAnalytics Tests`, () => {
         expect(spy).toHaveBeenCalledTimes(14);
         spy.mockRestore();
     });
+
+    test(`Deprecation flag`, () => {
+        const { deprecated, message } = pa.deprecatedInfo;
+
+        expect(deprecated).toBe(false);
+        expect(typeof message).toBe("string");
+    });
+});
+
+describe(`Deprecated Package Tests`, () => {
+    test(`Deprecation flag`, async () => {
+        const rootPath = path.join("tests", "data", "deprecated");
+        const provider = new FileSystemPackageProvider(rootPath);
+        const visitor = new Visitor(getPackageJson(rootPath), provider, new OraLogger());
+        const pa = await visitor.visit();
+        const extnode = pa.getPackageByName("extnode");
+
+        if (extnode) {
+            const { deprecated, message } = extnode.deprecatedInfo;
+
+            expect(deprecated).toBe(true);
+            expect(typeof message).toBe("string");
+        } else {
+            fail(`Couldn't find package "extnode"`);
+        }
+    });
 });
 
 describe(`Checks Name and Version extraction`, () => {
