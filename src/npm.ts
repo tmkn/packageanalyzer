@@ -3,6 +3,7 @@ import { downloadJsonHttps } from "./requests";
 export interface INpmPackageVersion {
     author: INpmUser;
     dependencies?: INpmKeyValue;
+    deprecated?: string;
     description: string;
     devDependencies?: INpmKeyValue;
     directories: unknown;

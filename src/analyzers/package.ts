@@ -9,6 +9,11 @@ export type LicenseSummary = Map<Name, Map<Version, License>>;
 export type GroupedLicenseSummary = Array<{ license: string; names: string[] }>;
 export type VersionSummary = Map<Name, Set<Version>>;
 
+interface IDeprecatedInfo {
+    deprecated: boolean;
+    message: string;
+}
+
 interface IPackageStatistics {
     all: PackageAnalytics[];
     transitiveDependenciesCount: number;
@@ -129,6 +134,22 @@ export class PackageAnalytics implements IPackageStatistics {
 
     get directDependencyCount(): number {
         return this._dependencies.length;
+    }
+
+    get deprecatedInfo(): IDeprecatedInfo {
+        const { deprecated } = this._data;
+
+        if (deprecated) {
+            return {
+                deprecated: true,
+                message: deprecated
+            };
+        }
+
+        return {
+            deprecated: false,
+            message: ``
+        };
     }
 
     getData<T extends keyof INpmPackageVersion = keyof INpmPackageVersion>(
