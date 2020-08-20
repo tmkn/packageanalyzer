@@ -1,6 +1,5 @@
 import * as path from "path";
 import * as fs from "fs";
-import * as os from "os";
 
 import { INpmDumpRow } from "../src/npm";
 import { LookupFileCreator, ILookupEntry, LookupFileWriter } from "../src/lookup";
@@ -41,15 +40,8 @@ describe(`Lookup Creator Tests`, () => {
         const index = 5;
         const { name, offset, length } = lookups[index];
         const buffer = Buffer.alloc(length);
-        let actualOffset = offset;
 
-        if (os.platform() === "win32") {
-            const lineOffset = index + 1; //+1 because of 0 based index
-
-            actualOffset += lineOffset;
-        }
-
-        fs.readSync(fd, buffer, 0, length, actualOffset);
+        fs.readSync(fd, buffer, 0, length, offset);
         fs.closeSync(fd);
 
         const { doc: pkg }: INpmDumpRow = JSON.parse(buffer.toString());
@@ -63,8 +55,7 @@ describe(`LookupFileWriter Tests`, () => {
         const lookup: ILookupEntry = {
             name: "foo",
             length: 1337,
-            offset: 0,
-            line: 1
+            offset: 0
         };
         const line = `${lookup.name} ${lookup.offset} ${lookup.length}\n`;
 

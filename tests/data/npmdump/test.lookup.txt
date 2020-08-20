@@ -1,4 +1,4 @@
-﻿ux-com-paging-break 48 9865
+ux-com-paging-break 48 9865
 ux-common-interface 9915 10892
 ux-company-announcement 20809 238886
 ux-company-key-word 259697 37070

@@ -1,6 +1,5 @@
 import * as readline from "readline";
 import * as fs from "fs";
-import * as os from "os";
 import * as path from "path";
 import * as semver from "semver";
 
@@ -92,30 +91,24 @@ export class FlatFileProvider extends PackageProvider implements IPackageVersion
         });
         const fileSize = fs.statSync(this._lookupFile).size;
         let parsedBytes = 0;
-        let lineNum = 0;
 
         this._lookup.clear();
         this._logger.start();
 
         for await (const line of rl) {
             parsedBytes += Buffer.byteLength(line, "utf8");
-            const name = this._parseLine(line, ++lineNum);
+            const name = this._parseLine(line);
 
             this._logger.log(`Parsing Lookup [${getPercentage(parsedBytes, fileSize)}%] ${name}`);
         }
         this._logger.stop();
     }
 
-    private _parseLine(line: string, lineNum: number): string {
+    private _parseLine(line: string): string {
         const [name, offset, length] = line.split(" ").map(l => l.trim());
-        const _offset: number = parseInt(offset);
-        const _length: number = parseInt(length);
-        //due to the way newlines are interpreted between different os, we need to correct the offset
-        //basically if win add +1 for every newline since win -> \r\n -> 2char, *nix -> \n -> 1char
-        const correctedOffset = os.platform() !== "win32" ? _offset : _offset + lineNum;
         const lookup: ILookupInfo = {
-            offset: correctedOffset,
-            length: _length
+            offset: parseInt(offset),
+            length: parseInt(length)
         };
 
         this._lookup.set(name, lookup);
@@ -139,7 +132,7 @@ export class FlatFileProvider extends PackageProvider implements IPackageVersion
 
         const { offset, length } = lookupInfo;
         const fd = fs.openSync(this._file, "r");
-        const buffer = Buffer.alloc(length);
+        const buffer = Buffer.alloc(length, undefined, "latin1");
 
         fs.readSync(fd, buffer, 0, length, offset);
         fs.closeSync(fd);

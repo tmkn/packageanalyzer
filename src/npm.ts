@@ -116,9 +116,9 @@ interface INpmPackageRow {
 }
 
 export interface INpmDumpRow {
-    doc: INpmPackage;
-    id: string;
-    key: string;
+    readonly doc: INpmPackage;
+    readonly id: string;
+    readonly key: string;
 }
 
 export type PackageVersion = [string, string?];

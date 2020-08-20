@@ -1,18 +1,14 @@
 import * as path from "path";
 import * as fs from "fs";
 import * as readline from "readline";
-import * as os from "os";
 
 import { INpmDumpRow } from "./npm";
 import { getPercentage } from "./providers/flatFile";
-
-const newLine = "\n";
 
 export interface ILookupEntry {
     readonly name: string;
     readonly offset: number;
     readonly length: number;
-    readonly line: number;
 }
 
 export class LookupFileCreator {
@@ -26,41 +22,45 @@ export class LookupFileCreator {
 
     async parse(): Promise<void> {
         const rl = readline.createInterface({
-            input: fs.createReadStream(this._filePath),
+            input: fs.createReadStream(this._filePath, { encoding: "latin1" }),
             crlfDelay: Infinity
         });
         const fileSize = fs.statSync(this._filePath).size;
         let parsedBytes = 0;
-        const startToken = `{"id":"`;
 
         console.log(
             `[${getPercentage(parsedBytes, fileSize)}%] Creating lookup for ${this._filePath}`
         );
-        let i = 0;
+
+        let i=0;
 
         for await (const line of rl) {
-            const lineByteLength = Buffer.byteLength(line, "utf8");
-
-            if (line.startsWith(startToken)) {
-                const json: string = line.endsWith(`,`) ? line.slice(0, line.length - 1) : line;
-                const length = Buffer.byteLength(json, "utf8");
-                const { doc: pkg }: INpmDumpRow = JSON.parse(json);
+            if (this._isDataRow(line)) {
+                const hasTrailingComma: boolean = line.endsWith(`,`);
+                const jsonStr: string = hasTrailingComma ? line.slice(0, line.length - 1) : line;
+                const { doc: pkg }: INpmDumpRow = JSON.parse(jsonStr);
 
                 this._lookups.push({
                     name: pkg.name,
                     offset: parsedBytes,
-                    length: length,
-                    line: i
+                    length: jsonStr.length
                 });
 
                 console.log(`[${getPercentage(parsedBytes, fileSize)}%] ${pkg.name}`);
             }
 
-            parsedBytes += lineByteLength + newLine.length;
+            parsedBytes += line.length + 2; //+2 for win, else +1
+
             i++;
+            if(i === 20)
+                return;
         }
 
         console.log(`[${getPercentage(parsedBytes, fileSize)}%] Done`);
+    }
+
+    private _isDataRow(line: string): boolean {
+        return line.endsWith(`}}`) || line.endsWith(`}},`);
     }
 }
 
@@ -72,6 +72,15 @@ export async function createLookupFile(srcFile: string): Promise<void> {
         }
 
         const lookupFile = getLookupFilePath(srcFile);
+
+        if (fs.existsSync(lookupFile)) {
+            const answer = await confirm(
+                `Lookup file already exists at ${srcFile}\nContinue? [y/n] `
+            );
+
+            if (answer.toLowerCase() !== "y") return;
+        }
+
         const creator = new LookupFileCreator(srcFile);
 
         await creator.parse();
@@ -124,20 +133,18 @@ function verifyLookups(srcFile: string, lookups: ReadonlyArray<ILookupEntry>): v
 /* istanbul ignore next */
 function verifySingleLookup(
     srcFile: string,
-    { name, offset, length, line }: Readonly<ILookupEntry>
+    { name, offset, length }: Readonly<ILookupEntry>
 ): void {
     try {
         const fd = fs.openSync(srcFile, "r");
-        const buffer = Buffer.alloc(length);
-
-        if (os.platform() === "win32") {
-            offset += line;
-        }
+        const buffer = Buffer.alloc(length, undefined, "latin1");
 
         fs.readSync(fd, buffer, 0, length, offset);
         fs.closeSync(fd);
 
         const str = buffer.toString();
+        console.log(13, str.slice(0, 32));
+        console.log(14, str.slice(str.length - 32, str.length));
         const { doc: pkg }: INpmDumpRow = JSON.parse(str);
 
         if (pkg.name === name) {
@@ -154,7 +161,7 @@ export class LookupFileWriter {
     constructor(private _targetFile: string, private _lookups: ReadonlyArray<ILookupEntry>) {}
 
     static getLine({ name, offset, length }: ILookupEntry): string {
-        return `${name} ${offset} ${length}${newLine}`;
+        return `${name} ${offset} ${length}\n`;
     }
 
     /* istanbul ignore next */
@@ -173,4 +180,18 @@ export class LookupFileWriter {
         fs.closeSync(fd);
         console.log(`Done, Created lookup file at "${fullPath}"`);
     }
+}
+
+function confirm(question: string): Promise<string> {
+    const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+    });
+
+    return new Promise(resolve =>
+        rl.question(question, answer => {
+            rl.close();
+            resolve(answer);
+        })
+    );
 }
