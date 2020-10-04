@@ -3,6 +3,7 @@
 import * as path from "path";
 import * as fs from "fs";
 
+import { Cli, Command } from "clipanion";
 import * as dayjs from "dayjs";
 
 import { npmOnline } from "./providers/online";
@@ -16,237 +17,13 @@ import { FlatFileProvider } from "./providers/flatFile";
 import { createLookupFile } from "./lookup";
 import { updateInfo } from "./analyzers/update";
 
-let commandFound = false;
-
-process.argv.forEach((arg, i) => {
-    if (arg === "-v" && !commandFound) {
-        console.log(`${getVersion()}`);
-        commandFound = true;
-    } else if (arg === "-h" && !commandFound) {
-        showHelp();
-        commandFound = true;
-    } else if (arg === "-l" && !commandFound) {
-        const folder = process.argv[i + 1];
-
-        cliResolveFolder(folder);
-        commandFound = true;
-    } else if (arg === "-o" && !commandFound) {
-        const name = process.argv[i + 1];
-
-        cliResolveName(name);
-        commandFound = true;
-    } else if (arg === "-f") {
-        const npmFile = process.argv[i + 1];
-        const name = process.argv[i + 2];
-
-        cliResolveFile(name, npmFile);
-        commandFound = true;
-    } else if (arg === "-lookup") {
-        const file = process.argv[i + 1];
-        const filePath = path.join(`tests`, `data`, `extractor`, `data.json`);
-
-        cliCreateLookup(file ? file : filePath);
-        commandFound = true;
-    } else if (arg === "-downloads") {
-        const pkg = process.argv[i + 1];
-
-        cliDownloads(pkg);
-        commandFound = true;
-    } else if (arg === "-loops") {
-        const pkg = process.argv[i + 1];
-
-        cliLoops(pkg);
-        commandFound = true;
-    } else if (arg === "-tree") {
-        const pkg = process.argv[i + 1];
-
-        cliTree(pkg);
-        commandFound = true;
-    } else if (arg === "-u") {
-        const name = process.argv[i + 1];
-
-        cliUpdateInfo(name);
-        commandFound = true;
-    }
-});
-
-if (!commandFound) {
-    console.log(`No command found`);
-    showHelp();
-}
-
-function showHelp(): void {
-    console.log(`Package Analyzer ${getVersion()}`);
-    console.log(`Options:`);
-    console.log(
-        `${`-l`.padEnd(10)} ${`Analyze a local folder`.padEnd(60)} e.g. "pa -l path/to/project"`
-    );
-    console.log(
-        `${`-o`.padEnd(10)} ${`Analyze a package, version optional, default latest`.padEnd(
-            60
-        )} e.g. "pa -o typescript(@3.5.1)"`
-    );
-    console.log(
-        `${`-u`.padEnd(10)} ${`Get update info for a package`.padEnd(
-            60
-        )} e.g. "pa -u typescript@3.5.1"`
-    );
-    console.log(
-        `${`-f`.padEnd(10)} ${`Analyze a package from a npm dump`.padEnd(
-            60
-        )} e.g. "pa -f path/to/npmdump typescript(@3.5.1)"`
-    );
-    console.log(
-        `${`-lookup`.padEnd(10)} ${`Create a lookup file from a npm dump`.padEnd(
-            60
-        )} e.g. "pa -lookup path/to/npmdump"`
-    );
-    console.log(
-        `${`-downloads`.padEnd(10)} ${`Get number of downloads from last week`.padEnd(
-            60
-        )} e.g. "pa -downloads typescript(@3.5.1)"`
-    );
-    console.log(
-        `${`-loops`.padEnd(10)} ${`Show dependency loops`.padEnd(
-            60
-        )} e.g. "pa -loops typescript(@3.5.1)"`
-    );
-    console.log(
-        `${`-tree`.padEnd(10)} ${`Print the dependency tree`.padEnd(
-            60
-        )} e.g. "pa -tree typescript(@3.5.1)" or "pa -tree /path/to/project"`
-    );
-    console.log(`${`-v`.padEnd(10)} ${`Prints version`.padEnd(60)}`);
-    console.log(`${`-h`.padEnd(10)} ${`Display help`.padEnd(60)}`);
-}
-
-async function cliDownloads(pkg: string): Promise<void> {
+function getVersion(): string {
     try {
-        const downloads = await getDownloadsLastWeek(pkg);
+        const file = path.join(__dirname, "./../../package.json");
 
-        console.log(`${pkg}: ${downloads.downloads} Downloads`);
-    } catch {
-        console.log(`Couldn't get downloads for ${pkg}`);
-    }
-}
-
-async function cliCreateLookup(file: string): Promise<void> {
-    await createLookupFile(file);
-}
-
-async function cliResolveFolder(folder: string | undefined): Promise<void> {
-    if (typeof folder === "undefined") {
-        console.log(`Missing folder path\n`);
-        showHelp();
-
-        return;
-    }
-
-    try {
-        const provider = new FileSystemPackageProvider(folder);
-        const visitor = new Visitor(getPackageJson(folder), provider, new OraLogger());
-        const pa: PackageAnalytics = await visitor.visit();
-
-        printStatistics(pa);
+        return JSON.parse(fs.readFileSync(file, "utf8")).version;
     } catch (e) {
-        console.log(e);
-    }
-}
-
-async function cliTree(pkgString: string | undefined): Promise<void> {
-    if (typeof pkgString === "undefined") {
-        console.log(`Missing package name\n`);
-        showHelp();
-
-        return;
-    }
-
-    try {
-        if (fs.existsSync(pkgString)) {
-            const provider = new FileSystemPackageProvider(pkgString);
-            const visitor = new Visitor(getPackageJson(pkgString), provider, new OraLogger());
-            const pa: PackageAnalytics = await visitor.visit();
-
-            pa.printDependencyTree();
-        } else {
-            const visitor = new Visitor(getNameAndVersion(pkgString), npmOnline, new OraLogger());
-            const pa = await visitor.visit();
-
-            pa.printDependencyTree();
-        }
-    } catch (e) {
-        console.log(e);
-    }
-}
-
-async function cliLoops(pkgString: string | undefined): Promise<void> {
-    if (typeof pkgString === "undefined") {
-        console.log(`Missing package name\n`);
-        showHelp();
-
-        return;
-    }
-
-    try {
-        const visitor = new Visitor(getNameAndVersion(pkgString), npmOnline, new OraLogger());
-        const pa = await visitor.visit();
-        const loopPathMap = pa.loopPathMap;
-        const distinctCount: number = [...loopPathMap].reduce((i, [, loops]) => i + loops.size, 0);
-        const loopPadding = ("" + distinctCount).length;
-        let total = 0;
-
-        console.log(`=== ${distinctCount} Loop(s) found for ${pa.fullName} ===\n`);
-        if (distinctCount > 0) {
-            console.log(`Affected Packages:`);
-            for (const [pkgName, loopsForPkg] of loopPathMap) {
-                console.log(`- ${`${loopsForPkg.size}x`.padStart(5)} ${pkgName}`);
-            }
-
-            for (const [pkgName, loopsForPkg] of loopPathMap) {
-                console.log(`\n== ${loopsForPkg.size} Loop(s) found for ${pkgName} ==`);
-
-                let i = 0;
-                for (const loop of loopsForPkg) {
-                    console.log(
-                        `[${`${total + i++ + 1}`.padStart(loopPadding)}/${distinctCount}] ${loop}`
-                    );
-                }
-
-                total += loopsForPkg.size;
-            }
-        }
-    } catch (e) {
-        console.log(e);
-    }
-}
-
-async function cliResolveName(pkgName: string | undefined): Promise<void> {
-    if (typeof pkgName === "undefined") {
-        console.log(`Missing package name\n`);
-        showHelp();
-
-        return;
-    }
-
-    try {
-        const visitor = new Visitor(getNameAndVersion(pkgName), npmOnline, new OraLogger());
-        const pa = await visitor.visit();
-
-        printStatistics(pa);
-    } catch (e) {
-        console.log(e);
-    }
-}
-
-async function cliResolveFile(pkgName: string, npmFile: string): Promise<void> {
-    try {
-        const provider = new FlatFileProvider(npmFile);
-        const visitor = new Visitor(getNameAndVersion(pkgName), provider, new OraLogger());
-        const pa = await visitor.visit();
-
-        printStatistics(pa);
-    } catch (e) {
-        console.log(e);
+        return "version parse error!";
     }
 }
 
@@ -363,51 +140,295 @@ function printLicenseInfo(groupedLicenses: GroupedLicenseSummary, paddingLeft: n
     }
 }
 
-async function cliUpdateInfo(token: string): Promise<void> {
+async function cliResolveFile(pkgName: string, npmFile: string): Promise<void> {
     try {
-        const [name, version] = getNameAndVersion(token);
+        const provider = new FlatFileProvider(npmFile);
+        const visitor = new Visitor(getNameAndVersion(pkgName), provider, new OraLogger());
+        const pa = await visitor.visit();
 
-        if (typeof version === "undefined") {
-            console.log(`Version info is missing (${token})`);
-
-            return;
-        }
-
-        const data = await updateInfo(name, version, npmOnline);
-        const padding = 24;
-
-        console.log(`========= Update Info for ${token} =========`);
-        console.log(
-            `Latest semantic match:`.padEnd(padding),
-            data.latestSemanticMatch.version,
-            daysAgo(data.latestSemanticMatch.releaseDate)
-        );
-        console.log(
-            `Latest bugfix:`.padEnd(padding),
-            data.latestBugfix.version,
-            daysAgo(data.latestBugfix.releaseDate)
-        );
-        console.log(
-            `Latest minor:`.padEnd(padding),
-            data.latestMinor.version,
-            daysAgo(data.latestMinor.releaseDate)
-        );
-        console.log(
-            `Latest version:`.padEnd(padding),
-            data.latestOverall.version,
-            daysAgo(data.latestOverall.releaseDate)
-        );
-    } catch (error) {
-        console.log(`Couldn't get update info for ${token}`);
-    }
-}
-
-function getVersion(): string {
-    try {
-        const file = path.join(__dirname, "./../../package.json");
-
-        return JSON.parse(fs.readFileSync(file, "utf8")).version;
+        printStatistics(pa);
     } catch (e) {
-        return "version parse error!";
+        console.log(e);
     }
 }
+
+async function cliDownloads(pkg: string): Promise<void> {
+    try {
+        const downloads = await getDownloadsLastWeek(pkg);
+
+        console.log(`${pkg}: ${downloads.downloads} Downloads`);
+    } catch {
+        console.log(`Couldn't get downloads for ${pkg}`);
+    }
+}
+
+const cli = new Cli({
+    binaryLabel: `packageanalyzer`,
+    binaryName: `pkga`,
+    binaryVersion: getVersion()
+});
+
+class UpdateInfoCommand extends Command {
+    @Command.String(`--package`, {
+        description: `the package to retrieve update info from e.g. typescript@3.5.1`
+    })
+    public package?: string;
+
+    static usage = Command.Usage({
+        description: `gets update info from a npm package`,
+        details: `
+            This command will print update information about a NPM package.
+        `,
+        examples: [
+            [
+                `Get update info for a specific version of a dependency`,
+                `$0 update --package typescript@3.5.1`
+            ]
+        ]
+    });
+
+    @Command.Path(`update`)
+    async execute() {
+        if (typeof this.package === "undefined") {
+            this.context.stdout.write(`Please specify a package.\n`);
+        } else {
+            try {
+                const [name, version] = getNameAndVersion(this.package);
+
+                if (typeof version === "undefined") {
+                    console.log(`Version info is missing (${this.package})`);
+
+                    return;
+                }
+
+                const data = await updateInfo(name, version, npmOnline);
+                const padding = 24;
+
+                console.log(`========= Update Info for ${this.package} =========`);
+                console.log(
+                    `Latest semantic match:`.padEnd(padding),
+                    data.latestSemanticMatch.version,
+                    daysAgo(data.latestSemanticMatch.releaseDate)
+                );
+                console.log(
+                    `Latest bugfix:`.padEnd(padding),
+                    data.latestBugfix.version,
+                    daysAgo(data.latestBugfix.releaseDate)
+                );
+                console.log(
+                    `Latest minor:`.padEnd(padding),
+                    data.latestMinor.version,
+                    daysAgo(data.latestMinor.releaseDate)
+                );
+                console.log(
+                    `Latest version:`.padEnd(padding),
+                    data.latestOverall.version,
+                    daysAgo(data.latestOverall.releaseDate)
+                );
+            } catch (error) {
+                console.log(`Couldn't get update info for ${this.package}`);
+            }
+        }
+    }
+}
+
+class NpmDumpCommand extends Command {
+    @Command.Boolean(`--lookup`)
+    public lookup: boolean = false;
+
+    @Command.String(`--npmfile`, { description: `path to a npmdump.json` })
+    public npmFile?: string;
+
+    @Command.String(`--package`, {
+        description: `the package to analyze e.g. typescript, typescript@3.5.1`
+    })
+    public package?: string;
+
+    @Command.Path(`npmdump`)
+    async execute() {
+        if (this.lookup === true && typeof this.npmFile !== "undefined") {
+            await createLookupFile(this.npmFile);
+        } else if (typeof this.npmFile !== "undefined" && typeof this.package !== "undefined") {
+            cliResolveFile(this.package, this.npmFile);
+        }
+    }
+}
+
+class DownloadCommand extends Command {
+    @Command.String(`--package`, {
+        description: `the package to retrieve the download count e.g. typescript@3.5.1`
+    })
+    public package?: string;
+
+    @Command.Path(`downloads`)
+    async execute() {
+        if (typeof this.package !== "undefined") {
+            cliDownloads(this.package);
+        }
+    }
+}
+
+class LoopsCommand extends Command {
+    @Command.String(`--package`, {
+        description: `the package to retrieve the loop info e.g. typescript@3.5.1`
+    })
+    public package?: string;
+
+    @Command.Path(`loops`)
+    async execute() {
+        if (typeof this.package !== "undefined") {
+            try {
+                const visitor = new Visitor(
+                    getNameAndVersion(this.package),
+                    npmOnline,
+                    new OraLogger()
+                );
+                const pa = await visitor.visit();
+                const loopPathMap = pa.loopPathMap;
+                const distinctCount: number = [...loopPathMap].reduce(
+                    (i, [, loops]) => i + loops.size,
+                    0
+                );
+                const loopPadding = ("" + distinctCount).length;
+                let total = 0;
+
+                console.log(`=== ${distinctCount} Loop(s) found for ${pa.fullName} ===\n`);
+                if (distinctCount > 0) {
+                    console.log(`Affected Packages:`);
+                    for (const [pkgName, loopsForPkg] of loopPathMap) {
+                        console.log(`- ${`${loopsForPkg.size}x`.padStart(5)} ${pkgName}`);
+                    }
+
+                    for (const [pkgName, loopsForPkg] of loopPathMap) {
+                        console.log(`\n== ${loopsForPkg.size} Loop(s) found for ${pkgName} ==`);
+
+                        let i = 0;
+                        for (const loop of loopsForPkg) {
+                            console.log(
+                                `[${`${total + i++ + 1}`.padStart(
+                                    loopPadding
+                                )}/${distinctCount}] ${loop}`
+                            );
+                        }
+
+                        total += loopsForPkg.size;
+                    }
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        }
+    }
+}
+
+class TreeCommand extends Command {
+    @Command.String(`--package`, {
+        description: `the package to display the dependency tree e.g. typescript@3.5.1`
+    })
+    public package?: string;
+
+    @Command.String(`--folder`, {
+        description: `path to a package.json`
+    })
+    public folder?: string;
+
+    @Command.Path(`tree`)
+    async execute() {
+        if (typeof this.package !== "undefined" && typeof this.folder !== "undefined") {
+            this.context.stdout.write(`Please specify a package or folder.\n`);
+        } else if (typeof this.package !== "undefined") {
+            try {
+                const visitor = new Visitor(
+                    getNameAndVersion(this.package),
+                    npmOnline,
+                    new OraLogger()
+                );
+                const pa = await visitor.visit();
+
+                pa.printDependencyTree();
+            } catch (e) {
+                console.log(e);
+            }
+        } else if (typeof this.folder !== "undefined") {
+            try {
+                if (fs.existsSync(this.folder)) {
+                    const provider = new FileSystemPackageProvider(this.folder);
+                    const visitor = new Visitor(
+                        getPackageJson(this.folder),
+                        provider,
+                        new OraLogger()
+                    );
+                    const pa: PackageAnalytics = await visitor.visit();
+
+                    pa.printDependencyTree();
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        }
+    }
+}
+
+class AnalyzeCommand extends Command {
+    @Command.String(`--package`, {
+        description: `the package to analyze e.g. typescript, typescript@3.5.1`
+    })
+    public package?: string;
+
+    @Command.String(`--folder`, { description: `path to a package.json` })
+    public folder?: string;
+
+    static usage = Command.Usage({
+        description: `analyze a npm package or a local project`,
+        details: `
+            This command will print information about a NPM package or about a local project.
+        `,
+        examples: [
+            [`Analyze the latest version of a dependency`, `$0 analyze --package typescript`],
+            [`Analyze a specific version of a dependency`, `$0 analyze --package typescript@3.5.1`],
+            [`Analyze a local project`, `$0 analyze --folder /path/to/your/package.json`]
+        ]
+    });
+
+    @Command.Path(`analyze`)
+    async execute() {
+        if (typeof this.package !== `undefined` && typeof this.folder !== `undefined`) {
+            this.context.stdout.write(`Please specify a package or folder.\n`);
+        } else if (typeof this.package !== `undefined`) {
+            try {
+                const visitor = new Visitor(
+                    getNameAndVersion(this.package),
+                    npmOnline,
+                    new OraLogger()
+                );
+                const pa = await visitor.visit();
+
+                printStatistics(pa);
+            } catch (e) {
+                console.log(e);
+            }
+        } else if (typeof this.folder !== `undefined`) {
+            try {
+                const provider = new FileSystemPackageProvider(this.folder);
+                const visitor = new Visitor(getPackageJson(this.folder), provider, new OraLogger());
+                const pa: PackageAnalytics = await visitor.visit();
+
+                printStatistics(pa);
+            } catch (e) {
+                console.log(e);
+            }
+        }
+    }
+}
+
+cli.register(AnalyzeCommand);
+cli.register(UpdateInfoCommand);
+cli.register(NpmDumpCommand);
+cli.register(DownloadCommand);
+cli.register(LoopsCommand);
+cli.register(TreeCommand);
+cli.register(Command.Entries.Help);
+
+cli.runExit(process.argv.slice(2), {
+    ...Cli.defaultContext
+});
