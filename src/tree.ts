@@ -13,16 +13,16 @@ export interface ITreeFormatter<T> {
     getChildren(data: T): T[];
 }
 
-export function print<T>(entry: T, converter: ITreeFormatter<T>): void {
+export function print<T>(node: T, converter: ITreeFormatter<T>): void {
     const lines: string[] = [];
 
-    visit(entry, converter, ``, lines);
+    visit(node, converter, ``, lines);
     lines.forEach(line => console.log(line));
 }
 
-function visit<T>(entry: T, converter: ITreeFormatter<T>, prefix: string, lines: string[]): void {
-    const label = converter.getLabel(entry);
-    const children = converter.getChildren(entry);
+function visit<T>(node: T, converter: ITreeFormatter<T>, prefix: string, lines: string[]): void {
+    const label = converter.getLabel(node);
+    const children = converter.getChildren(node);
 
     if (Array.isArray(label)) {
         for (const [i, entry] of label.entries()) {

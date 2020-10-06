@@ -67,8 +67,10 @@ export const Visitor: IVisitorConstructor = class Visitor implements IPackageVis
             const dependencyArray = Object.entries(dependencyField);
             const packages: INpmPackageVersion[] = [];
 
-            for await (const dependencies of this._provider.getPackagesByVersion(dependencyArray)) {
-                packages.push(dependencies);
+            for await (const resolvedDependencies of this._provider.getPackagesByVersion(
+                dependencyArray
+            )) {
+                packages.push(resolvedDependencies);
             }
 
             for (const p of packages) {
