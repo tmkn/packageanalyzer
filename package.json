@@ -1,6 +1,6 @@
 {
   "name": "@tmkn/packageanalyzer",
-  "version": "0.9.0-beta.3",
+  "version": "0.9.0-beta.4",
   "description": "A tool to analyze a Node.js project/package",
   "main": "./build/src/index.js",
   "types": "./build/src/index.d.ts",
@@ -9,7 +9,7 @@
     "/build/src/**/*.d.ts"
   ],
   "bin": {
-    "pa": "./build/src/cli.js"
+    "pkga": "./build/src/cli.js"
   },
   "scripts": {
     "build": "tsc",
@@ -56,6 +56,7 @@
     "typescript": "3.9.7"
   },
   "dependencies": {
+    "clipanion": "^2.6.2",
     "dayjs": "^1.8.18",
     "ora": "^5.0.0",
     "semver": "^7.1.1"

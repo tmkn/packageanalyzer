@@ -5,7 +5,8 @@
         "sourceMap": true,
         "target": "es6",
         "module": "commonjs",
-        "declaration": true
+        "declaration": true,
+        "experimentalDecorators": true
     },
     "include": ["src", "tests"]
 
