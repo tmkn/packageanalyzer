@@ -232,33 +232,19 @@ class UpdateInfoCommand extends Command {
     }
 }
 
-class NpmDumpCommand extends Command {
-    @Command.Boolean(`--lookup`)
-    public lookup: boolean = false;
-
-    @Command.String(`--npmfile`, { description: `path to a npmdump.json` })
-    public npmFile?: string;
-
-    @Command.String(`--package`, {
-        description: `the package to analyze e.g. typescript, typescript@3.5.1`
-    })
-    public package?: string;
-
-    @Command.Path(`npmdump`)
-    async execute() {
-        if (this.lookup === true && typeof this.npmFile !== "undefined") {
-            await createLookupFile(this.npmFile);
-        } else if (typeof this.npmFile !== "undefined" && typeof this.package !== "undefined") {
-            cliResolveFile(this.package, this.npmFile);
-        }
-    }
-}
-
 class DownloadCommand extends Command {
     @Command.String(`--package`, {
         description: `the package to retrieve the download count e.g. typescript@3.5.1`
     })
     public package?: string;
+
+    static usage = Command.Usage({
+        description: `show the download count for a NPM package`,
+        details: `
+            This command will show show the download count for a NPM package.
+        `,
+        examples: [[`Show the download count for a NPM package`, `$0 loops --package typescript`]]
+    });
 
     @Command.Path(`downloads`)
     async execute() {
@@ -273,6 +259,23 @@ class LoopsCommand extends Command {
         description: `the package to retrieve the loop info e.g. typescript@3.5.1`
     })
     public package?: string;
+
+    static usage = Command.Usage({
+        description: `show loops in the dependency tree`,
+        details: `
+            This command will show loops in the dependency tree.
+        `,
+        examples: [
+            [
+                `Show dependency loops for a NPM package for the latest version`,
+                `$0 loops --package typescript`
+            ],
+            [
+                `Show dependency loops for a NPM package for a specific version`,
+                `$0 tree --package typescript@3.5.1`
+            ]
+        ]
+    });
 
     @Command.Path(`loops`)
     async execute() {
@@ -331,6 +334,27 @@ class TreeCommand extends Command {
         description: `path to a package.json`
     })
     public folder?: string;
+
+    static usage = Command.Usage({
+        description: `show the dependency tree of a NPM package or a local project`,
+        details: `
+            This command will print the dependency tree of a NPM package or a local project.
+        `,
+        examples: [
+            [
+                `Show the dependency tree for a NPM package for the latest version`,
+                `$0 tree --package typescript`
+            ],
+            [
+                `Show the dependency tree for a NPM package for a specific version`,
+                `$0 tree --package typescript@3.5.1`
+            ],
+            [
+                `Show the dependency tree for a local folder`,
+                `$0 analyze --folder ./path/to/your/package.json`
+            ]
+        ]
+    });
 
     @Command.Path(`tree`)
     async execute() {
@@ -421,13 +445,81 @@ class AnalyzeCommand extends Command {
     }
 }
 
+class NpmDumpCommand extends Command {
+    @Command.String(`--npmfile`, { description: `path to a npmdump.json` })
+    public npmFile?: string;
+
+    @Command.String(`--package`, {
+        description: `the package to analyze e.g. typescript, typescript@3.5.1`
+    })
+    public package?: string;
+
+    static usage = Command.Usage({
+        category: `Developer Tools`,
+        description: `looks up a package from a NPM dump`,
+        details: `
+            This command will look up a package from a NPM dump.
+        `,
+        examples: [
+            [
+                `Lookup latest package details from a NPM dump`,
+                `$0 npmdump --package typescript --npmfile /path/to/your/npmfile.json`
+            ],
+            [
+                `Lookup package details for a specific version from a NPM dump`,
+                `$0 npmdump --package typescript@3.5.1 --npmfile /path/to/your/npmfile.json`
+            ]
+        ]
+    });
+
+    @Command.Path(`npmdump`)
+    async execute() {
+        if (typeof this.npmFile !== "undefined" && typeof this.package !== "undefined") {
+            cliResolveFile(this.package, this.npmFile);
+        }
+    }
+}
+
+class NpmDumpLookupCreatorCommand extends Command {
+    @Command.String(`--npmfile`, { description: `path to a npmdump.json` })
+    public npmFile?: string;
+
+    static usage = Command.Usage({
+        category: `Developer Tools`,
+        description: `creates a lookup file from a NPM dump`,
+        details: `
+            This command will create a lookup file from a NPM dump.
+        `,
+        examples: [
+            [
+                `Create a lookup file from a NPM dump`,
+                `$0 lookupfile --npmfile /path/to/your/npmfile.json`
+            ]
+        ]
+    });
+
+    @Command.Path(`lookupfile`)
+    async execute() {
+        if (typeof this.npmFile !== "undefined") {
+            await createLookupFile(this.npmFile);
+        }
+    }
+}
+
+//standard commands
 cli.register(AnalyzeCommand);
 cli.register(UpdateInfoCommand);
-cli.register(NpmDumpCommand);
 cli.register(DownloadCommand);
 cli.register(LoopsCommand);
 cli.register(TreeCommand);
+
+//development niche commands
+cli.register(NpmDumpCommand);
+cli.register(NpmDumpLookupCreatorCommand);
+
+//built in commands
 cli.register(Command.Entries.Help);
+cli.register(Command.Entries.Version);
 
 cli.runExit(process.argv.slice(2), {
     ...Cli.defaultContext
