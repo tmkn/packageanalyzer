@@ -3,11 +3,11 @@ import { Command } from "clipanion";
 import { npmOnline } from "../providers/online";
 import { PackageAnalytics } from "../analyzers/package";
 import { getNameAndVersion } from "../npm";
-import { Visitor, DependencyTypes } from "../visitors/visitor";
+import { Visitor } from "../visitors/visitor";
 import { FileSystemPackageProvider } from "../providers/folder";
 import { getPackageJson } from "../visitors/folder";
 import { OraLogger } from "../logger";
-import { printStatistics, defaultDependencyType } from "./common";
+import { printStatistics, defaultDependencyType, isValidDependencyType } from "./common";
 
 export class AnalyzeCommand extends Command {
     @Command.String(`--package`, {
@@ -18,7 +18,7 @@ export class AnalyzeCommand extends Command {
     @Command.String(`--type`, {
         description: `the type of dependencies you want to analzye, "dependencies" or "devDependencies"`
     })
-    public type?: DependencyTypes = defaultDependencyType;
+    public type?: string = defaultDependencyType;
 
     @Command.String(`--folder`, { description: `path to a package.json` })
     public folder?: string;
@@ -42,7 +42,7 @@ export class AnalyzeCommand extends Command {
 
     @Command.Path(`analyze`)
     async execute() {
-        if (this.type !== "dependencies" || this.type !== "dependencies") {
+        if (!isValidDependencyType(this.type)) {
             throw new Error(
                 `Please only specify "dependencies" or "devDependencies" for the --type argument`
             );

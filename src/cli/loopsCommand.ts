@@ -3,9 +3,9 @@ import * as chalk from "chalk";
 
 import { npmOnline } from "../providers/online";
 import { getNameAndVersion } from "../npm";
-import { Visitor, DependencyTypes } from "../visitors/visitor";
+import { Visitor } from "../visitors/visitor";
 import { OraLogger } from "../logger";
-import { defaultDependencyType } from "./common";
+import { defaultDependencyType, isValidDependencyType } from "./common";
 
 export class LoopsCommand extends Command {
     @Command.String(`--package`, {
@@ -16,7 +16,7 @@ export class LoopsCommand extends Command {
     @Command.String(`--type`, {
         description: `the type of dependencies you want to analzye, "dependencies" or "devDependencies"`
     })
-    public type?: DependencyTypes = defaultDependencyType;
+    public type?: string = defaultDependencyType;
 
     static usage = Command.Usage({
         description: `show loops in the dependency tree`,
@@ -42,7 +42,7 @@ export class LoopsCommand extends Command {
 
     @Command.Path(`loops`)
     async execute() {
-        if (this.type !== "dependencies" || this.type !== "dependencies") {
+        if (!isValidDependencyType(this.type)) {
             throw new Error(
                 `Please only specify "dependencies" or "devDependencies" for the --type argument`
             );
