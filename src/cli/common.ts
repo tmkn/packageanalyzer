@@ -2,8 +2,12 @@ import * as path from "path";
 import * as fs from "fs";
 
 import * as dayjs from "dayjs";
+import * as chalk from "chalk";
 
 import { PackageAnalytics, VersionSummary, GroupedLicenseSummary } from "../analyzers/package";
+import { DependencyTypes } from "../visitors/visitor";
+
+export const defaultDependencyType: DependencyTypes = "dependencies";
 
 export function getVersion(): string {
     try {
@@ -23,7 +27,7 @@ export function printStatistics(pa: PackageAnalytics): void {
     const padding = 40;
     const paddingLeft = 4;
 
-    console.log(`=== Statistics for ${pa.fullName} ===\n`);
+    console.log(chalk.bold(`Statistics for ${pa.fullName}\n`));
 
     printPublished(pa, padding);
     printOldest(pa.oldest, padding);

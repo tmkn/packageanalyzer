@@ -1,4 +1,5 @@
 import { Command } from "clipanion";
+import * as chalk from "chalk";
 
 import { npmOnline } from "../providers/online";
 import { getNameAndVersion } from "../npm";
@@ -39,11 +40,11 @@ export class UpdateInfoCommand extends Command {
                 }
 
                 const data = await updateInfo(name, version, npmOnline);
-                const padding = 24;
+                const padding = 16;
 
-                console.log(`========= Update Info for ${this.package} =========`);
+                console.log(chalk.bold(`Update Info for ${this.package}\n`));
                 console.log(
-                    `Latest semantic match:`.padEnd(padding),
+                    `Semantic match:`.padEnd(padding),
                     data.latestSemanticMatch.version,
                     daysAgo(data.latestSemanticMatch.releaseDate)
                 );
