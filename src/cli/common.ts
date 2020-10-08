@@ -18,7 +18,7 @@ export function isValidDependencyType(type: unknown): type is DependencyTypes {
 
 export function getVersion(): string {
     try {
-        const file = path.join(__dirname, "./../../package.json");
+        const file = path.join(__dirname, "./../../../package.json");
 
         return JSON.parse(fs.readFileSync(file, "utf8")).version;
     } catch (e) {
