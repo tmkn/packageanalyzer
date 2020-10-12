@@ -10,6 +10,7 @@ import { TreeCommand } from "./cli/treeCommand";
 import { NpmDumpCommand } from "./cli/npmDumpCommand";
 import { getVersion } from "./cli/common";
 import { NpmDumpLookupCreatorCommand } from "./cli/npmLookupCreatorCommand";
+import { LicenseCheckCommand } from "./cli/licenseCommand";
 
 const cli = new Cli({
     binaryLabel: `packageanalyzer`,
@@ -23,6 +24,7 @@ cli.register(UpdateInfoCommand);
 cli.register(DownloadCommand);
 cli.register(LoopsCommand);
 cli.register(TreeCommand);
+cli.register(LicenseCheckCommand);
 
 //development niche commands
 cli.register(NpmDumpCommand);
