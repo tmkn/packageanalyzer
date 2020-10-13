@@ -46,6 +46,7 @@
     "@types/jest": "^26.0.0",
     "@types/node": "^14.0.1",
     "@types/semver": "^7.1.0",
+    "@types/spdx-satisfies": "^0.1.0",
     "@typescript-eslint/eslint-plugin": "^2.13.0",
     "@typescript-eslint/parser": "^2.13.0",
     "eslint": "^6.8.0",
@@ -60,6 +61,7 @@
     "clipanion": "^2.6.2",
     "dayjs": "^1.8.18",
     "ora": "^5.0.0",
-    "semver": "^7.1.1"
+    "semver": "^7.1.1",
+    "spdx-satisfies": "^5.0.0"
   }
 }

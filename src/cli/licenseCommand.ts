@@ -9,6 +9,11 @@ import { FileSystemPackageProvider } from "../providers/folder";
 import { getPackageJson } from "../visitors/folder";
 import { OraLogger } from "../logger";
 import { defaultDependencyType, isValidDependencyType } from "./common";
+import {
+    WhitelistLicenseCheckService,
+    ILicenseCheckResult,
+    ILicenseCheckReport
+} from "../services/licenseCheckService";
 
 export class LicenseCheckCommand extends Command {
     @Command.String(`--package`, {
@@ -30,6 +35,9 @@ export class LicenseCheckCommand extends Command {
         description: `specificies if the data should be grouped by license`
     })
     public grouped: boolean = false;
+
+    @Command.String(`--folder`, { description: `path to a package.json` })
+    public folder?: string;
 
     static usage = Command.Usage({
         description: `check the licenses for all packages in the dependency tree`,
@@ -61,9 +69,6 @@ export class LicenseCheckCommand extends Command {
         ]
     });
 
-    @Command.String(`--folder`, { description: `path to a package.json` })
-    public folder?: string;
-
     @Command.Path(`license`)
     async execute() {
         if (!isValidDependencyType(this.type)) {
@@ -82,10 +87,11 @@ export class LicenseCheckCommand extends Command {
                     new OraLogger()
                 );
                 const pa = await visitor.visit(this.type);
-                const licenseService = new LicenseCheckService(pa, this.allow ?? []);
+                const licenseService = new WhitelistLicenseCheckService(pa, this.allow ?? [], true);
+                const licensePrinter = new LicenseCheckPrinter(licenseService.check());
 
-                if (this.grouped) licenseService.printGroupedByLicense();
-                else licenseService.printLicenses();
+                if (this.grouped) licensePrinter.printGroupedByLicense();
+                else licensePrinter.printLicenses();
             } catch (e) {
                 console.log(e);
             }
@@ -94,10 +100,15 @@ export class LicenseCheckCommand extends Command {
                 const provider = new FileSystemPackageProvider(this.folder);
                 const visitor = new Visitor(getPackageJson(this.folder), provider, new OraLogger());
                 const pa: PackageAnalytics = await visitor.visit(this.type);
-                const licenseService = new LicenseCheckService(pa, this.allow ?? []);
+                const licenseService = new WhitelistLicenseCheckService(
+                    pa,
+                    this.allow ?? [],
+                    false
+                );
+                const licensePrinter = new LicenseCheckPrinter(licenseService.check());
 
-                if (this.grouped) licenseService.printGroupedByLicense();
-                else licenseService.printLicenses();
+                if (this.grouped) licensePrinter.printGroupedByLicense();
+                else licensePrinter.printLicenses();
             } catch (e) {
                 console.log(e);
             }
@@ -105,61 +116,23 @@ export class LicenseCheckCommand extends Command {
     }
 }
 
-interface ILicenseInfo {
-    passedCheck?: boolean; //todo fill in later
-    name: string;
-    version: string;
-    fullName: string;
-    license: string;
-}
+class LicenseCheckPrinter {
+    constructor(private _licenseCheckResult: ILicenseCheckReport) {}
 
-class LicenseCheckService {
-    constructor(private _pa: PackageAnalytics, private _whitelist: string[]) {}
+    public groupedByLicense(): Map<PackageAnalytics, ILicenseCheckResult>[] {
+        const groups: Map<string, Map<PackageAnalytics, ILicenseCheckResult>> = new Map();
 
-    private _checkLicense(licenseString: string): boolean | undefined {
-        if (this._whitelist.length === 0) return undefined;
+        for (const [pa, result] of this._licenseCheckResult.allChecks) {
+            const existingGroup = groups.get(pa.license);
 
-        //todo license check
-        return false;
-    }
-
-    public check(): Readonly<ILicenseInfo>[] {
-        const licenses: Map<string, ILicenseInfo> = new Map<string, ILicenseInfo>();
-        let longestline = 0;
-
-        this._pa.visit(dep => {
-            licenses.set(dep.fullName, {
-                passedCheck: this._checkLicense(dep.license),
-                name: dep.name,
-                version: dep.version,
-                fullName: dep.fullName,
-                license: dep.license
-            });
-
-            if (longestline < dep.fullName.length) longestline = dep.fullName.length;
-        }, true);
-
-        return [...licenses.values()];
-    }
-
-    public groupedByLicense(): Readonly<ILicenseInfo>[][] {
-        const licenses = this.check();
-        const groupedLicenses: ILicenseInfo[][] = [];
-        const grouped: Map<string, ILicenseInfo[]> = new Map();
-
-        for (const info of licenses) {
-            if (grouped.has(info.license)) {
-                grouped.get(info.license)?.push(info);
+            if (existingGroup) {
+                existingGroup.set(pa, result);
             } else {
-                grouped.set(info.license, [info]);
+                groups.set(pa.license, new Map([[pa, result]]));
             }
         }
 
-        for (const licenseData of grouped.values()) {
-            groupedLicenses.push(licenseData);
-        }
-
-        return groupedLicenses;
+        return [...groups.values()];
     }
 
     public printGroupedByLicense(): void {
@@ -168,34 +141,63 @@ class LicenseCheckService {
         for (const group of licenses) {
             this._print(group);
         }
+        this._printSummary();
     }
 
     public printLicenses(): void {
-        const licenses = this.check();
-
-        this._print(licenses);
+        this._print(this._licenseCheckResult.allChecks);
+        this._printSummary();
     }
 
-    private _print(data: ILicenseInfo[]): void {
-        let padding = data.reduce(
+    private _print(data: Map<PackageAnalytics, ILicenseCheckResult>): void {
+        let padding = [...data.keys()].reduce(
             (previous, current) =>
                 current.fullName.length > previous ? current.fullName.length : previous,
             0
         );
 
-        for (const entry of data.sort((a, b) => a.name.localeCompare(b.name))) {
-            const { fullName, license, passedCheck } = entry;
-            const str = `${fullName.padEnd(padding + 1)}${license}`;
+        const sorted = [...data].sort(([pa1], [pa2]) => pa1.name.localeCompare(pa2.name));
 
-            if (typeof passedCheck !== "undefined") {
-                if (passedCheck) {
-                    console.log(chalk.green(str));
-                } else {
-                    console.log(chalk.redBright(str));
-                }
+        for (const [pa, result] of sorted) {
+            const str = `${pa.fullName.padEnd(padding + 1)}${pa.license}`;
+
+            if (result.ok) {
+                console.log(chalk.green(str));
             } else {
-                console.log(str);
+                console.log(chalk.redBright(str));
             }
+        }
+    }
+
+    private _printSummary(): void {
+        const { ok, allChecks, failedChecks, passedChecks } = this._licenseCheckResult;
+        const failedToParseChecks: Map<PackageAnalytics, ILicenseCheckResult> = new Map();
+        const failedToSatisfyLicense: Map<PackageAnalytics, ILicenseCheckResult> = new Map();
+
+        if (ok) {
+            console.log(`\nAll packages passed the license check`);
+        } else {
+            for (const [pa, result] of failedChecks) {
+                if (result.parseError) {
+                    failedToParseChecks.set(pa, result);
+                } else {
+                    failedToSatisfyLicense.set(pa, result);
+                }
+            }
+        }
+
+        if (failedToSatisfyLicense.size > 0) {
+            console.log(
+                `\n${failedToSatisfyLicense.size}/${allChecks.size} packages failed the license check`
+            );
+            this._print(failedToSatisfyLicense);
+        }
+
+        if (failedToParseChecks.size > 0) {
+            console.log(
+                `\n${failedToParseChecks.size}/${allChecks.size} licenses couldn't be parsed`
+            );
+            this._print(failedToParseChecks);
         }
     }
 }
