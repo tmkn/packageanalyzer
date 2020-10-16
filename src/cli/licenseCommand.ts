@@ -170,7 +170,7 @@ class LicenseCheckPrinter {
     }
 
     private _printSummary(): void {
-        const { ok, allChecks, failedChecks, passedChecks } = this._licenseCheckResult;
+        const { ok, allChecks, failedChecks } = this._licenseCheckResult;
         const failedToParseChecks: Map<PackageAnalytics, ILicenseCheckResult> = new Map();
         const failedToSatisfyLicense: Map<PackageAnalytics, ILicenseCheckResult> = new Map();
 

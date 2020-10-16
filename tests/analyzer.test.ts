@@ -132,7 +132,7 @@ describe(`PackageAnalytics Tests`, () => {
         if (react) {
             const path = react.pathString;
 
-            expect(path).toBe(`testproject1@1.0.0 -> react@16.8.6`);
+            expect(path).toBe(`testproject1@1.0.0 → react@16.8.6`);
         }
     });
 

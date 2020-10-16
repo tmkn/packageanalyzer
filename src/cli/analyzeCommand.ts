@@ -23,6 +23,9 @@ export class AnalyzeCommand extends Command {
     @Command.String(`--folder`, { description: `path to a package.json` })
     public folder?: string;
 
+    @Command.Boolean(`--full`, { description: `show all information` })
+    public full: boolean = false;
+
     static usage = Command.Usage({
         description: `analyze a npm package or a local project`,
         details: `
@@ -59,7 +62,7 @@ export class AnalyzeCommand extends Command {
                 );
                 const pa = await visitor.visit(this.type);
 
-                printStatistics(pa);
+                printStatistics(pa, this.full);
             } catch (e) {
                 console.log(e);
             }
@@ -69,7 +72,7 @@ export class AnalyzeCommand extends Command {
                 const visitor = new Visitor(getPackageJson(this.folder), provider, new OraLogger());
                 const pa: PackageAnalytics = await visitor.visit(this.type);
 
-                printStatistics(pa);
+                printStatistics(pa, this.full);
             } catch (e) {
                 console.log(e);
             }
