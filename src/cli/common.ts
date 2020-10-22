@@ -36,31 +36,31 @@ export function printStatistics(pa: PackageAnalytics, extra: boolean): void {
     extra ? printExhaustiveStatistics(pa) : printCondensedStatistics(pa);
 }
 
-const padding = 40;
-const paddingLeft = 4;
+const Padding = 40;
+const PaddingLeft = 4;
 
 export function printExhaustiveStatistics(pa: PackageAnalytics): void {
-    printPublished(pa, padding);
-    printOldest(pa.oldest, padding);
-    printNewest(pa.newest, padding);
-    console.log(`${`Direct dependencies:`.padEnd(padding)}${pa.directDependencyCount}`);
-    console.log(`${`Transitive dependencies:`.padEnd(padding)}${pa.transitiveDependenciesCount}`);
-    printDistinctDependencies(pa.distinctByNameCount, pa.distinctByVersionCount, paddingLeft);
-    printMostReferred(pa.mostReferred, padding);
-    printMostDependencies(pa.mostDependencies, padding);
-    printMostVersion(pa.mostVersions, padding, paddingLeft);
-    printLoops(pa, padding, paddingLeft);
-    printLicenseInfo(pa.licensesByGroup, paddingLeft);
+    printPublished(pa, Padding);
+    printOldest(pa.oldest, Padding);
+    printNewest(pa.newest, Padding);
+    console.log(`${`Direct dependencies:`.padEnd(Padding)}${pa.directDependencyCount}`);
+    console.log(`${`Transitive dependencies:`.padEnd(Padding)}${pa.transitiveDependenciesCount}`);
+    printDistinctDependencies(pa.distinctByNameCount, pa.distinctByVersionCount, PaddingLeft);
+    printMostReferred(pa.mostReferred, Padding);
+    printMostDependencies(pa.mostDependencies, Padding);
+    printMostVersion(pa.mostVersions, Padding, PaddingLeft);
+    printLoops(pa, Padding, PaddingLeft);
+    printLicenseInfo(pa.licensesByGroup, PaddingLeft);
 }
 
 export function printCondensedStatistics(pa: PackageAnalytics): void {
-    console.log(`${`Direct dependencies:`.padEnd(padding)}${pa.directDependencyCount}`);
-    console.log(`${`Transitive dependencies:`.padEnd(padding)}${pa.transitiveDependenciesCount}`);
-    printSimpleDistinctDependencies(pa.distinctByNameCount, padding);
-    printMostReferred(pa.mostReferred, padding);
-    printMostDependencies(pa.mostDependencies, padding);
-    printMostVersion(pa.mostVersions, padding, paddingLeft);
-    printSimpleLicenseInfo(pa.licensesByGroup, paddingLeft);
+    console.log(`${`Direct dependencies:`.padEnd(Padding)}${pa.directDependencyCount}`);
+    console.log(`${`Transitive dependencies:`.padEnd(Padding)}${pa.transitiveDependenciesCount}`);
+    printSimpleDistinctDependencies(pa.distinctByNameCount, Padding);
+    printMostReferred(pa.mostReferred, Padding);
+    printMostDependencies(pa.mostDependencies, Padding);
+    printMostVersion(pa.mostVersions, Padding, PaddingLeft);
+    printSimpleLicenseInfo(pa.licensesByGroup, PaddingLeft);
 }
 
 function printNewest(newest: PackageAnalytics | undefined, padding: number): void {
@@ -168,15 +168,5 @@ function printSimpleLicenseInfo(groupedLicenses: GroupedLicenseSummary, paddingL
     console.log(`Licenses:`);
     for (const { license, names } of groupedLicenses) {
         console.log(`${``.padStart(paddingLeft)}${names.length}x ${license}`);
-        /*const threshold = 4;
-        const samples: string[] = names.slice(0, threshold);
-
-        if (names.length > threshold)
-            console.log(
-                `${``.padStart(paddingLeft)}${license} - [${samples.join(", ")}, +${
-                    names.length - threshold
-                } more]`
-            );
-        else console.log(`${``.padStart(paddingLeft)}${license} - [${samples.join(", ")}]`);*/
     }
 }
