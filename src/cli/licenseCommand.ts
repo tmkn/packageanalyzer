@@ -10,9 +10,9 @@ import { getPackageJson } from "../visitors/folder";
 import { OraLogger } from "../logger";
 import { defaultDependencyType, isValidDependencyType } from "./common";
 import {
-    WhitelistLicenseCheckService,
+    createWhitelistLicenseCheckReport,
     ILicenseCheckResult,
-    ILicenseCheckReport
+    LicenseCheckReport
 } from "../services/licenseCheckService";
 
 export class LicenseCheckCommand extends Command {
@@ -29,7 +29,7 @@ export class LicenseCheckCommand extends Command {
     @Command.Array(`--allow`, {
         description: `the type of dependencies you want to akkiw"`
     })
-    public allow?: string[];
+    public allowList?: string[];
 
     @Command.Boolean(`--grouped`, {
         description: `specificies if the data should be grouped by license`
@@ -87,11 +87,15 @@ export class LicenseCheckCommand extends Command {
                     new OraLogger()
                 );
                 const pa = await visitor.visit(this.type);
-                const licenseService = new WhitelistLicenseCheckService(pa, this.allow ?? [], true);
-                const licensePrinter = new LicenseCheckPrinter(licenseService.check());
+                const licenseReport = createWhitelistLicenseCheckReport(
+                    pa,
+                    this.allowList ?? [],
+                    true
+                );
 
-                if (this.grouped) licensePrinter.printGroupedByLicense();
-                else licensePrinter.printLicenses();
+                printLicenseCheck(licenseReport, this.grouped);
+
+                if (!licenseReport.ok) process.exitCode = 1;
             } catch (e) {
                 console.log(e);
             }
@@ -100,15 +104,15 @@ export class LicenseCheckCommand extends Command {
                 const provider = new FileSystemPackageProvider(this.folder);
                 const visitor = new Visitor(getPackageJson(this.folder), provider, new OraLogger());
                 const pa: PackageAnalytics = await visitor.visit(this.type);
-                const licenseService = new WhitelistLicenseCheckService(
+                const licenseReport = createWhitelistLicenseCheckReport(
                     pa,
-                    this.allow ?? [],
+                    this.allowList ?? [],
                     false
                 );
-                const licensePrinter = new LicenseCheckPrinter(licenseService.check());
 
-                if (this.grouped) licensePrinter.printGroupedByLicense();
-                else licensePrinter.printLicenses();
+                printLicenseCheck(licenseReport, this.grouped);
+
+                if (!licenseReport.ok) process.exitCode = 1;
             } catch (e) {
                 console.log(e);
             }
@@ -116,8 +120,15 @@ export class LicenseCheckCommand extends Command {
     }
 }
 
+function printLicenseCheck(licenseReport: LicenseCheckReport, grouped: boolean): void {
+    const licensePrinter = new LicenseCheckPrinter(licenseReport);
+
+    if (grouped) licensePrinter.printGroupedByLicense();
+    else licensePrinter.printLicenses();
+}
+
 class LicenseCheckPrinter {
-    constructor(private _licenseCheckResult: ILicenseCheckReport) {}
+    constructor(private _licenseCheckResult: LicenseCheckReport) {}
 
     public groupedByLicense(): Map<PackageAnalytics, ILicenseCheckResult>[] {
         const groups: Map<string, Map<PackageAnalytics, ILicenseCheckResult>> = new Map();

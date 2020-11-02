@@ -8,23 +8,33 @@ export interface ILicenseCheckResult {
     parseError: boolean;
 }
 
-export interface ILicenseCheckReport {
+interface ILicenseCheckReport {
     ok: boolean;
     allChecks: Map<PackageAnalytics, ILicenseCheckResult>;
     failedChecks: Map<PackageAnalytics, ILicenseCheckResult>;
     passedChecks: Map<PackageAnalytics, ILicenseCheckResult>;
 }
 
+export type LicenseCheckReport = Readonly<ILicenseCheckReport>;
+
 export interface ILicenseCheckService {
     check(): ILicenseCheckReport;
 }
 
-export class WhitelistLicenseCheckService implements ILicenseCheckService {
+class WhitelistLicenseCheckService implements ILicenseCheckService {
     constructor(
         private _pa: PackageAnalytics,
         private _whitelist: string[],
         private _includeSelf: Readonly<boolean>
     ) {}
+
+    private _satisfiesLicense(packageLicense: string, spdxIdentifier: string): boolean {
+        try {
+            return satisfies(packageLicense, spdxIdentifier);
+        } catch {
+            return false;
+        }
+    }
 
     check(): ILicenseCheckReport {
         const distinctPackages: string[] = [];
@@ -35,10 +45,13 @@ export class WhitelistLicenseCheckService implements ILicenseCheckService {
         this._pa.visit(pkg => {
             if (distinctPackages.includes(pkg.fullName)) return;
 
+            let result: ILicenseCheckResult | undefined;
             try {
                 distinctPackages.push(pkg.fullName);
-                const result: ILicenseCheckResult = {
-                    ok: this._whitelist.some(license => satisfies(license, pkg.license)),
+                result = {
+                    ok: this._whitelist.some(license =>
+                        this._satisfiesLicense(pkg.license, license)
+                    ),
                     parseError: false
                 };
 
@@ -49,14 +62,16 @@ export class WhitelistLicenseCheckService implements ILicenseCheckService {
                     all.set(pkg, result);
                     failedChecks.set(pkg, result);
                 }
-            } catch {
-                const result: ILicenseCheckResult = {
+            } catch (e: unknown) {
+                result = {
                     ok: false,
                     parseError: true
                 };
 
                 all.set(pkg, result);
                 failedChecks.set(pkg, result);
+            } finally {
+                if (result) all.set(pkg, result);
             }
         }, this._includeSelf);
 
@@ -67,4 +82,14 @@ export class WhitelistLicenseCheckService implements ILicenseCheckService {
             passedChecks
         };
     }
+}
+
+export function createWhitelistLicenseCheckReport(
+    pkg: PackageAnalytics,
+    whitelist: string[],
+    includeSelf: boolean
+): LicenseCheckReport {
+    const licenseCheckService = new WhitelistLicenseCheckService(pkg, whitelist, includeSelf);
+
+    return licenseCheckService.check();
 }

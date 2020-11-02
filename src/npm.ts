@@ -121,7 +121,7 @@ export interface INpmDumpRow {
     key: string;
 }
 
-export type PackageVersion = [string, string?];
+export type PackageVersion = [name: string, version?: string];
 
 export function isUnpublished(
     data: IUnpublishedNpmPackage | INpmPackage
