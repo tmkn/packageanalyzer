@@ -30,16 +30,16 @@ export function daysAgo(date: string | number | Date): string {
     return `(${dayjs(new Date()).diff(date, "day")} days ago)`;
 }
 
-export function printStatistics(pa: PackageAnalytics, extra: boolean): void {
+export function printStatistics(pa: PackageAnalytics, all: boolean): void {
     console.log(`Statistics for ${chalk.bold(pa.fullName)}\n`);
 
-    extra ? printExhaustiveStatistics(pa) : printCondensedStatistics(pa);
+    all ? printAllStatistics(pa) : printBasicStatistics(pa);
 }
 
 const Padding = 40;
 const PaddingLeft = 4;
 
-export function printExhaustiveStatistics(pa: PackageAnalytics): void {
+export function printAllStatistics(pa: PackageAnalytics): void {
     printPublished(pa, Padding);
     printOldest(pa.oldest, Padding);
     printNewest(pa.newest, Padding);
@@ -53,7 +53,7 @@ export function printExhaustiveStatistics(pa: PackageAnalytics): void {
     printLicenseInfo(pa.licensesByGroup, PaddingLeft);
 }
 
-export function printCondensedStatistics(pa: PackageAnalytics): void {
+export function printBasicStatistics(pa: PackageAnalytics): void {
     console.log(`${`Direct dependencies:`.padEnd(Padding)}${pa.directDependencyCount}`);
     console.log(`${`Transitive dependencies:`.padEnd(Padding)}${pa.transitiveDependenciesCount}`);
     printSimpleDistinctDependencies(pa.distinctByNameCount, Padding);
