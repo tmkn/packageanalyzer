@@ -40,6 +40,7 @@ export class LoopsCommand extends Command {
         ]
     });
 
+    /* istanbul ignore next */
     @Command.Path(`loops`)
     async execute() {
         if (!isValidDependencyType(this.type)) {

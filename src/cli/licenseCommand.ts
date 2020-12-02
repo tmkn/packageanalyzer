@@ -27,7 +27,7 @@ export class LicenseCheckCommand extends Command {
     public type?: string = defaultDependencyType;
 
     @Command.Array(`--allow`, {
-        description: `the type of dependencies you want to akkiw"`
+        description: `the type of dependencies you want to allow"`
     })
     public allowList?: string[];
 
@@ -69,6 +69,7 @@ export class LicenseCheckCommand extends Command {
         ]
     });
 
+    /* istanbul ignore next */
     @Command.Path(`license`)
     async execute() {
         if (!isValidDependencyType(this.type)) {

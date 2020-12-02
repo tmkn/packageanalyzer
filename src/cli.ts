@@ -12,7 +12,7 @@ import { getVersion } from "./cli/common";
 import { NpmDumpLookupCreatorCommand } from "./cli/npmLookupCreatorCommand";
 import { LicenseCheckCommand } from "./cli/licenseCommand";
 
-const cli = new Cli({
+export const cli = new Cli({
     binaryLabel: `packageanalyzer`,
     binaryName: `pkga`,
     binaryVersion: getVersion()
@@ -34,6 +34,8 @@ cli.register(NpmDumpLookupCreatorCommand);
 cli.register(Command.Entries.Help);
 cli.register(Command.Entries.Version);
 
-cli.runExit(process.argv.slice(2), {
-    ...Cli.defaultContext
-});
+if (require.main === module) {
+    cli.runExit(process.argv.slice(2), {
+        ...Cli.defaultContext
+    });
+}

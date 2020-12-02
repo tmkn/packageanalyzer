@@ -37,17 +37,17 @@ class WhitelistLicenseCheckService implements ILicenseCheckService {
     }
 
     check(): ILicenseCheckReport {
-        const distinctPackages: string[] = [];
+        const visitedPackages: string[] = [];
         const all: Map<PackageAnalytics, ILicenseCheckResult> = new Map();
         const failedChecks: Map<PackageAnalytics, ILicenseCheckResult> = new Map();
         const passedChecks: Map<PackageAnalytics, ILicenseCheckResult> = new Map();
 
         this._pa.visit(pkg => {
-            if (distinctPackages.includes(pkg.fullName)) return;
+            if (visitedPackages.includes(pkg.fullName)) return;
 
             let result: ILicenseCheckResult | undefined;
             try {
-                distinctPackages.push(pkg.fullName);
+                visitedPackages.push(pkg.fullName);
                 result = {
                     ok: this._whitelist.some(license =>
                         this._satisfiesLicense(pkg.license, license)

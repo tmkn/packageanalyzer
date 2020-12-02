@@ -53,6 +53,7 @@ export class TreeCommand extends Command {
         ]
     });
 
+    /* istanbul ignore next */
     @Command.Path(`tree`)
     async execute() {
         if (typeof this.package !== "undefined" && typeof this.folder !== "undefined") {

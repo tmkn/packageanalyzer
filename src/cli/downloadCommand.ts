@@ -16,6 +16,7 @@ export class DownloadCommand extends Command {
         examples: [[`Show the download count for a NPM package`, `$0 loops --package typescript`]]
     });
 
+    /* istanbul ignore next */
     @Command.Path(`downloads`)
     async execute() {
         if (typeof this.package !== "undefined") {

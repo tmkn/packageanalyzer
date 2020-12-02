@@ -25,6 +25,7 @@ export class UpdateInfoCommand extends Command {
         ]
     });
 
+    /* istanbul ignore next */
     @Command.Path(`update`)
     async execute() {
         if (typeof this.package === "undefined") {

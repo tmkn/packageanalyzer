@@ -33,6 +33,7 @@ export class NpmDumpCommand extends Command {
         ]
     });
 
+    /* istanbul ignore next */
     @Command.Path(`npmdump`)
     async execute() {
         if (typeof this.npmFile !== "undefined" && typeof this.package !== "undefined") {

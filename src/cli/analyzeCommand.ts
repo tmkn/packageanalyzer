@@ -43,6 +43,7 @@ export class AnalyzeCommand extends Command {
         ]
     });
 
+    /* istanbul ignore next */
     @Command.Path(`analyze`)
     async execute() {
         if (!isValidDependencyType(this.type)) {
