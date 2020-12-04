@@ -1,7 +1,7 @@
 import { Command } from "clipanion";
 import * as chalk from "chalk";
 
-import { npmOnline } from "../providers/online";
+import { npmOnline, OnlinePackageProvider } from "../providers/online";
 import { getNameAndVersion } from "../npm";
 import { updateInfo } from "../analyzers/update";
 import { daysAgo } from "./common";
@@ -25,47 +25,45 @@ export class UpdateInfoCommand extends Command {
         ]
     });
 
+    static OnlineProvider: OnlinePackageProvider = npmOnline;
+
     @Command.Path(`update`)
     async execute() {
         if (typeof this.package === "undefined") {
             this.context.stdout.write(`Please specify a package.\n`);
         } else {
-            try {
-                const [name, version] = getNameAndVersion(this.package);
+            const [name, version] = getNameAndVersion(this.package);
 
-                if (typeof version === "undefined") {
-                    console.log(`Version info is missing (${this.package})`);
+            if (typeof version === "undefined") {
+                console.log(`Version info is missing (${this.package})`);
 
-                    return;
-                }
-
-                const data = await updateInfo(name, version, npmOnline);
-                const padding = 16;
-
-                console.log(chalk.bold(`Update Info for ${this.package}\n`));
-                console.log(
-                    `Semantic match:`.padEnd(padding),
-                    data.latestSemanticMatch.version,
-                    daysAgo(data.latestSemanticMatch.releaseDate)
-                );
-                console.log(
-                    `Latest bugfix:`.padEnd(padding),
-                    data.latestBugfix.version,
-                    daysAgo(data.latestBugfix.releaseDate)
-                );
-                console.log(
-                    `Latest minor:`.padEnd(padding),
-                    data.latestMinor.version,
-                    daysAgo(data.latestMinor.releaseDate)
-                );
-                console.log(
-                    `Latest version:`.padEnd(padding),
-                    data.latestOverall.version,
-                    daysAgo(data.latestOverall.releaseDate)
-                );
-            } catch (error) {
-                console.log(`Couldn't get update info for ${this.package}`);
+                return;
             }
+
+            const data = await updateInfo(name, version, UpdateInfoCommand.OnlineProvider);
+            const padding = 16;
+
+            console.log(chalk.bold(`Update Info for ${this.package}\n`));
+            console.log(
+                `Semantic match:`.padEnd(padding),
+                data.latestSemanticMatch.version,
+                daysAgo(data.latestSemanticMatch.releaseDate)
+            );
+            console.log(
+                `Latest bugfix:`.padEnd(padding),
+                data.latestBugfix.version,
+                daysAgo(data.latestBugfix.releaseDate)
+            );
+            console.log(
+                `Latest minor:`.padEnd(padding),
+                data.latestMinor.version,
+                daysAgo(data.latestMinor.releaseDate)
+            );
+            console.log(
+                `Latest version:`.padEnd(padding),
+                data.latestOverall.version,
+                daysAgo(data.latestOverall.releaseDate)
+            );
         }
     }
 }

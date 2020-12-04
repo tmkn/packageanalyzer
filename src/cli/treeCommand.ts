@@ -2,7 +2,7 @@ import * as fs from "fs";
 
 import { Command } from "clipanion";
 
-import { npmOnline } from "../providers/online";
+import { npmOnline, OnlinePackageProvider } from "../providers/online";
 import { PackageAnalytics } from "../analyzers/package";
 import { getNameAndVersion } from "../npm";
 import { Visitor, DependencyTypes } from "../visitors/visitor";
@@ -53,38 +53,28 @@ export class TreeCommand extends Command {
         ]
     });
 
+    static OnlineProvider: OnlinePackageProvider = npmOnline;
+
     @Command.Path(`tree`)
     async execute() {
         if (typeof this.package !== "undefined" && typeof this.folder !== "undefined") {
             this.context.stdout.write(`Please specify a package or folder.\n`);
         } else if (typeof this.package !== "undefined") {
-            try {
-                const visitor = new Visitor(
-                    getNameAndVersion(this.package),
-                    npmOnline,
-                    new OraLogger()
-                );
-                const pa = await visitor.visit();
+            const visitor = new Visitor(
+                getNameAndVersion(this.package),
+                TreeCommand.OnlineProvider,
+                new OraLogger()
+            );
+            const pa = await visitor.visit();
+
+            pa.printDependencyTree();
+        } else if (typeof this.folder !== "undefined") {
+            if (fs.existsSync(this.folder)) {
+                const provider = new FileSystemPackageProvider(this.folder);
+                const visitor = new Visitor(getPackageJson(this.folder), provider, new OraLogger());
+                const pa: PackageAnalytics = await visitor.visit();
 
                 pa.printDependencyTree();
-            } catch (e) {
-                console.log(e);
-            }
-        } else if (typeof this.folder !== "undefined") {
-            try {
-                if (fs.existsSync(this.folder)) {
-                    const provider = new FileSystemPackageProvider(this.folder);
-                    const visitor = new Visitor(
-                        getPackageJson(this.folder),
-                        provider,
-                        new OraLogger()
-                    );
-                    const pa: PackageAnalytics = await visitor.visit();
-
-                    pa.printDependencyTree();
-                }
-            } catch (e) {
-                console.log(e);
             }
         }
     }

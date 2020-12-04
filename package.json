@@ -1,6 +1,6 @@
 {
   "name": "@tmkn/packageanalyzer",
-  "version": "0.9.0-beta.4",
+  "version": "0.9.1",
   "description": "A tool to analyze a Node.js project/package",
   "main": "./build/src/index.js",
   "types": "./build/src/index.d.ts",
@@ -46,6 +46,7 @@
     "@types/jest": "^26.0.15",
     "@types/node": "^14.14.10",
     "@types/semver": "^7.3.4",
+    "@types/spdx-satisfies": "^0.1.0",
     "@typescript-eslint/eslint-plugin": "^4.8.2",
     "@typescript-eslint/parser": "^4.8.2",
     "eslint": "^7.14.0",
@@ -60,6 +61,7 @@
     "clipanion": "^2.6.2",
     "dayjs": "^1.9.6",
     "ora": "^5.1.0",
-    "semver": "^7.3.2"
+    "semver": "^7.3.2",
+    "spdx-satisfies": "^5.0.0"
   }
 }

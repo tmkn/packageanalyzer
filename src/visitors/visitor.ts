@@ -12,7 +12,7 @@ interface IVisitorConstructor {
     ): IPackageVisitor;
 }
 
-interface IPackageVisitor {
+export interface IPackageVisitor {
     visit: (depType?: DependencyTypes) => Promise<PackageAnalytics>;
 }
 

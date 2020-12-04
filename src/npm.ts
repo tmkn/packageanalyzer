@@ -1,4 +1,4 @@
-import { downloadJsonHttps } from "./requests";
+import { downloadHttpJson } from "./requests";
 
 export interface INpmPackageVersion {
     author: INpmUser;
@@ -94,11 +94,15 @@ export interface INpmDownloadRangeStatistic extends INpmDownloadBaseStatistic {
     downloads: Array<{ downloads: number; day: string }>;
 }
 
-/* istanbul ignore next */
-export function getDownloadsLastWeek(name: string): Promise<INpmDownloadStatistic> {
-    return downloadJsonHttps(
-        `https://api.npmjs.org/downloads/point/last-week/${encodeURIComponent(name)}`
-    );
+export async function getDownloadsLastWeek(
+    name: string,
+    url: string = `http://api.npmjs.org/downloads/point/last-week/`
+): Promise<INpmDownloadStatistic> {
+    const json = await downloadHttpJson<INpmDownloadStatistic>(`${url}${encodeURIComponent(name)}`);
+
+    if (json !== null) return json;
+
+    throw new Error(`Couldn't get download numbers for ${name}`);
 }
 
 export interface INpmAllPackagesResponse {
@@ -121,7 +125,7 @@ export interface INpmDumpRow {
     key: string;
 }
 
-export type PackageVersion = [string, string?];
+export type PackageVersion = [name: string, version?: string];
 
 export function isUnpublished(
     data: IUnpublishedNpmPackage | INpmPackage

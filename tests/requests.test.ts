@@ -7,7 +7,7 @@ describe(`Request Tests`, () => {
     let server: Server;
     const threshold = 200;
     const artificalDelay = 2000;
-    const port = 3001;
+    const port = 3000;
 
     if (threshold >= artificalDelay) {
         console.log(

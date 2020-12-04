@@ -371,7 +371,7 @@ export class PackageAnalytics implements IPackageStatistics {
             levels.push(`${name}@${version}`);
         }
 
-        return levels.join(" -> ");
+        return levels.join(" → ");
     }
 
     get all(): PackageAnalytics[] {

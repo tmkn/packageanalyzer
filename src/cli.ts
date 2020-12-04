@@ -10,8 +10,9 @@ import { TreeCommand } from "./cli/treeCommand";
 import { NpmDumpCommand } from "./cli/npmDumpCommand";
 import { getVersion } from "./cli/common";
 import { NpmDumpLookupCreatorCommand } from "./cli/npmLookupCreatorCommand";
+import { LicenseCheckCommand } from "./cli/licenseCommand";
 
-const cli = new Cli({
+export const cli = new Cli({
     binaryLabel: `packageanalyzer`,
     binaryName: `pkga`,
     binaryVersion: getVersion()
@@ -23,6 +24,7 @@ cli.register(UpdateInfoCommand);
 cli.register(DownloadCommand);
 cli.register(LoopsCommand);
 cli.register(TreeCommand);
+cli.register(LicenseCheckCommand);
 
 //development niche commands
 cli.register(NpmDumpCommand);
@@ -32,6 +34,8 @@ cli.register(NpmDumpLookupCreatorCommand);
 cli.register(Command.Entries.Help);
 cli.register(Command.Entries.Version);
 
-cli.runExit(process.argv.slice(2), {
-    ...Cli.defaultContext
-});
+if (require.main === module) {
+    cli.runExit(process.argv.slice(2), {
+        ...Cli.defaultContext
+    });
+}

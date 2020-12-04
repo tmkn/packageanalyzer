@@ -16,17 +16,20 @@ export class DownloadCommand extends Command {
         examples: [[`Show the download count for a NPM package`, `$0 loops --package typescript`]]
     });
 
+    static DownloadUrl: string | null = null;
+
     @Command.Path(`downloads`)
     async execute() {
         if (typeof this.package !== "undefined") {
-            cliDownloads(this.package);
+            cliDownloads(this.package, DownloadCommand.DownloadUrl);
         }
     }
 }
 
-async function cliDownloads(pkg: string): Promise<void> {
+async function cliDownloads(pkg: string, url: string | null): Promise<void> {
     try {
-        const downloads = await getDownloadsLastWeek(pkg);
+        const downloads =
+            url !== null ? await getDownloadsLastWeek(pkg, url) : await getDownloadsLastWeek(pkg);
 
         console.log(`${pkg}: ${downloads.downloads} Downloads`);
     } catch {

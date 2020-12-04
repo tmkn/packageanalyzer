@@ -11,7 +11,7 @@ export class MockNpmServer {
     private _dataPath = path.join("tests", "data", "mockserverdata");
     private _cache: Map<string, Readonly<INpmPackage>> = new Map();
 
-    constructor(private readonly _port: number) {
+    constructor(public readonly port: number) {
         const app = express();
 
         this._populateCache();
@@ -59,6 +59,13 @@ export class MockNpmServer {
 
                     res.json(mock);
                 }
+            } else if (name === "_downloads") {
+                res.json({
+                    downloads: 8609192,
+                    start: "2020-11-27",
+                    end: "2020-12-03",
+                    package: "react"
+                });
             } else {
                 const data = this._cache.get(name);
 
@@ -70,7 +77,9 @@ export class MockNpmServer {
             }
         });
 
-        this._server = app.listen(this._port, () => console.log(`Started MockNpmServer`));
+        this._server = app
+            .listen(this.port, () => console.log(`Started MockNpmServer`))
+            .on("error", e => console.log(`error`, e));
     }
 
     private _populateCache(): void {
