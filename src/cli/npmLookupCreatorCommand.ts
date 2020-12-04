@@ -20,7 +20,6 @@ export class NpmDumpLookupCreatorCommand extends Command {
         ]
     });
 
-    /* istanbul ignore next */
     @Command.Path(`lookupfile`)
     async execute() {
         if (typeof this.npmFile !== "undefined") {

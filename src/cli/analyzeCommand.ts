@@ -1,9 +1,9 @@
 import { Command } from "clipanion";
 
-import { npmOnline } from "../providers/online";
+import { npmOnline, OnlinePackageProvider } from "../providers/online";
 import { PackageAnalytics } from "../analyzers/package";
 import { getNameAndVersion } from "../npm";
-import { Visitor } from "../visitors/visitor";
+import { IPackageVisitor, Visitor } from "../visitors/visitor";
 import { FileSystemPackageProvider } from "../providers/folder";
 import { getPackageJson } from "../visitors/folder";
 import { OraLogger } from "../logger";
@@ -43,40 +43,35 @@ export class AnalyzeCommand extends Command {
         ]
     });
 
-    /* istanbul ignore next */
+    static OnlineProvider: OnlinePackageProvider = npmOnline;
+
     @Command.Path(`analyze`)
     async execute() {
         if (!isValidDependencyType(this.type)) {
             throw new Error(
-                `Please only specify "dependencies" or "devDependencies" for the --type argument`
+                `Please only specify "dependencies" or "devDependencies" for the --type argument\nReceived ${this.type}\n`
             );
         }
 
-        if (typeof this.package !== `undefined` && typeof this.folder !== `undefined`) {
-            this.context.stdout.write(`Please specify a package or folder.\n`);
-        } else if (typeof this.package !== `undefined`) {
-            try {
-                const visitor = new Visitor(
-                    getNameAndVersion(this.package),
-                    npmOnline,
-                    new OraLogger()
-                );
-                const pa = await visitor.visit(this.type);
+        let visitor: IPackageVisitor | undefined = undefined;
 
-                printStatistics(pa, this.full);
-            } catch (e) {
-                console.log(e);
-            }
+        if (typeof this.package !== `undefined`) {
+            visitor = new Visitor(
+                getNameAndVersion(this.package),
+                AnalyzeCommand.OnlineProvider,
+                new OraLogger()
+            );
         } else if (typeof this.folder !== `undefined`) {
-            try {
-                const provider = new FileSystemPackageProvider(this.folder);
-                const visitor = new Visitor(getPackageJson(this.folder), provider, new OraLogger());
-                const pa: PackageAnalytics = await visitor.visit(this.type);
-
-                printStatistics(pa, this.full);
-            } catch (e) {
-                console.log(e);
-            }
+            const provider = new FileSystemPackageProvider(this.folder);
+            visitor = new Visitor(getPackageJson(this.folder), provider, new OraLogger());
         }
+
+        if (typeof visitor === "undefined") {
+            throw new Error(`Please specify a package or folder.\n`);
+        }
+
+        const pa: PackageAnalytics = await visitor.visit(this.type);
+
+        printStatistics(pa, this.full);
     }
 }

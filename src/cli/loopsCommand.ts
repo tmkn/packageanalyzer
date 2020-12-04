@@ -6,6 +6,7 @@ import { getNameAndVersion } from "../npm";
 import { Visitor } from "../visitors/visitor";
 import { OraLogger } from "../logger";
 import { defaultDependencyType, isValidDependencyType } from "./common";
+import { IPackageVersionProvider } from "../providers/folder";
 
 export class LoopsCommand extends Command {
     @Command.String(`--package`, {
@@ -40,7 +41,8 @@ export class LoopsCommand extends Command {
         ]
     });
 
-    /* istanbul ignore next */
+    static Provider: IPackageVersionProvider = npmOnline;
+
     @Command.Path(`loops`)
     async execute() {
         if (!isValidDependencyType(this.type)) {
@@ -50,47 +52,41 @@ export class LoopsCommand extends Command {
         }
 
         if (typeof this.package !== "undefined") {
-            try {
-                const visitor = new Visitor(
-                    getNameAndVersion(this.package),
-                    npmOnline,
-                    new OraLogger()
-                );
-                const pa = await visitor.visit(this.type);
-                const loopPathMap = pa.loopPathMap;
-                const distinctCount: number = [...loopPathMap].reduce(
-                    (i, [, loops]) => i + loops.size,
-                    0
-                );
-                const loopPadding = ("" + distinctCount).length;
-                let total = 0;
+            const visitor = new Visitor(
+                getNameAndVersion(this.package),
+                LoopsCommand.Provider,
+                new OraLogger()
+            );
+            const pa = await visitor.visit(this.type);
+            const loopPathMap = pa.loopPathMap;
+            const distinctCount: number = [...loopPathMap].reduce(
+                (i, [, loops]) => i + loops.size,
+                0
+            );
+            const loopPadding = ("" + distinctCount).length;
+            let total = 0;
 
-                console.log(chalk.bold(`${distinctCount} Loop(s) found for ${pa.fullName}\n`));
-                if (distinctCount > 0) {
-                    console.log(`Affected Packages:`);
-                    for (const [pkgName, loopsForPkg] of loopPathMap) {
-                        console.log(`- ${`${loopsForPkg.size}x`.padStart(5)} ${pkgName}`);
-                    }
-
-                    for (const [pkgName, loopsForPkg] of loopPathMap) {
-                        console.log(
-                            chalk.bgGray(`\n${loopsForPkg.size} Loop(s) found for ${pkgName}`)
-                        );
-
-                        let i = 0;
-                        for (const loop of loopsForPkg) {
-                            console.log(
-                                `[${`${total + i++ + 1}`.padStart(
-                                    loopPadding
-                                )}/${distinctCount}] ${loop}`
-                            );
-                        }
-
-                        total += loopsForPkg.size;
-                    }
+            console.log(chalk.bold(`${distinctCount} Loop(s) found for ${pa.fullName}\n`));
+            if (distinctCount > 0) {
+                console.log(`Affected Packages:`);
+                for (const [pkgName, loopsForPkg] of loopPathMap) {
+                    console.log(`- ${`${loopsForPkg.size}x`.padStart(5)} ${pkgName}`);
                 }
-            } catch (e) {
-                console.log(e);
+
+                for (const [pkgName, loopsForPkg] of loopPathMap) {
+                    console.log(chalk.bgGray(`\n${loopsForPkg.size} Loop(s) found for ${pkgName}`));
+
+                    let i = 0;
+                    for (const loop of loopsForPkg) {
+                        console.log(
+                            `[${`${total + i++ + 1}`.padStart(
+                                loopPadding
+                            )}/${distinctCount}] ${loop}`
+                        );
+                    }
+
+                    total += loopsForPkg.size;
+                }
             }
         }
     }

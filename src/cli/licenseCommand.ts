@@ -1,7 +1,7 @@
 import { Command } from "clipanion";
 import * as chalk from "chalk";
 
-import { npmOnline } from "../providers/online";
+import { npmOnline, OnlinePackageProvider } from "../providers/online";
 import { PackageAnalytics } from "../analyzers/package";
 import { getNameAndVersion } from "../npm";
 import { Visitor } from "../visitors/visitor";
@@ -69,7 +69,8 @@ export class LicenseCheckCommand extends Command {
         ]
     });
 
-    /* istanbul ignore next */
+    static OnlineProvider: OnlinePackageProvider = npmOnline;
+
     @Command.Path(`license`)
     async execute() {
         if (!isValidDependencyType(this.type)) {
@@ -81,42 +82,30 @@ export class LicenseCheckCommand extends Command {
         if (typeof this.package !== `undefined` && typeof this.folder !== `undefined`) {
             this.context.stdout.write(`Please specify a package or folder.\n`);
         } else if (typeof this.package !== `undefined`) {
-            try {
-                const visitor = new Visitor(
-                    getNameAndVersion(this.package),
-                    npmOnline,
-                    new OraLogger()
-                );
-                const pa = await visitor.visit(this.type);
-                const licenseReport = createWhitelistLicenseCheckReport(
-                    pa,
-                    this.allowList ?? [],
-                    true
-                );
+            const visitor = new Visitor(
+                getNameAndVersion(this.package),
+                LicenseCheckCommand.OnlineProvider,
+                new OraLogger()
+            );
+            const pa = await visitor.visit(this.type);
+            const licenseReport = createWhitelistLicenseCheckReport(pa, this.allowList ?? [], true);
 
-                printLicenseCheck(licenseReport, this.grouped);
+            printLicenseCheck(licenseReport, this.grouped);
 
-                if (!licenseReport.ok) process.exitCode = 1;
-            } catch (e) {
-                console.log(e);
-            }
+            if (!licenseReport.ok) process.exitCode = 1;
         } else if (typeof this.folder !== `undefined`) {
-            try {
-                const provider = new FileSystemPackageProvider(this.folder);
-                const visitor = new Visitor(getPackageJson(this.folder), provider, new OraLogger());
-                const pa: PackageAnalytics = await visitor.visit(this.type);
-                const licenseReport = createWhitelistLicenseCheckReport(
-                    pa,
-                    this.allowList ?? [],
-                    false
-                );
+            const provider = new FileSystemPackageProvider(this.folder);
+            const visitor = new Visitor(getPackageJson(this.folder), provider, new OraLogger());
+            const pa: PackageAnalytics = await visitor.visit(this.type);
+            const licenseReport = createWhitelistLicenseCheckReport(
+                pa,
+                this.allowList ?? [],
+                false
+            );
 
-                printLicenseCheck(licenseReport, this.grouped);
+            printLicenseCheck(licenseReport, this.grouped);
 
-                if (!licenseReport.ok) process.exitCode = 1;
-            } catch (e) {
-                console.log(e);
-            }
+            if (!licenseReport.ok) process.exitCode = 1;
         }
     }
 }

@@ -11,11 +11,10 @@ import { MockNpmServer } from "./server";
 describe(`Update Tests`, () => {
     let server: MockNpmServer;
     let provider: OnlinePackageProvider;
-    const port = 3002;
 
     beforeAll(() => {
-        provider = new OnlinePackageProvider(`http://localhost:${port}`);
-        server = new MockNpmServer(port);
+        server = new MockNpmServer(3004);
+        provider = new OnlinePackageProvider(`http://localhost:${server.port}`);
     });
 
     afterAll(() => {

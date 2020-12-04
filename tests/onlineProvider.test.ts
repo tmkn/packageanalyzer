@@ -6,11 +6,10 @@ import { MockNpmServer } from "./server";
 describe.only(`OnlineProvider Tests`, () => {
     let server: MockNpmServer;
     let provider: OnlinePackageProvider;
-    const port = 3000;
 
     beforeAll(() => {
-        provider = new OnlinePackageProvider(`http://localhost:${port}`);
-        server = new MockNpmServer(port);
+        server = new MockNpmServer(3003);
+        provider = new OnlinePackageProvider(`http://localhost:${server.port}`);
     });
 
     test(`resolveFromName with name and version`, async () => {
