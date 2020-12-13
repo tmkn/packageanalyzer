@@ -73,6 +73,6 @@ export class AnalyzeCommand extends Command {
 
         const pa: PackageAnalytics = await visitor.visit(this.type);
 
-        printStatistics(pa, this.full);
+        printStatistics(pa, this.full, this.context.stdout);
     }
 }
