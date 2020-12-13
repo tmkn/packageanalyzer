@@ -33,9 +33,7 @@ export class LookupFileCreator {
         let parsedBytes = 0;
         const startToken = `{"id":"`;
 
-        console.log(
-            `[${getPercentage(parsedBytes, fileSize)}%] Creating lookup for ${this._filePath}`
-        );
+        log(`[${getPercentage(parsedBytes, fileSize)}%] Creating lookup for ${this._filePath}`);
         let i = 0;
 
         for await (const line of rl) {
@@ -53,14 +51,14 @@ export class LookupFileCreator {
                     line: i
                 });
 
-                console.log(`[${getPercentage(parsedBytes, fileSize)}%] ${pkg.name}`);
+                log(`[${getPercentage(parsedBytes, fileSize)}%] ${pkg.name}`);
             }
 
             parsedBytes += lineByteLength + newLine.length;
             i++;
         }
 
-        console.log(`[${getPercentage(parsedBytes, fileSize)}%] Done`);
+        log(`[${getPercentage(parsedBytes, fileSize)}%] Done`);
     }
 }
 
@@ -78,7 +76,7 @@ export async function createLookupFile(srcFile: string): Promise<void> {
         verifyLookups(srcFile, creator.lookups);
         saveLookupFile(lookupFile, creator.lookups);
     } catch (e) {
-        console.log(e.message);
+        log(e.message);
     }
 }
 
@@ -141,7 +139,7 @@ function verifySingleLookup(
         const { doc: pkg }: INpmDumpRow = JSON.parse(str);
 
         if (pkg.name === name) {
-            console.log(`Correctly verified random package "${name}"`);
+            log(`Correctly verified random package "${name}"`);
         } else {
             throw new Error(`Package name didn't match [${name}/${pkg.name}]`);
         }
@@ -164,13 +162,17 @@ export class LookupFileWriter {
         const fullPath = path.resolve(this._targetFile);
         let i = 0;
 
-        console.log(`Creating lookup file "${fullPath}"`);
+        log(`Creating lookup file "${fullPath}"`);
         for (const lookup of this._lookups) {
             console.log(`[${getPercentage(++i, size)}%] added ${lookup.name}`);
             fs.writeSync(fd, LookupFileWriter.getLine(lookup));
         }
 
         fs.closeSync(fd);
-        console.log(`Done, Created lookup file at "${fullPath}"`);
+        log(`Done, Created lookup file at "${fullPath}"`);
     }
+}
+
+function log(msg: string): void {
+    if (process.env.NODE_ENV !== "test") console.log(msg);
 }
