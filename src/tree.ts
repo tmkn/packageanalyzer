@@ -1,3 +1,5 @@
+import { Writable } from "stream";
+
 enum Markup {
     Spacer = ` `,
     HorizontalLine = `─`,
@@ -13,11 +15,11 @@ export interface ITreeFormatter<T> {
     getChildren(data: T): T[];
 }
 
-export function print<T>(node: T, converter: ITreeFormatter<T>): void {
+export function print<T>(node: T, converter: ITreeFormatter<T>, stdout: Writable): void {
     const lines: string[] = [];
 
     visit(node, converter, ``, lines);
-    lines.forEach(line => console.log(line));
+    lines.forEach(line => stdout.write(`${line}\n`));
 }
 
 function visit<T>(node: T, converter: ITreeFormatter<T>, prefix: string, lines: string[]): void {
