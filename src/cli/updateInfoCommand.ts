@@ -54,12 +54,12 @@ export class UpdateInfoCommand extends Command {
                 ${data.latestBugfix.version} 
                 ${daysAgo(data.latestBugfix.releaseDate)}
             \n`);
-            console.log(`
+            this.context.stdout.write(`
                 ${`Latest minor:`.padEnd(padding)} 
                 ${data.latestMinor.version} 
                 ${daysAgo(data.latestMinor.releaseDate)}
             \n`);
-            console.log(`
+            this.context.stdout.write(`
                 ${`Latest version:`.padEnd(padding)} 
                 ${data.latestOverall.version} 
                 ${daysAgo(data.latestOverall.releaseDate)}

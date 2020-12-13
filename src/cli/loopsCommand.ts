@@ -66,22 +66,28 @@ export class LoopsCommand extends Command {
             const loopPadding = ("" + distinctCount).length;
             let total = 0;
 
-            console.log(chalk.bold(`${distinctCount} Loop(s) found for ${pa.fullName}\n`));
+            this.context.stdout.write(
+                chalk.bold(`${distinctCount} Loop(s) found for ${pa.fullName}\n\n`)
+            );
             if (distinctCount > 0) {
-                console.log(`Affected Packages:`);
+                this.context.stdout.write(`Affected Packages:\n`);
                 for (const [pkgName, loopsForPkg] of loopPathMap) {
-                    console.log(`- ${`${loopsForPkg.size}x`.padStart(5)} ${pkgName}`);
+                    this.context.stdout.write(
+                        `- ${`${loopsForPkg.size}x`.padStart(5)} ${pkgName}\n`
+                    );
                 }
 
                 for (const [pkgName, loopsForPkg] of loopPathMap) {
-                    console.log(chalk.bgGray(`\n${loopsForPkg.size} Loop(s) found for ${pkgName}`));
+                    this.context.stdout.write(
+                        chalk.bgGray(`\n${loopsForPkg.size} Loop(s) found for ${pkgName}\n`)
+                    );
 
                     let i = 0;
                     for (const loop of loopsForPkg) {
-                        console.log(
+                        this.context.stdout.write(
                             `[${`${total + i++ + 1}`.padStart(
                                 loopPadding
-                            )}/${distinctCount}] ${loop}`
+                            )}/${distinctCount}] ${loop}\n`
                         );
                     }
 
