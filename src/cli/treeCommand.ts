@@ -67,14 +67,14 @@ export class TreeCommand extends Command {
             );
             const pa = await visitor.visit();
 
-            pa.printDependencyTree();
+            pa.printDependencyTree(this.context.stdout);
         } else if (typeof this.folder !== "undefined") {
             if (fs.existsSync(this.folder)) {
                 const provider = new FileSystemPackageProvider(this.folder);
                 const visitor = new Visitor(getPackageJson(this.folder), provider, new OraLogger());
                 const pa: PackageAnalytics = await visitor.visit();
 
-                pa.printDependencyTree();
+                pa.printDependencyTree(this.context.stdout);
             }
         }
     }

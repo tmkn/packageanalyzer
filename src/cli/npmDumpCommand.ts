@@ -5,6 +5,7 @@ import { Visitor } from "../visitors/visitor";
 import { OraLogger } from "../logger";
 import { FlatFileProvider } from "../providers/flatFile";
 import { printStatistics } from "./common";
+import { Writable } from "stream";
 
 export class NpmDumpCommand extends Command {
     @Command.String(`--npmfile`, { description: `path to a npmdump.json` })
@@ -36,19 +37,19 @@ export class NpmDumpCommand extends Command {
     @Command.Path(`npmdump`)
     async execute() {
         if (typeof this.npmFile !== "undefined" && typeof this.package !== "undefined") {
-            cliResolveFile(this.package, this.npmFile);
+            cliResolveFile(this.package, this.npmFile, this.context.stdout);
         }
     }
 }
 
-async function cliResolveFile(pkgName: string, npmFile: string): Promise<void> {
+async function cliResolveFile(pkgName: string, npmFile: string, stdout: Writable): Promise<void> {
     try {
         const provider = new FlatFileProvider(npmFile);
         const visitor = new Visitor(getNameAndVersion(pkgName), provider, new OraLogger());
         const pa = await visitor.visit();
 
-        printStatistics(pa, false);
+        printStatistics(pa, false, stdout);
     } catch (e) {
-        console.log(e);
+        stdout.write(e);
     }
 }

@@ -45,7 +45,7 @@ export class Extractor {
 
             if (!fs.existsSync(packageDir)) fs.mkdirSync(packageDir, { recursive: true });
 
-            console.log(`[${padding}/${max}] ${filePath}`);
+            process.stdout.write(`[${padding}/${max}] ${filePath}\n`);
             fs.writeFileSync(filePath, data, "utf8");
         });
 
@@ -85,7 +85,7 @@ export class Extractor {
         this._resolvedPackages = new Map();
 
         for (const [name, version] of this._versions) {
-            console.log(`Fetching ${name}@${version ? version : `latest`}`);
+            process.stdout.write(`Fetching ${name}@${version ? version : `latest`}\n`);
 
             const visitor = new Visitor([name, version], this._provider, new OraLogger());
             const pa: PackageAnalytics = await visitor.visit();
@@ -108,7 +108,7 @@ export class Extractor {
     writeLookupFile(lookupDestination: string): void {
         const fd = fs.openSync(lookupDestination, "w");
 
-        console.log(`Writing lookup file...`);
+        process.stdout.write(`Writing lookup file...\n`);
 
         for (const entry of this._resolvedPackages.keys()) {
             fs.writeSync(fd, `${entry}\n`, null, "utf8");
@@ -116,7 +116,7 @@ export class Extractor {
 
         fs.closeSync(fd);
 
-        console.log(`Generated lookup file at ${lookupDestination}`);
+        process.stdout.write(`Generated lookup file at ${lookupDestination}\n`);
     }
 
     /* istanbul ignore next */
@@ -130,7 +130,7 @@ export class Extractor {
                 await saveCallback(jsonData, pa, i++, this._resolvedPackages.size);
             }
         } catch (e) {
-            console.log(e);
+            process.stderr.write(`${e}`);
             throw new Error(`Couldn't save`);
         }
     }

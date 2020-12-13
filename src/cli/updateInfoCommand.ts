@@ -35,7 +35,7 @@ export class UpdateInfoCommand extends Command {
             const [name, version] = getNameAndVersion(this.package);
 
             if (typeof version === "undefined") {
-                console.log(`Version info is missing (${this.package})`);
+                this.context.stdout.write(`Version info is missing (${this.package})\n`);
 
                 return;
             }
@@ -43,27 +43,27 @@ export class UpdateInfoCommand extends Command {
             const data = await updateInfo(name, version, UpdateInfoCommand.OnlineProvider);
             const padding = 16;
 
-            console.log(chalk.bold(`Update Info for ${this.package}\n`));
-            console.log(
-                `Semantic match:`.padEnd(padding),
-                data.latestSemanticMatch.version,
-                daysAgo(data.latestSemanticMatch.releaseDate)
-            );
-            console.log(
-                `Latest bugfix:`.padEnd(padding),
-                data.latestBugfix.version,
-                daysAgo(data.latestBugfix.releaseDate)
-            );
-            console.log(
-                `Latest minor:`.padEnd(padding),
-                data.latestMinor.version,
-                daysAgo(data.latestMinor.releaseDate)
-            );
-            console.log(
-                `Latest version:`.padEnd(padding),
-                data.latestOverall.version,
-                daysAgo(data.latestOverall.releaseDate)
-            );
+            this.context.stdout.write(`${chalk.bold(`Update Info for ${this.package}\n`)}\n`);
+            this.context.stdout.write(`
+                ${`Semantic match:`.padEnd(padding)} 
+                ${data.latestSemanticMatch.version} 
+                ${daysAgo(data.latestSemanticMatch.releaseDate)}
+            \n`);
+            this.context.stdout.write(`
+                ${`Latest bugfix:`.padEnd(padding)} 
+                ${data.latestBugfix.version} 
+                ${daysAgo(data.latestBugfix.releaseDate)}
+            \n`);
+            this.context.stdout.write(`
+                ${`Latest minor:`.padEnd(padding)} 
+                ${data.latestMinor.version} 
+                ${daysAgo(data.latestMinor.releaseDate)}
+            \n`);
+            this.context.stdout.write(`
+                ${`Latest version:`.padEnd(padding)} 
+                ${data.latestOverall.version} 
+                ${daysAgo(data.latestOverall.releaseDate)}
+            \n`);
         }
     }
 }

@@ -5,6 +5,8 @@ import { getPackageJson } from "../src/visitors/folder";
 import { OraLogger } from "../src/logger";
 import { ITreeFormatter, print } from "../src/tree";
 import { PackageAnalytics } from "../src/analyzers/package";
+import { Writable } from "stream";
+import { TestWritable } from "./analyzer.test";
 
 const output = `
 testproject1@1.0.0
@@ -70,12 +72,11 @@ describe(`Tree Tests`, () => {
             getChildren: data => data.directDependencies
         };
 
-        const lines: string[] = [];
-        const spy = jest.spyOn(console, "log").mockImplementation(line => lines.push(line));
-        print<PackageAnalytics>(pa, converter);
-        spy.mockRestore();
+        const stdout = new TestWritable();
 
-        expect(lines).toEqual(output);
+        print<PackageAnalytics>(pa, converter, stdout);
+
+        expect(stdout.lines).toEqual(output);
     });
 
     test(`Print tree with multi lines`, async () => {
@@ -92,11 +93,10 @@ describe(`Tree Tests`, () => {
             getChildren: data => data.directDependencies
         };
 
-        const lines: string[] = [];
-        const spy = jest.spyOn(console, "log").mockImplementation(line => lines.push(line));
-        print<PackageAnalytics>(pa, converter);
-        spy.mockRestore();
+        const stdout = new TestWritable();
 
-        expect(lines).toEqual(multilineOutput);
+        print<PackageAnalytics>(pa, converter, stdout);
+
+        expect(stdout.lines).toEqual(multilineOutput);
     });
 });

@@ -1,3 +1,4 @@
+import { Writable } from "stream";
 import { INpmPackageVersion, IMalformedLicenseField } from "../npm";
 import { ITreeFormatter, print } from "../tree";
 
@@ -31,7 +32,7 @@ interface IPackageStatistics {
     timeSpan: number | undefined;
     size: number | undefined;
     directDependencies: PackageAnalytics[];
-    printDependencyTree(): void;
+    printDependencyTree(stdout: Writable): void;
 }
 
 export class PackageAnalytics implements IPackageStatistics {
@@ -442,12 +443,12 @@ export class PackageAnalytics implements IPackageStatistics {
         return this.getPackagesBy(pkg => pkg.path.length === depth + 1);
     }
 
-    printDependencyTree(): void {
+    printDependencyTree(stdout: Writable): void {
         const converter: ITreeFormatter<PackageAnalytics> = {
             getLabel: data => `${data.fullName} (${data.transitiveDependenciesCount} dependencies)`,
             getChildren: data => data.directDependencies
         };
 
-        print<PackageAnalytics>(this, converter);
+        print<PackageAnalytics>(this, converter, stdout);
     }
 }

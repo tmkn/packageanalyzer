@@ -10,7 +10,7 @@ describe(`Request Tests`, () => {
     const port = 3000;
 
     if (threshold >= artificalDelay) {
-        console.log(
+        process.stdout.write(
             `Make sure threshold is lower than artifical delay to correctly trigger retries`
         );
     }
@@ -32,7 +32,7 @@ describe(`Request Tests`, () => {
         app.get("/notjson", (req, res) => res.send("not json"));
         app.get("/forbidden", (req, res) => res.status(401).json({ message: "forbidden" }));
 
-        server = app.listen(port, () => console.log(`Started server`));
+        server = app.listen(port, () => process.stdout.write(`Started Server\n`));
     });
 
     test(`Returns json`, async () => {
@@ -73,7 +73,7 @@ describe(`Request Tests`, () => {
 
     afterAll(() => {
         server.close(e => {
-            if (e) console.log(e);
+            if (e) process.stderr.write(e.message);
         });
     });
 });

@@ -78,8 +78,8 @@ export class MockNpmServer {
         });
 
         this._server = app
-            .listen(this.port, () => console.log(`Started MockNpmServer`))
-            .on("error", e => console.log(`error`, e));
+            .listen(this.port, () => process.stdout.write(`Started MockNpmServer\n`))
+            .on("error", e => process.stderr.write(e.message));
     }
 
     private _populateCache(): void {
@@ -94,7 +94,7 @@ export class MockNpmServer {
 
     close(): void {
         this._server.close(e => {
-            if (e) console.log(e);
+            if (e) process.stderr.write(e.message);
         });
     }
 }

@@ -6,6 +6,7 @@ import { getPackageJson } from "../src/visitors/folder";
 import { FileSystemPackageProvider } from "../src/providers/folder";
 import { Visitor } from "../src/visitors/visitor";
 import { OraLogger } from "../src/logger";
+import { Writable } from "stream";
 
 describe(`PackageAnalytics Tests`, () => {
     let pa: PackageAnalytics;
@@ -188,10 +189,10 @@ describe(`PackageAnalytics Tests`, () => {
     });
 
     test(`Print dependency tree in console`, () => {
-        const spy = jest.spyOn(console, "log").mockImplementation();
-        pa.printDependencyTree();
-        expect(spy).toHaveBeenCalledTimes(14);
-        spy.mockRestore();
+        const stdout = new TestWritable();
+
+        pa.printDependencyTree(stdout);
+        expect(stdout.lines.length).toEqual(14);
     });
 
     test(`Deprecation flag`, () => {
@@ -274,3 +275,16 @@ describe(`Checks Name and Version extraction`, () => {
         expect(() => getNameAndVersion(`foo@`)).toThrow();
     });
 });
+
+export class TestWritable extends Writable {
+    public lines: string[] = [];
+
+    _write(chunk: any, encoding: BufferEncoding, callback: (error?: Error | null) => void) {
+        const data: string = chunk.toString();
+
+        if (data.endsWith(`\n`)) this.lines.push(data.slice(0, data.length - 1));
+        else this.lines.push(data);
+
+        callback();
+    }
+}

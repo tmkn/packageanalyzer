@@ -8,6 +8,7 @@ import { FileSystemPackageProvider } from "../providers/folder";
 import { getPackageJson } from "../visitors/folder";
 import { OraLogger } from "../logger";
 import { printStatistics, defaultDependencyType, isValidDependencyType } from "./common";
+import { Stream, Writable } from "stream";
 
 export class AnalyzeCommand extends Command {
     @Command.String(`--package`, {
@@ -72,6 +73,6 @@ export class AnalyzeCommand extends Command {
 
         const pa: PackageAnalytics = await visitor.visit(this.type);
 
-        printStatistics(pa, this.full);
+        printStatistics(pa, this.full, this.context.stdout);
     }
 }
