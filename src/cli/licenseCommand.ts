@@ -14,6 +14,7 @@ import {
     ILicenseCheckResult,
     LicenseCheckReport
 } from "../services/licenseCheckService";
+import { Writable } from "stream";
 
 export class LicenseCheckCommand extends Command {
     @Command.String(`--package`, {
@@ -90,7 +91,7 @@ export class LicenseCheckCommand extends Command {
             const pa = await visitor.visit(this.type);
             const licenseReport = createWhitelistLicenseCheckReport(pa, this.allowList ?? [], true);
 
-            printLicenseCheck(licenseReport, this.grouped);
+            printLicenseCheck(licenseReport, this.grouped, this.context.stdout);
 
             if (!licenseReport.ok) process.exitCode = 1;
         } else if (typeof this.folder !== `undefined`) {
@@ -103,22 +104,26 @@ export class LicenseCheckCommand extends Command {
                 false
             );
 
-            printLicenseCheck(licenseReport, this.grouped);
+            printLicenseCheck(licenseReport, this.grouped, this.context.stdout);
 
             if (!licenseReport.ok) process.exitCode = 1;
         }
     }
 }
 
-function printLicenseCheck(licenseReport: LicenseCheckReport, grouped: boolean): void {
-    const licensePrinter = new LicenseCheckPrinter(licenseReport);
+function printLicenseCheck(
+    licenseReport: LicenseCheckReport,
+    grouped: boolean,
+    stdout: Writable
+): void {
+    const licensePrinter = new LicenseCheckPrinter(licenseReport, stdout);
 
     if (grouped) licensePrinter.printGroupedByLicense();
     else licensePrinter.printLicenses();
 }
 
 class LicenseCheckPrinter {
-    constructor(private _licenseCheckResult: LicenseCheckReport) {}
+    constructor(private _licenseCheckResult: LicenseCheckReport, private _stdout: Writable) {}
 
     public groupedByLicense(): Map<PackageAnalytics, ILicenseCheckResult>[] {
         const groups: Map<string, Map<PackageAnalytics, ILicenseCheckResult>> = new Map();
@@ -163,9 +168,9 @@ class LicenseCheckPrinter {
             const str = `${pa.fullName.padEnd(padding + 1)}${pa.license}`;
 
             if (result.ok) {
-                console.log(chalk.green(str));
+                this._stdout.write(`${chalk.green(str)}\n`);
             } else {
-                console.log(chalk.redBright(str));
+                this._stdout.write(`${chalk.redBright(str)}\n`);
             }
         }
     }
@@ -176,7 +181,7 @@ class LicenseCheckPrinter {
         const failedToSatisfyLicense: Map<PackageAnalytics, ILicenseCheckResult> = new Map();
 
         if (ok) {
-            console.log(`\nAll packages passed the license check`);
+            this._stdout.write(`\nAll packages passed the license check\n`);
         } else {
             for (const [pa, result] of failedChecks) {
                 if (result.parseError) {
@@ -188,15 +193,15 @@ class LicenseCheckPrinter {
         }
 
         if (failedToSatisfyLicense.size > 0) {
-            console.log(
-                `\n${failedToSatisfyLicense.size}/${allChecks.size} packages failed the license check`
+            this._stdout.write(
+                `\n${failedToSatisfyLicense.size}/${allChecks.size} packages failed the license check\n`
             );
             this._print(failedToSatisfyLicense);
         }
 
         if (failedToParseChecks.size > 0) {
-            console.log(
-                `\n${failedToParseChecks.size}/${allChecks.size} licenses couldn't be parsed`
+            this._stdout.write(
+                `\n${failedToParseChecks.size}/${allChecks.size} licenses couldn't be parsed\n`
             );
             this._print(failedToParseChecks);
         }
