@@ -1,7 +1,7 @@
 import { Command } from "clipanion";
 
 import { npmOnline, OnlinePackageProvider } from "../providers/online";
-import { PackageAnalytics } from "../analyzers/package";
+import { Package } from "../analyzers/package";
 import { getNameAndVersion } from "../npm";
 import { IPackageVisitor, Visitor } from "../visitors/visitor";
 import { FileSystemPackageProvider } from "../providers/folder";
@@ -71,8 +71,8 @@ export class AnalyzeCommand extends Command {
             throw new Error(`Please specify a package or folder.\n`);
         }
 
-        const pa: PackageAnalytics = await visitor.visit(this.type);
+        const p: Package = await visitor.visit(this.type);
 
-        printStatistics(pa, this.full, this.context.stdout);
+        printStatistics(p, this.full, this.context.stdout);
     }
 }

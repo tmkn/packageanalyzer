@@ -14,18 +14,18 @@ describe.only(`OnlineProvider Tests`, () => {
 
     test(`resolveFromName with name and version`, async () => {
         const visitor = new Visitor(["react", "16.8.1"], provider, new OraLogger());
-        const pa = await visitor.visit();
+        const p = await visitor.visit();
 
-        expect(pa.name).toBe("react");
-        expect(pa.version).toBe("16.8.1");
+        expect(p.name).toBe("react");
+        expect(p.version).toBe("16.8.1");
     });
 
     test(`resolveFromName with name`, async () => {
         const visitor = new Visitor(["react"], provider, new OraLogger());
-        const pa = await visitor.visit();
+        const p = await visitor.visit();
 
-        expect(pa.name).toBe("react");
-        expect(pa.version).toBe("16.8.6");
+        expect(p.name).toBe("react");
+        expect(p.version).toBe("16.8.6");
     });
 
     test(`Check size`, () => {
@@ -34,8 +34,8 @@ describe.only(`OnlineProvider Tests`, () => {
 
     test(`Check oldest package`, async () => {
         const visitor = new Visitor(["react", "16.8.1"], provider, new OraLogger());
-        const pa = await visitor.visit();
-        const oldestPackage = pa.oldest;
+        const p = await visitor.visit();
+        const oldestPackage = p.oldest;
 
         expect.assertions(1);
 
@@ -46,8 +46,8 @@ describe.only(`OnlineProvider Tests`, () => {
 
     test(`Check newest package`, async () => {
         const visitor = new Visitor(["react", "16.8.1"], provider, new OraLogger());
-        const pa = await visitor.visit();
-        const newestPackage = pa.newest;
+        const p = await visitor.visit();
+        const newestPackage = p.newest;
 
         expect.assertions(1);
 

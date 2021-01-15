@@ -1,23 +1,23 @@
-import { PackageAnalytics } from "./analyzers/package";
+import { Package } from "./analyzers/package";
 
 interface IMappedDependency<T> {
     parent: T | null;
     dependencies: IMappedDependency<T>[];
 }
 
-export type MapFn<T> = (pa: PackageAnalytics) => T;
+export type MapFn<T> = (p: Package) => T;
 export type MappedDependency<T> = T & IMappedDependency<T>;
 
 //useful maybe later? ¯\_(ツ)_/¯
-//maps PackageAnalytics to another format
-export function map<T>(pa: PackageAnalytics, mapFn: MapFn<T>): MappedDependency<T> {
+//maps Package to another format
+export function map<T>(p: Package, mapFn: MapFn<T>): MappedDependency<T> {
     const mappedDependency: MappedDependency<T> = {
-        ...mapFn(pa),
+        ...mapFn(p),
         parent: null,
         dependencies: []
     };
 
-    mappedDependency.dependencies = pa.directDependencies.map(childPa => {
+    mappedDependency.dependencies = p.directDependencies.map(childPa => {
         const child: MappedDependency<T> = map<T>(childPa, mapFn);
 
         child.parent = mappedDependency;

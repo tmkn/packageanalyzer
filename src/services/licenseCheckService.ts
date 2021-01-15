@@ -1,7 +1,7 @@
 //import * as satisfies from "spdx-satisfies";
 const satisfies = require("spdx-satisfies");
 
-import { PackageAnalytics } from "../analyzers/package";
+import { Package } from "../analyzers/package";
 
 export interface ILicenseCheckResult {
     ok: boolean;
@@ -10,9 +10,9 @@ export interface ILicenseCheckResult {
 
 interface ILicenseCheckReport {
     ok: boolean;
-    allChecks: Map<PackageAnalytics, ILicenseCheckResult>;
-    failedChecks: Map<PackageAnalytics, ILicenseCheckResult>;
-    passedChecks: Map<PackageAnalytics, ILicenseCheckResult>;
+    allChecks: Map<Package, ILicenseCheckResult>;
+    failedChecks: Map<Package, ILicenseCheckResult>;
+    passedChecks: Map<Package, ILicenseCheckResult>;
 }
 
 export type LicenseCheckReport = Readonly<ILicenseCheckReport>;
@@ -23,7 +23,7 @@ export interface ILicenseCheckService {
 
 class WhitelistLicenseCheckService implements ILicenseCheckService {
     constructor(
-        private _pa: PackageAnalytics,
+        private _pa: Package,
         private _whitelist: string[],
         private _includeSelf: Readonly<boolean>
     ) {}
@@ -38,9 +38,9 @@ class WhitelistLicenseCheckService implements ILicenseCheckService {
 
     check(): ILicenseCheckReport {
         const visitedPackages: string[] = [];
-        const all: Map<PackageAnalytics, ILicenseCheckResult> = new Map();
-        const failedChecks: Map<PackageAnalytics, ILicenseCheckResult> = new Map();
-        const passedChecks: Map<PackageAnalytics, ILicenseCheckResult> = new Map();
+        const all: Map<Package, ILicenseCheckResult> = new Map();
+        const failedChecks: Map<Package, ILicenseCheckResult> = new Map();
+        const passedChecks: Map<Package, ILicenseCheckResult> = new Map();
 
         this._pa.visit(pkg => {
             if (visitedPackages.includes(pkg.fullName)) return;
@@ -85,7 +85,7 @@ class WhitelistLicenseCheckService implements ILicenseCheckService {
 }
 
 export function createWhitelistLicenseCheckReport(
-    pkg: PackageAnalytics,
+    pkg: Package,
     whitelist: string[],
     includeSelf: boolean
 ): LicenseCheckReport {

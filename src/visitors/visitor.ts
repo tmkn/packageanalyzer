@@ -1,5 +1,5 @@
 import { IPackageVersionProvider } from "../providers/folder";
-import { PackageAnalytics } from "../analyzers/package";
+import { Package } from "../analyzers/package";
 import { INpmKeyValue, INpmPackageVersion, PackageVersion } from "../npm";
 import { ILogger } from "../logger";
 import { PackageProvider } from "../providers/online";
@@ -13,7 +13,7 @@ interface IVisitorConstructor {
 }
 
 export interface IPackageVisitor {
-    visit: (depType?: DependencyTypes) => Promise<PackageAnalytics>;
+    visit: (depType?: DependencyTypes) => Promise<Package>;
 }
 
 export type DependencyTypes = "dependencies" | "devDependencies";
@@ -28,11 +28,11 @@ export const Visitor: IVisitorConstructor = class Visitor implements IPackageVis
         private readonly _logger: ILogger
     ) {}
 
-    async visit(depType = this._depType): Promise<PackageAnalytics> {
+    async visit(depType = this._depType): Promise<Package> {
         try {
             const [name, version] = this._entry;
             const rootPkg = await this._provider.getPackageByVersion(name, version);
-            const root: PackageAnalytics = new PackageAnalytics(rootPkg);
+            const root: Package = new Package(rootPkg);
 
             this._logger.start();
             this._logger.log("Fetching");
@@ -59,7 +59,7 @@ export const Visitor: IVisitorConstructor = class Visitor implements IPackageVis
     }
 
     private async visitDependencies(
-        parent: PackageAnalytics,
+        parent: Package,
         dependencies: INpmKeyValue | undefined
     ): Promise<void> {
         try {
@@ -74,7 +74,7 @@ export const Visitor: IVisitorConstructor = class Visitor implements IPackageVis
             }
 
             for (const p of packages) {
-                const dependency = new PackageAnalytics(p);
+                const dependency = new Package(p);
 
                 this._logger.log(`Fetched ${p.name}`);
                 await addPublished(dependency, this._provider);
@@ -97,22 +97,19 @@ export const Visitor: IVisitorConstructor = class Visitor implements IPackageVis
     }
 };
 
-export async function addPublished(
-    pa: PackageAnalytics,
-    provider: IPackageVersionProvider
-): Promise<void> {
+export async function addPublished(p: Package, provider: IPackageVersionProvider): Promise<void> {
     if (!(provider instanceof PackageProvider)) {
         return;
     }
 
-    const info = await provider.getPackageInfo(pa.name);
+    const info = await provider.getPackageInfo(p.name);
 
     if (!info) return;
 
     const time = info.time;
-    const released = time[pa.version];
+    const released = time[p.version];
 
     if (!released) return;
 
-    pa.published = new Date(released);
+    p.published = new Date(released);
 }

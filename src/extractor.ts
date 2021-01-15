@@ -4,22 +4,17 @@ import * as fs from "fs";
 import { FlatFileProvider } from "./providers/flatFile";
 import { PackageVersion, getNameAndVersion } from "./npm";
 import { OraLogger } from "./logger";
-import { PackageAnalytics } from "./analyzers/package";
+import { Package } from "./analyzers/package";
 import { Visitor } from "./visitors/visitor";
 
-type Formatter = (pa: PackageAnalytics) => object;
-type ExtractCallback = (
-    data: string,
-    pa: PackageAnalytics,
-    i: number,
-    max: number
-) => Promise<void>;
+type Formatter = (p: Package) => object;
+type ExtractCallback = (data: string, p: Package, i: number, max: number) => Promise<void>;
 
 //extract packages from dump file
 export class Extractor {
     private _provider: FlatFileProvider;
     private _versions: PackageVersion[] = [];
-    private _resolvedPackages: Map<string, PackageAnalytics> = new Map();
+    private _resolvedPackages: Map<string, Package> = new Map();
 
     /* istanbul ignore next */
     static async Extract(
@@ -33,14 +28,14 @@ export class Extractor {
         await extractor.extract();
         if (!fs.existsSync(targetDir)) fs.mkdirSync(targetDir, { recursive: true });
 
-        extractor.save(formatter, async (data, pa, i, max) => {
+        extractor.save(formatter, async (data, p, i, max) => {
             const padding = `${i + 1}`.padStart(max.toString().length);
-            const partialDir = Extractor.PackageNameToDir(pa.fullName);
+            const partialDir = Extractor.PackageNameToDir(p.fullName);
             const packageDir = path.join(targetDir, partialDir);
             const fileName =
                 partialDir.length > 0
-                    ? `${pa.fullName}.json`.split(partialDir)[1]
-                    : `${pa.fullName}.json`;
+                    ? `${p.fullName}.json`.split(partialDir)[1]
+                    : `${p.fullName}.json`;
             const filePath = path.join(packageDir, fileName);
 
             if (!fs.existsSync(packageDir)) fs.mkdirSync(packageDir, { recursive: true });
@@ -81,20 +76,20 @@ export class Extractor {
         }
     }
 
-    async extract(): Promise<ReadonlyMap<string, PackageAnalytics>> {
+    async extract(): Promise<ReadonlyMap<string, Package>> {
         this._resolvedPackages = new Map();
 
         for (const [name, version] of this._versions) {
             process.stdout.write(`Fetching ${name}@${version ? version : `latest`}\n`);
 
             const visitor = new Visitor([name, version], this._provider, new OraLogger());
-            const pa: PackageAnalytics = await visitor.visit();
+            const p: Package = await visitor.visit();
 
-            if (!this._resolvedPackages.has(pa.fullName)) {
-                this._resolvedPackages.set(pa.fullName, pa);
+            if (!this._resolvedPackages.has(p.fullName)) {
+                this._resolvedPackages.set(p.fullName, p);
 
                 //add distinct dependencies
-                pa.visit(dep => {
+                p.visit(dep => {
                     if (!this._resolvedPackages.has(dep.fullName))
                         this._resolvedPackages.set(dep.fullName, dep);
                 });
@@ -124,10 +119,10 @@ export class Extractor {
         try {
             let i = 0;
 
-            for (const pa of this._resolvedPackages.values()) {
-                const jsonData = JSON.stringify(formatter(pa));
+            for (const p of this._resolvedPackages.values()) {
+                const jsonData = JSON.stringify(formatter(p));
 
-                await saveCallback(jsonData, pa, i++, this._resolvedPackages.size);
+                await saveCallback(jsonData, p, i++, this._resolvedPackages.size);
             }
         } catch (e) {
             process.stderr.write(`${e}`);

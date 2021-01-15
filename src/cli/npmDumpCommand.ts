@@ -46,9 +46,9 @@ async function cliResolveFile(pkgName: string, npmFile: string, stdout: Writable
     try {
         const provider = new FlatFileProvider(npmFile);
         const visitor = new Visitor(getNameAndVersion(pkgName), provider, new OraLogger());
-        const pa = await visitor.visit();
+        const p = await visitor.visit();
 
-        printStatistics(pa, false, stdout);
+        printStatistics(p, false, stdout);
     } catch (e) {
         stdout.write(e);
     }
