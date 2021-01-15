@@ -16,29 +16,29 @@ interface IDeprecatedInfo {
 }
 
 interface IPackageStatistics {
-    all: PackageAnalytics[];
+    all: Package[];
     transitiveDependenciesCount: number;
     distinctByNameCount: number;
     distinctByVersionCount: number;
     path: Array<[string, string]>;
     mostReferred: [string, number];
-    mostDependencies: PackageAnalytics;
+    mostDependencies: Package;
     mostVersions: VersionSummary;
-    loops: PackageAnalytics[];
+    loops: Package[];
     licenses: LicenseSummary;
     licensesByGroup: GroupedLicenseSummary;
-    newest: PackageAnalytics | undefined;
-    oldest: PackageAnalytics | undefined;
+    newest: Package | undefined;
+    oldest: Package | undefined;
     timeSpan: number | undefined;
     size: number | undefined;
-    directDependencies: PackageAnalytics[];
+    directDependencies: Package[];
     printDependencyTree(stdout: Writable): void;
 }
 
-export class PackageAnalytics implements IPackageStatistics {
-    parent: PackageAnalytics | null = null;
+export class Package implements IPackageStatistics {
+    parent: Package | null = null;
     isLoop = false;
-    private readonly _dependencies: PackageAnalytics[] = [];
+    private readonly _dependencies: Package[] = [];
 
     constructor(private readonly _data: Readonly<INpmPackageVersion>) {}
 
@@ -55,8 +55,8 @@ export class PackageAnalytics implements IPackageStatistics {
     }
 
     published: Date | undefined;
-    get oldest(): PackageAnalytics | undefined {
-        let oldest: PackageAnalytics | undefined = undefined;
+    get oldest(): Package | undefined {
+        let oldest: Package | undefined = undefined;
 
         if (this.published) oldest = this;
 
@@ -73,8 +73,8 @@ export class PackageAnalytics implements IPackageStatistics {
         return oldest;
     }
 
-    get newest(): PackageAnalytics | undefined {
-        let newest: PackageAnalytics | undefined = undefined;
+    get newest(): Package | undefined {
+        let newest: Package | undefined = undefined;
 
         if (this.published) newest = this;
 
@@ -159,16 +159,16 @@ export class PackageAnalytics implements IPackageStatistics {
         return this._data[key];
     }
 
-    addDependency(dependency: PackageAnalytics): void {
+    addDependency(dependency: Package): void {
         dependency.parent = this;
 
         this._dependencies.push(dependency);
     }
 
     visit(
-        callback: (dependency: PackageAnalytics) => void,
+        callback: (dependency: Package) => void,
         includeSelf = false,
-        start: PackageAnalytics = this
+        start: Package = this
     ): void {
         if (includeSelf) callback(this);
 
@@ -178,8 +178,8 @@ export class PackageAnalytics implements IPackageStatistics {
         }
     }
 
-    getPackagesBy(filter: (pkg: PackageAnalytics) => boolean): PackageAnalytics[] {
-        const matches: PackageAnalytics[] = [];
+    getPackagesBy(filter: (pkg: Package) => boolean): Package[] {
+        const matches: Package[] = [];
 
         this.visit(
             d => {
@@ -192,8 +192,8 @@ export class PackageAnalytics implements IPackageStatistics {
         return matches;
     }
 
-    getPackagesByName(name: string, version?: string): PackageAnalytics[] {
-        const matches: PackageAnalytics[] = [];
+    getPackagesByName(name: string, version?: string): Package[] {
+        const matches: Package[] = [];
 
         this.visit(d => {
             if (typeof version === "undefined") {
@@ -206,8 +206,8 @@ export class PackageAnalytics implements IPackageStatistics {
         return matches;
     }
 
-    getPackageByName(name: string, version?: string): PackageAnalytics | null {
-        const matches: PackageAnalytics[] = this.getPackagesByName(name, version);
+    getPackageByName(name: string, version?: string): Package | null {
+        const matches: Package[] = this.getPackagesByName(name, version);
 
         if (matches.length > 0) return matches[0];
 
@@ -265,8 +265,8 @@ export class PackageAnalytics implements IPackageStatistics {
         return grouped.sort((a, b) => b.names.length - a.names.length);
     }
 
-    get sorted(): Map<string, Map<string, PackageAnalytics>> {
-        const sorted: Map<string, Map<string, PackageAnalytics>> = new Map();
+    get sorted(): Map<string, Map<string, Package>> {
+        const sorted: Map<string, Map<string, Package>> = new Map();
 
         this.visit(d => {
             const packageName = sorted.get(d.name);
@@ -282,8 +282,8 @@ export class PackageAnalytics implements IPackageStatistics {
     }
 
     //todo possible multiple matches
-    get mostDependencies(): PackageAnalytics {
-        let most: PackageAnalytics = this;
+    get mostDependencies(): Package {
+        let most: Package = this;
 
         this.visit(d => {
             if (most._dependencies.length < d._dependencies.length) {
@@ -352,7 +352,7 @@ export class PackageAnalytics implements IPackageStatistics {
 
     get path(): Array<[string, string]> {
         const path: Array<[string, string]> = [];
-        let current: PackageAnalytics | null = this;
+        let current: Package | null = this;
 
         while (current.parent !== null) {
             path.push([current.name, current.version]);
@@ -375,16 +375,16 @@ export class PackageAnalytics implements IPackageStatistics {
         return levels.join(" → ");
     }
 
-    get all(): PackageAnalytics[] {
-        const all: PackageAnalytics[] = [];
+    get all(): Package[] {
+        const all: Package[] = [];
 
         this.visit(d => all.push(d), true);
 
         return all;
     }
 
-    get loops(): PackageAnalytics[] {
-        const loops: PackageAnalytics[] = [];
+    get loops(): Package[] {
+        const loops: Package[] = [];
 
         this.visit(d => {
             if (d.isLoop) loops.push(d);
@@ -437,18 +437,18 @@ export class PackageAnalytics implements IPackageStatistics {
         return packageNames.size;
     }
 
-    get directDependencies(): PackageAnalytics[] {
+    get directDependencies(): Package[] {
         const depth = this.path.length;
 
         return this.getPackagesBy(pkg => pkg.path.length === depth + 1);
     }
 
     printDependencyTree(stdout: Writable): void {
-        const converter: ITreeFormatter<PackageAnalytics> = {
+        const converter: ITreeFormatter<Package> = {
             getLabel: data => `${data.fullName} (${data.transitiveDependenciesCount} dependencies)`,
             getChildren: data => data.directDependencies
         };
 
-        print<PackageAnalytics>(this, converter, stdout);
+        print<Package>(this, converter, stdout);
     }
 }

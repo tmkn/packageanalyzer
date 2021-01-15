@@ -1,6 +1,6 @@
 import * as path from "path";
 
-import { PackageAnalytics } from "../src/analyzers/package";
+import { Package } from "../src/analyzers/package";
 import { getPackageJson } from "../src/visitors/folder";
 import { IPackageVersionProvider, FileSystemPackageProvider } from "../src/providers/folder";
 import { INpmPackageVersion } from "../src/npm";
@@ -9,7 +9,7 @@ import { OraLogger } from "../src/logger";
 import { map, MappedDependency } from "../src/map";
 
 describe(`Map tests`, () => {
-    let pa: PackageAnalytics;
+    let p: Package;
     let mapped: MappedDependency<{ foo: string }>;
 
     beforeAll(async () => {
@@ -17,12 +17,12 @@ describe(`Map tests`, () => {
         const provider = new FileSystemPackageProvider(rootPath);
         const visitor = new Visitor(getPackageJson(rootPath), provider, new OraLogger());
 
-        pa = await visitor.visit();
-        mapped = map<{ foo: string }>(pa, pa => ({ foo: pa.fullName }));
+        p = await visitor.visit();
+        mapped = map<{ foo: string }>(p, p => ({ foo: p.fullName }));
     });
 
-    test(`Correctly maps PackageAnalytics`, () => {
-        expect(pa.fullName).toEqual(mapped.foo);
+    test(`Correctly maps Package`, () => {
+        expect(p.fullName).toEqual(mapped.foo);
     });
 
     test(`Correctly sets dependencis`, () => {

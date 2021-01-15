@@ -57,8 +57,8 @@ export class LoopsCommand extends Command {
                 LoopsCommand.Provider,
                 new OraLogger()
             );
-            const pa = await visitor.visit(this.type);
-            const loopPathMap = pa.loopPathMap;
+            const p = await visitor.visit(this.type);
+            const loopPathMap = p.loopPathMap;
             const distinctCount: number = [...loopPathMap].reduce(
                 (i, [, loops]) => i + loops.size,
                 0
@@ -67,7 +67,7 @@ export class LoopsCommand extends Command {
             let total = 0;
 
             this.context.stdout.write(
-                chalk.bold(`${distinctCount} Loop(s) found for ${pa.fullName}\n\n`)
+                chalk.bold(`${distinctCount} Loop(s) found for ${p.fullName}\n\n`)
             );
             if (distinctCount > 0) {
                 this.context.stdout.write(`Affected Packages:\n`);

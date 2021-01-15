@@ -2,7 +2,7 @@ import { Command } from "clipanion";
 import * as chalk from "chalk";
 
 import { npmOnline, OnlinePackageProvider } from "../providers/online";
-import { PackageAnalytics } from "../analyzers/package";
+import { Package } from "../analyzers/package";
 import { getNameAndVersion } from "../npm";
 import { Visitor } from "../visitors/visitor";
 import { FileSystemPackageProvider } from "../providers/folder";
@@ -88,8 +88,8 @@ export class LicenseCheckCommand extends Command {
                 LicenseCheckCommand.OnlineProvider,
                 new OraLogger()
             );
-            const pa = await visitor.visit(this.type);
-            const licenseReport = createWhitelistLicenseCheckReport(pa, this.allowList ?? [], true);
+            const p = await visitor.visit(this.type);
+            const licenseReport = createWhitelistLicenseCheckReport(p, this.allowList ?? [], true);
 
             printLicenseCheck(licenseReport, this.grouped, this.context.stdout);
 
@@ -97,12 +97,8 @@ export class LicenseCheckCommand extends Command {
         } else if (typeof this.folder !== `undefined`) {
             const provider = new FileSystemPackageProvider(this.folder);
             const visitor = new Visitor(getPackageJson(this.folder), provider, new OraLogger());
-            const pa: PackageAnalytics = await visitor.visit(this.type);
-            const licenseReport = createWhitelistLicenseCheckReport(
-                pa,
-                this.allowList ?? [],
-                false
-            );
+            const p: Package = await visitor.visit(this.type);
+            const licenseReport = createWhitelistLicenseCheckReport(p, this.allowList ?? [], false);
 
             printLicenseCheck(licenseReport, this.grouped, this.context.stdout);
 
@@ -125,16 +121,16 @@ function printLicenseCheck(
 class LicenseCheckPrinter {
     constructor(private _licenseCheckResult: LicenseCheckReport, private _stdout: Writable) {}
 
-    public groupedByLicense(): Map<PackageAnalytics, ILicenseCheckResult>[] {
-        const groups: Map<string, Map<PackageAnalytics, ILicenseCheckResult>> = new Map();
+    public groupedByLicense(): Map<Package, ILicenseCheckResult>[] {
+        const groups: Map<string, Map<Package, ILicenseCheckResult>> = new Map();
 
-        for (const [pa, result] of this._licenseCheckResult.allChecks) {
-            const existingGroup = groups.get(pa.license);
+        for (const [p, result] of this._licenseCheckResult.allChecks) {
+            const existingGroup = groups.get(p.license);
 
             if (existingGroup) {
-                existingGroup.set(pa, result);
+                existingGroup.set(p, result);
             } else {
-                groups.set(pa.license, new Map([[pa, result]]));
+                groups.set(p.license, new Map([[p, result]]));
             }
         }
 
@@ -155,7 +151,7 @@ class LicenseCheckPrinter {
         this._printSummary();
     }
 
-    private _print(data: Map<PackageAnalytics, ILicenseCheckResult>): void {
+    private _print(data: Map<Package, ILicenseCheckResult>): void {
         let padding = [...data.keys()].reduce(
             (previous, current) =>
                 current.fullName.length > previous ? current.fullName.length : previous,
@@ -164,8 +160,8 @@ class LicenseCheckPrinter {
 
         const sorted = [...data].sort(([pa1], [pa2]) => pa1.name.localeCompare(pa2.name));
 
-        for (const [pa, result] of sorted) {
-            const str = `${pa.fullName.padEnd(padding + 1)}${pa.license}`;
+        for (const [p, result] of sorted) {
+            const str = `${p.fullName.padEnd(padding + 1)}${p.license}`;
 
             if (result.ok) {
                 this._stdout.write(`${chalk.green(str)}\n`);
@@ -177,17 +173,17 @@ class LicenseCheckPrinter {
 
     private _printSummary(): void {
         const { ok, allChecks, failedChecks } = this._licenseCheckResult;
-        const failedToParseChecks: Map<PackageAnalytics, ILicenseCheckResult> = new Map();
-        const failedToSatisfyLicense: Map<PackageAnalytics, ILicenseCheckResult> = new Map();
+        const failedToParseChecks: Map<Package, ILicenseCheckResult> = new Map();
+        const failedToSatisfyLicense: Map<Package, ILicenseCheckResult> = new Map();
 
         if (ok) {
             this._stdout.write(`\nAll packages passed the license check\n`);
         } else {
-            for (const [pa, result] of failedChecks) {
+            for (const [p, result] of failedChecks) {
                 if (result.parseError) {
-                    failedToParseChecks.set(pa, result);
+                    failedToParseChecks.set(p, result);
                 } else {
-                    failedToSatisfyLicense.set(pa, result);
+                    failedToSatisfyLicense.set(p, result);
                 }
             }
         }

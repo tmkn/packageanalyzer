@@ -1,6 +1,6 @@
 import * as path from "path";
 
-import { PackageAnalytics } from "../src/analyzers/package";
+import { Package } from "../src/analyzers/package";
 import { getNameAndVersion } from "../src/npm";
 import { getPackageJson } from "../src/visitors/folder";
 import { FileSystemPackageProvider } from "../src/providers/folder";
@@ -8,19 +8,19 @@ import { Visitor } from "../src/visitors/visitor";
 import { OraLogger } from "../src/logger";
 import { Writable } from "stream";
 
-describe(`PackageAnalytics Tests`, () => {
-    let pa: PackageAnalytics;
+describe(`Package Tests`, () => {
+    let p: Package;
 
     beforeAll(async () => {
         const rootPath = path.join("tests", "data", "testproject1");
         const provider = new FileSystemPackageProvider(rootPath);
         const visitor = new Visitor(getPackageJson(rootPath), provider, new OraLogger());
 
-        pa = await visitor.visit();
+        p = await visitor.visit();
     });
 
     test(`Check licenses`, () => {
-        const licenses = pa.licenses;
+        const licenses = p.licenses;
 
         const names: string[] = [
             "testproject1",
@@ -54,7 +54,7 @@ describe(`PackageAnalytics Tests`, () => {
     });
 
     test(`Checks package with most direct dependencies`, () => {
-        const mostDeps = pa.mostDependencies;
+        const mostDeps = p.mostDependencies;
 
         expect(mostDeps.name).toBe("react");
         expect(mostDeps.version).toBe("16.8.6");
@@ -62,7 +62,7 @@ describe(`PackageAnalytics Tests`, () => {
     });
 
     test(`Checks package that is most referred`, () => {
-        const [name, times] = pa.mostReferred;
+        const [name, times] = p.mostReferred;
 
         expect(name).toBe("loose-envify");
         expect(times).toBe(3);
@@ -72,9 +72,9 @@ describe(`PackageAnalytics Tests`, () => {
         const rootPath = path.join("tests", "data", "testproject2");
         const provider = new FileSystemPackageProvider(rootPath);
         const visitor = new Visitor(getPackageJson(rootPath), provider, new OraLogger());
-        const pa: PackageAnalytics = await visitor.visit();
+        const p: Package = await visitor.visit();
 
-        for (const [name, versions] of pa.mostVersions) {
+        for (const [name, versions] of p.mostVersions) {
             expect(name).toBe("kind-of");
 
             expect(versions.has("3.2.2")).toBe(true);
@@ -85,7 +85,7 @@ describe(`PackageAnalytics Tests`, () => {
     });
 
     test(`Checks for package with most versions (all equal)`, () => {
-        const mostVersions = pa.mostVersions;
+        const mostVersions = p.mostVersions;
 
         expect(mostVersions.size).toBe(8);
 
@@ -121,13 +121,13 @@ describe(`PackageAnalytics Tests`, () => {
     });
 
     test(`Checks cost`, () => {
-        const cost = pa.cost;
+        const cost = p.cost;
 
         expect(cost).toBe(0);
     });
 
     test(`Checks path string`, () => {
-        const react = pa.getPackageByName("react");
+        const react = p.getPackageByName("react");
 
         expect.assertions(1);
         if (react) {
@@ -138,7 +138,7 @@ describe(`PackageAnalytics Tests`, () => {
     });
 
     test(`Check path for root`, () => {
-        const path = pa.path;
+        const path = p.path;
         const [[name, version]] = path;
 
         expect(path.length).toBe(1);
@@ -147,7 +147,7 @@ describe(`PackageAnalytics Tests`, () => {
     });
 
     test(`Check path for specific package`, () => {
-        const pa2 = pa.getPackageByName("loose-envify", "1.4.0");
+        const pa2 = p.getPackageByName("loose-envify", "1.4.0");
 
         expect.assertions(7);
 
@@ -169,34 +169,34 @@ describe(`PackageAnalytics Tests`, () => {
     });
 
     test(`Check all`, () => {
-        expect(pa.all.length).toBe(14);
+        expect(p.all.length).toBe(14);
     });
 
     test(`Check loops`, () => {
-        expect(pa.loops.length).toBe(0);
+        expect(p.loops.length).toBe(0);
     });
 
     test(`Checks published`, () => {
-        expect(pa.published).toBe(undefined);
+        expect(p.published).toBe(undefined);
     });
 
     test(`Checks timeSpan`, () => {
-        expect(() => pa.timeSpan).toThrow();
+        expect(() => p.timeSpan).toThrow();
     });
 
     test(`Checks size`, () => {
-        expect(() => pa.size).toThrow();
+        expect(() => p.size).toThrow();
     });
 
     test(`Print dependency tree in console`, () => {
         const stdout = new TestWritable();
 
-        pa.printDependencyTree(stdout);
+        p.printDependencyTree(stdout);
         expect(stdout.lines.length).toEqual(14);
     });
 
     test(`Deprecation flag`, () => {
-        const { deprecated, message } = pa.deprecatedInfo;
+        const { deprecated, message } = p.deprecatedInfo;
 
         expect(deprecated).toBe(false);
         expect(typeof message).toBe("string");
@@ -208,8 +208,8 @@ describe(`Deprecated Package Tests`, () => {
         const rootPath = path.join("tests", "data", "deprecated");
         const provider = new FileSystemPackageProvider(rootPath);
         const visitor = new Visitor(getPackageJson(rootPath), provider, new OraLogger());
-        const pa = await visitor.visit();
-        const extnode = pa.getPackageByName("extnode");
+        const p = await visitor.visit();
+        const extnode = p.getPackageByName("extnode");
 
         if (extnode) {
             const { deprecated, message } = extnode.deprecatedInfo;

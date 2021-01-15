@@ -4,7 +4,7 @@ import { Visitor } from "../src/visitors/visitor";
 import { getPackageJson } from "../src/visitors/folder";
 import { OraLogger } from "../src/logger";
 import { ITreeFormatter, print } from "../src/tree";
-import { PackageAnalytics } from "../src/analyzers/package";
+import { Package } from "../src/analyzers/package";
 import { Writable } from "stream";
 import { TestWritable } from "./analyzer.test";
 
@@ -65,16 +65,16 @@ describe(`Tree Tests`, () => {
         const rootPath = path.join("tests", "data", "testproject1");
         const provider = new FileSystemPackageProvider(rootPath);
         const visitor = new Visitor(getPackageJson(rootPath), provider, new OraLogger());
-        const pa = await visitor.visit();
+        const p = await visitor.visit();
 
-        const converter: ITreeFormatter<PackageAnalytics> = {
+        const converter: ITreeFormatter<Package> = {
             getLabel: data => data.fullName,
             getChildren: data => data.directDependencies
         };
 
         const stdout = new TestWritable();
 
-        print<PackageAnalytics>(pa, converter, stdout);
+        print<Package>(p, converter, stdout);
 
         expect(stdout.lines).toEqual(output);
     });
@@ -83,9 +83,9 @@ describe(`Tree Tests`, () => {
         const rootPath = path.join("tests", "data", "testproject1");
         const provider = new FileSystemPackageProvider(rootPath);
         const visitor = new Visitor(getPackageJson(rootPath), provider, new OraLogger());
-        const pa = await visitor.visit();
+        const p = await visitor.visit();
 
-        const converter: ITreeFormatter<PackageAnalytics> = {
+        const converter: ITreeFormatter<Package> = {
             getLabel: data => [
                 `${data.fullName} (${data.transitiveDependenciesCount} dependencies)`,
                 `License: ${data.license}`
@@ -95,7 +95,7 @@ describe(`Tree Tests`, () => {
 
         const stdout = new TestWritable();
 
-        print<PackageAnalytics>(pa, converter, stdout);
+        print<Package>(p, converter, stdout);
 
         expect(stdout.lines).toEqual(multilineOutput);
     });

@@ -3,7 +3,7 @@ import * as fs from "fs";
 import { Command } from "clipanion";
 
 import { npmOnline, OnlinePackageProvider } from "../providers/online";
-import { PackageAnalytics } from "../analyzers/package";
+import { Package } from "../analyzers/package";
 import { getNameAndVersion } from "../npm";
 import { Visitor, DependencyTypes } from "../visitors/visitor";
 import { FileSystemPackageProvider } from "../providers/folder";
@@ -65,16 +65,16 @@ export class TreeCommand extends Command {
                 TreeCommand.OnlineProvider,
                 new OraLogger()
             );
-            const pa = await visitor.visit(this.type);
+            const p = await visitor.visit(this.type);
 
-            pa.printDependencyTree(this.context.stdout);
+            p.printDependencyTree(this.context.stdout);
         } else if (typeof this.folder !== "undefined") {
             if (fs.existsSync(this.folder)) {
                 const provider = new FileSystemPackageProvider(this.folder);
                 const visitor = new Visitor(getPackageJson(this.folder), provider, new OraLogger());
-                const pa: PackageAnalytics = await visitor.visit(this.type);
+                const p: Package = await visitor.visit(this.type);
 
-                pa.printDependencyTree(this.context.stdout);
+                p.printDependencyTree(this.context.stdout);
             }
         }
     }

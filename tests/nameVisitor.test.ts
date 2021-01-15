@@ -1,53 +1,53 @@
 import * as path from "path";
 
 import { FileSystemPackageProvider } from "../src/providers/folder";
-import { PackageAnalytics } from "../src/analyzers/package";
+import { Package } from "../src/analyzers/package";
 import { Visitor } from "../src/visitors/visitor";
 import { OraLogger } from "../src/logger";
 
 describe(`visitFromFolder Tests`, () => {
-    let pa: PackageAnalytics;
+    let p: Package;
 
     beforeAll(async () => {
         const destination = path.join("tests", "data", "testproject2", "node_modules");
         const provider: FileSystemPackageProvider = new FileSystemPackageProvider(destination);
 
         const visitor = new Visitor(["webpack"], provider, new OraLogger());
-        pa = await visitor.visit();
+        p = await visitor.visit();
     });
 
     test(`Checks name`, () => {
-        expect(pa.name).toBe(`webpack`);
+        expect(p.name).toBe(`webpack`);
     });
 
     test(`Checks version`, () => {
-        expect(pa.version).toBe(`4.35.2`);
+        expect(p.version).toBe(`4.35.2`);
     });
 
     test(`Checks fullName`, () => {
-        expect(pa.fullName).toBe(`webpack@4.35.2`);
+        expect(p.fullName).toBe(`webpack@4.35.2`);
     });
 
     test(`Checks loop`, () => {
-        expect(pa.isLoop).toBe(false);
+        expect(p.isLoop).toBe(false);
     });
 
     test(`Checks transitive dependencies`, () => {
-        expect(pa.transitiveDependenciesCount).toBe(4279);
+        expect(p.transitiveDependenciesCount).toBe(4279);
     });
 
     test(`Checks distinct dependencies by name`, () => {
-        expect(pa.distinctByNameCount).toBe(308);
+        expect(p.distinctByNameCount).toBe(308);
     });
 
     test(`Checks distinct dependencies by name and version`, () => {
-        expect(pa.distinctByVersionCount).toBe(333);
+        expect(p.distinctByVersionCount).toBe(333);
     });
 
     test(`Checks visit method`, () => {
         let count = 0;
 
-        pa.visit(() => count++);
+        p.visit(() => count++);
 
         expect(count).toBe(4279);
     });
@@ -55,13 +55,13 @@ describe(`visitFromFolder Tests`, () => {
     test(`Checks visit method with self`, () => {
         let count = 0;
 
-        pa.visit(() => count++, true);
+        p.visit(() => count++, true);
 
         expect(count).toBe(4280);
     });
 
     test(`Test getPackagesBy`, () => {
-        const matches = pa.getPackagesBy(p => p.name === "@webassemblyjs/wast-parser");
+        const matches = p.getPackagesBy(p => p.name === "@webassemblyjs/wast-parser");
 
         expect(matches.length).toBe(25);
 
@@ -71,7 +71,7 @@ describe(`visitFromFolder Tests`, () => {
     });
 
     test(`Test getPackagesByName`, () => {
-        const matches = pa.getPackagesByName("has-value");
+        const matches = p.getPackagesByName("has-value");
 
         expect(matches.length).toBe(32);
 
@@ -81,7 +81,7 @@ describe(`visitFromFolder Tests`, () => {
     });
 
     test(`Test getPackagesByName with version`, () => {
-        const matches = pa.getPackagesByName("has-value", "1.0.0");
+        const matches = p.getPackagesByName("has-value", "1.0.0");
 
         expect(matches.length).toBe(16);
 
@@ -91,7 +91,7 @@ describe(`visitFromFolder Tests`, () => {
     });
 
     test(`Test getPackageByName`, () => {
-        const match = pa.getPackageByName("has-value");
+        const match = p.getPackageByName("has-value");
 
         expect.assertions(2);
 
@@ -100,7 +100,7 @@ describe(`visitFromFolder Tests`, () => {
     });
 
     test(`Test getPackageByName with version`, () => {
-        const match = pa.getPackageByName("has-value", "1.0.0");
+        const match = p.getPackageByName("has-value", "1.0.0");
 
         expect.assertions(3);
 
@@ -110,28 +110,28 @@ describe(`visitFromFolder Tests`, () => {
     });
 
     test(`Test getPackageByName with version`, () => {
-        const match = pa.getPackageByName("has-value", "123.456.789");
+        const match = p.getPackageByName("has-value", "123.456.789");
 
         expect(match).toBe(null);
     });
 
     test(`Test getPackageByName with non existant package`, () => {
-        const match = pa.getPackageByName("doesntexist");
+        const match = p.getPackageByName("doesntexist");
 
         expect(match).toBe(null);
     });
 
     test(`Test getPackageByName with non existant package and version`, () => {
-        const match = pa.getPackageByName("doesntexist", "1.0.0");
+        const match = p.getPackageByName("doesntexist", "1.0.0");
 
         expect(match).toBe(null);
     });
 
     test(`Test getData`, () => {
-        const name = pa.getData("name");
-        const version = pa.getData("version");
-        const dependencies = pa.getData("dependencies");
-        const license = pa.getData("license");
+        const name = p.getData("name");
+        const version = p.getData("version");
+        const dependencies = p.getData("dependencies");
+        const license = p.getData("license");
 
         expect.assertions(4);
 
@@ -144,7 +144,7 @@ describe(`visitFromFolder Tests`, () => {
     });
 
     test(`Test group packages by license`, () => {
-        const [{ license, names }, ...rest] = pa.licensesByGroup;
+        const [{ license, names }, ...rest] = p.licensesByGroup;
 
         expect(license).toBe("MIT");
         expect(names.length).toBe(239);
@@ -154,14 +154,14 @@ describe(`visitFromFolder Tests`, () => {
     });
 
     test(`Test published`, () => {
-        expect(pa.published).toBe(undefined);
+        expect(p.published).toBe(undefined);
     });
 
     test(`Test oldest`, () => {
-        expect(pa.oldest).toBe(undefined);
+        expect(p.oldest).toBe(undefined);
     });
 
     test(`Test newest`, () => {
-        expect(pa.newest).toBe(undefined);
+        expect(p.newest).toBe(undefined);
     });
 });

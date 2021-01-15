@@ -4,7 +4,7 @@ import * as fs from "fs";
 import * as dayjs from "dayjs";
 import * as chalk from "chalk";
 
-import { PackageAnalytics, VersionSummary, GroupedLicenseSummary } from "../analyzers/package";
+import { Package, VersionSummary, GroupedLicenseSummary } from "../analyzers/package";
 import { DependencyTypes } from "../visitors/visitor";
 import { Writable } from "stream";
 
@@ -31,53 +31,40 @@ export function daysAgo(date: string | number | Date): string {
     return `(${dayjs(new Date()).diff(date, "day")} days ago)`;
 }
 
-export function printStatistics(pa: PackageAnalytics, all: boolean, stdout: Writable): void {
-    stdout.write(`Statistics for ${chalk.bold(pa.fullName)}\n`);
+export function printStatistics(p: Package, all: boolean, stdout: Writable): void {
+    stdout.write(`Statistics for ${chalk.bold(p.fullName)}\n`);
 
-    all ? printAllStatistics(pa, stdout) : printBasicStatistics(pa, stdout);
+    all ? printAllStatistics(p, stdout) : printBasicStatistics(p, stdout);
 }
 
 const Padding = 40;
 const PaddingLeft = 4;
 
-export function printAllStatistics(pa: PackageAnalytics, stdout: Writable): void {
-    printPublished(pa, Padding, stdout);
-    printOldest(pa.oldest, Padding, stdout);
-    printNewest(pa.newest, Padding, stdout);
-    stdout.write(`${`Direct dependencies:`.padEnd(Padding)}${pa.directDependencyCount}\n`);
-    stdout.write(
-        `${`Transitive dependencies:`.padEnd(Padding)}${pa.transitiveDependenciesCount}\n`
-    );
-    printDistinctDependencies(
-        pa.distinctByNameCount,
-        pa.distinctByVersionCount,
-        PaddingLeft,
-        stdout
-    );
-    printMostReferred(pa.mostReferred, Padding, stdout);
-    printMostDependencies(pa.mostDependencies, Padding, stdout);
-    printMostVersion(pa.mostVersions, Padding, PaddingLeft, stdout);
-    printLoops(pa, Padding, PaddingLeft, stdout);
-    printLicenseInfo(pa.licensesByGroup, PaddingLeft, stdout);
+export function printAllStatistics(p: Package, stdout: Writable): void {
+    printPublished(p, Padding, stdout);
+    printOldest(p.oldest, Padding, stdout);
+    printNewest(p.newest, Padding, stdout);
+    stdout.write(`${`Direct dependencies:`.padEnd(Padding)}${p.directDependencyCount}\n`);
+    stdout.write(`${`Transitive dependencies:`.padEnd(Padding)}${p.transitiveDependenciesCount}\n`);
+    printDistinctDependencies(p.distinctByNameCount, p.distinctByVersionCount, PaddingLeft, stdout);
+    printMostReferred(p.mostReferred, Padding, stdout);
+    printMostDependencies(p.mostDependencies, Padding, stdout);
+    printMostVersion(p.mostVersions, Padding, PaddingLeft, stdout);
+    printLoops(p, Padding, PaddingLeft, stdout);
+    printLicenseInfo(p.licensesByGroup, PaddingLeft, stdout);
 }
 
-export function printBasicStatistics(pa: PackageAnalytics, stdout: Writable): void {
-    stdout.write(`${`Direct dependencies:`.padEnd(Padding)}${pa.directDependencyCount}\n`);
-    stdout.write(
-        `${`Transitive dependencies:`.padEnd(Padding)}${pa.transitiveDependenciesCount}\n`
-    );
-    printSimpleDistinctDependencies(pa.distinctByNameCount, Padding, stdout);
-    printMostReferred(pa.mostReferred, Padding, stdout);
-    printMostDependencies(pa.mostDependencies, Padding, stdout);
-    printMostVersion(pa.mostVersions, Padding, PaddingLeft, stdout);
-    printSimpleLicenseInfo(pa.licensesByGroup, PaddingLeft, stdout);
+export function printBasicStatistics(p: Package, stdout: Writable): void {
+    stdout.write(`${`Direct dependencies:`.padEnd(Padding)}${p.directDependencyCount}\n`);
+    stdout.write(`${`Transitive dependencies:`.padEnd(Padding)}${p.transitiveDependenciesCount}\n`);
+    printSimpleDistinctDependencies(p.distinctByNameCount, Padding, stdout);
+    printMostReferred(p.mostReferred, Padding, stdout);
+    printMostDependencies(p.mostDependencies, Padding, stdout);
+    printMostVersion(p.mostVersions, Padding, PaddingLeft, stdout);
+    printSimpleLicenseInfo(p.licensesByGroup, PaddingLeft, stdout);
 }
 
-function printNewest(
-    newest: PackageAnalytics | undefined,
-    padding: number,
-    stdout: Writable
-): void {
+function printNewest(newest: Package | undefined, padding: number, stdout: Writable): void {
     if (newest && newest.published) {
         stdout.write(
             `${`Newest package:`.padEnd(padding)}${
@@ -88,11 +75,7 @@ function printNewest(
     }
 }
 
-function printOldest(
-    oldest: PackageAnalytics | undefined,
-    padding: number,
-    stdout: Writable
-): void {
+function printOldest(oldest: Package | undefined, padding: number, stdout: Writable): void {
     if (oldest && oldest.published) {
         stdout.write(
             `${`Oldest package:`.padEnd(padding)}${
@@ -103,11 +86,11 @@ function printOldest(
     }
 }
 
-function printPublished(pa: PackageAnalytics, padding: number, stdout: Writable): void {
-    if (!pa.published) return;
+function printPublished(p: Package, padding: number, stdout: Writable): void {
+    if (!p.published) return;
 
     stdout.write(
-        `${`Published:`.padEnd(padding)}${pa.published.toUTCString()} ${daysAgo(pa.published)}\n`
+        `${`Published:`.padEnd(padding)}${p.published.toUTCString()} ${daysAgo(p.published)}\n`
     );
 }
 
@@ -126,13 +109,8 @@ function printSimpleDistinctDependencies(byName: number, padding: number, stdout
     stdout.write(`${`Distinct dependencies:`.padEnd(padding)}${byName}\n`);
 }
 
-function printLoops(
-    pa: PackageAnalytics,
-    padding: number,
-    paddingLeft: number,
-    stdout: Writable
-): void {
-    const { loops, loopPathMap, distinctLoopCount } = pa;
+function printLoops(p: Package, padding: number, paddingLeft: number, stdout: Writable): void {
+    const { loops, loopPathMap, distinctLoopCount } = p;
 
     stdout.write(`${`Loops:`.padEnd(padding)}${loops.length} (${distinctLoopCount} distinct)\n`);
 
@@ -147,9 +125,9 @@ function printLoops(
     }
 }
 
-function printMostDependencies(pa: PackageAnalytics, padding: number, stdout: Writable): void {
+function printMostDependencies(p: Package, padding: number, stdout: Writable): void {
     stdout.write(
-        `${`Most direct dependencies:`.padEnd(padding)}"${pa.name}": ${pa.directDependencyCount}\n`
+        `${`Most direct dependencies:`.padEnd(padding)}"${p.name}": ${p.directDependencyCount}\n`
     );
 }
 
