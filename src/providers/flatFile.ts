@@ -14,11 +14,10 @@ import {
     INpmDumpRow,
     IUnpublishedNpmPackage
 } from "../npm";
-import { PackageProvider } from "./online";
 
 //parses npm data from https://replicate.npmjs.com/_all_docs?limit=4&include_docs=true
 //needs a lookup file
-export class FlatFileProvider extends PackageProvider implements IPackageVersionProvider {
+export class FlatFileProvider implements IPackageVersionProvider {
     private _lookup: Map<string, ILookupInfo> = new Map();
     private _lookupFile: string;
     private _cache: Map<string, INpmPackage> = new Map();
@@ -41,8 +40,6 @@ export class FlatFileProvider extends PackageProvider implements IPackageVersion
     }
 
     constructor(private _file: string) {
-        super();
-
         this._lookupFile = FlatFileProvider.getLookupFile(this._file);
     }
 

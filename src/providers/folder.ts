@@ -2,10 +2,14 @@ import * as path from "path";
 import * as fs from "fs";
 import * as semver from "semver";
 
-import { PackageVersion, INpmPackageVersion } from "../npm";
+import { PackageVersion, INpmPackageVersion, INpmPackage, IUnpublishedNpmPackage } from "../npm";
+
+export interface INpmPackageProvider {
+    getPackageInfo(name: string): Promise<INpmPackage | IUnpublishedNpmPackage | undefined>;
+}
 
 //loads npm data from a folder
-export interface IPackageVersionProvider {
+export interface IPackageVersionProvider extends Partial<INpmPackageProvider> {
     //load version specific data, loads latest version if no version is specified
     size: number;
     getPackageByVersion: (name: string, version?: string) => Promise<INpmPackageVersion>;

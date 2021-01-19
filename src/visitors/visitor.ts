@@ -2,7 +2,6 @@ import { IPackageVersionProvider } from "../providers/folder";
 import { Package } from "../analyzers/package";
 import { INpmKeyValue, INpmPackageVersion, PackageVersion } from "../npm";
 import { ILogger } from "../logger";
-import { PackageProvider } from "../providers/online";
 
 interface IVisitorConstructor {
     new (
@@ -98,7 +97,7 @@ export const Visitor: IVisitorConstructor = class Visitor implements IPackageVis
 };
 
 export async function addPublished(p: Package, provider: IPackageVersionProvider): Promise<void> {
-    if (!(provider instanceof PackageProvider)) {
+    if (typeof provider.getPackageInfo === "undefined") {
         return;
     }
 

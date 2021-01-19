@@ -10,19 +10,11 @@ import {
 } from "../npm";
 import { downloadHttpJson } from "../requests";
 
-export abstract class PackageProvider {
-    abstract getPackageInfo(
-        name: string
-    ): Promise<INpmPackage | IUnpublishedNpmPackage | undefined>;
-}
-
 //loads npm data from the web
-export class OnlinePackageProvider extends PackageProvider implements IPackageVersionProvider {
+export class OnlinePackageProvider implements IPackageVersionProvider {
     private readonly _cache: Map<string, INpmPackage> = new Map();
 
-    constructor(private _url: string, private _max = 3) {
-        super();
-    }
+    constructor(private _url: string, private _max = 3) {}
 
     /*setMaxConcurrent(newMax: number): void {
         this._max = newMax;
