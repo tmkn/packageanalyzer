@@ -1,4 +1,3 @@
-import { ClassDeclaration, ClassLikeDeclaration } from "typescript";
 import { Package } from "../analyzers/package";
 
 //add more data to Package
