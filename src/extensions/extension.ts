@@ -1,7 +1,7 @@
 import { Package } from "../analyzers/package";
 
 //add more data to Package
-export interface IStaticDataExtension<T, CArgs extends []> {
+export interface IStaticDataExtension<T, CArgs extends any[]> {
     new (...args: CArgs): IDataExtension<T>;
     readonly key: Symbol;
 }

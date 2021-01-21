@@ -1,5 +1,6 @@
 import { Writable } from "stream";
-import { ExtensionData } from "../extensions/extension";
+import { ExtensionData, IDataExtension, IStaticDataExtension } from "../extensions/extension";
+import { ReleaseExtension } from "../extensions/ReleaseExtension";
 import { INpmPackageVersion, IMalformedLicenseField } from "../npm";
 import { ITreeFormatter, print } from "../tree";
 
@@ -34,12 +35,14 @@ interface IPackageStatistics {
     size: number | undefined;
     directDependencies: Package[];
     printDependencyTree(stdout: Writable): void;
-    getExtensionData<T>(extension: T): ExtensionData<T>;
+    getExtensionData<T extends IStaticDataExtension<any, []>>(extension: T): ExtensionData<T>;
+    addExtensionData(extension: IDataExtension<any>): Promise<void>;
 }
 
 export class Package implements IPackageStatistics {
     parent: Package | null = null;
     isLoop = false;
+    private _extensionData: Map<Symbol, any> = new Map();
     private readonly _dependencies: Package[] = [];
 
     constructor(private readonly _data: Readonly<INpmPackageVersion>) {}
@@ -56,7 +59,15 @@ export class Package implements IPackageStatistics {
         return `${this.name}@${this.version}`;
     }
 
-    published: Date | undefined;
+    get published(): Date | undefined {
+        try {
+            const { published } = this.getExtensionData(ReleaseExtension);
+
+            return published;
+        } catch {
+            return undefined;
+        }
+    }
     get oldest(): Package | undefined {
         let oldest: Package | undefined = undefined;
 
@@ -454,7 +465,19 @@ export class Package implements IPackageStatistics {
         print<Package>(this, converter, stdout);
     }
 
-    getExtensionData<T>(extension: T): ExtensionData<T> {
-        throw new Error(`Not Implemented`);
+    getExtensionData<T extends IStaticDataExtension<any, any[]>>(extension: T): ExtensionData<T> {
+        const data = this._extensionData.get(extension.key);
+
+        if (typeof data === "undefined") {
+            throw new Error(`No extension data found for ${extension.toString()}`);
+        }
+
+        return data;
+    }
+
+    async addExtensionData(extension: IDataExtension<any>): Promise<void> {
+        const data = await extension.apply(this);
+
+        this._extensionData.set(extension.key, data);
     }
 }
