@@ -4,7 +4,6 @@ import { Package } from "../analyzers/package";
 export interface IStaticDataExtension<T, CArgs extends []> {
     new (...args: CArgs): IDataExtension<T>;
     readonly key: Symbol;
-    getData: (p: Package) => Promise<T>;
 }
 
 export interface IDataExtension<T> {

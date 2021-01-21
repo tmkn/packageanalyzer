@@ -1,4 +1,5 @@
 import { Writable } from "stream";
+import { ExtensionData } from "../extensions/extension";
 import { INpmPackageVersion, IMalformedLicenseField } from "../npm";
 import { ITreeFormatter, print } from "../tree";
 
@@ -33,6 +34,7 @@ interface IPackageStatistics {
     size: number | undefined;
     directDependencies: Package[];
     printDependencyTree(stdout: Writable): void;
+    getExtensionData<T>(extension: T): ExtensionData<T>;
 }
 
 export class Package implements IPackageStatistics {
@@ -450,5 +452,9 @@ export class Package implements IPackageStatistics {
         };
 
         print<Package>(this, converter, stdout);
+    }
+
+    getExtensionData<T>(extension: T): ExtensionData<T> {
+        throw new Error(`Not Implemented`);
     }
 }

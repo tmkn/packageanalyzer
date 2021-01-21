@@ -12,10 +12,6 @@ export const ReleaseExtension: IStaticDataExtension<IReleaseData, []> = class Re
         return ReleaseExtensionSymbol;
     }
 
-    static getData(): Promise<IReleaseData> {
-        throw new Error(`Not Implemented`);
-    }
-
     constructor() {}
 
     get key() {
