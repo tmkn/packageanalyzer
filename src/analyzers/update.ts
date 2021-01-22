@@ -1,6 +1,6 @@
 import * as semver from "semver";
 import { isUnpublished, INpmPackage } from "../npm";
-import { PackageProvider } from "../providers/online";
+import { INpmPackageProvider } from "../providers/folder";
 
 interface IReleaseInfo {
     version: string;
@@ -59,7 +59,7 @@ function getReleaseDate(pkgInfo: INpmPackage, version: string): string {
     return releaseDate;
 }
 
-async function getNpmPackage(name: string, provider: PackageProvider): Promise<INpmPackage> {
+async function getNpmPackage(name: string, provider: INpmPackageProvider): Promise<INpmPackage> {
     const pkgInfo = await provider.getPackageInfo(name);
 
     if (typeof pkgInfo === "undefined" || isUnpublished(pkgInfo))
@@ -71,7 +71,7 @@ async function getNpmPackage(name: string, provider: PackageProvider): Promise<I
 export async function updateCheck(
     name: string,
     version: string,
-    provider: PackageProvider
+    provider: INpmPackageProvider
 ): Promise<IReleaseInfo> {
     const pkgInfo = await getNpmPackage(name, provider);
     const maxSatisfying = getMaxSatisfyingVersion(pkgInfo, version);
@@ -86,7 +86,7 @@ export async function updateCheck(
 export async function updateInfo(
     name: string,
     version: string,
-    provider: PackageProvider
+    provider: INpmPackageProvider
 ): Promise<IUpdateResult> {
     const bugfixVersionString = getBugfixVersionString(version);
     const minorVersionString = getMinorVersionString(version);

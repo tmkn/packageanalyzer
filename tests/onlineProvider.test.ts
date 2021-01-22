@@ -2,8 +2,9 @@ import { OnlinePackageProvider } from "../src/providers/online";
 import { Visitor } from "../src/visitors/visitor";
 import { OraLogger } from "../src/logger";
 import { MockNpmServer } from "./server";
+import { ReleaseExtension } from "../src/extensions/ReleaseExtension";
 
-describe.only(`OnlineProvider Tests`, () => {
+describe(`OnlineProvider Tests`, () => {
     let server: MockNpmServer;
     let provider: OnlinePackageProvider;
 
@@ -33,7 +34,9 @@ describe.only(`OnlineProvider Tests`, () => {
     });
 
     test(`Check oldest package`, async () => {
-        const visitor = new Visitor(["react", "16.8.1"], provider, new OraLogger());
+        const visitor = new Visitor(["react", "16.8.1"], provider, new OraLogger(), [
+            new ReleaseExtension(provider)
+        ]);
         const p = await visitor.visit();
         const oldestPackage = p.oldest;
 
@@ -45,7 +48,9 @@ describe.only(`OnlineProvider Tests`, () => {
     });
 
     test(`Check newest package`, async () => {
-        const visitor = new Visitor(["react", "16.8.1"], provider, new OraLogger());
+        const visitor = new Visitor(["react", "16.8.1"], provider, new OraLogger(), [
+            new ReleaseExtension(provider)
+        ]);
         const p = await visitor.visit();
         const newestPackage = p.newest;
 

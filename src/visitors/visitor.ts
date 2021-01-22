@@ -2,13 +2,14 @@ import { IPackageVersionProvider } from "../providers/folder";
 import { Package } from "../analyzers/package";
 import { INpmKeyValue, INpmPackageVersion, PackageVersion } from "../npm";
 import { ILogger } from "../logger";
-import { PackageProvider } from "../providers/online";
+import { IDataExtension } from "../extensions/extension";
 
 interface IVisitorConstructor {
     new (
         entry: PackageVersion,
         provider: IPackageVersionProvider,
-        logger: ILogger
+        logger: ILogger,
+        extensions?: IDataExtension<any>[]
     ): IPackageVisitor;
 }
 
@@ -25,7 +26,8 @@ export const Visitor: IVisitorConstructor = class Visitor implements IPackageVis
     constructor(
         private readonly _entry: PackageVersion,
         private readonly _provider: IPackageVersionProvider,
-        private readonly _logger: ILogger
+        private readonly _logger: ILogger,
+        private readonly _extensions: IDataExtension<any>[] = []
     ) {}
 
     async visit(depType = this._depType): Promise<Package> {
@@ -38,7 +40,7 @@ export const Visitor: IVisitorConstructor = class Visitor implements IPackageVis
             this._logger.log("Fetching");
             this._depType = depType;
 
-            await addPublished(root, this._provider);
+            await this._addExtensions(root);
 
             try {
                 await this.visitDependencies(root, rootPkg[depType]);
@@ -77,7 +79,9 @@ export const Visitor: IVisitorConstructor = class Visitor implements IPackageVis
                 const dependency = new Package(p);
 
                 this._logger.log(`Fetched ${p.name}`);
-                await addPublished(dependency, this._provider);
+
+                await this._addExtensions(dependency);
+
                 parent.addDependency(dependency);
 
                 if (this._depthStack.includes(dependency.fullName)) {
@@ -95,21 +99,14 @@ export const Visitor: IVisitorConstructor = class Visitor implements IPackageVis
             throw e;
         }
     }
-};
 
-export async function addPublished(p: Package, provider: IPackageVersionProvider): Promise<void> {
-    if (!(provider instanceof PackageProvider)) {
-        return;
+    private async _addExtensions(p: Package): Promise<void> {
+        for (const extension of this._extensions) {
+            try {
+                await p.addExtensionData(extension);
+            } catch {
+                this._logger.log(`Couldn't add Extension`);
+            }
+        }
     }
-
-    const info = await provider.getPackageInfo(p.name);
-
-    if (!info) return;
-
-    const time = info.time;
-    const released = time[p.version];
-
-    if (!released) return;
-
-    p.published = new Date(released);
-}
+};
