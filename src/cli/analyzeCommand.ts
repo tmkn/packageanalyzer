@@ -9,6 +9,7 @@ import { getPackageJson } from "../visitors/folder";
 import { OraLogger } from "../logger";
 import { printStatistics, defaultDependencyType, isValidDependencyType } from "./common";
 import { Stream, Writable } from "stream";
+import { ReleaseExtension } from "../extensions/ReleaseExtension";
 
 export class AnalyzeCommand extends Command {
     @Command.String(`--package`, {
@@ -60,7 +61,8 @@ export class AnalyzeCommand extends Command {
             visitor = new Visitor(
                 getNameAndVersion(this.package),
                 AnalyzeCommand.OnlineProvider,
-                new OraLogger()
+                new OraLogger(),
+                [new ReleaseExtension(AnalyzeCommand.OnlineProvider)]
             );
         } else if (typeof this.folder !== `undefined`) {
             const provider = new FileSystemPackageProvider(this.folder);

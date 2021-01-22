@@ -4,7 +4,7 @@ import { OraLogger } from "../src/logger";
 import { MockNpmServer } from "./server";
 import { ReleaseExtension } from "../src/extensions/ReleaseExtension";
 
-describe.only(`OnlineProvider Tests`, () => {
+describe(`OnlineProvider Tests`, () => {
     let server: MockNpmServer;
     let provider: OnlinePackageProvider;
 
