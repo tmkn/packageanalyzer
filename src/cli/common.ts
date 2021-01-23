@@ -42,7 +42,7 @@ const Padding = 40;
 const PaddingLeft = 4;
 
 export async function printAllStatistics(p: Package, stdout: Writable): Promise<void> {
-    const { published, newest, oldest } = await new ReleaseAnalysis().apply(p);
+    const { newest, oldest } = await new ReleaseAnalysis().apply(p);
 
     await printPublished(p, Padding, stdout);
     await printOldest(oldest, Padding, stdout);

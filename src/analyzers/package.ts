@@ -1,6 +1,5 @@
 import { Writable } from "stream";
 import { ExtensionData, IDataExtension, IStaticDataExtension } from "../extensions/extension";
-import { ReleaseExtension } from "../extensions/ReleaseExtension";
 import { INpmPackageVersion, IMalformedLicenseField } from "../npm";
 import { ITreeFormatter, print } from "../tree";
 
