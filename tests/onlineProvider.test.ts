@@ -3,6 +3,7 @@ import { Visitor } from "../src/visitors/visitor";
 import { OraLogger } from "../src/logger";
 import { MockNpmServer } from "./server";
 import { ReleaseExtension } from "../src/extensions/ReleaseExtension";
+import { ReleaseAnalysis } from "../src/analyses/ReleaseAnalysis";
 
 describe(`OnlineProvider Tests`, () => {
     let server: MockNpmServer;
@@ -38,7 +39,7 @@ describe(`OnlineProvider Tests`, () => {
             new ReleaseExtension(provider)
         ]);
         const p = await visitor.visit();
-        const oldestPackage = p.oldest;
+        const { oldest: oldestPackage } = await new ReleaseAnalysis().apply(p);
 
         expect.assertions(1);
 
@@ -52,7 +53,7 @@ describe(`OnlineProvider Tests`, () => {
             new ReleaseExtension(provider)
         ]);
         const p = await visitor.visit();
-        const newestPackage = p.newest;
+        const { newest: newestPackage } = await new ReleaseAnalysis().apply(p);
 
         expect.assertions(1);
 

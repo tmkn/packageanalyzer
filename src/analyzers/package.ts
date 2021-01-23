@@ -29,8 +29,6 @@ interface IPackageStatistics {
     loops: Package[];
     licenses: LicenseSummary;
     licensesByGroup: GroupedLicenseSummary;
-    newest: Package | undefined;
-    oldest: Package | undefined;
     timeSpan: number | undefined;
     size: number | undefined;
     directDependencies: Package[];
@@ -57,51 +55,6 @@ export class Package implements IPackageStatistics {
 
     get fullName(): string {
         return `${this.name}@${this.version}`;
-    }
-
-    get published(): Date | undefined {
-        try {
-            const { published } = this.getExtensionData(ReleaseExtension);
-
-            return published;
-        } catch {
-            return undefined;
-        }
-    }
-    get oldest(): Package | undefined {
-        let oldest: Package | undefined = undefined;
-
-        if (this.published) oldest = this;
-
-        this.visit(d => {
-            if (oldest) {
-                if (d.published && oldest.published) {
-                    if (d.published < oldest.published) oldest = d;
-                }
-            } else {
-                if (d.published) oldest = d;
-            }
-        }, false);
-
-        return oldest;
-    }
-
-    get newest(): Package | undefined {
-        let newest: Package | undefined = undefined;
-
-        if (this.published) newest = this;
-
-        this.visit(d => {
-            if (newest) {
-                if (d.published && newest.published) {
-                    if (d.published > newest.published) newest = d;
-                }
-            } else {
-                if (d.published) newest = d;
-            }
-        }, false);
-
-        return newest;
     }
 
     get timeSpan(): number | undefined {
