@@ -5,6 +5,7 @@ type LineKeyValue = [string, string];
 export interface IFormatter {
     writeLine: (line: string) => void;
     writeGroup: (lines: Array<LineKeyValue | string>) => void;
+    writeIdentation: (lines: [string, ...string[]], padding: number) => void;
 }
 
 export class Formatter implements IFormatter {
@@ -34,6 +35,17 @@ export class Formatter implements IFormatter {
 
                 this.writeLine(`${`${key}:`.padEnd(padding)}${value}`);
             }
+        }
+    }
+
+    writeIdentation(lines: [string, ...string[]], padding: number): void {
+        const padStr = new Array(padding).fill(" ").join("");
+        const [header, ...rest] = lines;
+
+        this.writeLine(header);
+
+        for (const line of rest) {
+            this.writeLine(`${padStr}${line}`);
         }
     }
 }

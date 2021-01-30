@@ -33,4 +33,14 @@ describe(`Formatter Tests`, () => {
 
         expect(expectedFormat).toEqual(writer.lines);
     });
+
+    test(`Correctly writes identation`, () => {
+        const writer = new TestWriter();
+        const formatter = new Formatter(writer);
+        const expectedFormat: string[] = [`header\n`, `    test1\n`, `    test2\n`];
+
+        formatter.writeIdentation([`header`, `test1`, `test2`], 4);
+
+        expect(writer.lines).toEqual(expectedFormat);
+    });
 });
