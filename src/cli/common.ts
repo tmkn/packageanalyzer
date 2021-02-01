@@ -7,6 +7,7 @@ import * as chalk from "chalk";
 import { Package, VersionSummary, GroupedLicenseSummary } from "../analyzers/package";
 import { DependencyTypes } from "../visitors/visitor";
 import { Writable } from "stream";
+import { IFormatter } from "../formatter";
 
 export const defaultDependencyType: DependencyTypes = "dependencies";
 
@@ -31,157 +32,180 @@ export function daysAgo(date: string | number | Date): string {
     return `(${dayjs(new Date()).diff(date, "day")} days ago)`;
 }
 
-export function printStatistics(p: Package, all: boolean, stdout: Writable): void {
-    stdout.write(`Statistics for ${chalk.bold(p.fullName)}\n`);
+export function printStatistics(p: Package, all: boolean, formatter: IFormatter): void {
+    formatter.writeLine(`Statistics for ${chalk.bold(p.fullName)}\n`);
 
-    all ? printAllStatistics(p, stdout) : printBasicStatistics(p, stdout);
+    all ? printAllStatistics(p, formatter) : printBasicStatistics(p, formatter);
 }
 
-const Padding = 40;
 const PaddingLeft = 4;
 
-export function printAllStatistics(p: Package, stdout: Writable): void {
-    printPublished(p, Padding, stdout);
-    printOldest(p.oldest, Padding, stdout);
-    printNewest(p.newest, Padding, stdout);
-    stdout.write(`${`Direct dependencies:`.padEnd(Padding)}${p.directDependencyCount}\n`);
-    stdout.write(`${`Transitive dependencies:`.padEnd(Padding)}${p.transitiveDependenciesCount}\n`);
-    printDistinctDependencies(p.distinctByNameCount, p.distinctByVersionCount, PaddingLeft, stdout);
-    printMostReferred(p.mostReferred, Padding, stdout);
-    printMostDependencies(p.mostDependencies, Padding, stdout);
-    printMostVersion(p.mostVersions, Padding, PaddingLeft, stdout);
-    printLoops(p, Padding, PaddingLeft, stdout);
-    printLicenseInfo(p.licensesByGroup, PaddingLeft, stdout);
+export function printAllStatistics(p: Package, formatter: IFormatter): void {
+    printPublished(p, formatter);
+    printOldest(p.oldest, formatter);
+    printNewest(p.newest, formatter);
+    formatter.writeGroup([
+        [`Direct dependencies`, `${p.directDependencyCount}`],
+        [`Transitive dependencies`, `${p.transitiveDependenciesCount}`]
+    ]);
+    printDistinctDependencies(
+        p.distinctByNameCount,
+        p.distinctByVersionCount,
+        PaddingLeft,
+        formatter
+    );
+    printMostReferred(p.mostReferred, formatter);
+    printMostDependencies(p.mostDependencies, formatter);
+    printMostVersion(p.mostVersions, PaddingLeft, formatter);
+    printLoops(p, PaddingLeft, formatter);
+    printLicenseInfo(p.licensesByGroup, PaddingLeft, formatter);
 }
 
-export function printBasicStatistics(p: Package, stdout: Writable): void {
-    stdout.write(`${`Direct dependencies:`.padEnd(Padding)}${p.directDependencyCount}\n`);
-    stdout.write(`${`Transitive dependencies:`.padEnd(Padding)}${p.transitiveDependenciesCount}\n`);
-    printSimpleDistinctDependencies(p.distinctByNameCount, Padding, stdout);
-    printMostReferred(p.mostReferred, Padding, stdout);
-    printMostDependencies(p.mostDependencies, Padding, stdout);
-    printMostVersion(p.mostVersions, Padding, PaddingLeft, stdout);
-    printSimpleLicenseInfo(p.licensesByGroup, PaddingLeft, stdout);
+export function printBasicStatistics(p: Package, formatter: IFormatter): void {
+    formatter.writeGroup([
+        [`Direct dependencies`, `${p.directDependencyCount}`],
+        [`Transitive dependencies`, `${p.transitiveDependenciesCount}`]
+    ]);
+    printSimpleDistinctDependencies(p.distinctByNameCount, formatter);
+    printMostReferred(p.mostReferred, formatter);
+    printMostDependencies(p.mostDependencies, formatter);
+    printMostVersion(p.mostVersions, PaddingLeft, formatter);
+    printSimpleLicenseInfo(p.licensesByGroup, PaddingLeft, formatter);
 }
 
-function printNewest(newest: Package | undefined, padding: number, stdout: Writable): void {
+function printNewest(newest: Package | undefined, formatter: IFormatter): void {
     if (newest && newest.published) {
-        stdout.write(
-            `${`Newest package:`.padEnd(padding)}${
-                newest.fullName
-            } - ${newest.published.toUTCString()} ${daysAgo(newest.published)}\n`
-        );
-        stdout.write(`${`Newest package path:`.padEnd(padding)}${newest.pathString}\n`);
+        formatter.writeGroup([
+            [
+                `Newest package`,
+                `${newest.fullName} - ${newest.published.toUTCString()} ${daysAgo(
+                    newest.published
+                )}`
+            ],
+            [`Newest package path`, newest.pathString]
+        ]);
     }
 }
 
-function printOldest(oldest: Package | undefined, padding: number, stdout: Writable): void {
+function printOldest(oldest: Package | undefined, formatter: IFormatter): void {
     if (oldest && oldest.published) {
-        stdout.write(
-            `${`Oldest package:`.padEnd(padding)}${
-                oldest.fullName
-            } - ${oldest.published.toUTCString()} ${daysAgo(oldest.published)}\n`
-        );
-        stdout.write(`${`Oldest package path:`.padEnd(padding)}${oldest.pathString}\n`);
+        formatter.writeGroup([
+            [
+                `Oldest package`,
+                `${oldest.fullName} - ${oldest.published.toUTCString()} ${daysAgo(
+                    oldest.published
+                )}`
+            ],
+            [`Oldest package path`, oldest.pathString]
+        ]);
     }
 }
 
-function printPublished(p: Package, padding: number, stdout: Writable): void {
+function printPublished(p: Package, formatter: IFormatter): void {
     if (!p.published) return;
 
-    stdout.write(
-        `${`Published:`.padEnd(padding)}${p.published.toUTCString()} ${daysAgo(p.published)}\n`
-    );
+    formatter.writeGroup([[`Published`, `${p.published.toUTCString()} ${daysAgo(p.published)}`]]);
 }
 
 function printDistinctDependencies(
     byName: number,
     byNameAndVersion: number,
     paddingLeft: number,
-    stdout: Writable
+    formatter: IFormatter
 ): void {
-    stdout.write(`Distinct dependencies:\n`);
-    stdout.write(`${``.padStart(paddingLeft)}${byName}: distinct name\n`);
-    stdout.write(`${``.padStart(paddingLeft)}${byNameAndVersion}: distinct name and version\n`);
-}
-
-function printSimpleDistinctDependencies(byName: number, padding: number, stdout: Writable): void {
-    stdout.write(`${`Distinct dependencies:`.padEnd(padding)}${byName}\n`);
-}
-
-function printLoops(p: Package, padding: number, paddingLeft: number, stdout: Writable): void {
-    const { loops, loopPathMap, distinctLoopCount } = p;
-
-    stdout.write(`${`Loops:`.padEnd(padding)}${loops.length} (${distinctLoopCount} distinct)\n`);
-
-    if (distinctLoopCount > 0) {
-        const [first] = loops.map(l => l.pathString).sort();
-
-        stdout.write(`    affected Packages: [${[...loopPathMap.keys()].join(", ")}]\n`);
-        stdout.write(`    e.g. ${first}\n`);
-
-        if (loops.length > 1)
-            stdout.write(`${``.padStart(paddingLeft)}+${loops.length - 1} additional loops\n`);
-    }
-}
-
-function printMostDependencies(p: Package, padding: number, stdout: Writable): void {
-    stdout.write(
-        `${`Most direct dependencies:`.padEnd(padding)}"${p.name}": ${p.directDependencyCount}\n`
+    formatter.writeIdentation(
+        [
+            `Distinct dependencies:`,
+            `${byName}: distinct name`,
+            `${byNameAndVersion}: distinct name and version`
+        ],
+        paddingLeft
     );
 }
 
-function printMostReferred(arg: [string, number], padding: number, stdout: Writable): void {
-    stdout.write(`${`Most referred package:`.padEnd(padding)}"${arg[0]}": ${arg[1]}x\n`);
+function printSimpleDistinctDependencies(byName: number, formatter: IFormatter): void {
+    formatter.writeGroup([[`Distinct dependencies`, byName.toString()]]);
+}
+
+function printLoops(p: Package, paddingLeft: number, formatter: IFormatter): void {
+    const { loops, loopPathMap, distinctLoopCount } = p;
+
+    formatter.writeGroup([[`Loops`, `${loops.length} (${distinctLoopCount} distinct)`]]);
+
+    if (distinctLoopCount > 0) {
+        const [first] = loops.map(l => l.pathString).sort();
+        const identBlock: [string, ...string[]] = [``];
+
+        identBlock.push(`affected Packages: [${[...loopPathMap.keys()].join(", ")}]`);
+        identBlock.push(`e.g. ${first}`);
+
+        if (loops.length > 1) {
+            identBlock.push(`${loops.length - 1} additional loops`);
+        }
+
+        formatter.writeIdentation(identBlock, paddingLeft);
+    }
+}
+
+function printMostDependencies(p: Package, formatter: IFormatter): void {
+    formatter.writeGroup([[`Most direct dependencies`, p.directDependencyCount.toString()]]);
+}
+
+function printMostReferred(arg: [string, number], formatter: IFormatter): void {
+    formatter.writeGroup([[`Most referred package`, `"${arg[0]}": ${arg[1]}x`]]);
 }
 
 function printMostVersion(
     mostVerions: VersionSummary,
-    padding: number,
     paddingLeft: number,
-    stdout: Writable
+    formatter: IFormatter
 ): void {
     let foundMultipleVersions = false;
-
-    stdout.write(`${`Package(s) with multiple versions:`.padEnd(padding)}\n`);
+    const identBlock: [string, ...string[]] = [`Package(s) with multiple versions:`];
 
     for (const [name, versions] of mostVerions) {
         if (versions.size > 1) {
-            stdout.write(`${``.padStart(paddingLeft)}${name} [${[...versions].join(", ")}]\n`);
+            identBlock.push(`${name} [${[...versions].join(", ")}]`);
             foundMultipleVersions = true;
         }
     }
 
-    if (!foundMultipleVersions) stdout.write(`${``.padStart(paddingLeft)}(none)\n`);
+    if (!foundMultipleVersions) identBlock.push(`(none)`);
+
+    formatter.writeIdentation(identBlock, paddingLeft);
 }
 
 function printLicenseInfo(
     groupedLicenses: GroupedLicenseSummary,
     paddingLeft: number,
-    stdout: Writable
+    formatter: IFormatter
 ): void {
-    stdout.write(`Licenses:\n`);
+    const identBlock: [string, ...string[]] = [`Licenses:`];
+
     for (const { license, names } of groupedLicenses) {
         const threshold = 4;
         const samples: string[] = names.slice(0, threshold);
 
         if (names.length > threshold)
-            stdout.write(
-                `${``.padStart(paddingLeft)}${license} - [${samples.join(", ")}, +${
-                    names.length - threshold
-                } more]\n`
+            identBlock.push(
+                `${license} - [${samples.join(", ")}, +${names.length - threshold} more]`
             );
-        else stdout.write(`${``.padStart(paddingLeft)}${license} - [${samples.join(", ")}]\n`);
+        else identBlock.push(`${license} - [${samples.join(", ")}]`);
     }
+
+    formatter.writeIdentation(identBlock, paddingLeft);
 }
 
 function printSimpleLicenseInfo(
     groupedLicenses: GroupedLicenseSummary,
     paddingLeft: number,
-    stdout: Writable
+    formatter: IFormatter
 ): void {
-    stdout.write(`Licenses:\n`);
+    const identBlock: [string, ...string[]] = [`Licenses:`];
+
     for (const { license, names } of groupedLicenses) {
-        stdout.write(`${``.padStart(paddingLeft)}${names.length}x ${license}\n`);
+        identBlock.push(`${names.length}x ${license}`);
     }
+
+    formatter.writeIdentation(identBlock, paddingLeft);
 }
