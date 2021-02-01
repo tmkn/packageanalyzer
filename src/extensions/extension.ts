@@ -11,4 +11,4 @@ export interface IDataExtension<T> {
     apply: (p: Package) => Promise<T>;
 }
 
-export type ExtensionData<T> = T extends IDataExtensionStatic<infer U, any> ? U : never;
+export type DataExtensionType<T> = T extends IDataExtensionStatic<infer U, any> ? U : never;

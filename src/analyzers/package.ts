@@ -1,4 +1,4 @@
-import { ExtensionData, IDataExtension, IDataExtensionStatic } from "../extensions/extension";
+import { DataExtensionType, IDataExtension, IDataExtensionStatic } from "../extensions/extension";
 import { IFormatter } from "../formatter";
 import { INpmPackageVersion, IMalformedLicenseField } from "../npm";
 import { ITreeFormatter, print } from "../tree";
@@ -32,7 +32,7 @@ interface IPackageStatistics {
     size: number | undefined;
     directDependencies: Package[];
     printDependencyTree(formatter: IFormatter): void;
-    getExtensionData<T extends IDataExtensionStatic<any, []>>(extension: T): ExtensionData<T>;
+    getExtensionData<T extends IDataExtensionStatic<any, []>>(extension: T): DataExtensionType<T>;
     addExtensionData(extension: IDataExtension<any>): Promise<void>;
 }
 
@@ -417,7 +417,9 @@ export class Package implements IPackageStatistics {
         print<Package>(this, converter, formatter);
     }
 
-    getExtensionData<T extends IDataExtensionStatic<any, any[]>>(extension: T): ExtensionData<T> {
+    getExtensionData<T extends IDataExtensionStatic<any, any[]>>(
+        extension: T
+    ): DataExtensionType<T> {
         const data = this._extensionData.get(extension.key);
 
         if (typeof data === "undefined") {
