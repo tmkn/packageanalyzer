@@ -8,7 +8,6 @@ import { FileSystemPackageProvider } from "../providers/folder";
 import { getPackageJson } from "../visitors/folder";
 import { OraLogger } from "../logger";
 import { printStatistics, defaultDependencyType, isValidDependencyType } from "./common";
-import { Stream, Writable } from "stream";
 import { ReleaseExtension } from "../extensions/ReleaseExtension";
 import { Formatter, IFormatter } from "../formatter";
 

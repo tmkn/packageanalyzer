@@ -7,6 +7,7 @@ import * as chalk from "chalk";
 import { Package, VersionSummary, GroupedLicenseSummary } from "../analyzers/package";
 import { DependencyTypes } from "../visitors/visitor";
 import { IFormatter } from "../formatter";
+import { ReleaseAnalysis } from "../analyses/ReleaseAnalysis";
 
 export const defaultDependencyType: DependencyTypes = "dependencies";
 
@@ -39,10 +40,10 @@ export function printStatistics(p: Package, all: boolean, formatter: IFormatter)
 
 const PaddingLeft = 4;
 
-export function printAllStatistics(p: Package, formatter: IFormatter): void {
+export async function printAllStatistics(p: Package, formatter: IFormatter): Promise<void> {
     printPublished(p, formatter);
-    printOldest(p.oldest, formatter);
-    printNewest(p.newest, formatter);
+    await printOldest(p, formatter);
+    await printNewest(p, formatter);
     printDependencyCount(p, formatter);
     printDistinctDependencies(
         p.distinctByNameCount,
@@ -73,13 +74,15 @@ function printDependencyCount(p: Package, formatter: IFormatter): void {
     ]);
 }
 
-function printNewest(newest: Package | undefined, formatter: IFormatter): void {
-    if (newest && newest.published) {
+async function printNewest(newest: Package, formatter: IFormatter): Promise<void> {
+    const { published } = await new ReleaseAnalysis().apply(newest);
+
+    if (published) {
         formatter.writeGroup([
             [
                 `Newest package`,
-                `${newest.fullName} - ${newest.published.toUTCString()} ${daysAgo(
-                    newest.published
+                `${newest.fullName} - ${published.toUTCString()} ${daysAgo(
+                    published
                 )}`
             ],
             [`Newest package path`, newest.pathString]
@@ -87,13 +90,15 @@ function printNewest(newest: Package | undefined, formatter: IFormatter): void {
     }
 }
 
-function printOldest(oldest: Package | undefined, formatter: IFormatter): void {
-    if (oldest && oldest.published) {
+async function printOldest(oldest: Package, formatter: IFormatter): Promise<void> {
+    const { published } = await new ReleaseAnalysis().apply(oldest);
+
+    if (published) {
         formatter.writeGroup([
             [
                 `Oldest package`,
-                `${oldest.fullName} - ${oldest.published.toUTCString()} ${daysAgo(
-                    oldest.published
+                `${oldest.fullName} - ${published.toUTCString()} ${daysAgo(
+                    published
                 )}`
             ],
             [`Oldest package path`, oldest.pathString]
@@ -101,10 +106,12 @@ function printOldest(oldest: Package | undefined, formatter: IFormatter): void {
     }
 }
 
-function printPublished(p: Package, formatter: IFormatter): void {
-    if (!p.published) return;
+async function printPublished(p: Package, formatter: IFormatter): Promise<void> {
+    const { published } = await new ReleaseAnalysis().apply(p);
 
-    formatter.writeGroup([[`Published`, `${p.published.toUTCString()} ${daysAgo(p.published)}`]]);
+    if (!published) return;
+
+    formatter.writeGroup([[`Published`, `${published.toUTCString()} ${daysAgo(published)}`]]);
 }
 
 function printDistinctDependencies(
