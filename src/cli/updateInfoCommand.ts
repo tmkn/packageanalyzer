@@ -5,6 +5,7 @@ import { npmOnline, OnlinePackageProvider } from "../providers/online";
 import { getNameAndVersion } from "../npm";
 import { updateInfo } from "../analyzers/update";
 import { daysAgo } from "./common";
+import { Formatter } from "../formatter";
 
 export class UpdateInfoCommand extends Command {
     @Command.String(`--package`, {
@@ -29,41 +30,42 @@ export class UpdateInfoCommand extends Command {
 
     @Command.Path(`update`)
     async execute() {
+        const formatter = new Formatter(this.context.stdout);
+
         if (typeof this.package === "undefined") {
-            this.context.stdout.write(`Please specify a package.\n`);
+            formatter.writeLine(`Please specify a package.`);
         } else {
             const [name, version] = getNameAndVersion(this.package);
 
             if (typeof version === "undefined") {
-                this.context.stdout.write(`Version info is missing (${this.package})\n`);
+                formatter.writeLine(`Version info is missing (${this.package})`);
 
                 return;
             }
 
             const data = await updateInfo(name, version, UpdateInfoCommand.OnlineProvider);
-            const padding = 16;
 
-            this.context.stdout.write(`${chalk.bold(`Update Info for ${this.package}\n`)}\n`);
-            this.context.stdout.write(`
-                ${`Semantic match:`.padEnd(padding)} 
-                ${data.latestSemanticMatch.version} 
-                ${daysAgo(data.latestSemanticMatch.releaseDate)}
-            \n`);
-            this.context.stdout.write(`
-                ${`Latest bugfix:`.padEnd(padding)} 
-                ${data.latestBugfix.version} 
-                ${daysAgo(data.latestBugfix.releaseDate)}
-            \n`);
-            this.context.stdout.write(`
-                ${`Latest minor:`.padEnd(padding)} 
-                ${data.latestMinor.version} 
-                ${daysAgo(data.latestMinor.releaseDate)}
-            \n`);
-            this.context.stdout.write(`
-                ${`Latest version:`.padEnd(padding)} 
-                ${data.latestOverall.version} 
-                ${daysAgo(data.latestOverall.releaseDate)}
-            \n`);
+            formatter.writeLine(`${chalk.bold(`Update Info for ${this.package}`)}\n`);
+            formatter.writeGroup([
+                [
+                    `Semantic match`,
+                    `${data.latestSemanticMatch.version}  ${daysAgo(
+                        data.latestSemanticMatch.releaseDate
+                    )}`
+                ],
+                [
+                    `Latest bugfix`,
+                    `${data.latestBugfix.version} ${daysAgo(data.latestBugfix.releaseDate)}`
+                ],
+                [
+                    `Latest minor`,
+                    `${data.latestMinor.version} ${daysAgo(data.latestMinor.releaseDate)}`
+                ],
+                [
+                    `Latest version`,
+                    `${data.latestOverall.version} ${daysAgo(data.latestOverall.releaseDate)}`
+                ]
+            ]);
         }
     }
 }

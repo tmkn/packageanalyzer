@@ -1,7 +1,7 @@
 import { Package } from "../analyzers/package";
 
-//add more data to Package
-export interface IStaticDataExtension<T, CArgs extends any[]> {
+//add custom data to each Package during lookup
+export interface IDataExtensionStatic<T, CArgs extends any[]> {
     new (...args: CArgs): IDataExtension<T>;
     readonly key: Symbol;
 }
@@ -11,4 +11,4 @@ export interface IDataExtension<T> {
     apply: (p: Package) => Promise<T>;
 }
 
-export type ExtensionData<T> = T extends IStaticDataExtension<infer U, any> ? U : never;
+export type ExtensionData<T> = T extends IDataExtensionStatic<infer U, any> ? U : never;

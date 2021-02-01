@@ -10,6 +10,7 @@ import { FileSystemPackageProvider } from "../providers/folder";
 import { getPackageJson } from "../visitors/folder";
 import { OraLogger } from "../logger";
 import { defaultDependencyType } from "./common";
+import { Formatter } from "../formatter";
 
 export class TreeCommand extends Command {
     @Command.String(`--package`, {
@@ -57,6 +58,8 @@ export class TreeCommand extends Command {
 
     @Command.Path(`tree`)
     async execute() {
+        const formatter = new Formatter(this.context.stdout);
+
         if (typeof this.package !== "undefined" && typeof this.folder !== "undefined") {
             this.context.stdout.write(`Please specify a package or folder.\n`);
         } else if (typeof this.package !== "undefined") {
@@ -67,14 +70,14 @@ export class TreeCommand extends Command {
             );
             const p = await visitor.visit(this.type);
 
-            p.printDependencyTree(this.context.stdout);
+            p.printDependencyTree(formatter);
         } else if (typeof this.folder !== "undefined") {
             if (fs.existsSync(this.folder)) {
                 const provider = new FileSystemPackageProvider(this.folder);
                 const visitor = new Visitor(getPackageJson(this.folder), provider, new OraLogger());
                 const p: Package = await visitor.visit(this.type);
 
-                p.printDependencyTree(this.context.stdout);
+                p.printDependencyTree(formatter);
             }
         }
     }

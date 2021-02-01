@@ -5,7 +5,11 @@ describe(`Formatter Tests`, () => {
     class TestWriter extends Writable {
         lines: string[] = [];
 
-        _write(chunk: any, encoding: BufferEncoding, callback: (error?: Error | null) => void) {
+        _write(
+            chunk: any,
+            encoding: BufferEncoding,
+            callback: (error?: Error | null) => void
+        ): void {
             this.lines.push(chunk.toString());
             callback();
         }

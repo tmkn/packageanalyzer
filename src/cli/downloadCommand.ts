@@ -1,4 +1,5 @@
 import { Command } from "clipanion";
+import { Formatter, IFormatter } from "../formatter";
 
 import { getDownloadsLastWeek } from "../npm";
 
@@ -21,18 +22,20 @@ export class DownloadCommand extends Command {
     @Command.Path(`downloads`)
     async execute() {
         if (typeof this.package !== "undefined") {
-            cliDownloads(this.package, DownloadCommand.DownloadUrl);
+            const formatter = new Formatter(this.context.stdout);
+
+            cliDownloads(this.package, DownloadCommand.DownloadUrl, formatter);
         }
     }
 }
 
-async function cliDownloads(pkg: string, url: string | null): Promise<void> {
+async function cliDownloads(pkg: string, url: string | null, formmater: IFormatter): Promise<void> {
     try {
         const downloads =
             url !== null ? await getDownloadsLastWeek(pkg, url) : await getDownloadsLastWeek(pkg);
 
-        console.log(`${pkg}: ${downloads.downloads} Downloads`);
+        formmater.writeLine(`${pkg}: ${downloads.downloads} Downloads`);
     } catch {
-        console.log(`Couldn't get downloads for ${pkg}`);
+        formmater.writeLine(`Couldn't get downloads for ${pkg}`);
     }
 }

@@ -6,7 +6,6 @@ import * as chalk from "chalk";
 
 import { Package, VersionSummary, GroupedLicenseSummary } from "../analyzers/package";
 import { DependencyTypes } from "../visitors/visitor";
-import { Writable } from "stream";
 import { IFormatter } from "../formatter";
 
 export const defaultDependencyType: DependencyTypes = "dependencies";
@@ -44,10 +43,7 @@ export function printAllStatistics(p: Package, formatter: IFormatter): void {
     printPublished(p, formatter);
     printOldest(p.oldest, formatter);
     printNewest(p.newest, formatter);
-    formatter.writeGroup([
-        [`Direct dependencies`, `${p.directDependencyCount}`],
-        [`Transitive dependencies`, `${p.transitiveDependenciesCount}`]
-    ]);
+    printDependencyCount(p, formatter);
     printDistinctDependencies(
         p.distinctByNameCount,
         p.distinctByVersionCount,
@@ -62,15 +58,19 @@ export function printAllStatistics(p: Package, formatter: IFormatter): void {
 }
 
 export function printBasicStatistics(p: Package, formatter: IFormatter): void {
-    formatter.writeGroup([
-        [`Direct dependencies`, `${p.directDependencyCount}`],
-        [`Transitive dependencies`, `${p.transitiveDependenciesCount}`]
-    ]);
+    printDependencyCount(p, formatter);
     printSimpleDistinctDependencies(p.distinctByNameCount, formatter);
     printMostReferred(p.mostReferred, formatter);
     printMostDependencies(p.mostDependencies, formatter);
     printMostVersion(p.mostVersions, PaddingLeft, formatter);
     printSimpleLicenseInfo(p.licensesByGroup, PaddingLeft, formatter);
+}
+
+function printDependencyCount(p: Package, formatter: IFormatter): void {
+    formatter.writeGroup([
+        [`Direct dependencies`, `${p.directDependencyCount}`],
+        [`Transitive dependencies`, `${p.transitiveDependenciesCount}`]
+    ]);
 }
 
 function printNewest(newest: Package | undefined, formatter: IFormatter): void {
@@ -148,7 +148,7 @@ function printLoops(p: Package, paddingLeft: number, formatter: IFormatter): voi
 }
 
 function printMostDependencies(p: Package, formatter: IFormatter): void {
-    formatter.writeGroup([[`Most direct dependencies`, p.directDependencyCount.toString()]]);
+    formatter.writeGroup([[`Most direct dependencies`, `"${p.name}": ${p.directDependencyCount}`]]);
 }
 
 function printMostReferred(arg: [string, number], formatter: IFormatter): void {

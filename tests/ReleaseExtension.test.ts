@@ -1,4 +1,3 @@
-import { assert } from "console";
 import { Package } from "../src";
 import { ReleaseExtension } from "../src/extensions/ReleaseExtension";
 import { INpmPackage, INpmPackageVersion, IUnpublishedNpmPackage } from "../src/npm";

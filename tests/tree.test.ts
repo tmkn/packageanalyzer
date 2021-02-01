@@ -1,12 +1,13 @@
 import * as path from "path";
+
 import { FileSystemPackageProvider } from "../src/providers/folder";
 import { Visitor } from "../src/visitors/visitor";
 import { getPackageJson } from "../src/visitors/folder";
 import { OraLogger } from "../src/logger";
 import { ITreeFormatter, print } from "../src/tree";
 import { Package } from "../src/analyzers/package";
-import { Writable } from "stream";
 import { TestWritable } from "./analyzer.test";
+import { Formatter } from "../src/formatter";
 
 const output = `
 testproject1@1.0.0
@@ -73,8 +74,9 @@ describe(`Tree Tests`, () => {
         };
 
         const stdout = new TestWritable();
+        const formatter = new Formatter(stdout);
 
-        print<Package>(p, converter, stdout);
+        print<Package>(p, converter, formatter);
 
         expect(stdout.lines).toEqual(output);
     });
@@ -94,8 +96,9 @@ describe(`Tree Tests`, () => {
         };
 
         const stdout = new TestWritable();
+        const formatter = new Formatter(stdout);
 
-        print<Package>(p, converter, stdout);
+        print<Package>(p, converter, formatter);
 
         expect(stdout.lines).toEqual(multilineOutput);
     });

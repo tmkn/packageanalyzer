@@ -111,11 +111,9 @@ describe(`CLI Tests`, () => {
 
     describe(`Download Command`, () => {
         let server: MockNpmServer;
-        let provider: OnlinePackageProvider;
 
         beforeAll(() => {
             server = new MockNpmServer(3006);
-            provider = new OnlinePackageProvider(`http://localhost:${server.port}`);
         });
 
         test(`--package`, async () => {

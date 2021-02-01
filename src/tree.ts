@@ -1,4 +1,4 @@
-import { Writable } from "stream";
+import { IFormatter } from "./formatter";
 
 enum Markup {
     Spacer = ` `,
@@ -15,11 +15,11 @@ export interface ITreeFormatter<T> {
     getChildren(data: T): T[];
 }
 
-export function print<T>(node: T, converter: ITreeFormatter<T>, stdout: Writable): void {
+export function print<T>(node: T, converter: ITreeFormatter<T>, formatter: IFormatter): void {
     const lines: string[] = [];
 
     visit(node, converter, ``, lines);
-    lines.forEach(line => stdout.write(`${line}\n`));
+    lines.forEach(line => formatter.writeLine(`${line}`));
 }
 
 function visit<T>(node: T, converter: ITreeFormatter<T>, prefix: string, lines: string[]): void {

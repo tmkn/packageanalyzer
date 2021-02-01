@@ -10,11 +10,11 @@ export interface ILogger {
 export class OraLogger implements ILogger {
     private _logger: ora.Ora = ora();
 
-    start() {
+    start(): void {
         this._logger.start();
     }
 
-    stop() {
+    stop(): void {
         this._logger.stop();
     }
 
