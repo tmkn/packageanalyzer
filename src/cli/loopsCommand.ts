@@ -7,6 +7,7 @@ import { Visitor } from "../visitors/visitor";
 import { OraLogger } from "../logger";
 import { defaultDependencyType, isValidDependencyType } from "./common";
 import { IPackageVersionProvider } from "../providers/folder";
+import { Formatter } from "../formatter";
 
 export class LoopsCommand extends Command {
     @Command.String(`--package`, {
@@ -52,6 +53,7 @@ export class LoopsCommand extends Command {
         }
 
         if (typeof this.package !== "undefined") {
+            const formatter = new Formatter(this.context.stdout);
             const visitor = new Visitor(
                 getNameAndVersion(this.package),
                 LoopsCommand.Provider,
@@ -66,28 +68,24 @@ export class LoopsCommand extends Command {
             const loopPadding = ("" + distinctCount).length;
             let total = 0;
 
-            this.context.stdout.write(
-                chalk.bold(`${distinctCount} Loop(s) found for ${p.fullName}\n\n`)
-            );
+            formatter.writeLine(chalk.bold(`${distinctCount} Loop(s) found for ${p.fullName}\n`));
             if (distinctCount > 0) {
-                this.context.stdout.write(`Affected Packages:\n`);
+                formatter.writeLine(`Affected Packages:`);
                 for (const [pkgName, loopsForPkg] of loopPathMap) {
-                    this.context.stdout.write(
-                        `- ${`${loopsForPkg.size}x`.padStart(5)} ${pkgName}\n`
-                    );
+                    formatter.writeLine(`- ${`${loopsForPkg.size}x`.padStart(5)} ${pkgName}`);
                 }
 
                 for (const [pkgName, loopsForPkg] of loopPathMap) {
-                    this.context.stdout.write(
-                        chalk.bgGray(`\n${loopsForPkg.size} Loop(s) found for ${pkgName}\n`)
+                    formatter.writeLine(
+                        chalk.bgGray(`\n${loopsForPkg.size} Loop(s) found for ${pkgName}`)
                     );
 
                     let i = 0;
                     for (const loop of loopsForPkg) {
-                        this.context.stdout.write(
+                        formatter.writeLine(
                             `[${`${total + i++ + 1}`.padStart(
                                 loopPadding
-                            )}/${distinctCount}] ${loop}\n`
+                            )}/${distinctCount}] ${loop}`
                         );
                     }
 

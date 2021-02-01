@@ -9,6 +9,7 @@ import { getPackageJson } from "../visitors/folder";
 import { OraLogger } from "../logger";
 import { printStatistics, defaultDependencyType, isValidDependencyType } from "./common";
 import { ReleaseExtension } from "../extensions/ReleaseExtension";
+import { Formatter, IFormatter } from "../formatter";
 
 export class AnalyzeCommand extends Command {
     @Command.String(`--package`, {
@@ -72,8 +73,9 @@ export class AnalyzeCommand extends Command {
             throw new Error(`Please specify a package or folder.\n`);
         }
 
+        const formatter: IFormatter = new Formatter(this.context.stdout);
         const p: Package = await visitor.visit(this.type);
 
-        printStatistics(p, this.full, this.context.stdout);
+        await printStatistics(p, this.full, formatter);
     }
 }

@@ -1,14 +1,11 @@
 import { getDownloadsLastWeek } from "../src/npm";
-import { OnlinePackageProvider } from "../src/providers/online";
 import { MockNpmServer } from "./server";
 
 describe(`Download Tests`, () => {
     let server: MockNpmServer;
-    let provider: OnlinePackageProvider;
 
     beforeAll(() => {
         server = new MockNpmServer(3007);
-        provider = new OnlinePackageProvider(`http://localhost:${server.port}`);
     });
 
     afterAll(() => {

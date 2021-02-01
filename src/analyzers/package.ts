@@ -1,5 +1,5 @@
-import { Writable } from "stream";
-import { ExtensionData, IDataExtension, IStaticDataExtension } from "../extensions/extension";
+import { DataExtensionType, IDataExtension, IDataExtensionStatic } from "../extensions/extension";
+import { IFormatter } from "../formatter";
 import { INpmPackageVersion, IMalformedLicenseField } from "../npm";
 import { ITreeFormatter, print } from "../tree";
 
@@ -31,8 +31,8 @@ interface IPackageStatistics {
     timeSpan: number | undefined;
     size: number | undefined;
     directDependencies: Package[];
-    printDependencyTree(stdout: Writable): void;
-    getExtensionData<T extends IStaticDataExtension<any, []>>(extension: T): ExtensionData<T>;
+    printDependencyTree(formatter: IFormatter): void;
+    getExtensionData<T extends IDataExtensionStatic<any, []>>(extension: T): DataExtensionType<T>;
     addExtensionData(extension: IDataExtension<any>): Promise<void>;
 }
 
@@ -408,16 +408,18 @@ export class Package implements IPackageStatistics {
         return this.getPackagesBy(pkg => pkg.path.length === depth + 1);
     }
 
-    printDependencyTree(stdout: Writable): void {
+    printDependencyTree(formatter: IFormatter): void {
         const converter: ITreeFormatter<Package> = {
             getLabel: data => `${data.fullName} (${data.transitiveDependenciesCount} dependencies)`,
             getChildren: data => data.directDependencies
         };
 
-        print<Package>(this, converter, stdout);
+        print<Package>(this, converter, formatter);
     }
 
-    getExtensionData<T extends IStaticDataExtension<any, any[]>>(extension: T): ExtensionData<T> {
+    getExtensionData<T extends IDataExtensionStatic<any, any[]>>(
+        extension: T
+    ): DataExtensionType<T> {
         const data = this._extensionData.get(extension.key);
 
         if (typeof data === "undefined") {

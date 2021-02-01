@@ -6,6 +6,7 @@ import { OraLogger } from "../logger";
 import { FlatFileProvider } from "../providers/flatFile";
 import { printStatistics } from "./common";
 import { Writable } from "stream";
+import { IFormatter, Formatter } from "../formatter";
 
 export class NpmDumpCommand extends Command {
     @Command.String(`--npmfile`, { description: `path to a npmdump.json` })
@@ -44,11 +45,12 @@ export class NpmDumpCommand extends Command {
 
 async function cliResolveFile(pkgName: string, npmFile: string, stdout: Writable): Promise<void> {
     try {
+        const formatter: IFormatter = new Formatter(stdout);
         const provider = new FlatFileProvider(npmFile);
         const visitor = new Visitor(getNameAndVersion(pkgName), provider, new OraLogger());
         const p = await visitor.visit();
 
-        printStatistics(p, false, stdout);
+        await printStatistics(p, false, formatter);
     } catch (e) {
         stdout.write(e);
     }
