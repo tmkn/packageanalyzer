@@ -50,7 +50,7 @@ async function cliResolveFile(pkgName: string, npmFile: string, stdout: Writable
         const visitor = new Visitor(getNameAndVersion(pkgName), provider, new OraLogger());
         const p = await visitor.visit();
 
-        printStatistics(p, false, formatter);
+        await printStatistics(p, false, formatter);
     } catch (e) {
         stdout.write(e);
     }

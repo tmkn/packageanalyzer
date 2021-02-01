@@ -32,7 +32,11 @@ export function daysAgo(date: string | number | Date): string {
     return `(${dayjs(new Date()).diff(date, "day")} days ago)`;
 }
 
-export function printStatistics(p: Package, all: boolean, formatter: IFormatter): void {
+export async function printStatistics(
+    p: Package,
+    all: boolean,
+    formatter: IFormatter
+): Promise<void> {
     formatter.writeLine(`Statistics for ${chalk.bold(p.fullName)}\n`);
 
     all ? printAllStatistics(p, formatter) : printBasicStatistics(p, formatter);
@@ -81,9 +85,7 @@ async function printNewest(newest: Package, formatter: IFormatter): Promise<void
         formatter.writeGroup([
             [
                 `Newest package`,
-                `${newest.fullName} - ${published.toUTCString()} ${daysAgo(
-                    published
-                )}`
+                `${newest.fullName} - ${published.toUTCString()} ${daysAgo(published)}`
             ],
             [`Newest package path`, newest.pathString]
         ]);
@@ -97,9 +99,7 @@ async function printOldest(oldest: Package, formatter: IFormatter): Promise<void
         formatter.writeGroup([
             [
                 `Oldest package`,
-                `${oldest.fullName} - ${published.toUTCString()} ${daysAgo(
-                    published
-                )}`
+                `${oldest.fullName} - ${published.toUTCString()} ${daysAgo(published)}`
             ],
             [`Oldest package path`, oldest.pathString]
         ]);

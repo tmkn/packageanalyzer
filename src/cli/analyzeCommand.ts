@@ -76,6 +76,6 @@ export class AnalyzeCommand extends Command {
         const formatter: IFormatter = new Formatter(this.context.stdout);
         const p: Package = await visitor.visit(this.type);
 
-        printStatistics(p, this.full, formatter);
+        await printStatistics(p, this.full, formatter);
     }
 }
