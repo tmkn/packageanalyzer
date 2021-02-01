@@ -8,7 +8,7 @@ import { FileSystemPackageProvider } from "../providers/folder";
 import { getPackageJson } from "../visitors/folder";
 import { OraLogger } from "../logger";
 import { printStatistics, defaultDependencyType, isValidDependencyType } from "./common";
-import { ReleaseExtension } from "../extensions/ReleaseExtension";
+import { ReleaseExtension } from "../extensions/data/ReleaseExtension";
 import { Formatter, IFormatter } from "../formatter";
 
 export class AnalyzeCommand extends Command {

@@ -1,4 +1,4 @@
-import { Package } from "../analyzers/package";
+import { Package } from "../../analyzers/package";
 
 //add custom data to each Package during lookup
 export interface IDataExtensionStatic<T, CArgs extends any[]> {

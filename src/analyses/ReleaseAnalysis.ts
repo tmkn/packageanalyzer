@@ -1,5 +1,5 @@
 import { Package } from "../analyzers/package";
-import { ReleaseExtension } from "../extensions/ReleaseExtension";
+import { ReleaseExtension } from "../extensions/data/ReleaseExtension";
 import { IAnalysis } from "./analysis";
 
 interface IReleaseData {

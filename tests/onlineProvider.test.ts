@@ -2,7 +2,7 @@ import { OnlinePackageProvider } from "../src/providers/online";
 import { Visitor } from "../src/visitors/visitor";
 import { OraLogger } from "../src/logger";
 import { MockNpmServer } from "./server";
-import { ReleaseExtension } from "../src/extensions/ReleaseExtension";
+import { ReleaseExtension } from "../src/extensions/data/ReleaseExtension";
 import { ReleaseAnalysis } from "../src/analyses/ReleaseAnalysis";
 
 describe(`OnlineProvider Tests`, () => {

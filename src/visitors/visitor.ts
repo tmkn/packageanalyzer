@@ -2,7 +2,7 @@ import { IPackageVersionProvider } from "../providers/folder";
 import { Package } from "../analyzers/package";
 import { INpmKeyValue, INpmPackageVersion, PackageVersion } from "../npm";
 import { ILogger } from "../logger";
-import { IDataExtension } from "../extensions/extension";
+import { IDataExtension } from "../extensions/data/DataExtension";
 
 interface IVisitorConstructor {
     new (
