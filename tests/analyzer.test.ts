@@ -176,10 +176,6 @@ describe(`Package Tests`, () => {
         expect(p.loops.length).toBe(0);
     });
 
-    test(`Checks published`, () => {
-        expect(p.published).toBe(undefined);
-    });
-
     test(`Checks timeSpan`, () => {
         expect(() => p.timeSpan).toThrow();
     });

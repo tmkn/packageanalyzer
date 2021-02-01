@@ -7,6 +7,7 @@ import * as chalk from "chalk";
 import { Package, VersionSummary, GroupedLicenseSummary } from "../analyzers/package";
 import { DependencyTypes } from "../visitors/visitor";
 import { Writable } from "stream";
+import { ReleaseAnalysis } from "../analyses/ReleaseAnalysis";
 
 export const defaultDependencyType: DependencyTypes = "dependencies";
 
@@ -40,10 +41,12 @@ export function printStatistics(p: Package, all: boolean, stdout: Writable): voi
 const Padding = 40;
 const PaddingLeft = 4;
 
-export function printAllStatistics(p: Package, stdout: Writable): void {
-    printPublished(p, Padding, stdout);
-    printOldest(p.oldest, Padding, stdout);
-    printNewest(p.newest, Padding, stdout);
+export async function printAllStatistics(p: Package, stdout: Writable): Promise<void> {
+    const { newest, oldest } = await new ReleaseAnalysis().apply(p);
+
+    await printPublished(p, Padding, stdout);
+    await printOldest(oldest, Padding, stdout);
+    await printNewest(newest, Padding, stdout);
     stdout.write(`${`Direct dependencies:`.padEnd(Padding)}${p.directDependencyCount}\n`);
     stdout.write(`${`Transitive dependencies:`.padEnd(Padding)}${p.transitiveDependenciesCount}\n`);
     printDistinctDependencies(p.distinctByNameCount, p.distinctByVersionCount, PaddingLeft, stdout);
@@ -64,33 +67,51 @@ export function printBasicStatistics(p: Package, stdout: Writable): void {
     printSimpleLicenseInfo(p.licensesByGroup, PaddingLeft, stdout);
 }
 
-function printNewest(newest: Package | undefined, padding: number, stdout: Writable): void {
-    if (newest && newest.published) {
-        stdout.write(
-            `${`Newest package:`.padEnd(padding)}${
-                newest.fullName
-            } - ${newest.published.toUTCString()} ${daysAgo(newest.published)}\n`
-        );
-        stdout.write(`${`Newest package path:`.padEnd(padding)}${newest.pathString}\n`);
+async function printNewest(
+    newest: Package | undefined,
+    padding: number,
+    stdout: Writable
+): Promise<void> {
+    if (newest) {
+        const { published } = await new ReleaseAnalysis().apply(newest);
+
+        if (published) {
+            stdout.write(
+                `${`Newest package:`.padEnd(padding)}${
+                    newest.fullName
+                } - ${published.toUTCString()} ${daysAgo(published)}\n`
+            );
+            stdout.write(`${`Newest package path:`.padEnd(padding)}${newest.pathString}\n`);
+        }
     }
 }
 
-function printOldest(oldest: Package | undefined, padding: number, stdout: Writable): void {
-    if (oldest && oldest.published) {
-        stdout.write(
-            `${`Oldest package:`.padEnd(padding)}${
-                oldest.fullName
-            } - ${oldest.published.toUTCString()} ${daysAgo(oldest.published)}\n`
-        );
-        stdout.write(`${`Oldest package path:`.padEnd(padding)}${oldest.pathString}\n`);
+async function printOldest(
+    oldest: Package | undefined,
+    padding: number,
+    stdout: Writable
+): Promise<void> {
+    if (oldest) {
+        const { published } = await new ReleaseAnalysis().apply(oldest);
+
+        if (published) {
+            stdout.write(
+                `${`Oldest package:`.padEnd(padding)}${
+                    oldest.fullName
+                } - ${published.toUTCString()} ${daysAgo(published)}\n`
+            );
+            stdout.write(`${`Oldest package path:`.padEnd(padding)}${oldest.pathString}\n`);
+        }
     }
 }
 
-function printPublished(p: Package, padding: number, stdout: Writable): void {
-    if (!p.published) return;
+async function printPublished(p: Package, padding: number, stdout: Writable): Promise<void> {
+    const { published } = await new ReleaseAnalysis().apply(p);
+
+    if (!published) return;
 
     stdout.write(
-        `${`Published:`.padEnd(padding)}${p.published.toUTCString()} ${daysAgo(p.published)}\n`
+        `${`Published:`.padEnd(padding)}${published.toUTCString()} ${daysAgo(published)}\n`
     );
 }
 

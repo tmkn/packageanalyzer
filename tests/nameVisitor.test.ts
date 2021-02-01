@@ -152,16 +152,4 @@ describe(`visitFromFolder Tests`, () => {
         expect(rest[0].license).toBe("ISC");
         expect(rest[0].names.length).toBe(51);
     });
-
-    test(`Test published`, () => {
-        expect(p.published).toBe(undefined);
-    });
-
-    test(`Test oldest`, () => {
-        expect(p.oldest).toBe(undefined);
-    });
-
-    test(`Test newest`, () => {
-        expect(p.newest).toBe(undefined);
-    });
 });
