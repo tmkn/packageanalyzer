@@ -6,6 +6,7 @@ import { IPackageVersionProvider, FileSystemPackageProvider } from "../src/provi
 import { INpmPackageVersion } from "../src/npm";
 import { Visitor } from "../src/visitors/visitor";
 import { OraLogger } from "../src/logger";
+import { LoopStatistics } from "../src/extensions/statistics/StatisticsExtension";
 
 describe(`visitFromFolder Tests`, () => {
     let p: Package;
@@ -49,7 +50,7 @@ describe(`visitFromFolder Tests`, () => {
     });
 
     test(`Check loops`, () => {
-        expect(p.loops.length).toBe(50);
+        expect(new LoopStatistics(p).loops.length).toBe(50);
     });
 
     test(`Check direct dependecies`, async () => {
@@ -71,16 +72,16 @@ describe(`visitFromFolder Tests`, () => {
             "@webassemblyjs/wast-printer"
         ];
 
-        expect([...p.loopPathMap.keys()].sort()).toEqual(expected.sort());
+        expect([...new LoopStatistics(p).loopPathMap.keys()].sort()).toEqual(expected.sort());
     });
 
     test(`Check distinct loop count`, () => {
-        expect(p.distinctLoopCount).toBe(8);
+        expect(new LoopStatistics(p).distinctLoopCount).toBe(8);
     });
 
     test(`Check loopPathString`, () => {
-        const { loopPathMap } = p;
-        const [pkgName] = [...p.loopPathMap.keys()];
+        const { loopPathMap } = new LoopStatistics(p);
+        const [pkgName] = [...new LoopStatistics(p).loopPathMap.keys()];
         const [loopPath] = [...(loopPathMap.get(pkgName) ?? new Set())].sort();
         const expectedLoopPath =
             "@webassemblyjs/ast@1.8.5 → @webassemblyjs/helper-module-context@1.8.5 → @webassemblyjs/ast@1.8.5";

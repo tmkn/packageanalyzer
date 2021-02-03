@@ -6,6 +6,7 @@ import { getPackageJson } from "../src/visitors/folder";
 import { FileSystemPackageProvider } from "../src/providers/folder";
 import { Visitor } from "../src/visitors/visitor";
 import { OraLogger } from "../src/logger";
+import { LoopStatistics } from "../src/extensions/statistics/StatisticsExtension";
 
 describe(`Package Tests`, () => {
     let p: Package;
@@ -172,7 +173,7 @@ describe(`Package Tests`, () => {
     });
 
     test(`Check loops`, () => {
-        expect(p.loops.length).toBe(0);
+        expect(new LoopStatistics(p).loops.length).toBe(0);
     });
 
     test(`Checks timeSpan`, () => {
@@ -263,4 +264,3 @@ describe(`Checks Name and Version extraction`, () => {
         expect(() => getNameAndVersion(`foo@`)).toThrow();
     });
 });
-

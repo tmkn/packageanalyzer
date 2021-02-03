@@ -29,7 +29,6 @@ interface IPackageStatistics {
     mostReferred: [string, number];
     mostDependencies: Package;
     mostVersions: VersionSummary;
-    loops: Package[];
     licenses: LicenseSummary;
     licensesByGroup: GroupedLicenseSummary;
     timeSpan: number | undefined;
@@ -318,6 +317,14 @@ export class Package implements IPackageStatistics {
         return cost;
     }
 
+    get all(): Package[] {
+        const all: Package[] = [];
+
+        this.visit(d => all.push(d), true);
+
+        return all;
+    }
+
     get path(): Array<[string, string]> {
         const path: Array<[string, string]> = [];
         let current: Package | null = this;
@@ -341,52 +348,6 @@ export class Package implements IPackageStatistics {
         }
 
         return levels.join(" → ");
-    }
-
-    get all(): Package[] {
-        const all: Package[] = [];
-
-        this.visit(d => all.push(d), true);
-
-        return all;
-    }
-
-    get loops(): Package[] {
-        const loops: Package[] = [];
-
-        this.visit(d => {
-            if (d.isLoop) loops.push(d);
-        }, true);
-
-        return loops;
-    }
-
-    //returns the loop path e.g. c->d->c instead of the whole path a->b->c->d->c
-    get loopPathString(): string {
-        const split = this.pathString.indexOf(this.fullName);
-
-        return this.pathString.slice(split);
-    }
-
-    get loopPathMap(): ReadonlyMap<string, Set<string>> {
-        const map: Map<string, Set<string>> = new Map();
-        const loops = this.loops;
-
-        for (const loop of loops) {
-            const entry = map.get(loop.name);
-
-            if (entry) {
-                entry.add(loop.loopPathString);
-            } else {
-                map.set(loop.name, new Set([loop.loopPathString]));
-            }
-        }
-
-        return map;
-    }
-
-    get distinctLoopCount(): number {
-        return [...this.loopPathMap].reduce((i, [, loops]) => i + loops.size, 0);
     }
 
     get distinctByNameCount(): number {

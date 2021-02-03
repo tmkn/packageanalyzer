@@ -8,6 +8,7 @@ import { Package, VersionSummary, GroupedLicenseSummary } from "../analyzers/pac
 import { DependencyTypes } from "../visitors/visitor";
 import { IFormatter } from "../formatter";
 import { ReleaseAnalysis } from "../analyses/ReleaseAnalysis";
+import { LoopStatistics } from "../extensions/statistics/StatisticsExtension";
 
 export const defaultDependencyType: DependencyTypes = "dependencies";
 
@@ -135,7 +136,7 @@ function printSimpleDistinctDependencies(byName: number, formatter: IFormatter):
 }
 
 function printLoops(p: Package, paddingLeft: number, formatter: IFormatter): void {
-    const { loops, loopPathMap, distinctLoopCount } = p;
+    const { loops, loopPathMap, distinctLoopCount } = new LoopStatistics(p);
 
     formatter.writeGroup([[`Loops`, `${loops.length} (${distinctLoopCount} distinct)`]]);
 
