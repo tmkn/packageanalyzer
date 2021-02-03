@@ -1,0 +1,1 @@
+describe(`Statistics Extension Tests`, () => {});

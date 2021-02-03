@@ -1,4 +1,8 @@
-import { DataExtensionType, IDataExtension, IDataExtensionStatic } from "../extensions/data/DataExtension";
+import {
+    DataExtensionType,
+    IDataExtension,
+    IDataExtensionStatic
+} from "../extensions/data/DataExtension";
 import { IFormatter } from "../formatter";
 import { INpmPackageVersion, IMalformedLicenseField } from "../npm";
 import { ITreeFormatter, print } from "../tree";
