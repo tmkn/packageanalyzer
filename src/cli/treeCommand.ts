@@ -11,6 +11,7 @@ import { getPackageJson } from "../visitors/folder";
 import { OraLogger } from "../logger";
 import { defaultDependencyType } from "./common";
 import { Formatter } from "../formatter";
+import { printDependencyTree } from "../extensions/statistics/StatisticsExtension";
 
 export class TreeCommand extends Command {
     @Command.String(`--package`, {
@@ -70,14 +71,14 @@ export class TreeCommand extends Command {
             );
             const p = await visitor.visit(this.type);
 
-            p.printDependencyTree(formatter);
+            printDependencyTree(p, formatter);
         } else if (typeof this.folder !== "undefined") {
             if (fs.existsSync(this.folder)) {
                 const provider = new FileSystemPackageProvider(this.folder);
                 const visitor = new Visitor(getPackageJson(this.folder), provider, new OraLogger());
                 const p: Package = await visitor.visit(this.type);
 
-                p.printDependencyTree(formatter);
+                printDependencyTree(p, formatter);
             }
         }
     }

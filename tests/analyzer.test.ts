@@ -6,8 +6,6 @@ import { getPackageJson } from "../src/visitors/folder";
 import { FileSystemPackageProvider } from "../src/providers/folder";
 import { Visitor } from "../src/visitors/visitor";
 import { OraLogger } from "../src/logger";
-import { Writable } from "stream";
-import { Formatter } from "../src/formatter";
 
 describe(`Package Tests`, () => {
     let p: Package;
@@ -185,14 +183,6 @@ describe(`Package Tests`, () => {
         expect(() => p.size).toThrow();
     });
 
-    test(`Print dependency tree in console`, () => {
-        const stdout = new TestWritable();
-        const formatter = new Formatter(stdout);
-
-        p.printDependencyTree(formatter);
-        expect(stdout.lines.length).toEqual(14);
-    });
-
     test(`Deprecation flag`, () => {
         const { deprecated, message } = p.deprecatedInfo;
 
@@ -274,15 +264,3 @@ describe(`Checks Name and Version extraction`, () => {
     });
 });
 
-export class TestWritable extends Writable {
-    public lines: string[] = [];
-
-    _write(chunk: any, encoding: BufferEncoding, callback: (error?: Error | null) => void): void {
-        const data: string = chunk.toString();
-
-        if (data.endsWith(`\n`)) this.lines.push(data.slice(0, data.length - 1));
-        else this.lines.push(data);
-
-        callback();
-    }
-}

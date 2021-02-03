@@ -35,7 +35,6 @@ interface IPackageStatistics {
     timeSpan: number | undefined;
     size: number | undefined;
     directDependencies: Package[];
-    printDependencyTree(formatter: IFormatter): void;
     getExtensionData<T extends IDataExtensionStatic<any, []>>(extension: T): DataExtensionType<T>;
     addExtensionData(extension: IDataExtension<any>): Promise<void>;
 }
@@ -410,15 +409,6 @@ export class Package implements IPackageStatistics {
         const depth = this.path.length;
 
         return this.getPackagesBy(pkg => pkg.path.length === depth + 1);
-    }
-
-    printDependencyTree(formatter: IFormatter): void {
-        const converter: ITreeFormatter<Package> = {
-            getLabel: data => `${data.fullName} (${data.transitiveDependenciesCount} dependencies)`,
-            getChildren: data => data.directDependencies
-        };
-
-        print<Package>(this, converter, formatter);
     }
 
     getExtensionData<T extends IDataExtensionStatic<any, any[]>>(

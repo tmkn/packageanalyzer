@@ -6,8 +6,8 @@ import { getPackageJson } from "../src/visitors/folder";
 import { OraLogger } from "../src/logger";
 import { ITreeFormatter, print } from "../src/tree";
 import { Package } from "../src/analyzers/package";
-import { TestWritable } from "./analyzer.test";
 import { Formatter } from "../src/formatter";
+import { TestWritable } from "./common";
 
 const output = `
 testproject1@1.0.0
