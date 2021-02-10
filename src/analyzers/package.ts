@@ -3,9 +3,7 @@ import {
     IDataExtension,
     IDataExtensionStatic
 } from "../extensions/data/DataExtension";
-import { IFormatter } from "../formatter";
 import { INpmPackageVersion, IMalformedLicenseField } from "../npm";
-import { ITreeFormatter, print } from "../tree";
 
 type Name = string;
 type Version = string;
@@ -31,8 +29,6 @@ interface IPackageStatistics {
     mostVersions: VersionSummary;
     licenses: LicenseSummary;
     licensesByGroup: GroupedLicenseSummary;
-    timeSpan: number | undefined;
-    size: number | undefined;
     directDependencies: Package[];
     getExtensionData<T extends IDataExtensionStatic<any, []>>(extension: T): DataExtensionType<T>;
     addExtensionData(extension: IDataExtension<any>): Promise<void>;
@@ -56,14 +52,6 @@ export class Package implements IPackageStatistics {
 
     get fullName(): string {
         return `${this.name}@${this.version}`;
-    }
-
-    get timeSpan(): number | undefined {
-        throw new Error("Not Implemented");
-    }
-
-    get size(): number | undefined {
-        throw new Error("Not Implemented");
     }
 
     get license(): string {
