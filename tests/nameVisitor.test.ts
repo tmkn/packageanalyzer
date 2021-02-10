@@ -4,6 +4,7 @@ import { FileSystemPackageProvider } from "../src/providers/folder";
 import { Package } from "../src/analyzers/package";
 import { Visitor } from "../src/visitors/visitor";
 import { OraLogger } from "../src/logger";
+import { LicenseStatistics } from "../src/extensions/statistics/LicenseStatistics";
 
 describe(`visitFromFolder Tests`, () => {
     let p: Package;
@@ -144,7 +145,7 @@ describe(`visitFromFolder Tests`, () => {
     });
 
     test(`Test group packages by license`, () => {
-        const [{ license, names }, ...rest] = p.licensesByGroup;
+        const [{ license, names }, ...rest] = new LicenseStatistics(p).licensesByGroup;
 
         expect(license).toBe("MIT");
         expect(names.length).toBe(239);

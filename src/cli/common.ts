@@ -4,11 +4,15 @@ import * as fs from "fs";
 import * as dayjs from "dayjs";
 import * as chalk from "chalk";
 
-import { Package, VersionSummary, GroupedLicenseSummary } from "../analyzers/package";
+import { Package, VersionSummary } from "../analyzers/package";
 import { DependencyTypes } from "../visitors/visitor";
 import { IFormatter } from "../formatter";
 import { ReleaseStatistics } from "../extensions/statistics/ReleaseStatistics";
 import { LoopStatistics } from "../extensions/statistics/LoopStatistics";
+import {
+    GroupedLicenseSummary,
+    LicenseStatistics
+} from "../extensions/statistics/LicenseStatistics";
 
 export const defaultDependencyType: DependencyTypes = "dependencies";
 
@@ -60,7 +64,7 @@ export async function printAllStatistics(p: Package, formatter: IFormatter): Pro
     printMostDependencies(p.mostDependencies, formatter);
     printMostVersion(p.mostVersions, PaddingLeft, formatter);
     printLoops(p, PaddingLeft, formatter);
-    printLicenseInfo(p.licensesByGroup, PaddingLeft, formatter);
+    printLicenseInfo(new LicenseStatistics(p).licensesByGroup, PaddingLeft, formatter);
 }
 
 export function printBasicStatistics(p: Package, formatter: IFormatter): void {
@@ -69,7 +73,7 @@ export function printBasicStatistics(p: Package, formatter: IFormatter): void {
     printMostReferred(p.mostReferred, formatter);
     printMostDependencies(p.mostDependencies, formatter);
     printMostVersion(p.mostVersions, PaddingLeft, formatter);
-    printSimpleLicenseInfo(p.licensesByGroup, PaddingLeft, formatter);
+    printSimpleLicenseInfo(new LicenseStatistics(p).licensesByGroup, PaddingLeft, formatter);
 }
 
 function printDependencyCount(p: Package, formatter: IFormatter): void {

@@ -7,6 +7,7 @@ import { FileSystemPackageProvider } from "../src/providers/folder";
 import { Visitor } from "../src/visitors/visitor";
 import { OraLogger } from "../src/logger";
 import { LoopStatistics } from "../src/extensions/statistics/LoopStatistics";
+import { LicenseStatistics } from "../src/extensions/statistics/LicenseStatistics";
 
 describe(`Package Tests`, () => {
     let p: Package;
@@ -20,7 +21,7 @@ describe(`Package Tests`, () => {
     });
 
     test(`Check licenses`, () => {
-        const licenses = p.licenses;
+        const licenses = new LicenseStatistics(p).licenses;
 
         const names: string[] = [
             "testproject1",
@@ -174,14 +175,6 @@ describe(`Package Tests`, () => {
 
     test(`Check loops`, () => {
         expect(new LoopStatistics(p).loops.length).toBe(0);
-    });
-
-    test(`Checks timeSpan`, () => {
-        expect(() => p.timeSpan).toThrow();
-    });
-
-    test(`Checks size`, () => {
-        expect(() => p.size).toThrow();
     });
 
     test(`Deprecation flag`, () => {
