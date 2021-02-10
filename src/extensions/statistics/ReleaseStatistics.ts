@@ -1,20 +1,19 @@
-import { Package } from "../analyzers/package";
-import { ReleaseExtension } from "../extensions/data/ReleaseExtension";
-import { IAnalysis } from "./analysis";
+import { Package } from "../../analyzers/package";
+import { ReleaseExtension } from "../data/ReleaseExtension";
 
-interface IReleaseData {
-    published?: Date;
-    newest?: Package;
-    oldest?: Package;
-}
+export class ReleaseStatistics {
+    constructor(private _p: Package) {}
 
-export class ReleaseAnalysis implements IAnalysis<IReleaseData> {
-    async apply(p: Package): Promise<IReleaseData> {
-        return {
-            published: this._getPublished(p),
-            newest: this._getNewest(p),
-            oldest: this._getOldest(p)
-        };
+    get published(): Date | undefined {
+        return this._getPublished(this._p);
+    }
+
+    get newest(): Package | undefined {
+        return this._getNewest(this._p);
+    }
+
+    get oldest(): Package | undefined {
+        return this._getOldest(this._p);
     }
 
     private _getPublished(p: Package): Date | undefined {

@@ -6,7 +6,7 @@ import { IPackageVersionProvider, FileSystemPackageProvider } from "../src/provi
 import { INpmPackageVersion } from "../src/npm";
 import { Visitor } from "../src/visitors/visitor";
 import { OraLogger } from "../src/logger";
-import { LoopStatistics } from "../src/extensions/statistics/StatisticsExtension";
+import { LoopStatistics } from "../src/extensions/statistics/LoopStatistics";
 
 describe(`visitFromFolder Tests`, () => {
     let p: Package;

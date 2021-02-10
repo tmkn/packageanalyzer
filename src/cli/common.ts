@@ -7,8 +7,8 @@ import * as chalk from "chalk";
 import { Package, VersionSummary, GroupedLicenseSummary } from "../analyzers/package";
 import { DependencyTypes } from "../visitors/visitor";
 import { IFormatter } from "../formatter";
-import { ReleaseAnalysis } from "../analyses/ReleaseAnalysis";
-import { LoopStatistics } from "../extensions/statistics/StatisticsExtension";
+import { ReleaseStatistics } from "../extensions/statistics/ReleaseStatistics";
+import { LoopStatistics } from "../extensions/statistics/LoopStatistics";
 
 export const defaultDependencyType: DependencyTypes = "dependencies";
 
@@ -80,7 +80,7 @@ function printDependencyCount(p: Package, formatter: IFormatter): void {
 }
 
 async function printNewest(newest: Package, formatter: IFormatter): Promise<void> {
-    const { published } = await new ReleaseAnalysis().apply(newest);
+    const { published } = new ReleaseStatistics(newest);
 
     if (published) {
         formatter.writeGroup([
@@ -94,7 +94,7 @@ async function printNewest(newest: Package, formatter: IFormatter): Promise<void
 }
 
 async function printOldest(oldest: Package, formatter: IFormatter): Promise<void> {
-    const { published } = await new ReleaseAnalysis().apply(oldest);
+    const { published } = new ReleaseStatistics(oldest);
 
     if (published) {
         formatter.writeGroup([
@@ -108,7 +108,7 @@ async function printOldest(oldest: Package, formatter: IFormatter): Promise<void
 }
 
 async function printPublished(p: Package, formatter: IFormatter): Promise<void> {
-    const { published } = await new ReleaseAnalysis().apply(p);
+    const { published } = new ReleaseStatistics(p);
 
     if (!published) return;
 

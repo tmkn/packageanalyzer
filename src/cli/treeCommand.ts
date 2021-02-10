@@ -11,7 +11,7 @@ import { getPackageJson } from "../visitors/folder";
 import { OraLogger } from "../logger";
 import { defaultDependencyType } from "./common";
 import { Formatter } from "../formatter";
-import { printDependencyTree } from "../extensions/statistics/StatisticsExtension";
+import { printDependencyTree } from "../extensions/statistics/LoopStatistics";
 
 export class TreeCommand extends Command {
     @Command.String(`--package`, {

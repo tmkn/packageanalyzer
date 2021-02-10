@@ -1,7 +1,7 @@
 import * as path from "path";
 
 import { Package } from "../src/analyzers/package";
-import { printDependencyTree } from "../src/extensions/statistics/StatisticsExtension";
+import { printDependencyTree } from "../src/extensions/statistics/LoopStatistics";
 import { Formatter } from "../src/formatter";
 import { OraLogger } from "../src/logger";
 import { FileSystemPackageProvider } from "../src/providers/folder";

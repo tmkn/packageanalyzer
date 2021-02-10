@@ -8,7 +8,7 @@ import { OraLogger } from "../logger";
 import { defaultDependencyType, isValidDependencyType } from "./common";
 import { IPackageVersionProvider } from "../providers/folder";
 import { Formatter } from "../formatter";
-import { LoopStatistics } from "../extensions/statistics/StatisticsExtension";
+import { LoopStatistics } from "../extensions/statistics/LoopStatistics";
 
 export class LoopsCommand extends Command {
     @Command.String(`--package`, {
