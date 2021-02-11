@@ -8,6 +8,7 @@ import { Visitor } from "../src/visitors/visitor";
 import { OraLogger } from "../src/logger";
 import { LoopStatistics } from "../src/extensions/statistics/LoopStatistics";
 import { LicenseStatistics } from "../src/extensions/statistics/LicenseStatistics";
+import { PathStatistics } from "../src/extensions/statistics/PathStatistics";
 
 describe(`Package Tests`, () => {
     let p: Package;
@@ -132,14 +133,14 @@ describe(`Package Tests`, () => {
 
         expect.assertions(1);
         if (react) {
-            const path = react.pathString;
+            const path = new PathStatistics(react).pathString;
 
             expect(path).toBe(`testproject1@1.0.0 → react@16.8.6`);
         }
     });
 
     test(`Check path for root`, () => {
-        const path = p.path;
+        const path = new PathStatistics(p).path;
         const [[name, version]] = path;
 
         expect(path.length).toBe(1);
@@ -153,7 +154,7 @@ describe(`Package Tests`, () => {
         expect.assertions(7);
 
         if (pa2) {
-            const path = pa2.path;
+            const path = new PathStatistics(pa2).path;
             const [[name1, version1], [name2, version2], [name3, version3]] = path;
 
             expect(path.length).toBe(3);

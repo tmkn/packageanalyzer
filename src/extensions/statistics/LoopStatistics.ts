@@ -1,6 +1,7 @@
 import { Package } from "../../analyzers/package";
 import { IFormatter } from "../../formatter";
 import { ITreeFormatter, print } from "../../tree";
+import { PathStatistics } from "./PathStatistics";
 
 export function printDependencyTree(p: Package, formatter: IFormatter): void {
     const converter: ITreeFormatter<Package> = {
@@ -16,9 +17,9 @@ export class LoopStatistics {
 
     //returns the loop path e.g. c->d->c instead of the whole path a->b->c->d->c
     get loopPathString(): string {
-        const split = this._p.pathString.indexOf(this._p.fullName);
+        const split = new PathStatistics(this._p).pathString.indexOf(this._p.fullName);
 
-        return this._p.pathString.slice(split);
+        return new PathStatistics(this._p).pathString.slice(split);
     }
 
     get loops(): Package[] {

@@ -13,6 +13,7 @@ import {
     GroupedLicenseSummary,
     LicenseStatistics
 } from "../extensions/statistics/LicenseStatistics";
+import { PathStatistics } from "../extensions/statistics/PathStatistics";
 
 export const defaultDependencyType: DependencyTypes = "dependencies";
 
@@ -92,7 +93,7 @@ async function printNewest(newest: Package, formatter: IFormatter): Promise<void
                 `Newest package`,
                 `${newest.fullName} - ${published.toUTCString()} ${daysAgo(published)}`
             ],
-            [`Newest package path`, newest.pathString]
+            [`Newest package path`, new PathStatistics(newest).pathString]
         ]);
     }
 }
@@ -106,7 +107,7 @@ async function printOldest(oldest: Package, formatter: IFormatter): Promise<void
                 `Oldest package`,
                 `${oldest.fullName} - ${published.toUTCString()} ${daysAgo(published)}`
             ],
-            [`Oldest package path`, oldest.pathString]
+            [`Oldest package path`, new PathStatistics(oldest).pathString]
         ]);
     }
 }
@@ -145,7 +146,7 @@ function printLoops(p: Package, paddingLeft: number, formatter: IFormatter): voi
     formatter.writeGroup([[`Loops`, `${loops.length} (${distinctLoopCount} distinct)`]]);
 
     if (distinctLoopCount > 0) {
-        const [first] = loops.map(l => l.pathString).sort();
+        const [first] = loops.map(l => new PathStatistics(l).pathString).sort();
         const identBlock: [string, ...string[]] = [``];
 
         identBlock.push(`affected Packages: [${[...loopPathMap.keys()].join(", ")}]`);

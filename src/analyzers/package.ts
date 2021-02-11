@@ -20,7 +20,6 @@ interface IPackageStatistics {
     transitiveDependenciesCount: number;
     distinctByNameCount: number;
     distinctByVersionCount: number;
-    path: Array<[string, string]>;
     mostReferred: [string, number];
     mostDependencies: Package;
     mostVersions: VersionSummary;
@@ -265,31 +264,6 @@ export class Package implements IPackageStatistics {
         return all;
     }
 
-    get path(): Array<[string, string]> {
-        const path: Array<[string, string]> = [];
-        let current: Package | null = this;
-
-        while (current.parent !== null) {
-            path.push([current.name, current.version]);
-
-            current = current.parent;
-        }
-
-        path.push([current.name, current.version]);
-
-        return path.reverse();
-    }
-
-    get pathString(): string {
-        const levels: string[] = [];
-
-        for (const [name, version] of this.path) {
-            levels.push(`${name}@${version}`);
-        }
-
-        return levels.join(" → ");
-    }
-
     get distinctByNameCount(): number {
         const packageNames: Set<string> = new Set();
 
@@ -307,9 +281,7 @@ export class Package implements IPackageStatistics {
     }
 
     get directDependencies(): Package[] {
-        const depth = this.path.length;
-
-        return this.getPackagesBy(pkg => pkg.path.length === depth + 1);
+        return this._dependencies;
     }
 
     getExtensionData<T extends IDataExtensionStatic<any, any[]>>(
