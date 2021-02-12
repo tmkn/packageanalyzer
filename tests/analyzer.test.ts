@@ -9,6 +9,7 @@ import { OraLogger } from "../src/logger";
 import { LoopStatistics } from "../src/extensions/statistics/LoopStatistics";
 import { LicenseStatistics } from "../src/extensions/statistics/LicenseStatistics";
 import { PathStatistics } from "../src/extensions/statistics/PathStatistics";
+import { DependencyStatistics } from "../src/extensions/statistics/DependencyStatistics";
 
 describe(`Package Tests`, () => {
     let p: Package;
@@ -56,15 +57,15 @@ describe(`Package Tests`, () => {
     });
 
     test(`Checks package with most direct dependencies`, () => {
-        const mostDeps = p.mostDependencies;
+        const mostDeps = new DependencyStatistics(p).mostDependencies;
 
         expect(mostDeps.name).toBe("react");
         expect(mostDeps.version).toBe("16.8.6");
-        expect(mostDeps.directDependencyCount).toBe(4);
+        expect(mostDeps.directDependencies.length).toBe(4);
     });
 
     test(`Checks package that is most referred`, () => {
-        const [name, times] = p.mostReferred;
+        const [name, times] = new DependencyStatistics(p).mostReferred;
 
         expect(name).toBe("loose-envify");
         expect(times).toBe(3);
@@ -76,7 +77,7 @@ describe(`Package Tests`, () => {
         const visitor = new Visitor(getPackageJson(rootPath), provider, new OraLogger());
         const p: Package = await visitor.visit();
 
-        for (const [name, versions] of p.mostVersions) {
+        for (const [name, versions] of new DependencyStatistics(p).mostVersions) {
             expect(name).toBe("kind-of");
 
             expect(versions.has("3.2.2")).toBe(true);
@@ -87,7 +88,7 @@ describe(`Package Tests`, () => {
     });
 
     test(`Checks for package with most versions (all equal)`, () => {
-        const mostVersions = p.mostVersions;
+        const mostVersions = new DependencyStatistics(p).mostVersions;
 
         expect(mostVersions.size).toBe(8);
 
@@ -120,12 +121,6 @@ describe(`Package Tests`, () => {
                 expect(_versions).toContain(version);
             }
         }
-    });
-
-    test(`Checks cost`, () => {
-        const cost = p.cost;
-
-        expect(cost).toBe(0);
     });
 
     test(`Checks path string`, () => {
@@ -171,7 +166,7 @@ describe(`Package Tests`, () => {
     });
 
     test(`Check all`, () => {
-        expect(p.all.length).toBe(14);
+        expect(new DependencyStatistics(p).all.length).toBe(14);
     });
 
     test(`Check loops`, () => {

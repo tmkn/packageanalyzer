@@ -1,4 +1,5 @@
 import { Package } from "../../analyzers/package";
+import { IMalformedLicenseField } from "../../npm";
 
 type Name = string;
 type Version = string;
@@ -10,16 +11,51 @@ export type GroupedLicenseSummary = Array<{ license: string; names: string[] }>;
 export class LicenseStatistics {
     constructor(private _p: Package) {}
 
+    get license(): string {
+        try {
+            const license = this._p.getData("license");
+            const licenses = this._p.getData("licenses");
+
+            //check if license field is set
+            if (typeof license !== "undefined") {
+                if (typeof license === "string") {
+                    return license;
+                } else if (this._isLicenseObject(license)) {
+                    return license.type;
+                } else {
+                    return JSON.stringify(license);
+                }
+                //fallback to licenses field
+            } else if (Array.isArray(licenses)) return licenses.map(l => l.type).join(",");
+            //weird format | not set -> fail
+            else {
+                throw new Error(`Unable to parse license`);
+            }
+        } catch {
+            return `PARSE ERROR: ${this._p.fullName}`;
+        }
+    }
+
+    //even though license should be string some packages contain json objects...
+    private _isLicenseObject(data: unknown): data is IMalformedLicenseField {
+        if (typeof data === "object" && data !== null) {
+            return "type" in data && "url" in data;
+        }
+
+        return false;
+    }
+
     get licenses(): LicenseSummary {
         const licenseMap: LicenseSummary = new Map();
 
         this._p.visit(d => {
             const packageKey = licenseMap.get(d.name);
+            const license = new LicenseStatistics(d).license;
 
             if (!packageKey) {
-                licenseMap.set(d.name, new Map([[d.version, d.license]]));
+                licenseMap.set(d.name, new Map([[d.version, license]]));
             } else {
-                packageKey.set(d.version, d.license);
+                packageKey.set(d.version, license);
             }
         }, true);
 

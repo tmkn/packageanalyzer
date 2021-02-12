@@ -5,6 +5,7 @@ import { Package } from "../src/analyzers/package";
 import { Visitor } from "../src/visitors/visitor";
 import { OraLogger } from "../src/logger";
 import { LicenseStatistics } from "../src/extensions/statistics/LicenseStatistics";
+import { DependencyStatistics } from "../src/extensions/statistics/DependencyStatistics";
 
 describe(`visitFromFolder Tests`, () => {
     let p: Package;
@@ -34,15 +35,15 @@ describe(`visitFromFolder Tests`, () => {
     });
 
     test(`Checks transitive dependencies`, () => {
-        expect(p.transitiveDependenciesCount).toBe(4279);
+        expect(new DependencyStatistics(p).transitiveDependenciesCount).toBe(4279);
     });
 
     test(`Checks distinct dependencies by name`, () => {
-        expect(p.distinctByNameCount).toBe(308);
+        expect(new DependencyStatistics(p).distinctByNameCount).toBe(308);
     });
 
     test(`Checks distinct dependencies by name and version`, () => {
-        expect(p.distinctByVersionCount).toBe(333);
+        expect(new DependencyStatistics(p).distinctByVersionCount).toBe(333);
     });
 
     test(`Checks visit method`, () => {
@@ -133,14 +134,18 @@ describe(`visitFromFolder Tests`, () => {
         const version = p.getData("version");
         const dependencies = p.getData("dependencies");
         const license = p.getData("license");
+        const scriptsTest = p.getData("scripts.test");
+        const missing = p.getData("adf.sdf.esdf");
 
-        expect.assertions(4);
+        expect.assertions(6);
 
         if (dependencies) {
             expect(name).toBe("webpack");
             expect(version).toBe("4.35.2");
-            expect(Object.keys(dependencies).length).toBe(24);
+            expect(Object.keys(dependencies as object).length).toBe(24);
             expect(license).toBe("MIT");
+            expect(typeof scriptsTest).toBe("string");
+            expect(missing).toBeUndefined();
         }
     });
 

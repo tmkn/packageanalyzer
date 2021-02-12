@@ -1,11 +1,15 @@
 import { Package } from "../../analyzers/package";
 import { IFormatter } from "../../formatter";
 import { ITreeFormatter, print } from "../../tree";
+import { DependencyStatistics } from "./DependencyStatistics";
 import { PathStatistics } from "./PathStatistics";
 
 export function printDependencyTree(p: Package, formatter: IFormatter): void {
     const converter: ITreeFormatter<Package> = {
-        getLabel: data => `${data.fullName} (${data.transitiveDependenciesCount} dependencies)`,
+        getLabel: data =>
+            `${data.fullName} (${
+                new DependencyStatistics(data).transitiveDependenciesCount
+            } dependencies)`,
         getChildren: data => data.directDependencies
     };
 

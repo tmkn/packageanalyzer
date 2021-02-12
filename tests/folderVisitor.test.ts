@@ -7,6 +7,7 @@ import { INpmPackageVersion } from "../src/npm";
 import { Visitor } from "../src/visitors/visitor";
 import { OraLogger } from "../src/logger";
 import { LoopStatistics } from "../src/extensions/statistics/LoopStatistics";
+import { LicenseStatistics } from "../src/extensions/statistics/LicenseStatistics";
 
 describe(`visitFromFolder Tests`, () => {
     let p: Package;
@@ -32,7 +33,7 @@ describe(`visitFromFolder Tests`, () => {
     });
 
     test(`Checks license`, () => {
-        expect(`ISC`).toBe(p.license);
+        expect(`ISC`).toBe(new LicenseStatistics(p).license);
     });
 
     test(`Throws on missing package.json`, async () => {
