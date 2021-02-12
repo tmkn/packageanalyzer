@@ -6,8 +6,10 @@ import { getPackageJson } from "../src/visitors/folder";
 import { FileSystemPackageProvider } from "../src/providers/folder";
 import { Visitor } from "../src/visitors/visitor";
 import { OraLogger } from "../src/logger";
-import { Writable } from "stream";
-import { Formatter } from "../src/formatter";
+import { LoopStatistics } from "../src/extensions/statistics/LoopStatistics";
+import { LicenseStatistics } from "../src/extensions/statistics/LicenseStatistics";
+import { PathStatistics } from "../src/extensions/statistics/PathStatistics";
+import { DependencyStatistics } from "../src/extensions/statistics/DependencyStatistics";
 
 describe(`Package Tests`, () => {
     let p: Package;
@@ -21,7 +23,7 @@ describe(`Package Tests`, () => {
     });
 
     test(`Check licenses`, () => {
-        const licenses = p.licenses;
+        const licenses = new LicenseStatistics(p).licenses;
 
         const names: string[] = [
             "testproject1",
@@ -55,15 +57,15 @@ describe(`Package Tests`, () => {
     });
 
     test(`Checks package with most direct dependencies`, () => {
-        const mostDeps = p.mostDependencies;
+        const mostDeps = new DependencyStatistics(p).mostDependencies;
 
         expect(mostDeps.name).toBe("react");
         expect(mostDeps.version).toBe("16.8.6");
-        expect(mostDeps.directDependencyCount).toBe(4);
+        expect(mostDeps.directDependencies.length).toBe(4);
     });
 
     test(`Checks package that is most referred`, () => {
-        const [name, times] = p.mostReferred;
+        const [name, times] = new DependencyStatistics(p).mostReferred;
 
         expect(name).toBe("loose-envify");
         expect(times).toBe(3);
@@ -75,7 +77,7 @@ describe(`Package Tests`, () => {
         const visitor = new Visitor(getPackageJson(rootPath), provider, new OraLogger());
         const p: Package = await visitor.visit();
 
-        for (const [name, versions] of p.mostVersions) {
+        for (const [name, versions] of new DependencyStatistics(p).mostVersions) {
             expect(name).toBe("kind-of");
 
             expect(versions.has("3.2.2")).toBe(true);
@@ -86,7 +88,7 @@ describe(`Package Tests`, () => {
     });
 
     test(`Checks for package with most versions (all equal)`, () => {
-        const mostVersions = p.mostVersions;
+        const mostVersions = new DependencyStatistics(p).mostVersions;
 
         expect(mostVersions.size).toBe(8);
 
@@ -121,25 +123,19 @@ describe(`Package Tests`, () => {
         }
     });
 
-    test(`Checks cost`, () => {
-        const cost = p.cost;
-
-        expect(cost).toBe(0);
-    });
-
     test(`Checks path string`, () => {
         const react = p.getPackageByName("react");
 
         expect.assertions(1);
         if (react) {
-            const path = react.pathString;
+            const path = new PathStatistics(react).pathString;
 
             expect(path).toBe(`testproject1@1.0.0 → react@16.8.6`);
         }
     });
 
     test(`Check path for root`, () => {
-        const path = p.path;
+        const path = new PathStatistics(p).path;
         const [[name, version]] = path;
 
         expect(path.length).toBe(1);
@@ -153,7 +149,7 @@ describe(`Package Tests`, () => {
         expect.assertions(7);
 
         if (pa2) {
-            const path = pa2.path;
+            const path = new PathStatistics(pa2).path;
             const [[name1, version1], [name2, version2], [name3, version3]] = path;
 
             expect(path.length).toBe(3);
@@ -170,27 +166,11 @@ describe(`Package Tests`, () => {
     });
 
     test(`Check all`, () => {
-        expect(p.all.length).toBe(14);
+        expect(new DependencyStatistics(p).all.length).toBe(14);
     });
 
     test(`Check loops`, () => {
-        expect(p.loops.length).toBe(0);
-    });
-
-    test(`Checks timeSpan`, () => {
-        expect(() => p.timeSpan).toThrow();
-    });
-
-    test(`Checks size`, () => {
-        expect(() => p.size).toThrow();
-    });
-
-    test(`Print dependency tree in console`, () => {
-        const stdout = new TestWritable();
-        const formatter = new Formatter(stdout);
-
-        p.printDependencyTree(formatter);
-        expect(stdout.lines.length).toEqual(14);
+        expect(new LoopStatistics(p).loops.length).toBe(0);
     });
 
     test(`Deprecation flag`, () => {
@@ -273,16 +253,3 @@ describe(`Checks Name and Version extraction`, () => {
         expect(() => getNameAndVersion(`foo@`)).toThrow();
     });
 });
-
-export class TestWritable extends Writable {
-    public lines: string[] = [];
-
-    _write(chunk: any, encoding: BufferEncoding, callback: (error?: Error | null) => void): void {
-        const data: string = chunk.toString();
-
-        if (data.endsWith(`\n`)) this.lines.push(data.slice(0, data.length - 1));
-        else this.lines.push(data);
-
-        callback();
-    }
-}

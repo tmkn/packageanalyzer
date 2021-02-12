@@ -8,6 +8,7 @@ import { OraLogger } from "../logger";
 import { defaultDependencyType, isValidDependencyType } from "./common";
 import { IPackageVersionProvider } from "../providers/folder";
 import { Formatter } from "../formatter";
+import { LoopStatistics } from "../extensions/statistics/LoopStatistics";
 
 export class LoopsCommand extends Command {
     @Command.String(`--package`, {
@@ -60,7 +61,7 @@ export class LoopsCommand extends Command {
                 new OraLogger()
             );
             const p = await visitor.visit(this.type);
-            const loopPathMap = p.loopPathMap;
+            const loopPathMap = new LoopStatistics(p).loopPathMap;
             const distinctCount: number = [...loopPathMap].reduce(
                 (i, [, loops]) => i + loops.size,
                 0

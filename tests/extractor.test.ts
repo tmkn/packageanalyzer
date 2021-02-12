@@ -15,13 +15,13 @@ describe(`Extractor Tests`, () => {
             const [metarpheus, metaroute, metarhia] = (await extractor.extract()).values();
 
             expect(metarpheus.name).toEqual("metarpheus");
-            expect(metarpheus.directDependencyCount).toEqual(0);
+            expect(metarpheus.directDependencies.length).toEqual(0);
 
             expect(metaroute.name).toEqual("metaroute");
-            expect(metaroute.directDependencyCount).toEqual(0);
+            expect(metaroute.directDependencies.length).toEqual(0);
 
             expect(metarhia.name).toEqual("metarhia-jstp");
-            expect(metarhia.directDependencyCount).toEqual(0);
+            expect(metarhia.directDependencies.length).toEqual(0);
             expect(metarhia.version).toBe("0.1.4");
         } catch (e) {
             console.log(e);

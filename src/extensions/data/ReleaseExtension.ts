@@ -1,6 +1,6 @@
-import { Package } from "../analyzers/package";
-import { INpmPackageProvider } from "../providers/folder";
-import { IDataExtensionStatic } from "./extension";
+import { Package } from "../../analyzers/package";
+import { INpmPackageProvider } from "../../providers/folder";
+import { IDataExtensionStatic } from "./DataExtension";
 
 interface IReleaseData {
     published: Date;

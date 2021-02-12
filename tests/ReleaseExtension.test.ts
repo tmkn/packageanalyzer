@@ -1,5 +1,5 @@
 import { Package } from "../src";
-import { ReleaseExtension } from "../src/extensions/ReleaseExtension";
+import { ReleaseExtension } from "../src/extensions/data/ReleaseExtension";
 import { INpmPackage, INpmPackageVersion, IUnpublishedNpmPackage } from "../src/npm";
 import { INpmPackageProvider } from "../src/providers/folder";
 
