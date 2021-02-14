@@ -2,14 +2,14 @@ import { IPackageVersionProvider } from "../providers/folder";
 import { Package } from "../analyzers/package";
 import { INpmKeyValue, INpmPackageVersion, PackageVersion } from "../npm";
 import { ILogger } from "../logger";
-import { IDataExtension } from "../extensions/data/DataExtension";
+import { IDecorator } from "../extensions/decorators/Decorator";
 
 interface IVisitorConstructor {
     new (
         entry: PackageVersion,
         provider: IPackageVersionProvider,
         logger: ILogger,
-        extensions?: IDataExtension<any>[]
+        decorators?: IDecorator<any>[]
     ): IPackageVisitor;
 }
 
@@ -27,7 +27,7 @@ export const Visitor: IVisitorConstructor = class Visitor implements IPackageVis
         private readonly _entry: PackageVersion,
         private readonly _provider: IPackageVersionProvider,
         private readonly _logger: ILogger,
-        private readonly _extensions: IDataExtension<any>[] = []
+        private readonly _decorators: IDecorator<any>[] = []
     ) {}
 
     async visit(depType = this._depType): Promise<Package> {
@@ -40,7 +40,7 @@ export const Visitor: IVisitorConstructor = class Visitor implements IPackageVis
             this._logger.log("Fetching");
             this._depType = depType;
 
-            await this._addExtensions(root);
+            await this._addDecorator(root);
 
             try {
                 await this.visitDependencies(root, rootPkg[depType]);
@@ -80,7 +80,7 @@ export const Visitor: IVisitorConstructor = class Visitor implements IPackageVis
 
                 this._logger.log(`Fetched ${p.name}`);
 
-                await this._addExtensions(dependency);
+                await this._addDecorator(dependency);
 
                 parent.addDependency(dependency);
 
@@ -100,12 +100,12 @@ export const Visitor: IVisitorConstructor = class Visitor implements IPackageVis
         }
     }
 
-    private async _addExtensions(p: Package): Promise<void> {
-        for (const extension of this._extensions) {
+    private async _addDecorator(p: Package): Promise<void> {
+        for (const decorator of this._decorators) {
             try {
-                await p.addExtensionData(extension);
+                await p.addDecoratorData(decorator);
             } catch {
-                this._logger.log(`Couldn't add Extension`);
+                this._logger.log(`Failed to apply decorator: ${decorator.name}`);
             }
         }
     }

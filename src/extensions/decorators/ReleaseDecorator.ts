@@ -1,6 +1,6 @@
 import { Package } from "../../analyzers/package";
 import { INpmPackageProvider } from "../../providers/folder";
-import { IDataExtensionStatic } from "./DataExtension";
+import { IDecoratorStatic } from "./Decorator";
 
 interface IReleaseData {
     published: Date;
@@ -8,7 +8,7 @@ interface IReleaseData {
 
 const ReleaseExtensionSymbol = Symbol();
 
-export const ReleaseExtension: IDataExtensionStatic<
+export const ReleaseDecorator: IDecoratorStatic<
     IReleaseData,
     [INpmPackageProvider]
 > = class ReleaseExtension {
@@ -17,6 +17,8 @@ export const ReleaseExtension: IDataExtensionStatic<
     }
 
     constructor(private _provider: INpmPackageProvider) {}
+
+    readonly name: string = `ReleaseDecorator`;
 
     get key(): Symbol {
         return ReleaseExtension.key;

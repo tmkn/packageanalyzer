@@ -8,7 +8,7 @@ import { FileSystemPackageProvider } from "../providers/folder";
 import { getPackageJson } from "../visitors/folder";
 import { OraLogger } from "../logger";
 import { printStatistics, defaultDependencyType, isValidDependencyType } from "./common";
-import { ReleaseExtension } from "../extensions/data/ReleaseExtension";
+import { ReleaseDecorator } from "../extensions/decorators/ReleaseDecorator";
 import { Formatter, IFormatter } from "../formatter";
 
 export class AnalyzeCommand extends Command {
@@ -62,7 +62,7 @@ export class AnalyzeCommand extends Command {
                 getNameAndVersion(this.package),
                 AnalyzeCommand.OnlineProvider,
                 new OraLogger(),
-                [new ReleaseExtension(AnalyzeCommand.OnlineProvider)]
+                [new ReleaseDecorator(AnalyzeCommand.OnlineProvider)]
             );
         } else if (typeof this.folder !== `undefined`) {
             const provider = new FileSystemPackageProvider(this.folder);

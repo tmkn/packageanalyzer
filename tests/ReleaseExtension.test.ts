@@ -1,5 +1,5 @@
 import { Package } from "../src";
-import { ReleaseExtension } from "../src/extensions/data/ReleaseExtension";
+import { ReleaseDecorator } from "../src/extensions/decorators/ReleaseDecorator";
 import { INpmPackage, INpmPackageVersion, IUnpublishedNpmPackage } from "../src/npm";
 import { INpmPackageProvider } from "../src/providers/folder";
 
@@ -20,7 +20,7 @@ describe(`ReleaseExtension Tests`, () => {
                 return data as INpmPackage;
             }
         })();
-        const extension = new ReleaseExtension(provider);
+        const extension = new ReleaseDecorator(provider);
         const data: Partial<INpmPackageVersion> = {
             name: "foo",
             version: version
@@ -40,7 +40,7 @@ describe(`ReleaseExtension Tests`, () => {
                 return undefined;
             }
         })();
-        const extension = new ReleaseExtension(provider);
+        const extension = new ReleaseDecorator(provider);
         const data: Partial<INpmPackageVersion> = {
             name: "foo",
             version: "1.0.0"
@@ -62,7 +62,7 @@ describe(`ReleaseExtension Tests`, () => {
                 return data as INpmPackage;
             }
         })();
-        const extension = new ReleaseExtension(provider);
+        const extension = new ReleaseDecorator(provider);
         const data: Partial<INpmPackageVersion> = {
             name: "foo",
             version: "1.0.0"
