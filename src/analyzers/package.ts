@@ -1,10 +1,6 @@
 import { get } from "lodash";
 
-import {
-    DataExtensionType,
-    IDataExtension,
-    IDataExtensionStatic
-} from "../extensions/data/DataExtension";
+import { DecoratorType, IDecorator, IDecoratorStatic } from "../extensions/decorators/Decorator";
 import { INpmPackageVersion } from "../npm";
 
 interface IDeprecatedInfo {
@@ -30,8 +26,8 @@ interface IPackage<T> {
 
     getData(key: string): unknown;
 
-    getExtensionData<E extends IDataExtensionStatic<any, []>>(extension: E): DataExtensionType<E>;
-    addExtensionData(extension: IDataExtension<any>): Promise<void>;
+    getDecoratorData<E extends IDecoratorStatic<any, []>>(decorators: E): DecoratorType<E>;
+    addDecoratorData(extension: IDecorator<any>): Promise<void>;
 }
 
 export class Package implements IPackage<Package> {
@@ -134,19 +130,17 @@ export class Package implements IPackage<Package> {
         return get(this._data, key);
     }
 
-    getExtensionData<T extends IDataExtensionStatic<any, any[]>>(
-        extension: T
-    ): DataExtensionType<T> {
-        const data = this._extensionData.get(extension.key);
+    getDecoratorData<T extends IDecoratorStatic<any, any[]>>(decorators: T): DecoratorType<T> {
+        const data = this._extensionData.get(decorators.key);
 
         if (typeof data === "undefined") {
-            throw new Error(`No extension data found for ${extension.toString()}`);
+            throw new Error(`No extension data found for ${decorators.toString()}`);
         }
 
         return data;
     }
 
-    async addExtensionData(extension: IDataExtension<any>): Promise<void> {
+    async addDecoratorData(extension: IDecorator<any>): Promise<void> {
         const data = await extension.apply(this);
 
         this._extensionData.set(extension.key, data);

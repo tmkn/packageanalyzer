@@ -1,5 +1,5 @@
 import { Package } from "../../analyzers/package";
-import { ReleaseExtension } from "../data/ReleaseExtension";
+import { ReleaseDecorator } from "../decorators/ReleaseDecorator";
 
 export class ReleaseStatistics {
     constructor(private _p: Package) {}
@@ -18,7 +18,7 @@ export class ReleaseStatistics {
 
     private _getPublished(p: Package): Date | undefined {
         try {
-            const { published } = p.getExtensionData(ReleaseExtension);
+            const { published } = p.getDecoratorData(ReleaseDecorator);
 
             return published;
         } catch {
