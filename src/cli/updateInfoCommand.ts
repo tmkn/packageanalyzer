@@ -3,9 +3,9 @@ import * as chalk from "chalk";
 
 import { npmOnline, OnlinePackageProvider } from "../providers/online";
 import { getNameAndVersion } from "../npm";
-import { updateInfo } from "../analyzers/update";
+import { updateInfo } from "../utils/update";
 import { daysAgo } from "./common";
-import { Formatter } from "../formatter";
+import { Formatter } from "../utils/formatter";
 
 export class UpdateInfoCommand extends Command {
     @Command.String(`--package`, {

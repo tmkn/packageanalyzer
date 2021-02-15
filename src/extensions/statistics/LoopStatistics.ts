@@ -1,6 +1,6 @@
 import { Package } from "../../analyzers/package";
-import { IFormatter } from "../../formatter";
-import { ITreeFormatter, print } from "../../tree";
+import { IFormatter } from "../../utils/formatter";
+import { ITreeFormatter, print } from "../../utils/tree";
 import { DependencyStatistics } from "./DependencyStatistics";
 import { PathStatistics } from "./PathStatistics";
 

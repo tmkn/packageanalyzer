@@ -4,7 +4,7 @@ import * as os from "os";
 import * as path from "path";
 import * as semver from "semver";
 
-import { OraLogger } from "../logger";
+import { OraLogger } from "../utils/logger";
 
 import { IPackageVersionProvider } from "./folder";
 import {

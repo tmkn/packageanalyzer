@@ -1,5 +1,5 @@
 import { Writable } from "stream";
-import { Formatter } from "../src/formatter";
+import { Formatter } from "../src/utils/formatter";
 
 describe(`Formatter Tests`, () => {
     class TestWriter extends Writable {

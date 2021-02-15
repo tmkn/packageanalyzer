@@ -1,4 +1,4 @@
-export { Extractor } from "./extractor";
+export { Extractor } from "./utils/extractor";
 export { Visitor } from "./visitors/visitor";
 export { Package } from "./analyzers/package";
 export { FlatFileProvider } from "./providers/flatFile";

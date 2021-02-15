@@ -4,7 +4,7 @@ import {
     getMinorVersionString,
     updateCheck,
     updateInfo
-} from "../src/analyzers/update";
+} from "../src/utils/update";
 import { OnlinePackageProvider } from "../src/providers/online";
 import { MockNpmServer } from "./server";
 

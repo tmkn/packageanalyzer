@@ -1,4 +1,4 @@
-import { Package } from "./analyzers/package";
+import { Package } from "../analyzers/package";
 
 interface IMappedDependency<T> {
     parent: T | null;

@@ -1,7 +1,7 @@
 import { Server } from "http";
 
 import * as express from "express";
-import { downloadHttpJson } from "../src/requests";
+import { downloadHttpJson } from "../src/utils/requests";
 
 describe(`Request Tests`, () => {
     let server: Server;

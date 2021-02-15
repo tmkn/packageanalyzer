@@ -4,10 +4,10 @@ import * as chalk from "chalk";
 import { npmOnline } from "../providers/online";
 import { getNameAndVersion } from "../npm";
 import { Visitor } from "../visitors/visitor";
-import { OraLogger } from "../logger";
+import { OraLogger } from "../utils/logger";
 import { defaultDependencyType, isValidDependencyType } from "./common";
 import { IPackageVersionProvider } from "../providers/folder";
-import { Formatter } from "../formatter";
+import { Formatter } from "../utils/formatter";
 import { LoopStatistics } from "../extensions/statistics/LoopStatistics";
 
 export class LoopsCommand extends Command {

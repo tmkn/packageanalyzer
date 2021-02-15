@@ -1,8 +1,8 @@
 //import * as satisfies from "spdx-satisfies";
 const satisfies = require("spdx-satisfies");
 
-import { Package } from "../../analyzers/package";
-import { LicenseStatistics } from "./LicenseStatistics";
+import { Package } from "../analyzers/package";
+import { LicenseStatistics } from "../extensions/statistics/LicenseStatistics";
 
 export interface ILicenseCheckResult {
     ok: boolean;

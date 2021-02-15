@@ -1,4 +1,4 @@
-import { downloadHttpJson } from "./requests";
+import { downloadHttpJson } from "./utils/requests";
 
 export interface INpmPackageVersion {
     author: INpmUser;

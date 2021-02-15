@@ -5,7 +5,7 @@ import { getNameAndVersion } from "../src/npm";
 import { getPackageJson } from "../src/visitors/folder";
 import { FileSystemPackageProvider } from "../src/providers/folder";
 import { Visitor } from "../src/visitors/visitor";
-import { OraLogger } from "../src/logger";
+import { OraLogger } from "../src/utils/logger";
 import { LoopStatistics } from "../src/extensions/statistics/LoopStatistics";
 import { LicenseStatistics } from "../src/extensions/statistics/LicenseStatistics";
 import { PathStatistics } from "../src/extensions/statistics/PathStatistics";

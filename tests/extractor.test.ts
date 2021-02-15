@@ -1,6 +1,6 @@
 import * as path from "path";
 
-import { Extractor } from "../src/extractor";
+import { Extractor } from "../src/utils/extractor";
 
 describe(`Extractor Tests`, () => {
     const destination = path.join("tests", "data", "extractor");

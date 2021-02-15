@@ -6,7 +6,7 @@ import * as chalk from "chalk";
 
 import { Package } from "../analyzers/package";
 import { DependencyTypes } from "../visitors/visitor";
-import { IFormatter } from "../formatter";
+import { IFormatter } from "../utils/formatter";
 import { ReleaseStatistics } from "../extensions/statistics/ReleaseStatistics";
 import { LoopStatistics } from "../extensions/statistics/LoopStatistics";
 import {

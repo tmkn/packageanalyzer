@@ -8,7 +8,7 @@ import {
     IUnpublishedNpmPackage,
     isUnpublished
 } from "../npm";
-import { downloadHttpJson } from "../requests";
+import { downloadHttpJson } from "../utils/requests";
 
 //loads npm data from the web
 export class OnlinePackageProvider implements IPackageVersionProvider {

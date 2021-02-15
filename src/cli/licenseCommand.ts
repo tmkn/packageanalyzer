@@ -7,14 +7,14 @@ import { getNameAndVersion } from "../npm";
 import { Visitor } from "../visitors/visitor";
 import { FileSystemPackageProvider } from "../providers/folder";
 import { getPackageJson } from "../visitors/folder";
-import { OraLogger } from "../logger";
+import { OraLogger } from "../utils/logger";
 import { defaultDependencyType, isValidDependencyType } from "./common";
 import {
     createWhitelistLicenseCheckReport,
     ILicenseCheckResult,
     LicenseCheckReport
-} from "../extensions/statistics/licenseCheckService";
-import { Formatter, IFormatter } from "../formatter";
+} from "../utils/licenseCheckService";
+import { Formatter, IFormatter } from "../utils/formatter";
 import { LicenseStatistics } from "../extensions/statistics/LicenseStatistics";
 
 export class LicenseCheckCommand extends Command {
