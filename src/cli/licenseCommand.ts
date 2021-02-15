@@ -13,7 +13,7 @@ import {
     createWhitelistLicenseCheckReport,
     ILicenseCheckResult,
     LicenseCheckReport
-} from "../services/licenseCheckService";
+} from "../extensions/statistics/licenseCheckService";
 import { Formatter, IFormatter } from "../formatter";
 import { LicenseStatistics } from "../extensions/statistics/LicenseStatistics";
 

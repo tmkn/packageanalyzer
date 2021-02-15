@@ -3,7 +3,7 @@ import * as path from "path";
 import { Package } from "../src/analyzers/package";
 import { OraLogger } from "../src/logger";
 import { FileSystemPackageProvider } from "../src/providers/folder";
-import { createWhitelistLicenseCheckReport } from "../src/services/licenseCheckService";
+import { createWhitelistLicenseCheckReport } from "../src/extensions/statistics/licenseCheckService";
 import { getPackageJson } from "../src/visitors/folder";
 import { Visitor } from "../src/visitors/visitor";
 
