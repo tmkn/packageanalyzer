@@ -3,7 +3,7 @@ import { Visitor } from "../src/visitors/visitor";
 import { OraLogger } from "../src/utils/logger";
 import { MockNpmServer } from "./server";
 import { ReleaseDecorator } from "../src/extensions/decorators/ReleaseDecorator";
-import { ReleaseStatistics } from "../src/extensions/statistics/ReleaseStatistics";
+import { ReleaseMetrics } from "../src/extensions/metrics/ReleaseMetrics";
 
 describe(`OnlineProvider Tests`, () => {
     let server: MockNpmServer;
@@ -39,7 +39,7 @@ describe(`OnlineProvider Tests`, () => {
             new ReleaseDecorator(provider)
         ]);
         const p = await visitor.visit();
-        const { oldest: oldestPackage } = new ReleaseStatistics(p);
+        const { oldest: oldestPackage } = new ReleaseMetrics(p);
 
         expect.assertions(1);
 
@@ -53,7 +53,7 @@ describe(`OnlineProvider Tests`, () => {
             new ReleaseDecorator(provider)
         ]);
         const p = await visitor.visit();
-        const { newest: newestPackage } = new ReleaseStatistics(p);
+        const { newest: newestPackage } = new ReleaseMetrics(p);
 
         expect.assertions(1);
 

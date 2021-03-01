@@ -15,7 +15,7 @@ import {
     LicenseCheckReport
 } from "../utils/licenseCheckService";
 import { Formatter, IFormatter } from "../utils/formatter";
-import { LicenseStatistics } from "../extensions/statistics/LicenseStatistics";
+import { LicenseMetrics } from "../extensions/metrics/LicenseMetrics";
 
 export class LicenseCheckCommand extends Command {
     @Command.String(`--package`, {
@@ -128,12 +128,12 @@ class LicenseCheckPrinter {
         const groups: Map<string, Map<Package, ILicenseCheckResult>> = new Map();
 
         for (const [p, result] of this._licenseCheckResult.allChecks) {
-            const existingGroup = groups.get(new LicenseStatistics(p).license);
+            const existingGroup = groups.get(new LicenseMetrics(p).license);
 
             if (existingGroup) {
                 existingGroup.set(p, result);
             } else {
-                groups.set(new LicenseStatistics(p).license, new Map([[p, result]]));
+                groups.set(new LicenseMetrics(p).license, new Map([[p, result]]));
             }
         }
 
@@ -164,7 +164,7 @@ class LicenseCheckPrinter {
         const sorted = [...data].sort(([pa1], [pa2]) => pa1.name.localeCompare(pa2.name));
 
         for (const [p, result] of sorted) {
-            const str = `${p.fullName.padEnd(padding + 1)}${new LicenseStatistics(p).license}`;
+            const str = `${p.fullName.padEnd(padding + 1)}${new LicenseMetrics(p).license}`;
 
             if (result.ok) {
                 this._formatter.writeLine(`${chalk.green(str)}`);

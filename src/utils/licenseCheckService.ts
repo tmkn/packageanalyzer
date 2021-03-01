@@ -2,7 +2,7 @@
 const satisfies = require("spdx-satisfies");
 
 import { Package } from "../analyzers/package";
-import { LicenseStatistics } from "../extensions/statistics/LicenseStatistics";
+import { LicenseMetrics } from "../extensions/metrics/LicenseMetrics";
 
 export interface ILicenseCheckResult {
     ok: boolean;
@@ -47,7 +47,7 @@ class WhitelistLicenseCheckService {
                 visitedPackages.push(pkg.fullName);
                 result = {
                     ok: this._whitelist.some(license =>
-                        this._satisfiesLicense(new LicenseStatistics(pkg).license, license)
+                        this._satisfiesLicense(new LicenseMetrics(pkg).license, license)
                     ),
                     parseError: false
                 };

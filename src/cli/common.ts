@@ -7,17 +7,11 @@ import * as chalk from "chalk";
 import { Package } from "../analyzers/package";
 import { DependencyTypes } from "../visitors/visitor";
 import { IFormatter } from "../utils/formatter";
-import { ReleaseStatistics } from "../extensions/statistics/ReleaseStatistics";
-import { LoopStatistics } from "../extensions/statistics/LoopStatistics";
-import {
-    GroupedLicenseSummary,
-    LicenseStatistics
-} from "../extensions/statistics/LicenseStatistics";
-import { PathStatistics } from "../extensions/statistics/PathStatistics";
-import {
-    DependencyStatistics,
-    VersionSummary
-} from "../extensions/statistics/DependencyStatistics";
+import { ReleaseMetrics } from "../extensions/metrics/ReleaseMetrics";
+import { LoopMetrics } from "../extensions/metrics/LoopMetrics";
+import { GroupedLicenseSummary, LicenseMetrics } from "../extensions/metrics/LicenseMetrics";
+import { PathMetrics } from "../extensions/metrics/PathMetrics";
+import { DependencyMetrics, VersionSummary } from "../extensions/metrics/DependencyMetrics";
 
 export const defaultDependencyType: DependencyTypes = "dependencies";
 
@@ -60,36 +54,36 @@ export async function printAllStatistics(p: Package, formatter: IFormatter): Pro
     await printNewest(p, formatter);
     printDependencyCount(p, formatter);
     printDistinctDependencies(
-        new DependencyStatistics(p).distinctByNameCount,
-        new DependencyStatistics(p).distinctByVersionCount,
+        new DependencyMetrics(p).distinctByNameCount,
+        new DependencyMetrics(p).distinctByVersionCount,
         PaddingLeft,
         formatter
     );
-    printMostReferred(new DependencyStatistics(p).mostReferred, formatter);
-    printMostDependencies(new DependencyStatistics(p).mostDependencies, formatter);
-    printMostVersion(new DependencyStatistics(p).mostVersions, PaddingLeft, formatter);
+    printMostReferred(new DependencyMetrics(p).mostReferred, formatter);
+    printMostDependencies(new DependencyMetrics(p).mostDependencies, formatter);
+    printMostVersion(new DependencyMetrics(p).mostVersions, PaddingLeft, formatter);
     printLoops(p, PaddingLeft, formatter);
-    printLicenseInfo(new LicenseStatistics(p).licensesByGroup, PaddingLeft, formatter);
+    printLicenseInfo(new LicenseMetrics(p).licensesByGroup, PaddingLeft, formatter);
 }
 
 export function printBasicStatistics(p: Package, formatter: IFormatter): void {
     printDependencyCount(p, formatter);
-    printSimpleDistinctDependencies(new DependencyStatistics(p).distinctByNameCount, formatter);
-    printMostReferred(new DependencyStatistics(p).mostReferred, formatter);
-    printMostDependencies(new DependencyStatistics(p).mostDependencies, formatter);
-    printMostVersion(new DependencyStatistics(p).mostVersions, PaddingLeft, formatter);
-    printSimpleLicenseInfo(new LicenseStatistics(p).licensesByGroup, PaddingLeft, formatter);
+    printSimpleDistinctDependencies(new DependencyMetrics(p).distinctByNameCount, formatter);
+    printMostReferred(new DependencyMetrics(p).mostReferred, formatter);
+    printMostDependencies(new DependencyMetrics(p).mostDependencies, formatter);
+    printMostVersion(new DependencyMetrics(p).mostVersions, PaddingLeft, formatter);
+    printSimpleLicenseInfo(new LicenseMetrics(p).licensesByGroup, PaddingLeft, formatter);
 }
 
 function printDependencyCount(p: Package, formatter: IFormatter): void {
     formatter.writeGroup([
         [`Direct dependencies`, `${p.directDependencies.length}`],
-        [`Transitive dependencies`, `${new DependencyStatistics(p).transitiveDependenciesCount}`]
+        [`Transitive dependencies`, `${new DependencyMetrics(p).transitiveDependenciesCount}`]
     ]);
 }
 
 async function printNewest(newest: Package, formatter: IFormatter): Promise<void> {
-    const { published } = new ReleaseStatistics(newest);
+    const { published } = new ReleaseMetrics(newest);
 
     if (published) {
         formatter.writeGroup([
@@ -97,13 +91,13 @@ async function printNewest(newest: Package, formatter: IFormatter): Promise<void
                 `Newest package`,
                 `${newest.fullName} - ${published.toUTCString()} ${daysAgo(published)}`
             ],
-            [`Newest package path`, new PathStatistics(newest).pathString]
+            [`Newest package path`, new PathMetrics(newest).pathString]
         ]);
     }
 }
 
 async function printOldest(oldest: Package, formatter: IFormatter): Promise<void> {
-    const { published } = new ReleaseStatistics(oldest);
+    const { published } = new ReleaseMetrics(oldest);
 
     if (published) {
         formatter.writeGroup([
@@ -111,13 +105,13 @@ async function printOldest(oldest: Package, formatter: IFormatter): Promise<void
                 `Oldest package`,
                 `${oldest.fullName} - ${published.toUTCString()} ${daysAgo(published)}`
             ],
-            [`Oldest package path`, new PathStatistics(oldest).pathString]
+            [`Oldest package path`, new PathMetrics(oldest).pathString]
         ]);
     }
 }
 
 async function printPublished(p: Package, formatter: IFormatter): Promise<void> {
-    const { published } = new ReleaseStatistics(p);
+    const { published } = new ReleaseMetrics(p);
 
     if (!published) return;
 
@@ -145,12 +139,12 @@ function printSimpleDistinctDependencies(byName: number, formatter: IFormatter):
 }
 
 function printLoops(p: Package, paddingLeft: number, formatter: IFormatter): void {
-    const { loops, loopPathMap, distinctLoopCount } = new LoopStatistics(p);
+    const { loops, loopPathMap, distinctLoopCount } = new LoopMetrics(p);
 
     formatter.writeGroup([[`Loops`, `${loops.length} (${distinctLoopCount} distinct)`]]);
 
     if (distinctLoopCount > 0) {
-        const [first] = loops.map(l => new PathStatistics(l).pathString).sort();
+        const [first] = loops.map(l => new PathMetrics(l).pathString).sort();
         const identBlock: [string, ...string[]] = [``];
 
         identBlock.push(`affected Packages: [${[...loopPathMap.keys()].join(", ")}]`);

@@ -6,10 +6,10 @@ import { getPackageJson } from "../src/visitors/folder";
 import { FileSystemPackageProvider } from "../src/providers/folder";
 import { Visitor } from "../src/visitors/visitor";
 import { OraLogger } from "../src/utils/logger";
-import { LoopStatistics } from "../src/extensions/statistics/LoopStatistics";
-import { LicenseStatistics } from "../src/extensions/statistics/LicenseStatistics";
-import { PathStatistics } from "../src/extensions/statistics/PathStatistics";
-import { DependencyStatistics } from "../src/extensions/statistics/DependencyStatistics";
+import { LoopMetrics } from "../src/extensions/metrics/LoopMetrics";
+import { LicenseMetrics } from "../src/extensions/metrics/LicenseMetrics";
+import { PathMetrics } from "../src/extensions/metrics/PathMetrics";
+import { DependencyMetrics } from "../src/extensions/metrics/DependencyMetrics";
 
 describe(`Package Tests`, () => {
     let p: Package;
@@ -23,7 +23,7 @@ describe(`Package Tests`, () => {
     });
 
     test(`Check licenses`, () => {
-        const licenses = new LicenseStatistics(p).licenses;
+        const licenses = new LicenseMetrics(p).licenses;
 
         const names: string[] = [
             "testproject1",
@@ -57,7 +57,7 @@ describe(`Package Tests`, () => {
     });
 
     test(`Checks package with most direct dependencies`, () => {
-        const mostDeps = new DependencyStatistics(p).mostDependencies;
+        const mostDeps = new DependencyMetrics(p).mostDependencies;
 
         expect(mostDeps.name).toBe("react");
         expect(mostDeps.version).toBe("16.8.6");
@@ -65,7 +65,7 @@ describe(`Package Tests`, () => {
     });
 
     test(`Checks package that is most referred`, () => {
-        const [name, times] = new DependencyStatistics(p).mostReferred;
+        const [name, times] = new DependencyMetrics(p).mostReferred;
 
         expect(name).toBe("loose-envify");
         expect(times).toBe(3);
@@ -77,7 +77,7 @@ describe(`Package Tests`, () => {
         const visitor = new Visitor(getPackageJson(rootPath), provider, new OraLogger());
         const p: Package = await visitor.visit();
 
-        for (const [name, versions] of new DependencyStatistics(p).mostVersions) {
+        for (const [name, versions] of new DependencyMetrics(p).mostVersions) {
             expect(name).toBe("kind-of");
 
             expect(versions.has("3.2.2")).toBe(true);
@@ -88,7 +88,7 @@ describe(`Package Tests`, () => {
     });
 
     test(`Checks for package with most versions (all equal)`, () => {
-        const mostVersions = new DependencyStatistics(p).mostVersions;
+        const mostVersions = new DependencyMetrics(p).mostVersions;
 
         expect(mostVersions.size).toBe(8);
 
@@ -128,14 +128,14 @@ describe(`Package Tests`, () => {
 
         expect.assertions(1);
         if (react) {
-            const path = new PathStatistics(react).pathString;
+            const path = new PathMetrics(react).pathString;
 
             expect(path).toBe(`testproject1@1.0.0 → react@16.8.6`);
         }
     });
 
     test(`Check path for root`, () => {
-        const path = new PathStatistics(p).path;
+        const path = new PathMetrics(p).path;
         const [[name, version]] = path;
 
         expect(path.length).toBe(1);
@@ -149,7 +149,7 @@ describe(`Package Tests`, () => {
         expect.assertions(7);
 
         if (pa2) {
-            const path = new PathStatistics(pa2).path;
+            const path = new PathMetrics(pa2).path;
             const [[name1, version1], [name2, version2], [name3, version3]] = path;
 
             expect(path.length).toBe(3);
@@ -166,11 +166,11 @@ describe(`Package Tests`, () => {
     });
 
     test(`Check all`, () => {
-        expect(new DependencyStatistics(p).all.length).toBe(14);
+        expect(new DependencyMetrics(p).all.length).toBe(14);
     });
 
     test(`Check loops`, () => {
-        expect(new LoopStatistics(p).loops.length).toBe(0);
+        expect(new LoopMetrics(p).loops.length).toBe(0);
     });
 
     test(`Deprecation flag`, () => {
