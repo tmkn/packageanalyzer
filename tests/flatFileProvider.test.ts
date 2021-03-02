@@ -1,7 +1,7 @@
 import * as path from "path";
 
 import { FlatFileProvider } from "../src/providers/flatFile";
-import { PackageVersion } from "../src/npm";
+import { PackageVersion } from "../src/visitors/visitor";
 
 describe(`flatFileProvider Tests`, () => {
     const destination = path.join("tests", "data", "npmdump");

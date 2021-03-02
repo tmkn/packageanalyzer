@@ -1,7 +1,8 @@
 import * as path from "path";
 import * as fs from "fs";
 
-import { INpmPackageVersion, PackageVersion } from "../npm";
+import { INpmPackageVersion } from "../npm";
+import { PackageVersion } from "./visitor";
 
 export function getPackageJson(folder: string): PackageVersion {
     const packageJsonPath = path.join(folder, `package.json`);

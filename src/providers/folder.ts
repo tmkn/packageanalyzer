@@ -2,7 +2,8 @@ import * as path from "path";
 import * as fs from "fs";
 import * as semver from "semver";
 
-import { PackageVersion, INpmPackageVersion, INpmPackage, IUnpublishedNpmPackage } from "../npm";
+import { INpmPackageVersion, INpmPackage, IUnpublishedNpmPackage } from "../npm";
+import { PackageVersion } from "../visitors/visitor";
 
 export interface INpmPackageProvider {
     getPackageInfo(name: string): Promise<INpmPackage | IUnpublishedNpmPackage | undefined>;

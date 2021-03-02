@@ -1,4 +1,5 @@
 import { downloadHttpJson } from "./utils/requests";
+import { PackageVersion } from "./visitors/visitor";
 
 export interface INpmPackageVersion {
     author: INpmUser;
@@ -125,8 +126,6 @@ export interface INpmDumpRow {
     key: string;
 }
 
-export type PackageVersion = [name: string, version?: string];
-
 export function isUnpublished(
     data: IUnpublishedNpmPackage | INpmPackage
 ): data is IUnpublishedNpmPackage {
@@ -139,7 +138,7 @@ export function isUnpublished(
     return false;
 }
 
-export function getNameAndVersion(name: string): [string, string?] {
+export function getNameAndVersion(name: string): PackageVersion {
     if (name.startsWith(`@`)) {
         const parts = name.slice(1).split("@");
 

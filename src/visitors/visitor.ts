@@ -1,8 +1,10 @@
 import { IPackageVersionProvider } from "../providers/folder";
 import { Package } from "../package/package";
-import { INpmKeyValue, INpmPackageVersion, PackageVersion } from "../npm";
+import { INpmKeyValue, INpmPackageVersion } from "../npm";
 import { ILogger } from "../utils/logger";
 import { IDecorator } from "../extensions/decorators/Decorator";
+
+export type PackageVersion = [name: string, version?: string];
 
 interface IVisitorConstructor {
     new (
