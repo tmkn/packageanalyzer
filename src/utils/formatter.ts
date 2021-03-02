@@ -32,8 +32,9 @@ export class Formatter implements IFormatter {
                 this.writeLine(line);
             } else {
                 const [key, value] = line;
+                const keyPadding = `${key}:`.padEnd(padding);
 
-                this.writeLine(`${`${key}:`.padEnd(padding)}${value}`);
+                this.writeLine(`${keyPadding}${value}`);
             }
         }
     }

@@ -2,7 +2,7 @@ import * as http from "http";
 import * as https from "https";
 
 function downloadHttp(url: string, timeoutLimit: number): Promise<string> {
-    const promise = new Promise<string>((resolve, reject) => {
+    return new Promise<string>((resolve, reject) => {
         http.get(url, res => {
             try {
                 const { statusCode } = res;
@@ -39,8 +39,6 @@ function downloadHttp(url: string, timeoutLimit: number): Promise<string> {
             clearTimeout(id);
         }, timeoutLimit);
     });
-
-    return promise;
 }
 
 export async function downloadHttpJson<T extends object>(
@@ -53,9 +51,8 @@ export async function downloadHttpJson<T extends object>(
     while (retries < maxRetries) {
         try {
             const response = await downloadHttp(url, timeoutLimit);
-            const data: T = JSON.parse(response);
 
-            return data;
+            return JSON.parse(response);
         } catch (e) {
             retries++;
 
@@ -96,26 +93,3 @@ export function downloadJsonHttps<T extends object>(url: string): Promise<T> {
             });
     });
 }
-
-/*export function numberOfDownloadsRange(
-    name: string,
-    from: string,
-    to: string
-): Promise<INpmRangeStatistic> {
-    return downloadJsonHttps(
-        `https://api.npmjs.org/downloads/range/${encodeURIComponent(from)}:${encodeURIComponent(
-            to
-        )}/${encodeURIComponent(name)}`
-    );
-}
-
-interface IGithubRepository {}
-export function githubRepositoryInfo(user: string, repo: string): Promise<IGithubRepository> {
-    return downloadJsonHttps(`https://api.github.com/repos/${user}/${repo}`);
-}
-
-export function npmAllPackageNames(): Promise<INpmAllPackagesResponse> {
-    //limit=23
-    //offset=23
-    return downloadJsonHttps(`https://replicate.npmjs.com/_all_docs`);
-}*/

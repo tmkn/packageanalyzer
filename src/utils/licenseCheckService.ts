@@ -1,4 +1,3 @@
-//import * as satisfies from "spdx-satisfies";
 const satisfies = require("spdx-satisfies");
 
 import { Package } from "../analyzers/package";

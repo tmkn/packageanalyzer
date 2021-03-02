@@ -80,7 +80,8 @@ export class Extractor {
         this._resolvedPackages = new Map();
 
         for (const [name, version] of this._versions) {
-            process.stdout.write(`Fetching ${name}@${version ? version : `latest`}\n`);
+            const versionStr: string = version ? version : `latest`;
+            process.stdout.write(`Fetching ${name}@${versionStr}\n`);
 
             const visitor = new Visitor([name, version], this._provider, new OraLogger());
             const p: Package = await visitor.visit();
