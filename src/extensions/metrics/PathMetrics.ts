@@ -1,4 +1,4 @@
-import { Package } from "../../analyzers/package";
+import { Package } from "../../package/package";
 
 export class PathMetrics {
     constructor(private _p: Package) {}

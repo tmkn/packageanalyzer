@@ -1,8 +1,13 @@
+import * as path from "path";
+import * as fs from "fs";
+
 import { IPackageVersionProvider } from "../providers/folder";
-import { Package } from "../analyzers/package";
-import { INpmKeyValue, INpmPackageVersion, PackageVersion } from "../npm";
+import { Package } from "../package/package";
+import { INpmKeyValue, INpmPackageVersion } from "../npm";
 import { ILogger } from "../utils/logger";
 import { IDecorator } from "../extensions/decorators/Decorator";
+
+export type PackageVersion = [name: string, version?: string];
 
 interface IVisitorConstructor {
     new (
@@ -110,3 +115,40 @@ export const Visitor: IVisitorConstructor = class Visitor implements IPackageVis
         }
     }
 };
+
+export function getPackageVersionfromString(name: string): PackageVersion {
+    if (name.startsWith(`@`)) {
+        const parts = name.slice(1).split("@");
+
+        if (parts.length === 1) {
+            return [`@${parts[0]}`, undefined];
+        } else if (parts.length === 2) {
+            if (parts[1].trim() !== "") return [`@${parts[0]}`, parts[1]];
+        }
+
+        throw new Error(`Unable to determine version from "${name}"`);
+    } else {
+        const parts = name.split("@");
+
+        if (parts.length === 1) {
+            return [`${parts[0]}`, undefined];
+        } else if (parts.length === 2) {
+            if (parts[1].trim() !== "") return [`${parts[0]}`, parts[1]];
+        }
+
+        throw new Error(`Unable to determine version from "${name}"`);
+    }
+}
+
+export function getPackageVersionFromPackageJson(folder: string): PackageVersion {
+    const packageJsonPath = path.join(folder, `package.json`);
+
+    try {
+        const content = fs.readFileSync(packageJsonPath, "utf8");
+        const pkg: INpmPackageVersion = JSON.parse(content);
+
+        return [pkg.name, pkg.version];
+    } catch (e) {
+        throw new Error(`Couldn't find package.json in ${folder}`);
+    }
+}

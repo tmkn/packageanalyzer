@@ -1,11 +1,14 @@
 import { Command } from "clipanion";
 
 import { npmOnline, OnlinePackageProvider } from "../providers/online";
-import { Package } from "../analyzers/package";
-import { getNameAndVersion } from "../npm";
-import { IPackageVisitor, Visitor } from "../visitors/visitor";
+import { Package } from "../package/package";
+import {
+    getPackageVersionfromString,
+    getPackageVersionFromPackageJson,
+    IPackageVisitor,
+    Visitor
+} from "../visitors/visitor";
 import { FileSystemPackageProvider } from "../providers/folder";
-import { getPackageJson } from "../visitors/folder";
 import { OraLogger } from "../utils/logger";
 import { printStatistics, defaultDependencyType, isValidDependencyType } from "./common";
 import { ReleaseDecorator } from "../extensions/decorators/ReleaseDecorator";
@@ -59,14 +62,18 @@ export class AnalyzeCommand extends Command {
 
         if (typeof this.package !== `undefined`) {
             visitor = new Visitor(
-                getNameAndVersion(this.package),
+                getPackageVersionfromString(this.package),
                 AnalyzeCommand.OnlineProvider,
                 new OraLogger(),
                 [new ReleaseDecorator(AnalyzeCommand.OnlineProvider)]
             );
         } else if (typeof this.folder !== `undefined`) {
             const provider = new FileSystemPackageProvider(this.folder);
-            visitor = new Visitor(getPackageJson(this.folder), provider, new OraLogger());
+            visitor = new Visitor(
+                getPackageVersionFromPackageJson(this.folder),
+                provider,
+                new OraLogger()
+            );
         }
 
         if (typeof visitor === "undefined") {

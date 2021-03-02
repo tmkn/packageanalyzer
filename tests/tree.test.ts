@@ -1,11 +1,10 @@
 import * as path from "path";
 
 import { FileSystemPackageProvider } from "../src/providers/folder";
-import { Visitor } from "../src/visitors/visitor";
-import { getPackageJson } from "../src/visitors/folder";
+import { getPackageVersionFromPackageJson, Visitor } from "../src/visitors/visitor";
 import { OraLogger } from "../src/utils/logger";
 import { ITreeFormatter, print } from "../src/utils/tree";
-import { Package } from "../src/analyzers/package";
+import { Package } from "../src/package/package";
 import { Formatter } from "../src/utils/formatter";
 import { TestWritable } from "./common";
 import { DependencyMetrics } from "../src/extensions/metrics/DependencyMetrics";
@@ -67,7 +66,11 @@ describe(`Tree Tests`, () => {
     test(`Print tree`, async () => {
         const rootPath = path.join("tests", "data", "testproject1");
         const provider = new FileSystemPackageProvider(rootPath);
-        const visitor = new Visitor(getPackageJson(rootPath), provider, new OraLogger());
+        const visitor = new Visitor(
+            getPackageVersionFromPackageJson(rootPath),
+            provider,
+            new OraLogger()
+        );
         const p = await visitor.visit();
 
         const converter: ITreeFormatter<Package> = {
@@ -86,7 +89,11 @@ describe(`Tree Tests`, () => {
     test(`Print tree with multi lines`, async () => {
         const rootPath = path.join("tests", "data", "testproject1");
         const provider = new FileSystemPackageProvider(rootPath);
-        const visitor = new Visitor(getPackageJson(rootPath), provider, new OraLogger());
+        const visitor = new Visitor(
+            getPackageVersionFromPackageJson(rootPath),
+            provider,
+            new OraLogger()
+        );
         const p = await visitor.visit();
 
         const converter: ITreeFormatter<Package> = {

@@ -1,4 +1,4 @@
-import { Package } from "../../analyzers/package";
+import { Package } from "../../package/package";
 
 //add custom data to each Package during lookup
 export interface IDecoratorStatic<T, CArgs extends any[]> {

@@ -1,4 +1,4 @@
-import { Package } from "../../analyzers/package";
+import { Package } from "../../package/package";
 
 type Name = string;
 type Version = string;

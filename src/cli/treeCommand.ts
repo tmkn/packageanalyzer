@@ -3,11 +3,14 @@ import * as fs from "fs";
 import { Command } from "clipanion";
 
 import { npmOnline, OnlinePackageProvider } from "../providers/online";
-import { Package } from "../analyzers/package";
-import { getNameAndVersion } from "../npm";
-import { Visitor, DependencyTypes } from "../visitors/visitor";
+import { Package } from "../package/package";
+import {
+    Visitor,
+    DependencyTypes,
+    getPackageVersionfromString,
+    getPackageVersionFromPackageJson
+} from "../visitors/visitor";
 import { FileSystemPackageProvider } from "../providers/folder";
-import { getPackageJson } from "../visitors/folder";
 import { OraLogger } from "../utils/logger";
 import { defaultDependencyType } from "./common";
 import { Formatter } from "../utils/formatter";
@@ -65,7 +68,7 @@ export class TreeCommand extends Command {
             this.context.stdout.write(`Please specify a package or folder.\n`);
         } else if (typeof this.package !== "undefined") {
             const visitor = new Visitor(
-                getNameAndVersion(this.package),
+                getPackageVersionfromString(this.package),
                 TreeCommand.OnlineProvider,
                 new OraLogger()
             );
@@ -75,7 +78,11 @@ export class TreeCommand extends Command {
         } else if (typeof this.folder !== "undefined") {
             if (fs.existsSync(this.folder)) {
                 const provider = new FileSystemPackageProvider(this.folder);
-                const visitor = new Visitor(getPackageJson(this.folder), provider, new OraLogger());
+                const visitor = new Visitor(
+                    getPackageVersionFromPackageJson(this.folder),
+                    provider,
+                    new OraLogger()
+                );
                 const p: Package = await visitor.visit(this.type);
 
                 printDependencyTree(p, formatter);

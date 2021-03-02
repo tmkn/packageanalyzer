@@ -1,4 +1,4 @@
-import { Package } from "../../analyzers/package";
+import { Package } from "../../package/package";
 import { IFormatter } from "../../utils/formatter";
 import { ITreeFormatter, print } from "../../utils/tree";
 import { DependencyMetrics } from "./DependencyMetrics";

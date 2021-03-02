@@ -3,8 +3,9 @@ import * as path from "path";
 import * as fs from "fs";
 
 import { IPackageVersionProvider } from "./folder";
-import { INpmPackageVersion, PackageVersion, INpmPackage, INpmDumpRow } from "../npm";
+import { INpmPackageVersion, INpmPackage, INpmDumpRow } from "../npm";
 import * as semver from "semver";
+import { PackageVersion } from "../visitors/visitor";
 
 //load data from a folder where the filename is the sha1 hash of the package name
 export class FlatFolderProvider implements IPackageVersionProvider {

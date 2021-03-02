@@ -4,7 +4,7 @@ import * as fs from "fs";
 import * as dayjs from "dayjs";
 import * as chalk from "chalk";
 
-import { Package } from "../analyzers/package";
+import { Package } from "../package/package";
 import { DependencyTypes } from "../visitors/visitor";
 import { IFormatter } from "../utils/formatter";
 import { ReleaseMetrics } from "../extensions/metrics/ReleaseMetrics";

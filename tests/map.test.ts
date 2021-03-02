@@ -1,9 +1,8 @@
 import * as path from "path";
 
-import { Package } from "../src/analyzers/package";
-import { getPackageJson } from "../src/visitors/folder";
+import { Package } from "../src/package/package";
 import { FileSystemPackageProvider } from "../src/providers/folder";
-import { Visitor } from "../src/visitors/visitor";
+import { getPackageVersionFromPackageJson, Visitor } from "../src/visitors/visitor";
 import { OraLogger } from "../src/utils/logger";
 import { map, MappedDependency } from "../src/utils/map";
 
@@ -14,7 +13,11 @@ describe(`Map tests`, () => {
     beforeAll(async () => {
         const rootPath = path.join("tests", "data", "testproject2");
         const provider = new FileSystemPackageProvider(rootPath);
-        const visitor = new Visitor(getPackageJson(rootPath), provider, new OraLogger());
+        const visitor = new Visitor(
+            getPackageVersionFromPackageJson(rootPath),
+            provider,
+            new OraLogger()
+        );
 
         p = await visitor.visit();
         mapped = map<{ foo: string }>(p, p => ({ foo: p.fullName }));

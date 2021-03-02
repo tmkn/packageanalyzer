@@ -1,7 +1,8 @@
 import * as path from "path";
 
 import { FlatFolderProvider } from "../src/providers/flatFolder";
-import { PackageVersion, INpmPackageVersion } from "../src/npm";
+import { INpmPackageVersion } from "../src/npm";
+import { PackageVersion } from "../src/visitors/visitor";
 
 describe(`flatFolderProvider Tests`, () => {
     const destination = path.join("tests", "data", "flatfolder");

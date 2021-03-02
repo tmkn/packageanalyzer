@@ -1,7 +1,7 @@
 const satisfies = require("spdx-satisfies");
 
-import { Package } from "../analyzers/package";
 import { LicenseMetrics } from "../extensions/metrics/LicenseMetrics";
+import { Package } from "../package/package";
 
 export interface ILicenseCheckResult {
     ok: boolean;
