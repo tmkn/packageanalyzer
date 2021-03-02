@@ -27,14 +27,14 @@ interface IPackage<T> {
     getData(key: string): unknown;
 
     getDecoratorData<E extends IDecoratorStatic<any, []>>(decorators: E): DecoratorType<E>;
-    addDecoratorData(extension: IDecorator<any>): Promise<void>;
+    addDecoratorData(decorator: IDecorator<any>): Promise<void>;
 }
 
 export class Package implements IPackage<Package> {
     parent: Package | null = null;
     isLoop = false;
 
-    private _extensionData: Map<Symbol, any> = new Map();
+    private _decoratorData: Map<Symbol, any> = new Map();
     private readonly _dependencies: Package[] = [];
 
     constructor(private readonly _data: Readonly<INpmPackageVersion>) {}
@@ -131,7 +131,7 @@ export class Package implements IPackage<Package> {
     }
 
     getDecoratorData<T extends IDecoratorStatic<any, any[]>>(decorators: T): DecoratorType<T> {
-        const data = this._extensionData.get(decorators.key);
+        const data = this._decoratorData.get(decorators.key);
 
         if (typeof data === "undefined") {
             throw new Error(`No extension data found for ${decorators.toString()}`);
@@ -140,9 +140,9 @@ export class Package implements IPackage<Package> {
         return data;
     }
 
-    async addDecoratorData(extension: IDecorator<any>): Promise<void> {
-        const data = await extension.apply(this);
+    async addDecoratorData(decorator: IDecorator<any>): Promise<void> {
+        const data = await decorator.apply(this);
 
-        this._extensionData.set(extension.key, data);
+        this._decoratorData.set(decorator.key, data);
     }
 }
