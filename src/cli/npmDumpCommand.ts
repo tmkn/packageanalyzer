@@ -1,7 +1,6 @@
 import { Command } from "clipanion";
 
-import { getNameAndVersion } from "../npm";
-import { Visitor } from "../visitors/visitor";
+import { getNameAndVersion, Visitor } from "../visitors/visitor";
 import { OraLogger } from "../utils/logger";
 import { FlatFileProvider } from "../providers/flatFile";
 import { printStatistics } from "./common";

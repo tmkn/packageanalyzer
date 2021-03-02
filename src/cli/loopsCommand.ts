@@ -2,8 +2,7 @@ import { Command } from "clipanion";
 import * as chalk from "chalk";
 
 import { npmOnline } from "../providers/online";
-import { getNameAndVersion } from "../npm";
-import { Visitor } from "../visitors/visitor";
+import { getNameAndVersion, Visitor } from "../visitors/visitor";
 import { OraLogger } from "../utils/logger";
 import { defaultDependencyType, isValidDependencyType } from "./common";
 import { IPackageVersionProvider } from "../providers/folder";

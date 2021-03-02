@@ -112,3 +112,27 @@ export const Visitor: IVisitorConstructor = class Visitor implements IPackageVis
         }
     }
 };
+
+export function getNameAndVersion(name: string): PackageVersion {
+    if (name.startsWith(`@`)) {
+        const parts = name.slice(1).split("@");
+
+        if (parts.length === 1) {
+            return [`@${parts[0]}`, undefined];
+        } else if (parts.length === 2) {
+            if (parts[1].trim() !== "") return [`@${parts[0]}`, parts[1]];
+        }
+
+        throw new Error(`Unable to determine version from "${name}"`);
+    } else {
+        const parts = name.split("@");
+
+        if (parts.length === 1) {
+            return [`${parts[0]}`, undefined];
+        } else if (parts.length === 2) {
+            if (parts[1].trim() !== "") return [`${parts[0]}`, parts[1]];
+        }
+
+        throw new Error(`Unable to determine version from "${name}"`);
+    }
+}

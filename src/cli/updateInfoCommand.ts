@@ -2,10 +2,10 @@ import { Command } from "clipanion";
 import * as chalk from "chalk";
 
 import { npmOnline, OnlinePackageProvider } from "../providers/online";
-import { getNameAndVersion } from "../npm";
 import { updateInfo } from "../utils/update";
 import { daysAgo } from "./common";
 import { Formatter } from "../utils/formatter";
+import { getNameAndVersion } from "../visitors/visitor";
 
 export class UpdateInfoCommand extends Command {
     @Command.String(`--package`, {

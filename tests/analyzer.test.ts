@@ -1,10 +1,9 @@
 import * as path from "path";
 
 import { Package } from "../src/package/package";
-import { getNameAndVersion } from "../src/npm";
 import { getPackageJson } from "../src/visitors/folder";
 import { FileSystemPackageProvider } from "../src/providers/folder";
-import { Visitor } from "../src/visitors/visitor";
+import { getNameAndVersion, Visitor } from "../src/visitors/visitor";
 import { OraLogger } from "../src/utils/logger";
 import { LoopMetrics } from "../src/extensions/metrics/LoopMetrics";
 import { LicenseMetrics } from "../src/extensions/metrics/LicenseMetrics";
