@@ -3,9 +3,8 @@ import * as chalk from "chalk";
 
 import { npmOnline, OnlinePackageProvider } from "../providers/online";
 import { Package } from "../package/package";
-import { getNameAndVersion, Visitor } from "../visitors/visitor";
+import { getNameAndVersion, getPackageJson, Visitor } from "../visitors/visitor";
 import { FileSystemPackageProvider } from "../providers/folder";
-import { getPackageJson } from "../visitors/folder";
 import { OraLogger } from "../utils/logger";
 import { defaultDependencyType, isValidDependencyType } from "./common";
 import {

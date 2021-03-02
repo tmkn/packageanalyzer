@@ -5,8 +5,7 @@ import { printDependencyTree } from "../src/extensions/metrics/LoopMetrics";
 import { Formatter } from "../src/utils/formatter";
 import { OraLogger } from "../src/utils/logger";
 import { FileSystemPackageProvider } from "../src/providers/folder";
-import { getPackageJson } from "../src/visitors/folder";
-import { Visitor } from "../src/visitors/visitor";
+import { getPackageJson, Visitor } from "../src/visitors/visitor";
 import { TestWritable } from "./common";
 
 describe(`Metrics Extension Tests`, () => {

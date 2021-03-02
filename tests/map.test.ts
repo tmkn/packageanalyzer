@@ -1,9 +1,8 @@
 import * as path from "path";
 
 import { Package } from "../src/package/package";
-import { getPackageJson } from "../src/visitors/folder";
 import { FileSystemPackageProvider } from "../src/providers/folder";
-import { Visitor } from "../src/visitors/visitor";
+import { getPackageJson, Visitor } from "../src/visitors/visitor";
 import { OraLogger } from "../src/utils/logger";
 import { map, MappedDependency } from "../src/utils/map";
 

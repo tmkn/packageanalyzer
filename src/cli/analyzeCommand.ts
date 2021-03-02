@@ -2,9 +2,8 @@ import { Command } from "clipanion";
 
 import { npmOnline, OnlinePackageProvider } from "../providers/online";
 import { Package } from "../package/package";
-import { getNameAndVersion, IPackageVisitor, Visitor } from "../visitors/visitor";
+import { getNameAndVersion, getPackageJson, IPackageVisitor, Visitor } from "../visitors/visitor";
 import { FileSystemPackageProvider } from "../providers/folder";
-import { getPackageJson } from "../visitors/folder";
 import { OraLogger } from "../utils/logger";
 import { printStatistics, defaultDependencyType, isValidDependencyType } from "./common";
 import { ReleaseDecorator } from "../extensions/decorators/ReleaseDecorator";

@@ -1,3 +1,6 @@
+import * as path from "path";
+import * as fs from "fs";
+
 import { IPackageVersionProvider } from "../providers/folder";
 import { Package } from "../package/package";
 import { INpmKeyValue, INpmPackageVersion } from "../npm";
@@ -134,5 +137,18 @@ export function getNameAndVersion(name: string): PackageVersion {
         }
 
         throw new Error(`Unable to determine version from "${name}"`);
+    }
+}
+
+export function getPackageJson(folder: string): PackageVersion {
+    const packageJsonPath = path.join(folder, `package.json`);
+
+    try {
+        const content = fs.readFileSync(packageJsonPath, "utf8");
+        const pkg: INpmPackageVersion = JSON.parse(content);
+
+        return [pkg.name, pkg.version];
+    } catch (e) {
+        throw new Error(`Couldn't find package.json in ${folder}`);
     }
 }

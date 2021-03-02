@@ -1,8 +1,7 @@
 import * as path from "path";
 
 import { FileSystemPackageProvider } from "../src/providers/folder";
-import { Visitor } from "../src/visitors/visitor";
-import { getPackageJson } from "../src/visitors/folder";
+import { getPackageJson, Visitor } from "../src/visitors/visitor";
 import { OraLogger } from "../src/utils/logger";
 import { ITreeFormatter, print } from "../src/utils/tree";
 import { Package } from "../src/package/package";

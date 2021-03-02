@@ -4,9 +4,8 @@ import { Command } from "clipanion";
 
 import { npmOnline, OnlinePackageProvider } from "../providers/online";
 import { Package } from "../package/package";
-import { Visitor, DependencyTypes, getNameAndVersion } from "../visitors/visitor";
+import { Visitor, DependencyTypes, getNameAndVersion, getPackageJson } from "../visitors/visitor";
 import { FileSystemPackageProvider } from "../providers/folder";
-import { getPackageJson } from "../visitors/folder";
 import { OraLogger } from "../utils/logger";
 import { defaultDependencyType } from "./common";
 import { Formatter } from "../utils/formatter";
