@@ -1,6 +1,6 @@
 import * as path from "path";
 
-import { Package } from "../src/analyzers/package";
+import { Package } from "../src/package/package";
 import { printDependencyTree } from "../src/extensions/metrics/LoopMetrics";
 import { Formatter } from "../src/utils/formatter";
 import { OraLogger } from "../src/utils/logger";

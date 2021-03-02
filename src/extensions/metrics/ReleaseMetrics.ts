@@ -1,4 +1,4 @@
-import { Package } from "../../analyzers/package";
+import { Package } from "../../package/package";
 import { ReleaseDecorator } from "../decorators/ReleaseDecorator";
 
 export class ReleaseMetrics {

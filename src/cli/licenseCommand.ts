@@ -2,7 +2,7 @@ import { Command } from "clipanion";
 import * as chalk from "chalk";
 
 import { npmOnline, OnlinePackageProvider } from "../providers/online";
-import { Package } from "../analyzers/package";
+import { Package } from "../package/package";
 import { getNameAndVersion } from "../npm";
 import { Visitor } from "../visitors/visitor";
 import { FileSystemPackageProvider } from "../providers/folder";

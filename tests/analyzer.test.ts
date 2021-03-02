@@ -1,6 +1,6 @@
 import * as path from "path";
 
-import { Package } from "../src/analyzers/package";
+import { Package } from "../src/package/package";
 import { getNameAndVersion } from "../src/npm";
 import { getPackageJson } from "../src/visitors/folder";
 import { FileSystemPackageProvider } from "../src/providers/folder";

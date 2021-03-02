@@ -1,7 +1,7 @@
 import * as path from "path";
 
 import { FileSystemPackageProvider } from "../src/providers/folder";
-import { Package } from "../src/analyzers/package";
+import { Package } from "../src/package/package";
 import { Visitor } from "../src/visitors/visitor";
 import { OraLogger } from "../src/utils/logger";
 import { LicenseMetrics } from "../src/extensions/metrics/LicenseMetrics";

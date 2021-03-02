@@ -3,7 +3,7 @@ import * as fs from "fs";
 import { Command } from "clipanion";
 
 import { npmOnline, OnlinePackageProvider } from "../providers/online";
-import { Package } from "../analyzers/package";
+import { Package } from "../package/package";
 import { getNameAndVersion } from "../npm";
 import { Visitor, DependencyTypes } from "../visitors/visitor";
 import { FileSystemPackageProvider } from "../providers/folder";

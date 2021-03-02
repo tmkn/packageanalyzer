@@ -1,4 +1,4 @@
-import { Package } from "../../analyzers/package";
+import { Package } from "../../package/package";
 import { IMalformedLicenseField } from "../../npm";
 
 type Name = string;

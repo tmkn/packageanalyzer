@@ -5,7 +5,7 @@ import { Visitor } from "../src/visitors/visitor";
 import { getPackageJson } from "../src/visitors/folder";
 import { OraLogger } from "../src/utils/logger";
 import { ITreeFormatter, print } from "../src/utils/tree";
-import { Package } from "../src/analyzers/package";
+import { Package } from "../src/package/package";
 import { Formatter } from "../src/utils/formatter";
 import { TestWritable } from "./common";
 import { DependencyMetrics } from "../src/extensions/metrics/DependencyMetrics";

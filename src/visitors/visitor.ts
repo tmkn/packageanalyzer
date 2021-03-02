@@ -1,5 +1,5 @@
 import { IPackageVersionProvider } from "../providers/folder";
-import { Package } from "../analyzers/package";
+import { Package } from "../package/package";
 import { INpmKeyValue, INpmPackageVersion, PackageVersion } from "../npm";
 import { ILogger } from "../utils/logger";
 import { IDecorator } from "../extensions/decorators/Decorator";

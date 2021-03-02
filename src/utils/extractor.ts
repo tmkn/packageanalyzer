@@ -4,7 +4,7 @@ import * as fs from "fs";
 import { FlatFileProvider } from "../providers/flatFile";
 import { PackageVersion, getNameAndVersion } from "../npm";
 import { OraLogger } from "./logger";
-import { Package } from "../analyzers/package";
+import { Package } from "../package/package";
 import { Visitor } from "../visitors/visitor";
 
 type Formatter = (p: Package) => object;
