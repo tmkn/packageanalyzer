@@ -5,7 +5,7 @@ import { npmOnline, OnlinePackageProvider } from "../providers/online";
 import { updateInfo } from "../utils/update";
 import { daysAgo } from "./common";
 import { Formatter } from "../utils/formatter";
-import { getNameAndVersion } from "../visitors/visitor";
+import { getPackageVersionfromString } from "../visitors/visitor";
 
 export class UpdateInfoCommand extends Command {
     @Command.String(`--package`, {
@@ -35,7 +35,7 @@ export class UpdateInfoCommand extends Command {
         if (typeof this.package === "undefined") {
             formatter.writeLine(`Please specify a package.`);
         } else {
-            const [name, version] = getNameAndVersion(this.package);
+            const [name, version] = getPackageVersionfromString(this.package);
 
             if (typeof version === "undefined") {
                 formatter.writeLine(`Version info is missing (${this.package})`);

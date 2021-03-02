@@ -116,7 +116,7 @@ export const Visitor: IVisitorConstructor = class Visitor implements IPackageVis
     }
 };
 
-export function getNameAndVersion(name: string): PackageVersion {
+export function getPackageVersionfromString(name: string): PackageVersion {
     if (name.startsWith(`@`)) {
         const parts = name.slice(1).split("@");
 
@@ -140,7 +140,7 @@ export function getNameAndVersion(name: string): PackageVersion {
     }
 }
 
-export function getPackageJson(folder: string): PackageVersion {
+export function getPackageVersionFromPackageJson(folder: string): PackageVersion {
     const packageJsonPath = path.join(folder, `package.json`);
 
     try {

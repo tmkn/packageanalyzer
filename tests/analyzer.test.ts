@@ -2,7 +2,11 @@ import * as path from "path";
 
 import { Package } from "../src/package/package";
 import { FileSystemPackageProvider } from "../src/providers/folder";
-import { getNameAndVersion, getPackageJson, Visitor } from "../src/visitors/visitor";
+import {
+    getPackageVersionfromString,
+    getPackageVersionFromPackageJson,
+    Visitor
+} from "../src/visitors/visitor";
 import { OraLogger } from "../src/utils/logger";
 import { LoopMetrics } from "../src/extensions/metrics/LoopMetrics";
 import { LicenseMetrics } from "../src/extensions/metrics/LicenseMetrics";
@@ -15,7 +19,11 @@ describe(`Package Tests`, () => {
     beforeAll(async () => {
         const rootPath = path.join("tests", "data", "testproject1");
         const provider = new FileSystemPackageProvider(rootPath);
-        const visitor = new Visitor(getPackageJson(rootPath), provider, new OraLogger());
+        const visitor = new Visitor(
+            getPackageVersionFromPackageJson(rootPath),
+            provider,
+            new OraLogger()
+        );
 
         p = await visitor.visit();
     });
@@ -72,7 +80,11 @@ describe(`Package Tests`, () => {
     test(`Checks for package with most versions`, async () => {
         const rootPath = path.join("tests", "data", "testproject2");
         const provider = new FileSystemPackageProvider(rootPath);
-        const visitor = new Visitor(getPackageJson(rootPath), provider, new OraLogger());
+        const visitor = new Visitor(
+            getPackageVersionFromPackageJson(rootPath),
+            provider,
+            new OraLogger()
+        );
         const p: Package = await visitor.visit();
 
         for (const [name, versions] of new DependencyMetrics(p).mostVersions) {
@@ -183,7 +195,11 @@ describe(`Deprecated Package Tests`, () => {
     test(`Deprecation flag`, async () => {
         const rootPath = path.join("tests", "data", "deprecated");
         const provider = new FileSystemPackageProvider(rootPath);
-        const visitor = new Visitor(getPackageJson(rootPath), provider, new OraLogger());
+        const visitor = new Visitor(
+            getPackageVersionFromPackageJson(rootPath),
+            provider,
+            new OraLogger()
+        );
         const p = await visitor.visit();
         const extnode = p.getPackageByName("extnode");
 
@@ -200,54 +216,54 @@ describe(`Deprecated Package Tests`, () => {
 
 describe(`Checks Name and Version extraction`, () => {
     test(`Finds name and version`, () => {
-        const [name, version] = getNameAndVersion(`foo@1.2.3`);
+        const [name, version] = getPackageVersionfromString(`foo@1.2.3`);
 
         expect(name).toBe("foo");
         expect(version).toBe("1.2.3");
     });
 
     test(`Finds name and version for local package`, () => {
-        const [name, version] = getNameAndVersion(`@foo@1.2.3`);
+        const [name, version] = getPackageVersionfromString(`@foo@1.2.3`);
 
         expect(name).toBe("@foo");
         expect(version).toBe("1.2.3");
     });
 
     test(`Finds only name`, () => {
-        const [name, version] = getNameAndVersion(`foo`);
+        const [name, version] = getPackageVersionfromString(`foo`);
 
         expect(name).toBe("foo");
         expect(version).toBe(undefined);
     });
 
     test(`Finds only name for local package`, () => {
-        const [name, version] = getNameAndVersion(`@foo`);
+        const [name, version] = getPackageVersionfromString(`@foo`);
 
         expect(name).toBe("@foo");
         expect(version).toBe(undefined);
     });
 
     test(`Fails to parse, throws local package 1`, () => {
-        expect(() => getNameAndVersion(`@foo@`)).toThrow();
+        expect(() => getPackageVersionfromString(`@foo@`)).toThrow();
     });
 
     test(`Fails to parse, throws for local package 2`, () => {
-        expect(() => getNameAndVersion(`@foo@@ bla`)).toThrow();
+        expect(() => getPackageVersionfromString(`@foo@@ bla`)).toThrow();
     });
 
     test(`Fails to parse, throws for local package 3`, () => {
-        expect(() => getNameAndVersion(`@@foo@@ bla`)).toThrow();
+        expect(() => getPackageVersionfromString(`@@foo@@ bla`)).toThrow();
     });
 
     test(`Fails to parse, throws for package 1 `, () => {
-        expect(() => getNameAndVersion(`foo@`)).toThrow();
+        expect(() => getPackageVersionfromString(`foo@`)).toThrow();
     });
 
     test(`Fails to parse, throws for package 2`, () => {
-        expect(() => getNameAndVersion(`foo@2@ bla`)).toThrow();
+        expect(() => getPackageVersionfromString(`foo@2@ bla`)).toThrow();
     });
 
     test(`Fails to parse, throws forr foo@`, () => {
-        expect(() => getNameAndVersion(`foo@`)).toThrow();
+        expect(() => getPackageVersionfromString(`foo@`)).toThrow();
     });
 });

@@ -4,7 +4,7 @@ import * as fs from "fs";
 import { FlatFileProvider } from "../providers/flatFile";
 import { OraLogger } from "./logger";
 import { Package } from "../package/package";
-import { getNameAndVersion, PackageVersion, Visitor } from "../visitors/visitor";
+import { getPackageVersionfromString, PackageVersion, Visitor } from "../visitors/visitor";
 
 type Formatter = (p: Package) => object;
 type ExtractCallback = (data: string, p: Package, i: number, max: number) => Promise<void>;
@@ -48,7 +48,7 @@ export class Extractor {
 
     //get the dir part from a pkg name to save it correctly
     static PackageNameToDir(pkgName: string): string {
-        const [name] = getNameAndVersion(pkgName);
+        const [name] = getPackageVersionfromString(pkgName);
 
         if (name.startsWith(`@`)) {
             return name.split("/")[0];
@@ -71,7 +71,7 @@ export class Extractor {
 
         this._versions = [];
         for (const name of packageNames) {
-            this._versions.push(getNameAndVersion(name));
+            this._versions.push(getPackageVersionfromString(name));
         }
     }
 

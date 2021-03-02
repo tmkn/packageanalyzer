@@ -3,7 +3,7 @@ import * as path from "path";
 import { Package } from "../src/package/package";
 import { IPackageVersionProvider, FileSystemPackageProvider } from "../src/providers/folder";
 import { INpmPackageVersion } from "../src/npm";
-import { getPackageJson, Visitor } from "../src/visitors/visitor";
+import { getPackageVersionFromPackageJson, Visitor } from "../src/visitors/visitor";
 import { OraLogger } from "../src/utils/logger";
 import { LoopMetrics } from "../src/extensions/metrics/LoopMetrics";
 import { LicenseMetrics } from "../src/extensions/metrics/LicenseMetrics";
@@ -14,7 +14,11 @@ describe(`visitFromFolder Tests`, () => {
     beforeAll(async () => {
         const rootPath = path.join("tests", "data", "testproject2");
         const provider = new FileSystemPackageProvider(rootPath);
-        const visitor = new Visitor(getPackageJson(rootPath), provider, new OraLogger());
+        const visitor = new Visitor(
+            getPackageVersionFromPackageJson(rootPath),
+            provider,
+            new OraLogger()
+        );
 
         p = await visitor.visit();
     });
@@ -41,7 +45,11 @@ describe(`visitFromFolder Tests`, () => {
         try {
             const rootPath = `folderdoesntexist`;
             const provider = new FileSystemPackageProvider(rootPath);
-            const visitor = new Visitor(getPackageJson(rootPath), provider, new OraLogger());
+            const visitor = new Visitor(
+                getPackageVersionFromPackageJson(rootPath),
+                provider,
+                new OraLogger()
+            );
 
             await visitor.visit();
         } catch (e) {

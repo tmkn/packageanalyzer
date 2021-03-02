@@ -3,7 +3,11 @@ import * as chalk from "chalk";
 
 import { npmOnline, OnlinePackageProvider } from "../providers/online";
 import { Package } from "../package/package";
-import { getNameAndVersion, getPackageJson, Visitor } from "../visitors/visitor";
+import {
+    getPackageVersionfromString,
+    getPackageVersionFromPackageJson,
+    Visitor
+} from "../visitors/visitor";
 import { FileSystemPackageProvider } from "../providers/folder";
 import { OraLogger } from "../utils/logger";
 import { defaultDependencyType, isValidDependencyType } from "./common";
@@ -85,7 +89,7 @@ export class LicenseCheckCommand extends Command {
             this.context.stdout.write(`Please specify a package or folder.\n`);
         } else if (typeof this.package !== `undefined`) {
             const visitor = new Visitor(
-                getNameAndVersion(this.package),
+                getPackageVersionfromString(this.package),
                 LicenseCheckCommand.OnlineProvider,
                 new OraLogger()
             );
@@ -97,7 +101,11 @@ export class LicenseCheckCommand extends Command {
             if (!licenseReport.ok) process.exitCode = 1;
         } else if (typeof this.folder !== `undefined`) {
             const provider = new FileSystemPackageProvider(this.folder);
-            const visitor = new Visitor(getPackageJson(this.folder), provider, new OraLogger());
+            const visitor = new Visitor(
+                getPackageVersionFromPackageJson(this.folder),
+                provider,
+                new OraLogger()
+            );
             const p: Package = await visitor.visit(this.type);
             const licenseReport = createWhitelistLicenseCheckReport(p, this.allowList ?? [], false);
 

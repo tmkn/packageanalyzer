@@ -1,6 +1,6 @@
 import { Command } from "clipanion";
 
-import { getNameAndVersion, Visitor } from "../visitors/visitor";
+import { getPackageVersionfromString, Visitor } from "../visitors/visitor";
 import { OraLogger } from "../utils/logger";
 import { FlatFileProvider } from "../providers/flatFile";
 import { printStatistics } from "./common";
@@ -46,7 +46,11 @@ async function cliResolveFile(pkgName: string, npmFile: string, stdout: Writable
     try {
         const formatter: IFormatter = new Formatter(stdout);
         const provider = new FlatFileProvider(npmFile);
-        const visitor = new Visitor(getNameAndVersion(pkgName), provider, new OraLogger());
+        const visitor = new Visitor(
+            getPackageVersionfromString(pkgName),
+            provider,
+            new OraLogger()
+        );
         const p = await visitor.visit();
 
         await printStatistics(p, false, formatter);

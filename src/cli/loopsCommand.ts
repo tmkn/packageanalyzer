@@ -2,7 +2,7 @@ import { Command } from "clipanion";
 import * as chalk from "chalk";
 
 import { npmOnline } from "../providers/online";
-import { getNameAndVersion, Visitor } from "../visitors/visitor";
+import { getPackageVersionfromString, Visitor } from "../visitors/visitor";
 import { OraLogger } from "../utils/logger";
 import { defaultDependencyType, isValidDependencyType } from "./common";
 import { IPackageVersionProvider } from "../providers/folder";
@@ -55,7 +55,7 @@ export class LoopsCommand extends Command {
         if (typeof this.package !== "undefined") {
             const formatter = new Formatter(this.context.stdout);
             const visitor = new Visitor(
-                getNameAndVersion(this.package),
+                getPackageVersionfromString(this.package),
                 LoopsCommand.Provider,
                 new OraLogger()
             );

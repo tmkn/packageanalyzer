@@ -5,7 +5,7 @@ import { printDependencyTree } from "../src/extensions/metrics/LoopMetrics";
 import { Formatter } from "../src/utils/formatter";
 import { OraLogger } from "../src/utils/logger";
 import { FileSystemPackageProvider } from "../src/providers/folder";
-import { getPackageJson, Visitor } from "../src/visitors/visitor";
+import { getPackageVersionFromPackageJson, Visitor } from "../src/visitors/visitor";
 import { TestWritable } from "./common";
 
 describe(`Metrics Extension Tests`, () => {
@@ -14,7 +14,11 @@ describe(`Metrics Extension Tests`, () => {
     beforeAll(async () => {
         const rootPath = path.join("tests", "data", "testproject1");
         const provider = new FileSystemPackageProvider(rootPath);
-        const visitor = new Visitor(getPackageJson(rootPath), provider, new OraLogger());
+        const visitor = new Visitor(
+            getPackageVersionFromPackageJson(rootPath),
+            provider,
+            new OraLogger()
+        );
 
         p = await visitor.visit();
     });
