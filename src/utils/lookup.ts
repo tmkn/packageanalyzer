@@ -3,8 +3,8 @@ import * as fs from "fs";
 import * as readline from "readline";
 import * as os from "os";
 
-import { INpmDumpRow } from "./npm";
-import { getPercentage } from "./providers/flatFile";
+import { INpmDumpRow } from "../npm";
+import { getPercentage } from "../providers/flatFile";
 
 const newLine = "\n";
 

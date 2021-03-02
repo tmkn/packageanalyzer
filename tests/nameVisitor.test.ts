@@ -3,9 +3,9 @@ import * as path from "path";
 import { FileSystemPackageProvider } from "../src/providers/folder";
 import { Package } from "../src/analyzers/package";
 import { Visitor } from "../src/visitors/visitor";
-import { OraLogger } from "../src/logger";
-import { LicenseStatistics } from "../src/extensions/statistics/LicenseStatistics";
-import { DependencyStatistics } from "../src/extensions/statistics/DependencyStatistics";
+import { OraLogger } from "../src/utils/logger";
+import { LicenseMetrics } from "../src/extensions/metrics/LicenseMetrics";
+import { DependencyMetrics } from "../src/extensions/metrics/DependencyMetrics";
 
 describe(`visitFromFolder Tests`, () => {
     let p: Package;
@@ -35,15 +35,15 @@ describe(`visitFromFolder Tests`, () => {
     });
 
     test(`Checks transitive dependencies`, () => {
-        expect(new DependencyStatistics(p).transitiveDependenciesCount).toBe(4279);
+        expect(new DependencyMetrics(p).transitiveDependenciesCount).toBe(4279);
     });
 
     test(`Checks distinct dependencies by name`, () => {
-        expect(new DependencyStatistics(p).distinctByNameCount).toBe(308);
+        expect(new DependencyMetrics(p).distinctByNameCount).toBe(308);
     });
 
     test(`Checks distinct dependencies by name and version`, () => {
-        expect(new DependencyStatistics(p).distinctByVersionCount).toBe(333);
+        expect(new DependencyMetrics(p).distinctByVersionCount).toBe(333);
     });
 
     test(`Checks visit method`, () => {
@@ -150,7 +150,7 @@ describe(`visitFromFolder Tests`, () => {
     });
 
     test(`Test group packages by license`, () => {
-        const [{ license, names }, ...rest] = new LicenseStatistics(p).licensesByGroup;
+        const [{ license, names }, ...rest] = new LicenseMetrics(p).licensesByGroup;
 
         expect(license).toBe("MIT");
         expect(names.length).toBe(239);

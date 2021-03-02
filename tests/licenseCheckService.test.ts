@@ -1,9 +1,9 @@
 import * as path from "path";
 
 import { Package } from "../src/analyzers/package";
-import { OraLogger } from "../src/logger";
+import { OraLogger } from "../src/utils/logger";
 import { FileSystemPackageProvider } from "../src/providers/folder";
-import { createWhitelistLicenseCheckReport } from "../src/services/licenseCheckService";
+import { createWhitelistLicenseCheckReport } from "../src/utils/licenseCheckService";
 import { getPackageJson } from "../src/visitors/folder";
 import { Visitor } from "../src/visitors/visitor";
 

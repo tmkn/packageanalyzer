@@ -1,15 +1,15 @@
 import * as path from "path";
 
 import { Package } from "../src/analyzers/package";
-import { printDependencyTree } from "../src/extensions/statistics/LoopStatistics";
-import { Formatter } from "../src/formatter";
-import { OraLogger } from "../src/logger";
+import { printDependencyTree } from "../src/extensions/metrics/LoopMetrics";
+import { Formatter } from "../src/utils/formatter";
+import { OraLogger } from "../src/utils/logger";
 import { FileSystemPackageProvider } from "../src/providers/folder";
 import { getPackageJson } from "../src/visitors/folder";
 import { Visitor } from "../src/visitors/visitor";
 import { TestWritable } from "./common";
 
-describe(`Statistics Extension Tests`, () => {
+describe(`Metrics Extension Tests`, () => {
     let p: Package;
 
     beforeAll(async () => {

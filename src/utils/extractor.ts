@@ -1,11 +1,11 @@
 import * as path from "path";
 import * as fs from "fs";
 
-import { FlatFileProvider } from "./providers/flatFile";
-import { PackageVersion, getNameAndVersion } from "./npm";
+import { FlatFileProvider } from "../providers/flatFile";
+import { PackageVersion, getNameAndVersion } from "../npm";
 import { OraLogger } from "./logger";
-import { Package } from "./analyzers/package";
-import { Visitor } from "./visitors/visitor";
+import { Package } from "../analyzers/package";
+import { Visitor } from "../visitors/visitor";
 
 type Formatter = (p: Package) => object;
 type ExtractCallback = (data: string, p: Package, i: number, max: number) => Promise<void>;
@@ -80,7 +80,8 @@ export class Extractor {
         this._resolvedPackages = new Map();
 
         for (const [name, version] of this._versions) {
-            process.stdout.write(`Fetching ${name}@${version ? version : `latest`}\n`);
+            const versionStr: string = version ? version : `latest`;
+            process.stdout.write(`Fetching ${name}@${versionStr}\n`);
 
             const visitor = new Visitor([name, version], this._provider, new OraLogger());
             const p: Package = await visitor.visit();

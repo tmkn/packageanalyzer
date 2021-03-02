@@ -1,5 +1,5 @@
 import { Command } from "clipanion";
-import { Formatter, IFormatter } from "../formatter";
+import { Formatter, IFormatter } from "../utils/formatter";
 
 import { getDownloadsLastWeek } from "../npm";
 

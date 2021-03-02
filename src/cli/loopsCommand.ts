@@ -4,11 +4,11 @@ import * as chalk from "chalk";
 import { npmOnline } from "../providers/online";
 import { getNameAndVersion } from "../npm";
 import { Visitor } from "../visitors/visitor";
-import { OraLogger } from "../logger";
+import { OraLogger } from "../utils/logger";
 import { defaultDependencyType, isValidDependencyType } from "./common";
 import { IPackageVersionProvider } from "../providers/folder";
-import { Formatter } from "../formatter";
-import { LoopStatistics } from "../extensions/statistics/LoopStatistics";
+import { Formatter } from "../utils/formatter";
+import { LoopMetrics } from "../extensions/metrics/LoopMetrics";
 
 export class LoopsCommand extends Command {
     @Command.String(`--package`, {
@@ -61,7 +61,7 @@ export class LoopsCommand extends Command {
                 new OraLogger()
             );
             const p = await visitor.visit(this.type);
-            const loopPathMap = new LoopStatistics(p).loopPathMap;
+            const loopPathMap = new LoopMetrics(p).loopPathMap;
             const distinctCount: number = [...loopPathMap].reduce(
                 (i, [, loops]) => i + loops.size,
                 0

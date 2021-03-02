@@ -4,8 +4,8 @@ import { Package } from "../src/analyzers/package";
 import { getPackageJson } from "../src/visitors/folder";
 import { FileSystemPackageProvider } from "../src/providers/folder";
 import { Visitor } from "../src/visitors/visitor";
-import { OraLogger } from "../src/logger";
-import { map, MappedDependency } from "../src/map";
+import { OraLogger } from "../src/utils/logger";
+import { map, MappedDependency } from "../src/utils/map";
 
 describe(`Map tests`, () => {
     let p: Package;

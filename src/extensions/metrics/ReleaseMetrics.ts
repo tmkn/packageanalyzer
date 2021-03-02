@@ -1,7 +1,7 @@
 import { Package } from "../../analyzers/package";
 import { ReleaseDecorator } from "../decorators/ReleaseDecorator";
 
-export class ReleaseStatistics {
+export class ReleaseMetrics {
     constructor(private _p: Package) {}
 
     get published(): Date | undefined {

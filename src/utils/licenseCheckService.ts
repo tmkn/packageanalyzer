@@ -1,8 +1,7 @@
-//import * as satisfies from "spdx-satisfies";
 const satisfies = require("spdx-satisfies");
 
 import { Package } from "../analyzers/package";
-import { LicenseStatistics } from "../extensions/statistics/LicenseStatistics";
+import { LicenseMetrics } from "../extensions/metrics/LicenseMetrics";
 
 export interface ILicenseCheckResult {
     ok: boolean;
@@ -18,13 +17,9 @@ interface ILicenseCheckReport {
 
 export type LicenseCheckReport = Readonly<ILicenseCheckReport>;
 
-export interface ILicenseCheckService {
-    check(): ILicenseCheckReport;
-}
-
-class WhitelistLicenseCheckService implements ILicenseCheckService {
+class WhitelistLicenseCheckService {
     constructor(
-        private _pa: Package,
+        private _p: Package,
         private _whitelist: string[],
         private _includeSelf: Readonly<boolean>
     ) {}
@@ -43,7 +38,7 @@ class WhitelistLicenseCheckService implements ILicenseCheckService {
         const failedChecks: Map<Package, ILicenseCheckResult> = new Map();
         const passedChecks: Map<Package, ILicenseCheckResult> = new Map();
 
-        this._pa.visit(pkg => {
+        this._p.visit(pkg => {
             if (visitedPackages.includes(pkg.fullName)) return;
 
             let result: ILicenseCheckResult | undefined;
@@ -51,7 +46,7 @@ class WhitelistLicenseCheckService implements ILicenseCheckService {
                 visitedPackages.push(pkg.fullName);
                 result = {
                     ok: this._whitelist.some(license =>
-                        this._satisfiesLicense(new LicenseStatistics(pkg).license, license)
+                        this._satisfiesLicense(new LicenseMetrics(pkg).license, license)
                     ),
                     parseError: false
                 };

@@ -5,7 +5,7 @@ type Version = string;
 
 export type VersionSummary = Map<Name, Set<Version>>;
 
-export class DependencyStatistics {
+export class DependencyMetrics {
     constructor(private _p: Package) {}
 
     get transitiveDependenciesCount(): number {

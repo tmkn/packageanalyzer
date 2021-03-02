@@ -3,7 +3,7 @@ import * as fs from "fs";
 import * as os from "os";
 
 import { INpmDumpRow } from "../src/npm";
-import { LookupFileCreator, ILookupEntry, LookupFileWriter } from "../src/lookup";
+import { LookupFileCreator, ILookupEntry, LookupFileWriter } from "../src/utils/lookup";
 
 describe(`Lookup Creator Tests`, () => {
     const destination = path.join("tests", "data", "npmdump");

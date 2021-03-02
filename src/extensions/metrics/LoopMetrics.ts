@@ -1,14 +1,14 @@
 import { Package } from "../../analyzers/package";
-import { IFormatter } from "../../formatter";
-import { ITreeFormatter, print } from "../../tree";
-import { DependencyStatistics } from "./DependencyStatistics";
-import { PathStatistics } from "./PathStatistics";
+import { IFormatter } from "../../utils/formatter";
+import { ITreeFormatter, print } from "../../utils/tree";
+import { DependencyMetrics } from "./DependencyMetrics";
+import { PathMetrics } from "./PathMetrics";
 
 export function printDependencyTree(p: Package, formatter: IFormatter): void {
     const converter: ITreeFormatter<Package> = {
         getLabel: data =>
             `${data.fullName} (${
-                new DependencyStatistics(data).transitiveDependenciesCount
+                new DependencyMetrics(data).transitiveDependenciesCount
             } dependencies)`,
         getChildren: data => data.directDependencies
     };
@@ -16,14 +16,14 @@ export function printDependencyTree(p: Package, formatter: IFormatter): void {
     print<Package>(p, converter, formatter);
 }
 
-export class LoopStatistics {
+export class LoopMetrics {
     constructor(private _p: Package) {}
 
     //returns the loop path e.g. c->d->c instead of the whole path a->b->c->d->c
     get loopPathString(): string {
-        const split = new PathStatistics(this._p).pathString.indexOf(this._p.fullName);
+        const split = new PathMetrics(this._p).pathString.indexOf(this._p.fullName);
 
-        return new PathStatistics(this._p).pathString.slice(split);
+        return new PathMetrics(this._p).pathString.slice(split);
     }
 
     get loops(): Package[] {
@@ -41,7 +41,7 @@ export class LoopStatistics {
         const loops = this.loops;
 
         for (const p of loops) {
-            const loopsStatistic = new LoopStatistics(p);
+            const loopsStatistic = new LoopMetrics(p);
             const entry = map.get(p.name);
 
             if (entry) {
