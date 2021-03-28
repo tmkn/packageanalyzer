@@ -44,8 +44,9 @@ export class UpdateInfoCommand extends Command {
             }
 
             const data = await updateInfo(name, version, UpdateInfoCommand.OnlineProvider);
+            const updateStr = chalk.bold(`Update Info for ${this.package}`);
 
-            formatter.writeLine(`${chalk.bold(`Update Info for ${this.package}`)}\n`);
+            formatter.writeLine(`${updateStr}\n`);
             formatter.writeGroup([
                 [
                     `Semantic match`,
