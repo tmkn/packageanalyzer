@@ -1,9 +1,12 @@
 # Package Analyzer Architecture
 ## The Basics
-The package analyzer is written in TypeScript with the `strict` setting.
+The package analyzer is written in TypeScript with the `strict` setting and utilizes modern JavaScript syntax.
+Any other type setting(`noUncheckedIndexedAccess`) is not (yet) enabled.
+
 Unit Tests are orchestrated with Jest.
+
 Furthermore the repository is configured in a way that PR's will automatically build the project on Windows, Linux and Mac.
-Additionally a SonarCube analysis is run on every PR
+Additionally a SonarCube analysis is run on every PR.
 
 ## The Code
 ### The Package class
@@ -88,7 +91,7 @@ Calling this method will start the dependency tree traversal
 Example
 ```typescript
         const visitor = new Visitor(["react"], provider, new OraLogger());
-        const p = await visitor.visit();
+        const p = await visitor.visit(); //defaults to "dependencies"
         const p = await visitor.visit("dependencies");
         const p = await visitor.visit("devDependencies");
 ```
