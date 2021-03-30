@@ -39,7 +39,23 @@ const { published } = p.getDecoratorData(ReleaseDecorator);
 ```
 
 ### Providers
-todo
+During the dependency tree traversal the system asks the `Provider` for the package's meta data, that is, the `package.json`.
+```typescript
+export interface IPackageVersionProvider {
+    //get meta data for 1 package
+    getPackageByVersion: (name: string, version?: string) => Promise<INpmPackageVersion>;
+    //get meta data for multiple packages
+    getPackagesByVersion: (modules: PackageVersion[]) => AsyncIterableIterator<INpmPackageVersion>;
+}
+```
+Both methods are async by nature, single meta data is returned via a `Promise`, multiple meta data is returned via an `async iterator`.
+
+Due to this, data can be fetched from a remote endpoint or from the local file system or from anywhere else really, allowing a high degree of flexibility.
+
+### Loggers
+Any output during the dependency tree traversal is routed to the logger.
+
+Since the API will likely change, no detailed description is provided at this point in time.
 
 ### Dependency Tree Traversal
 At the heart of the dependency tree traversal is the `Visitor`.
@@ -76,3 +92,5 @@ Example
         const p = await visitor.visit("dependencies");
         const p = await visitor.visit("devDependencies");
 ```
+
+That's it for a basic introduction about the technical markup of the package analyzer.
