@@ -82,31 +82,37 @@ function printDependencyCount(p: Package, formatter: IFormatter): void {
     ]);
 }
 
-async function printNewest(newest: Package, formatter: IFormatter): Promise<void> {
-    const { published } = new ReleaseMetrics(newest);
+async function printNewest(p: Package, formatter: IFormatter): Promise<void> {
+    const { newest } = new ReleaseMetrics(p);
 
-    if (published) {
-        formatter.writeGroup([
-            [
-                `Newest package`,
-                `${newest.fullName} - ${published.toUTCString()} ${daysAgo(published)}`
-            ],
-            [`Newest package path`, new PathMetrics(newest).pathString]
-        ]);
+    if (newest) {
+        const { published } = new ReleaseMetrics(newest);
+
+        if (published)
+            formatter.writeGroup([
+                [
+                    `Newest package`,
+                    `${newest.fullName} - ${published.toUTCString()} ${daysAgo(published)}`
+                ],
+                [`Newest package path`, new PathMetrics(newest).pathString]
+            ]);
     }
 }
 
-async function printOldest(oldest: Package, formatter: IFormatter): Promise<void> {
-    const { published } = new ReleaseMetrics(oldest);
+async function printOldest(p: Package, formatter: IFormatter): Promise<void> {
+    const { oldest } = new ReleaseMetrics(p);
 
-    if (published) {
-        formatter.writeGroup([
-            [
-                `Oldest package`,
-                `${oldest.fullName} - ${published.toUTCString()} ${daysAgo(published)}`
-            ],
-            [`Oldest package path`, new PathMetrics(oldest).pathString]
-        ]);
+    if (oldest) {
+        const { published } = new ReleaseMetrics(oldest);
+
+        if (published)
+            formatter.writeGroup([
+                [
+                    `Oldest package`,
+                    `${oldest.fullName} - ${published.toUTCString()} ${daysAgo(published)}`
+                ],
+                [`Oldest package path`, new PathMetrics(oldest).pathString]
+            ]);
     }
 }
 
