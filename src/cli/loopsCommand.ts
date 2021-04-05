@@ -84,7 +84,7 @@ export class LoopsCommand extends Command {
 
                     let i = 0;
                     for (const loop of loopsForPkg) {
-                        const iStr = `total + i++ + 1}`.padStart(loopPadding);
+                        const iStr = `${total + i++ + 1}`.padStart(loopPadding);
 
                         formatter.writeLine(`[${iStr}/${distinctCount}] ${loop}`);
                     }
