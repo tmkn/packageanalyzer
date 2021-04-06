@@ -1,11 +1,11 @@
 {
   "name": "@tmkn/packageanalyzer",
-  "version": "0.9.1",
+  "version": "0.9.4",
   "description": "A tool to analyze a Node.js project/package",
   "main": "./build/src/index.js",
   "types": "./build/src/index.d.ts",
   "files": [
-    "build/src"
+    "build/src/**/*"
   ],
   "bin": {
     "pkga": "./build/src/cli.js"

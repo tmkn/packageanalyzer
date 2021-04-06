@@ -72,7 +72,9 @@ export class LoopsCommand extends Command {
             if (distinctCount > 0) {
                 formatter.writeLine(`Affected Packages:`);
                 for (const [pkgName, loopsForPkg] of loopPathMap) {
-                    formatter.writeLine(`- ${`${loopsForPkg.size}x`.padStart(5)} ${pkgName}`);
+                    const loopCountStr = `${loopsForPkg.size}x`.padStart(5);
+
+                    formatter.writeLine(`- ${loopCountStr} ${pkgName}`);
                 }
 
                 for (const [pkgName, loopsForPkg] of loopPathMap) {
@@ -82,11 +84,9 @@ export class LoopsCommand extends Command {
 
                     let i = 0;
                     for (const loop of loopsForPkg) {
-                        formatter.writeLine(
-                            `[${`${total + i++ + 1}`.padStart(
-                                loopPadding
-                            )}/${distinctCount}] ${loop}`
-                        );
+                        const iStr = `${total + i++ + 1}`.padStart(loopPadding);
+
+                        formatter.writeLine(`[${iStr}/${distinctCount}] ${loop}`);
                     }
 
                     total += loopsForPkg.size;

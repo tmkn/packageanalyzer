@@ -21,11 +21,11 @@ yarn build
 
 ## Usage
 ### Analyze latest version of a package
-`node build/src/cli.js -o typescript`
+`pkga analyze --package typescript`
 ### Analyze specific version of a package
-`node build/src/cli.js -o typescript@3.5.1`
+`pkga analyze --package typescript@3.5.1`
 ### Analyze local folder
-`node build/src/cli.js -f path/to/folder`
+`pkga analyze --folder path/to/folder`
 
 ## Prints various statistics:
 * Number of transitive dependencies
