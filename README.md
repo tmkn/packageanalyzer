@@ -1,4 +1,4 @@
-# Node.js Package Analyzer (npa)
+# Node.js Package Analyzer (pkga)
 [![Build Status](https://dev.azure.com/tmkndev/packageanalyzer/_apis/build/status/tmkn.packageanalyzer?branchName=master)](https://dev.azure.com/tmkndev/packageanalyzer/_build/latest?definitionId=1&branchName=master)
 [![codecov](https://codecov.io/gh/tmkn/packageanalyzer/branch/master/graph/badge.svg)](https://codecov.io/gh/tmkn/packageanalyzer)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=tmkn_packageanalyzer&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=tmkn_packageanalyzer)
@@ -8,7 +8,7 @@
 
 ![App Banner](./banner.png)
 
-A tool to analyze your Node.js project.
+A framework to analyze Node.js projects.
 
 Stats are fun!
 
@@ -18,6 +18,7 @@ git clone https://github.com/tmkn/packageanalyzer.git
 yarn install
 yarn build
 ```
+See [ARCHITECTURE.md](ARCHITECTURE.md) for a quick tour around the code
 
 ## Usage
 ### Analyze latest version of a package
@@ -46,10 +47,11 @@ yarn build
 ### Watch tests
 `yarn test:watch`
 
-## Ideas
-* Make available as API
-* Check for specific dependency/maintainer etc
-* Get oldest/newest dependency
+## Roadmap
+* Stabilize API
+* Provide option to specify a series of checks that should be run
+* Provide package health check (number of open tickets, release velocity etc)
+* Provide check for deprecated packages/unnecessary polyfills
 
 ## License
 MIT
