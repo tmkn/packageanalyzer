@@ -27,7 +27,7 @@ describe(`ReleaseExtension Tests`, () => {
         };
         const p = new Package(data as INpmPackageVersion);
 
-        const extensionData = await extension.apply(p);
+        const extensionData = await extension.apply({ p });
 
         expect(extensionData.published.toUTCString()).toEqual(new Date(timestamp).toUTCString());
     });
@@ -47,7 +47,7 @@ describe(`ReleaseExtension Tests`, () => {
         };
         const p = new Package(data as INpmPackageVersion);
 
-        await expect(extension.apply(p)).rejects.toThrowError();
+        await expect(extension.apply({ p })).rejects.toThrowError();
     });
 
     test(`Throws on missing version entry`, async () => {
@@ -69,6 +69,6 @@ describe(`ReleaseExtension Tests`, () => {
         };
         const p = new Package(data as INpmPackageVersion);
 
-        await expect(extension.apply(p)).rejects.toThrowError();
+        await expect(extension.apply({ p })).rejects.toThrowError();
     });
 });

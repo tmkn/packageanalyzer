@@ -1,6 +1,5 @@
-import { Package } from "../../package/package";
 import { INpmPackageProvider } from "../../providers/folder";
-import { IDecoratorStatic } from "./Decorator";
+import { IApplyArgs, IDecoratorStatic } from "./Decorator";
 
 interface IReleaseData {
     published: Date;
@@ -24,15 +23,15 @@ export const ReleaseDecorator: IDecoratorStatic<
         return ReleaseExtension.key;
     }
 
-    async apply(p: Package): Promise<IReleaseData> {
+    async apply({ p }: IApplyArgs): Promise<IReleaseData> {
         const info = await this._provider.getPackageInfo(p.name);
 
-        if (!info) throw new Error(`ReleaseExtension: Couldn't get data`);
+        if (!info) throw new Error(`${this.name}: Couldn't get data`);
 
         const time = info.time;
         const released = time[p.version];
 
-        if (!released) throw new Error(`ReleaseExtension: Couldn't get release data`);
+        if (!released) throw new Error(`${this.name}: Couldn't get release data`);
 
         return {
             published: new Date(released)

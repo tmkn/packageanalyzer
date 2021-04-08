@@ -141,7 +141,7 @@ export class Package implements IPackage<Package> {
     }
 
     async addDecoratorData(decorator: IDecorator<any>): Promise<void> {
-        const data = await decorator.apply(this);
+        const data = await decorator.apply({ p: this });
 
         this._decoratorData.set(decorator.key, data);
     }
