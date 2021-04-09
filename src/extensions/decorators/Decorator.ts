@@ -8,6 +8,7 @@ export interface IDecoratorStatic<T, CArgs extends any[]> {
 
 export interface IApplyArgs {
     p: Package;
+    logger: (msg: string) => void;
 }
 
 export interface IDecorator<T> {

@@ -4,6 +4,10 @@ import { INpmPackage, INpmPackageVersion, IUnpublishedNpmPackage } from "../src/
 import { INpmPackageProvider } from "../src/providers/folder";
 
 describe(`ReleaseExtension Tests`, () => {
+    const logStub = {
+        logger: function () {}
+    };
+
     test(`Correctly returns info`, async () => {
         const timestamp = "0";
         const version = "1.0.0";
@@ -27,7 +31,7 @@ describe(`ReleaseExtension Tests`, () => {
         };
         const p = new Package(data as INpmPackageVersion);
 
-        const extensionData = await extension.apply({ p });
+        const extensionData = await extension.apply({ p, ...logStub });
 
         expect(extensionData.published.toUTCString()).toEqual(new Date(timestamp).toUTCString());
     });
@@ -47,7 +51,7 @@ describe(`ReleaseExtension Tests`, () => {
         };
         const p = new Package(data as INpmPackageVersion);
 
-        await expect(extension.apply({ p })).rejects.toThrowError();
+        await expect(extension.apply({ p, ...logStub })).rejects.toThrowError();
     });
 
     test(`Throws on missing version entry`, async () => {
@@ -69,6 +73,6 @@ describe(`ReleaseExtension Tests`, () => {
         };
         const p = new Package(data as INpmPackageVersion);
 
-        await expect(extension.apply({ p })).rejects.toThrowError();
+        await expect(extension.apply({ p, ...logStub })).rejects.toThrowError();
     });
 });

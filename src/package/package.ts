@@ -26,8 +26,8 @@ interface IPackage<T> {
 
     getData(key: string): unknown;
 
-    getDecoratorData<E extends IDecoratorStatic<any, []>>(decorators: E): DecoratorType<E>;
-    addDecoratorData(decorator: IDecorator<any>): Promise<void>;
+    getDecoratorData<E extends IDecoratorStatic<any, []>>(decorator: E): DecoratorType<E>;
+    setDecoratorData(key: Symbol, data: any): void;
 }
 
 export class Package implements IPackage<Package> {
@@ -130,19 +130,17 @@ export class Package implements IPackage<Package> {
         return get(this._data, key);
     }
 
-    getDecoratorData<T extends IDecoratorStatic<any, any[]>>(decorators: T): DecoratorType<T> {
-        const data = this._decoratorData.get(decorators.key);
+    getDecoratorData<T extends IDecoratorStatic<any, any[]>>(decorator: T): DecoratorType<T> {
+        const data = this._decoratorData.get(decorator.key);
 
         if (typeof data === "undefined") {
-            throw new Error(`No extension data found for ${decorators.toString()}`);
+            throw new Error(`No extension data found for ${decorator.toString()}`);
         }
 
         return data;
     }
 
-    async addDecoratorData(decorator: IDecorator<any>): Promise<void> {
-        const data = await decorator.apply({ p: this });
-
-        this._decoratorData.set(decorator.key, data);
+    setDecoratorData(key: Symbol, data: any): void {
+        this._decoratorData.set(key, data);
     }
 }

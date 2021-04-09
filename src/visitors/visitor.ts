@@ -47,6 +47,8 @@ export const Visitor: IVisitorConstructor = class Visitor implements IPackageVis
 
             await this._addDecorator(root);
 
+            this._logger.log(`Fetched ${root.fullName}`);
+
             try {
                 await this.visitDependencies(root, rootPkg[depType]);
             } catch (e) {
@@ -55,13 +57,11 @@ export const Visitor: IVisitorConstructor = class Visitor implements IPackageVis
                 throw e;
             }
 
-            this._logger.stop();
-
             return root;
         } catch (e) {
-            this._logger.stop();
-
             throw e;
+        } finally {
+            this._logger.stop();
         }
     }
 
@@ -83,10 +83,9 @@ export const Visitor: IVisitorConstructor = class Visitor implements IPackageVis
             for (const p of packages) {
                 const dependency = new Package(p);
 
-                this._logger.log(`Fetched ${p.name}`);
-
                 await this._addDecorator(dependency);
 
+                this._logger.log(`Fetched ${dependency.fullName}`);
                 parent.addDependency(dependency);
 
                 if (this._depthStack.includes(dependency.fullName)) {
@@ -97,18 +96,24 @@ export const Visitor: IVisitorConstructor = class Visitor implements IPackageVis
                     await this.visitDependencies(dependency, p[this._depType]);
                 }
             }
-            this._depthStack.pop();
         } catch (e) {
-            this._depthStack.pop();
-
             throw e;
+        } finally {
+            this._depthStack.pop();
         }
     }
 
     private async _addDecorator(p: Package): Promise<void> {
         for (const decorator of this._decorators) {
             try {
-                await p.addDecoratorData(decorator);
+                this._logger.log(`[${decorator.name}]${p.fullName}`);
+
+                const data = await decorator.apply({
+                    p,
+                    logger: (msg: string) => this._logger.log(msg)
+                });
+
+                p.setDecoratorData(decorator.key, data);
             } catch {
                 this._logger.log(`Failed to apply decorator: ${decorator.name}`);
             }
