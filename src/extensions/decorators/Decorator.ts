@@ -6,10 +6,15 @@ export interface IDecoratorStatic<T, CArgs extends any[]> {
     readonly key: Symbol;
 }
 
+export interface IApplyArgs {
+    p: Package;
+    logger: (msg: string) => void;
+}
+
 export interface IDecorator<T> {
     readonly key: Symbol;
     readonly name: string;
-    apply: (p: Package) => Promise<T>;
+    apply: (args: IApplyArgs) => Promise<T>;
 }
 
 export type DecoratorType<T> = T extends IDecoratorStatic<infer U, any> ? U : never;
