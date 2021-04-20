@@ -11,6 +11,7 @@ import { NpmDumpCommand } from "./cli/npmDumpCommand";
 import { getVersion } from "./cli/common";
 import { NpmDumpLookupCreatorCommand } from "./cli/npmLookupCreatorCommand";
 import { LicenseCheckCommand } from "./cli/licenseCommand";
+import { ReportCommand } from "./cli/reportCommand";
 
 export const cli = new Cli({
     binaryLabel: `packageanalyzer`,
@@ -19,6 +20,7 @@ export const cli = new Cli({
 });
 
 //standard commands
+cli.register(ReportCommand);
 cli.register(AnalyzeCommand);
 cli.register(UpdateInfoCommand);
 cli.register(DownloadCommand);

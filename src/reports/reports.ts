@@ -15,21 +15,6 @@ export interface IReport<T extends {}> {
     report(pkg: Package, formatter: IFormatter): Promise<void>;
 }
 
-interface ITestReportParams {}
-export class TestReport implements IReport<ITestReportParams> {
-    name = `Test Report`;
-    pkg: PackageVersion = [``, ``];
-
-    constructor(readonly params: ITestReportParams) {}
-
-    async report(pkg: Package, formatter: IFormatter): Promise<void> {}
-}
-
-export class ReportService {
-    async process(reports: IReport<any>[]): Promise<void> {
-        try {
-            for (const report of reports) {
-            }
-        } catch (e) {}
-    }
+export interface IReports {
+    reports: IReport<any>[];
 }
