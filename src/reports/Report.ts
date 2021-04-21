@@ -15,6 +15,3 @@ export interface IReport<T extends {}> {
     report(pkg: Package, formatter: IFormatter): Promise<void>;
 }
 
-export interface IReports {
-    reports: IReport<any>[];
-}

@@ -6,7 +6,11 @@ import { npmOnline } from "../providers/online";
 import { Formatter, IFormatter } from "../utils/formatter";
 import { OraLogger } from "../utils/logger";
 import { Visitor } from "../visitors/visitor";
-import { IReports } from "./reports";
+import { IReport } from "./Report";
+
+export interface IReports {
+    reports: IReport<any>[];
+}
 
 export class ReportService {
     constructor(private _config: IReports, private _stdout: Writable) {
@@ -26,7 +30,8 @@ export class ReportService {
                     report.decorators
                 );
 
-                formatter.writeLine(chalk.underline.bgBlue(`Report: ${report.name}`));
+                if (reports.length > 1)
+                    formatter.writeLine(chalk.underline.bgBlue(`Report: ${report.name}`));
 
                 const p: Package = await visitor.visit();
 

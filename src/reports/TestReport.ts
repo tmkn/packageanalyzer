@@ -1,7 +1,16 @@
+import { defaultDependencyType } from "../cli/common";
+import { printDependencyTree } from "../extensions/metrics/LoopMetrics";
 import { Package } from "../package/package";
+import { FileSystemPackageProvider, IPackageVersionProvider } from "../providers/folder";
+import { npmOnline } from "../providers/online";
 import { IFormatter } from "../utils/formatter";
-import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
-import { IReport } from "./reports";
+import {
+    DependencyTypes,
+    getPackageVersionFromPackageJson,
+    getPackageVersionfromString,
+    PackageVersion
+} from "../visitors/visitor";
+import { IReport } from "./Report";
 
 interface ITestReportParams {
     package: string;

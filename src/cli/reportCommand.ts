@@ -1,8 +1,8 @@
 import { Command } from "clipanion";
 
-import { IReports } from "../reports/reports";
-import { ReportService } from "../reports/ReportService";
+import { IReports, ReportService } from "../reports/ReportService";
 import { TestReport } from "../reports/TestReport";
+import { TreeReport } from "../reports/TreeReport";
 
 export class ReportCommand extends Command {
     @Command.String(`--config`, {
@@ -15,9 +15,9 @@ export class ReportCommand extends Command {
         //const test: TestReport = require(`./abc`);
         const config: IReports = {
             reports: [
-                new TestReport({ package: `react` }),
-                new TestReport({ package: `webpack` }),
-                new TestReport({ package: `fastify` })
+                new TreeReport({ package: `react` }),
+                //new TestReport({ package: `webpack` }),
+                new TreeReport({ package: `fastify` })
             ]
         };
         const reportService = new ReportService(config, this.context.stdout);

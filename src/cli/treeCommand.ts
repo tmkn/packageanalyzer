@@ -1,20 +1,11 @@
-import * as fs from "fs";
-
 import { Command } from "clipanion";
 
 import { npmOnline, OnlinePackageProvider } from "../providers/online";
-import { Package } from "../package/package";
-import {
-    Visitor,
-    DependencyTypes,
-    getPackageVersionfromString,
-    getPackageVersionFromPackageJson
-} from "../visitors/visitor";
+import { DependencyTypes } from "../visitors/visitor";
 import { FileSystemPackageProvider } from "../providers/folder";
-import { OraLogger } from "../utils/logger";
 import { defaultDependencyType } from "./common";
-import { Formatter } from "../utils/formatter";
-import { printDependencyTree } from "../extensions/metrics/LoopMetrics";
+import { ReportService } from "../reports/ReportService";
+import { ITreeReportParams, TreeReport } from "../reports/TreeReport";
 
 export class TreeCommand extends Command {
     @Command.String(`--package`, {
@@ -62,31 +53,28 @@ export class TreeCommand extends Command {
 
     @Command.Path(`tree`)
     async execute() {
-        const formatter = new Formatter(this.context.stdout);
+        const params: ITreeReportParams = {
+            type: this.type,
+            folder: this.folder,
+            package: this.package
+        };
+        const treeReport = new TreeReport(params);
 
         if (typeof this.package !== "undefined" && typeof this.folder !== "undefined") {
             this.context.stdout.write(`Please specify a package or folder.\n`);
         } else if (typeof this.package !== "undefined") {
-            const visitor = new Visitor(
-                getPackageVersionfromString(this.package),
-                TreeCommand.OnlineProvider,
-                new OraLogger()
-            );
-            const p = await visitor.visit(this.type);
-
-            printDependencyTree(p, formatter);
+            treeReport.provider = TreeCommand.OnlineProvider;
         } else if (typeof this.folder !== "undefined") {
-            if (fs.existsSync(this.folder)) {
-                const provider = new FileSystemPackageProvider(this.folder);
-                const visitor = new Visitor(
-                    getPackageVersionFromPackageJson(this.folder),
-                    provider,
-                    new OraLogger()
-                );
-                const p: Package = await visitor.visit(this.type);
-
-                printDependencyTree(p, formatter);
-            }
+            treeReport.provider = new FileSystemPackageProvider(this.folder);
         }
+
+        const reportService = new ReportService(
+            {
+                reports: [treeReport]
+            },
+            this.context.stdout
+        );
+
+        await reportService.process();
     }
 }
