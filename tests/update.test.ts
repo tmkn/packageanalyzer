@@ -6,20 +6,18 @@ import {
     updateInfo
 } from "../src/utils/update";
 import { OnlinePackageProvider } from "../src/providers/online";
-import { MockNpmServer } from "./server";
+import { createServer, MockNpmServer } from "./server";
 
 describe(`Update Tests`, () => {
     let server: MockNpmServer;
     let provider: OnlinePackageProvider;
 
-    beforeAll(() => {
-        server = new MockNpmServer(3004);
+    beforeAll(async () => {
+        server = await createServer();
         provider = new OnlinePackageProvider(`http://localhost:${server.port}`);
     });
 
-    afterAll(() => {
-        server.close();
-    });
+    afterAll(() => server.close());
 
     test(`Clean semantic version strings`, () => {
         const baseVersion = `1.2.3`;

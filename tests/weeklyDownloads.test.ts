@@ -1,16 +1,14 @@
 import { getDownloadsLastWeek } from "../src/npm";
-import { MockNpmServer } from "./server";
+import { createServer, MockNpmServer } from "./server";
 
 describe(`Download Tests`, () => {
     let server: MockNpmServer;
 
-    beforeAll(() => {
-        server = new MockNpmServer(3007);
+    beforeAll(async () => {
+        server = await createServer();
     });
 
-    afterAll(() => {
-        server.close();
-    });
+    afterAll(() => server.close());
 
     test(`Clean semantic version strings`, async () => {
         const stats = await getDownloadsLastWeek(`_downloads`, `http://localhost:${server.port}/`);
