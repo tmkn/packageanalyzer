@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 import * as path from "path";
 import * as fs from "fs";
 import { Server } from "http";
@@ -7,7 +9,6 @@ import { INpmPackage, isUnpublished } from "../src/npm";
 
 type Cb = () => void;
 
-/* istanbul ignore next */
 export class MockNpmServer {
     private _server: Server;
     private _dataPath = path.join("tests", "data", "mockserverdata");
