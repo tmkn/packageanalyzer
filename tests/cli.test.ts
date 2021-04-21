@@ -13,7 +13,7 @@ import { NpmDumpLookupCreatorCommand } from "../src/cli/npmLookupCreatorCommand"
 import { TreeCommand } from "../src/cli/treeCommand";
 import { UpdateInfoCommand } from "../src/cli/updateInfoCommand";
 import { OnlinePackageProvider } from "../src/providers/online";
-import { MockNpmServer } from "./server";
+import { createServer, MockNpmServer } from "./server";
 import { FileSystemPackageProvider } from "../src/providers/folder";
 import { isValidDependencyType } from "../src/cli/common";
 
@@ -28,8 +28,8 @@ describe(`CLI Tests`, () => {
         let server: MockNpmServer;
         let provider: OnlinePackageProvider;
 
-        beforeAll(() => {
-            server = new MockNpmServer(3008);
+        beforeAll(async () => {
+            server = await createServer();
             provider = new OnlinePackageProvider(`http://localhost:${server.port}`);
         });
 
@@ -80,17 +80,15 @@ describe(`CLI Tests`, () => {
             await command.execute();
         });
 
-        afterAll(() => {
-            server.close();
-        });
+        afterAll(() => server.close());
     });
 
     describe(`Update Info Command`, () => {
         let server: MockNpmServer;
         let provider: OnlinePackageProvider;
 
-        beforeAll(() => {
-            server = new MockNpmServer(3005);
+        beforeAll(async () => {
+            server = await createServer();
             provider = new OnlinePackageProvider(`http://localhost:${server.port}`);
         });
 
@@ -104,16 +102,14 @@ describe(`CLI Tests`, () => {
             await command.execute();
         });
 
-        afterAll(() => {
-            server.close();
-        });
+        afterAll(() => server.close());
     });
 
     describe(`Download Command`, () => {
         let server: MockNpmServer;
 
-        beforeAll(() => {
-            server = new MockNpmServer(3006);
+        beforeAll(async () => {
+            server = await createServer();
         });
 
         test(`--package`, async () => {
@@ -126,9 +122,7 @@ describe(`CLI Tests`, () => {
             await command.execute();
         });
 
-        afterAll(() => {
-            server.close();
-        });
+        afterAll(() => server.close());
     });
 
     describe(`Loops Command`, () => {
@@ -156,8 +150,8 @@ describe(`CLI Tests`, () => {
         let server: MockNpmServer;
         let provider: OnlinePackageProvider;
 
-        beforeAll(() => {
-            server = new MockNpmServer(3001);
+        beforeAll(async () => {
+            server = await createServer();
             provider = new OnlinePackageProvider(`http://localhost:${server.port}`);
         });
 
@@ -191,17 +185,15 @@ describe(`CLI Tests`, () => {
             await command.execute();
         });
 
-        afterAll(() => {
-            server.close();
-        });
+        afterAll(() => server.close());
     });
 
     describe(`License Check Command`, () => {
         let server: MockNpmServer;
         let provider: OnlinePackageProvider;
 
-        beforeAll(() => {
-            server = new MockNpmServer(3002);
+        beforeAll(async () => {
+            server = await createServer();
             provider = new OnlinePackageProvider(`http://localhost:${server.port}`);
         });
 
@@ -268,9 +260,7 @@ describe(`CLI Tests`, () => {
             await command.execute();
         });
 
-        afterAll(() => {
-            server.close();
-        });
+        afterAll(() => server.close());
     });
 
     describe(`Npmdump Command`, () => {
