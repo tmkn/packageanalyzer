@@ -1,11 +1,9 @@
 import { Command } from "clipanion";
-import * as chalk from "chalk";
 
 import { npmOnline, OnlinePackageProvider } from "../providers/online";
-import { updateInfo } from "../utils/update";
-import { daysAgo } from "./common";
 import { Formatter } from "../utils/formatter";
-import { getPackageVersionfromString } from "../visitors/visitor";
+import { IUpdateInfoParams, UpdateInfoReport } from "../reports/UpdateInfoReport";
+import { ReportService } from "../reports/ReportService";
 
 export class UpdateInfoCommand extends Command {
     @Command.String(`--package`, {
@@ -35,38 +33,20 @@ export class UpdateInfoCommand extends Command {
         if (typeof this.package === "undefined") {
             formatter.writeLine(`Please specify a package.`);
         } else {
-            const [name, version] = getPackageVersionfromString(this.package);
+            const updateInfoParams: IUpdateInfoParams = {
+                package: this.package,
+                provider: UpdateInfoCommand.OnlineProvider
+            };
+            const updateInfoReport = new UpdateInfoReport(updateInfoParams);
 
-            if (typeof version === "undefined") {
-                formatter.writeLine(`Version info is missing (${this.package})`);
+            const reportService = new ReportService(
+                {
+                    reports: [updateInfoReport]
+                },
+                this.context.stdout
+            );
 
-                return;
-            }
-
-            const data = await updateInfo(name, version, UpdateInfoCommand.OnlineProvider);
-            const updateStr = chalk.bold(`Update Info for ${this.package}`);
-
-            formatter.writeLine(`${updateStr}\n`);
-            formatter.writeGroup([
-                [
-                    `Semantic match`,
-                    `${data.latestSemanticMatch.version}  ${daysAgo(
-                        data.latestSemanticMatch.releaseDate
-                    )}`
-                ],
-                [
-                    `Latest bugfix`,
-                    `${data.latestBugfix.version} ${daysAgo(data.latestBugfix.releaseDate)}`
-                ],
-                [
-                    `Latest minor`,
-                    `${data.latestMinor.version} ${daysAgo(data.latestMinor.releaseDate)}`
-                ],
-                [
-                    `Latest version`,
-                    `${data.latestOverall.version} ${daysAgo(data.latestOverall.releaseDate)}`
-                ]
-            ]);
+            await reportService.process();
         }
     }
 }
