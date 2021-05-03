@@ -159,3 +159,41 @@ describe(`visitFromFolder Tests`, () => {
         expect(rest[0].names.length).toBe(51);
     });
 });
+
+describe(`Visitor Max Depth Tests`, () => {
+    function getPackage(depth: number): Promise<Package> {
+        const destination = path.join("tests", "data", "testproject2", "node_modules");
+        const provider: FileSystemPackageProvider = new FileSystemPackageProvider(destination);
+
+        const visitor = new Visitor(["webpack"], provider, new OraLogger(), [], depth);
+
+        return visitor.visit();
+    }
+
+    test(`Max depth: Infinity`, async () => {
+        const p = await getPackage(Infinity);
+        let libCount: number = 0;
+
+        p.visit(() => libCount++, true);
+
+        expect(libCount).toBe(4280);
+    });
+
+    test(`Max depth: 1`, async () => {
+        const p = await getPackage(1);
+        let libCount: number = 0;
+
+        p.visit(() => libCount++, true);
+
+        expect(libCount).toBe(25);
+    });
+
+    test(`Max depth: 2`, async () => {
+        const p = await getPackage(2);
+        let libCount: number = 0;
+
+        p.visit(() => libCount++, true);
+
+        expect(libCount).toBe(114);
+    });
+});

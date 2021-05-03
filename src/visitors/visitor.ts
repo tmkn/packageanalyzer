@@ -14,7 +14,8 @@ interface IVisitorConstructor {
         entry: PackageVersion,
         provider: IPackageVersionProvider,
         logger: ILogger,
-        decorators?: IDecorator<any>[]
+        decorators?: IDecorator<any>[],
+        maxDepth?: number
     ): IPackageVisitor;
 }
 
@@ -32,7 +33,8 @@ export const Visitor: IVisitorConstructor = class Visitor implements IPackageVis
         private readonly _entry: PackageVersion,
         private readonly _provider: IPackageVersionProvider,
         private readonly _logger: ILogger,
-        private readonly _decorators: IDecorator<any>[] = []
+        private readonly _decorators: IDecorator<any>[] = [],
+        private readonly _maxDepth: number = Infinity
     ) {}
 
     async visit(depType = this._depType): Promise<Package> {
@@ -47,10 +49,12 @@ export const Visitor: IVisitorConstructor = class Visitor implements IPackageVis
 
             await this._addDecorator(root);
 
+            this._depthStack.push(root.fullName);
             this._logger.log(`Fetched ${root.fullName}`);
 
             try {
-                await this.visitDependencies(root, rootPkg[depType]);
+                if (this._depthStack.length <= this._maxDepth)
+                    await this.visitDependencies(root, rootPkg[depType]);
             } catch (e) {
                 this._logger.error("Error evaluating dependencies");
 
@@ -91,9 +95,10 @@ export const Visitor: IVisitorConstructor = class Visitor implements IPackageVis
                 if (this._depthStack.includes(dependency.fullName)) {
                     dependency.isLoop = true;
                 } else {
-                    this._depthStack.push(dependency.fullName);
-
-                    await this.visitDependencies(dependency, p[this._depType]);
+                    if (this._depthStack.length < this._maxDepth) {
+                        this._depthStack.push(dependency.fullName);
+                        await this.visitDependencies(dependency, p[this._depType]);
+                    }
                 }
             }
         } catch (e) {
