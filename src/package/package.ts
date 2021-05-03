@@ -1,6 +1,6 @@
 import { get } from "lodash";
 
-import { DecoratorType, IDecorator, IDecoratorStatic } from "../extensions/decorators/Decorator";
+import { DecoratorType, IDecoratorStatic } from "../extensions/decorators/Decorator";
 import { INpmPackageVersion } from "../npm";
 
 interface IDeprecatedInfo {
