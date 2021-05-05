@@ -16,9 +16,12 @@ export interface IUpdateInfoParams {
 export class UpdateInfoReport implements IReport<IUpdateInfoParams> {
     name = `Update Info Report`;
     pkg: PackageVersion;
+    provider: IPackageVersionProvider;
+    depth: number = 0;
 
     constructor(readonly params: IUpdateInfoParams) {
         this.pkg = getPackageVersionfromString(params.package);
+        this.provider = params.provider;
     }
 
     async report(pkg: Package, formatter: IFormatter): Promise<void> {

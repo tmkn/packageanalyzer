@@ -117,7 +117,7 @@ describe(`CLI Tests`, () => {
 
             expect.assertions(0);
             command.context = mockContext;
-            DownloadCommand.DownloadUrl = `http://localhost:${server.port}/`;
+            //DownloadCommand.DownloadUrl = `http://localhost:${server.port}/`;
 
             await command.execute();
         });

@@ -27,15 +27,16 @@ export class ReportService {
                     report.pkg,
                     report.provider ?? npmOnline,
                     new OraLogger(),
-                    report.decorators
+                    report.decorators,
+                    report.depth
                 );
 
                 if (reports.length > 1)
                     formatter.writeLine(chalk.underline.bgBlue(`Report: ${report.name}`));
 
-                const p: Package = await visitor.visit();
+                const p: Package = await visitor.visit(report.type);
 
-                report.report(p, formatter);
+                await report.report(p, formatter);
                 formatter.writeLine(``);
             }
         } catch (e) {}
