@@ -1,18 +1,9 @@
 import { Command } from "clipanion";
 
 import { npmOnline, OnlinePackageProvider } from "../providers/online";
-import { Package } from "../package/package";
-import {
-    getPackageVersionfromString,
-    getPackageVersionFromPackageJson,
-    IPackageVisitor,
-    Visitor
-} from "../visitors/visitor";
-import { FileSystemPackageProvider } from "../providers/folder";
-import { OraLogger } from "../utils/logger";
-import { printStatistics, defaultDependencyType, isValidDependencyType } from "./common";
-import { ReleaseDecorator } from "../extensions/decorators/ReleaseDecorator";
-import { Formatter, IFormatter } from "../utils/formatter";
+import { defaultDependencyType, isValidDependencyType } from "./common";
+import { AnalyzeReport, IAnalyzeParams } from "../reports/AnalyzeReport";
+import { ReportService } from "../reports/ReportService";
 
 export class AnalyzeCommand extends Command {
     @Command.String(`--package`, {
@@ -58,31 +49,22 @@ export class AnalyzeCommand extends Command {
             );
         }
 
-        let visitor: IPackageVisitor | undefined = undefined;
+        const params: IAnalyzeParams = {
+            folder: this.folder,
+            package: this.package,
+            type: this.type,
+            full: this.full
+        };
 
-        if (typeof this.package !== `undefined`) {
-            visitor = new Visitor(
-                getPackageVersionfromString(this.package),
-                AnalyzeCommand.OnlineProvider,
-                new OraLogger(),
-                [new ReleaseDecorator(AnalyzeCommand.OnlineProvider)]
-            );
-        } else if (typeof this.folder !== `undefined`) {
-            const provider = new FileSystemPackageProvider(this.folder);
-            visitor = new Visitor(
-                getPackageVersionFromPackageJson(this.folder),
-                provider,
-                new OraLogger()
-            );
-        }
+        const analyzeReport = new AnalyzeReport(params);
 
-        if (typeof visitor === "undefined") {
-            throw new Error(`Please specify a package or folder.\n`);
-        }
+        const reportService = new ReportService(
+            {
+                reports: [analyzeReport]
+            },
+            this.context.stdout
+        );
 
-        const formatter: IFormatter = new Formatter(this.context.stdout);
-        const p: Package = await visitor.visit(this.type);
-
-        await printStatistics(p, this.full, formatter);
+        await reportService.process();
     }
 }
