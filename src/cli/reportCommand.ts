@@ -1,7 +1,6 @@
 import { Command } from "clipanion";
 
 import { IReports, ReportService } from "../reports/ReportService";
-import { TestReport } from "../reports/TestReport";
 import { TreeReport } from "../reports/TreeReport";
 
 export class ReportCommand extends Command {
@@ -16,7 +15,6 @@ export class ReportCommand extends Command {
         const config: IReports = {
             reports: [
                 new TreeReport({ package: `react` }),
-                //new TestReport({ package: `webpack` }),
                 new TreeReport({ package: `fastify` })
             ]
         };
