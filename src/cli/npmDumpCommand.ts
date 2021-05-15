@@ -1,11 +1,7 @@
 import { Command } from "clipanion";
 
-import { getPackageVersionfromString, Visitor } from "../visitors/visitor";
-import { OraLogger } from "../utils/logger";
 import { FlatFileProvider } from "../providers/flatFile";
-import { printStatistics } from "./common";
 import { Writable } from "stream";
-import { IFormatter, Formatter } from "../utils/formatter";
 import { AnalyzeReport } from "../reports/AnalyzeReport";
 import { ReportService } from "../reports/ReportService";
 

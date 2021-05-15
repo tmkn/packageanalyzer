@@ -13,10 +13,7 @@ export class ReportCommand extends Command {
     async execute() {
         //const test: TestReport = require(`./abc`);
         const config: IReports = {
-            reports: [
-                new TreeReport({ package: `react` }),
-                new TreeReport({ package: `fastify` })
-            ]
+            reports: [new TreeReport({ package: `react` }), new TreeReport({ package: `fastify` })]
         };
         const reportService = new ReportService(config, this.context.stdout);
 
