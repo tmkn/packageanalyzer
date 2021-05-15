@@ -48,7 +48,7 @@ export async function printStatistics(
 
 const PaddingLeft = 4;
 
-export async function printAllStatistics(p: Package, formatter: IFormatter): Promise<void> {
+async function printAllStatistics(p: Package, formatter: IFormatter): Promise<void> {
     printPublished(p, formatter);
     await printOldest(p, formatter);
     await printNewest(p, formatter);
@@ -66,7 +66,7 @@ export async function printAllStatistics(p: Package, formatter: IFormatter): Pro
     printLicenseInfo(new LicenseMetrics(p).licensesByGroup, PaddingLeft, formatter);
 }
 
-export function printBasicStatistics(p: Package, formatter: IFormatter): void {
+function printBasicStatistics(p: Package, formatter: IFormatter): void {
     printDependencyCount(p, formatter);
     printSimpleDistinctDependencies(new DependencyMetrics(p).distinctByNameCount, formatter);
     printMostReferred(new DependencyMetrics(p).mostReferred, formatter);
