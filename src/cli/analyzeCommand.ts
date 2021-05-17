@@ -1,6 +1,5 @@
 import { Command } from "clipanion";
 
-import { npmOnline, OnlinePackageProvider } from "../providers/online";
 import { defaultDependencyType, isValidDependencyType } from "./common";
 import { AnalyzeReport, IAnalyzeParams } from "../reports/AnalyzeReport";
 import { ReportService } from "../reports/ReportService";
@@ -38,8 +37,6 @@ export class AnalyzeCommand extends Command {
             [`Analyze a local project`, `$0 analyze --folder /path/to/your/package.json`]
         ]
     });
-
-    static OnlineProvider: OnlinePackageProvider = npmOnline;
 
     @Command.Path(`analyze`)
     async execute() {

@@ -1,6 +1,6 @@
 import { Command } from "clipanion";
 
-import { npmOnline, OnlinePackageProvider } from "../providers/online";
+import { npmOnline } from "../providers/online";
 import { Formatter } from "../utils/formatter";
 import { IUpdateInfoParams, UpdateInfoReport } from "../reports/UpdateInfoReport";
 import { ReportService } from "../reports/ReportService";
@@ -24,8 +24,6 @@ export class UpdateInfoCommand extends Command {
         ]
     });
 
-    static OnlineProvider: OnlinePackageProvider = npmOnline;
-
     @Command.Path(`update`)
     async execute() {
         const formatter = new Formatter(this.context.stdout);
@@ -35,7 +33,7 @@ export class UpdateInfoCommand extends Command {
         } else {
             const updateInfoParams: IUpdateInfoParams = {
                 package: this.package,
-                provider: UpdateInfoCommand.OnlineProvider
+                provider: npmOnline
             };
             const updateInfoReport = new UpdateInfoReport(updateInfoParams);
 

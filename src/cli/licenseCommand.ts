@@ -1,6 +1,5 @@
 import { Command } from "clipanion";
 
-import { npmOnline, OnlinePackageProvider } from "../providers/online";
 import { ILicenseParams, LicenseReport } from "../reports/LicenseReport";
 import { ReportService } from "../reports/ReportService";
 import { defaultDependencyType, isValidDependencyType } from "./common";
@@ -58,8 +57,6 @@ export class LicenseCheckCommand extends Command {
             ]
         ]
     });
-
-    static OnlineProvider: OnlinePackageProvider = npmOnline;
 
     @Command.Path(`license`)
     async execute() {

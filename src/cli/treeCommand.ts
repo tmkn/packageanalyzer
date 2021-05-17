@@ -1,6 +1,6 @@
 import { Command } from "clipanion";
 
-import { npmOnline, OnlinePackageProvider } from "../providers/online";
+import { npmOnline } from "../providers/online";
 import { DependencyTypes } from "../visitors/visitor";
 import { FileSystemPackageProvider } from "../providers/folder";
 import { defaultDependencyType } from "./common";
@@ -49,8 +49,6 @@ export class TreeCommand extends Command {
         ]
     });
 
-    static OnlineProvider: OnlinePackageProvider = npmOnline;
-
     @Command.Path(`tree`)
     async execute() {
         const params: ITreeReportParams = {
@@ -63,7 +61,7 @@ export class TreeCommand extends Command {
         if (typeof this.package !== "undefined" && typeof this.folder !== "undefined") {
             this.context.stdout.write(`Please specify a package or folder.\n`);
         } else if (typeof this.package !== "undefined") {
-            treeReport.provider = TreeCommand.OnlineProvider;
+            treeReport.provider = npmOnline;
         } else if (typeof this.folder !== "undefined") {
             treeReport.provider = new FileSystemPackageProvider(this.folder);
         }

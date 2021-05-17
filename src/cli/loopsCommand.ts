@@ -1,13 +1,6 @@
 import { Command } from "clipanion";
-import * as chalk from "chalk";
 
-import { npmOnline } from "../providers/online";
-import { getPackageVersionfromString, Visitor } from "../visitors/visitor";
-import { OraLogger } from "../utils/logger";
 import { defaultDependencyType, isValidDependencyType } from "./common";
-import { IPackageVersionProvider } from "../providers/folder";
-import { Formatter } from "../utils/formatter";
-import { LoopMetrics } from "../extensions/metrics/LoopMetrics";
 import { ILoopParams, LoopsReport } from "../reports/LoopsReport";
 import { ReportService } from "../reports/ReportService";
 
@@ -43,8 +36,6 @@ export class LoopsCommand extends Command {
             ]
         ]
     });
-
-    static Provider: IPackageVersionProvider = npmOnline;
 
     @Command.Path(`loops`)
     async execute() {
