@@ -2,7 +2,6 @@ import { Writable } from "stream";
 import { Formatter } from "../src/utils/formatter";
 
 describe(`Formatter Tests`, () => {
-
     //todo unify with TestWritable?
     class TestWriter extends Writable {
         lines: string[] = [];
