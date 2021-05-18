@@ -7,10 +7,11 @@ import { UpdateInfoCommand } from "./cli/updateInfoCommand";
 import { DownloadCommand } from "./cli/downloadCommand";
 import { LoopsCommand } from "./cli/loopsCommand";
 import { TreeCommand } from "./cli/treeCommand";
-import { NpmDumpCommand, DependencyDumperCommand } from "./cli/npmDumpCommand";
+import { NpmDumpCommand } from "./cli/npmDumpCommand";
 import { getVersion } from "./cli/common";
 import { NpmDumpLookupCreatorCommand } from "./cli/npmLookupCreatorCommand";
 import { LicenseCheckCommand } from "./cli/licenseCommand";
+import { DependencyDumperCommand } from "./cli/dependencyDumpCommand";
 
 export const cli = new Cli({
     binaryLabel: `packageanalyzer`,
