@@ -5,6 +5,7 @@ import { Package } from "../package/package";
 import { OnlinePackageProvider } from "../providers/online";
 import { PackageVersion, Visitor } from "../visitors/visitor";
 import { OraLogger } from "./logger";
+import { DependencyMetrics } from "../extensions/metrics/DependencyMetrics";
 
 export class DependencyDumper {
     pkg?: Package;
@@ -26,11 +27,7 @@ export class DependencyDumper {
         try {
             if (!this.pkg || !this._provider) return;
 
-            const distinct: Set<string> = new Set();
-
-            this.pkg.visit(pkg => {
-                distinct.add(pkg.name);
-            }, true);
+            const distinct: Set<string> = new DependencyMetrics(this.pkg).distinctByName;
 
             fs.mkdir(baseDir, { recursive: true });
 
