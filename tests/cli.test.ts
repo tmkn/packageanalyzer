@@ -267,7 +267,7 @@ describe(`CLI Tests`, () => {
         });
     });
 
-    describe(`Dependency Dumper`, async () => {
+    describe(`Dependency Dumper`, () => {
         let server: MockNpmServer;
         const outputFolder = path.join(process.cwd(), `tmp`, `dump`);
 
