@@ -5,7 +5,7 @@ import { DependencyDumper } from "../utils/dumper";
 
 export class DependencyDumperCommand extends Command {
     @Command.String(`--package`, {
-        description: `the package to analyze e.g. typescript, typescript@3.5.1`
+        description: `the package to dump e.g. typescript, typescript@3.5.1`
     })
     public package?: string;
 
@@ -13,6 +13,11 @@ export class DependencyDumperCommand extends Command {
         description: `folder to output the dump`
     })
     public folder?: string;
+
+    @Command.String(`--registry`, {
+        description: `online registry`
+    })
+    public registry: string = `http://registry.npmjs.com`;
 
     static usage = Command.Usage({
         category: `Developer Tools`,
@@ -39,14 +44,11 @@ export class DependencyDumperCommand extends Command {
 
             const dumper = new DependencyDumper();
 
-            await dumper.collect(
-                getPackageVersionfromString(this.package),
-                `http://registry.npmjs.com`
-            );
+            await dumper.collect(getPackageVersionfromString(this.package), this.registry);
             await dumper.save(this.folder);
         } catch (e) {
-            console.log(`Something went wrong`);
-            console.log(e);
+            this.context.stderr.write(`Something went wrong\n`);
+            this.context.stderr.write(`${e}\n`);
         }
     }
 }

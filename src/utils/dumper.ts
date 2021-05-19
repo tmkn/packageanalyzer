@@ -13,24 +13,23 @@ export class DependencyDumper {
     private _provider?: OnlinePackageProvider;
 
     async collect(pkg: PackageVersion, repoUrl: string): Promise<void> {
-        try {
-            this._provider = new OnlinePackageProvider(repoUrl);
+        this._provider = new OnlinePackageProvider(repoUrl);
 
-            const visitor = new Visitor(pkg, this._provider, new OraLogger());
-            this.pkg = await visitor.visit();
-        } catch (e) {
-            console.log(e);
-        }
+        const visitor = new Visitor(pkg, this._provider, new OraLogger());
+        this.pkg = await visitor.visit();
     }
 
     async save(baseDir: string): Promise<void> {
+        if (!this.pkg || !this._provider) throw new Error(`pkg or provider is undefined`);
+
+        const distinct: Set<string> = new DependencyMetrics(this.pkg).distinctByName;
+        const logger = new OraLogger();
+
+        fs.mkdir(baseDir, { recursive: true });
+
+        logger.start();
+
         try {
-            if (!this.pkg || !this._provider) return;
-
-            const distinct: Set<string> = new DependencyMetrics(this.pkg).distinctByName;
-
-            fs.mkdir(baseDir, { recursive: true });
-
             for (const [i, dependency] of [...distinct].sort().entries()) {
                 const data = await this._provider.getPackageInfo(dependency);
                 const folder = this._getFolder(baseDir, dependency);
@@ -45,12 +44,13 @@ export class DependencyDumper {
 
                 const digits = distinct.size.toString().length;
                 const prefix: string = `${i + 1}`.padStart(digits);
-                console.log(`[${prefix}/${distinct.size}]: ${fullPath}`);
+                logger.log(`[${prefix}/${distinct.size}]: ${fullPath}`);
             }
-
-            console.log(`Saved ${distinct.size} dependencies for ${this.pkg.fullName}`);
-        } catch (e) {
-            console.log(e);
+        } finally {
+            logger.log(
+                `Saved ${distinct.size} dependencies for ${this.pkg.fullName} at ${baseDir}`
+            );
+            logger.stop();
         }
     }
 
