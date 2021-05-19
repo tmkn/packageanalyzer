@@ -39,6 +39,8 @@ export class ReportService {
                 await report.report(p, formatter);
                 formatter.writeLine(``);
             }
-        } catch (e) {}
+        } catch (e) {
+            console.log(e);
+        }
     }
 }
