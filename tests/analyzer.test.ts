@@ -179,6 +179,10 @@ describe(`Package Tests`, () => {
         expect(new DependencyMetrics(p).all.length).toBe(14);
     });
 
+    test(`Check distinct`, () => {
+        expect(new DependencyMetrics(p).distinctByName.size).toBe(8);
+    });
+
     test(`Check loops`, () => {
         expect(new LoopMetrics(p).loops.length).toBe(0);
     });

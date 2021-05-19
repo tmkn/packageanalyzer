@@ -79,6 +79,14 @@ export class DependencyMetrics {
         return all;
     }
 
+    get distinctByName(): Set<string> {
+        const distinct: Set<string> = new Set();
+
+        this._p.visit(d => distinct.add(d.name), true);
+
+        return distinct;
+    }
+
     get mostVersions(): VersionSummary {
         let max = 0;
         let map: VersionSummary = new Map();
