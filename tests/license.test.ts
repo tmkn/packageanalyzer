@@ -4,7 +4,7 @@ import { FileSystemPackageProvider } from "../src/providers/folder";
 import { Package } from "../src/package/package";
 import { LicenseMetrics } from "../src/extensions/metrics/LicenseMetrics";
 
-describe.only(`License Tests`, () => {
+describe(`License Tests`, () => {
     let provider: FileSystemPackageProvider;
 
     beforeAll(() => {

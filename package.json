@@ -1,6 +1,6 @@
 {
   "name": "@tmkn/packageanalyzer",
-  "version": "0.9.4",
+  "version": "0.9.5",
   "description": "A tool to analyze a Node.js project/package",
   "main": "./build/src/index.js",
   "types": "./build/src/index.d.ts",
@@ -65,5 +65,8 @@
     "ora": "^5.1.0",
     "semver": "^7.3.2",
     "spdx-satisfies": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=14.16.1"
   }
 }

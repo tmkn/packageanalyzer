@@ -1,11 +1,9 @@
 import { Command } from "clipanion";
 
-import { getPackageVersionfromString, Visitor } from "../visitors/visitor";
-import { OraLogger } from "../utils/logger";
 import { FlatFileProvider } from "../providers/flatFile";
-import { printStatistics } from "./common";
 import { Writable } from "stream";
-import { IFormatter, Formatter } from "../utils/formatter";
+import { AnalyzeReport } from "../reports/AnalyzeReport";
+import { ReportService } from "../reports/ReportService";
 
 export class NpmDumpCommand extends Command {
     @Command.String(`--npmfile`, { description: `path to a npmdump.json` })
@@ -44,16 +42,22 @@ export class NpmDumpCommand extends Command {
 
 async function cliResolveFile(pkgName: string, npmFile: string, stdout: Writable): Promise<void> {
     try {
-        const formatter: IFormatter = new Formatter(stdout);
         const provider = new FlatFileProvider(npmFile);
-        const visitor = new Visitor(
-            getPackageVersionfromString(pkgName),
-            provider,
-            new OraLogger()
-        );
-        const p = await visitor.visit();
+        const analyzeReport = new AnalyzeReport({
+            package: pkgName,
+            full: false
+        });
 
-        await printStatistics(p, false, formatter);
+        analyzeReport.provider = provider;
+
+        const reportService = new ReportService(
+            {
+                reports: [analyzeReport]
+            },
+            process.stdout
+        );
+
+        await reportService.process();
     } catch (e) {
         stdout.write(e);
     }

@@ -5,20 +5,15 @@ import { PassThrough } from "stream";
 import { BaseContext } from "clipanion";
 
 import { cli } from "../src/cli";
-import { AnalyzeCommand } from "../src/cli/analyzeCommand";
-import { DownloadCommand } from "../src/cli/downloadCommand";
-import { LicenseCheckCommand } from "../src/cli/licenseCommand";
-import { LoopsCommand } from "../src/cli/loopsCommand";
 import { NpmDumpCommand } from "../src/cli/npmDumpCommand";
 import { NpmDumpLookupCreatorCommand } from "../src/cli/npmLookupCreatorCommand";
-import { TreeCommand } from "../src/cli/treeCommand";
-import { UpdateInfoCommand } from "../src/cli/updateInfoCommand";
 import { OnlinePackageProvider } from "../src/providers/online";
 import { createServer, MockNpmServer } from "./server";
 import { FileSystemPackageProvider } from "../src/providers/folder";
 import { isValidDependencyType } from "../src/cli/common";
 import { DependencyDumperCommand } from "../src/cli/dependencyDumpCommand";
 import { TestWritable } from "./common";
+import { ReportCommand } from "../src/cli/reportCommand";
 
 describe(`CLI Tests`, () => {
     const mockContext: BaseContext = {
@@ -48,7 +43,6 @@ describe(`CLI Tests`, () => {
 
             expect.assertions(0);
             command.context = mockContext;
-            AnalyzeCommand.OnlineProvider = provider;
             await command.execute();
         });
 
@@ -63,7 +57,6 @@ describe(`CLI Tests`, () => {
 
             expect.assertions(0);
             command.context = mockContext;
-            AnalyzeCommand.OnlineProvider = provider;
             await command.execute();
         });
 
@@ -100,7 +93,6 @@ describe(`CLI Tests`, () => {
 
             expect.assertions(0);
             command.context = mockContext;
-            UpdateInfoCommand.OnlineProvider = provider;
 
             await command.execute();
         });
@@ -120,7 +112,7 @@ describe(`CLI Tests`, () => {
 
             expect.assertions(0);
             command.context = mockContext;
-            DownloadCommand.DownloadUrl = `http://localhost:${server.port}/`;
+            //DownloadCommand.DownloadUrl = `http://localhost:${server.port}/`;
 
             await command.execute();
         });
@@ -144,7 +136,6 @@ describe(`CLI Tests`, () => {
             const rootPath = path.join("tests", "data", "testproject2");
             const provider = new FileSystemPackageProvider(rootPath);
 
-            LoopsCommand.Provider = provider;
             await command.execute();
         });
     });
@@ -169,7 +160,6 @@ describe(`CLI Tests`, () => {
 
             expect.assertions(0);
             command.context = mockContext;
-            TreeCommand.OnlineProvider = provider;
             await command.execute();
         });
 
@@ -205,7 +195,6 @@ describe(`CLI Tests`, () => {
 
             expect.assertions(0);
             command.context = mockContext;
-            LicenseCheckCommand.OnlineProvider = provider;
             await command.execute();
         });
 
@@ -214,7 +203,6 @@ describe(`CLI Tests`, () => {
 
             expect.assertions(0);
             command.context = mockContext;
-            LicenseCheckCommand.OnlineProvider = provider;
             await command.execute();
         });
 
@@ -229,7 +217,6 @@ describe(`CLI Tests`, () => {
 
             expect.assertions(0);
             command.context = mockContext;
-            LicenseCheckCommand.OnlineProvider = provider;
             await command.execute();
         });
 
@@ -246,7 +233,6 @@ describe(`CLI Tests`, () => {
 
             expect.assertions(0);
             command.context = mockContext;
-            LicenseCheckCommand.OnlineProvider = provider;
             await command.execute();
         });
 
@@ -282,7 +268,7 @@ describe(`CLI Tests`, () => {
         });
     });
 
-    describe(`Dependency Dumper`, async () => {
+    describe(`Dependency Dumper`, () => {
         let server: MockNpmServer;
         const outputFolder = path.join(process.cwd(), `tmp`, `dump`);
 
@@ -375,6 +361,28 @@ describe(`CLI Tests`, () => {
         });
 
         afterAll(() => server.close());
+    });
+
+    describe(`Report Command`, () => {
+        test(`works`, async () => {
+            const command = cli.process([
+                `report`,
+                `--config`,
+                path.join(process.cwd(), `tests`, `sampleReport.js`)
+            ]);
+
+            expect(command).toBeInstanceOf(ReportCommand);
+
+            const stdout = new TestWritable();
+            command.context = {
+                stdin: process.stdin,
+                stdout: stdout,
+                stderr: new PassThrough()
+            };
+            await command.execute();
+
+            expect(stdout.lines.length).toBeGreaterThan(2);
+        });
     });
 
     describe(`CLI Utility`, () => {

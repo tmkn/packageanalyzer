@@ -1,13 +1,8 @@
 import { Command } from "clipanion";
-import * as chalk from "chalk";
 
-import { npmOnline } from "../providers/online";
-import { getPackageVersionfromString, Visitor } from "../visitors/visitor";
-import { OraLogger } from "../utils/logger";
 import { defaultDependencyType, isValidDependencyType } from "./common";
-import { IPackageVersionProvider } from "../providers/folder";
-import { Formatter } from "../utils/formatter";
-import { LoopMetrics } from "../extensions/metrics/LoopMetrics";
+import { ILoopParams, LoopsReport } from "../reports/LoopsReport";
+import { ReportService } from "../reports/ReportService";
 
 export class LoopsCommand extends Command {
     @Command.String(`--package`, {
@@ -42,8 +37,6 @@ export class LoopsCommand extends Command {
         ]
     });
 
-    static Provider: IPackageVersionProvider = npmOnline;
-
     @Command.Path(`loops`)
     async execute() {
         if (!isValidDependencyType(this.type)) {
@@ -53,45 +46,20 @@ export class LoopsCommand extends Command {
         }
 
         if (typeof this.package !== "undefined") {
-            const formatter = new Formatter(this.context.stdout);
-            const visitor = new Visitor(
-                getPackageVersionfromString(this.package),
-                LoopsCommand.Provider,
-                new OraLogger()
+            const params: ILoopParams = {
+                type: this.type,
+                package: this.package
+            };
+            const loopsReport = new LoopsReport(params);
+
+            const reportService = new ReportService(
+                {
+                    reports: [loopsReport]
+                },
+                this.context.stdout
             );
-            const p = await visitor.visit(this.type);
-            const loopPathMap = new LoopMetrics(p).loopPathMap;
-            const distinctCount: number = [...loopPathMap].reduce(
-                (i, [, loops]) => i + loops.size,
-                0
-            );
-            const loopPadding = ("" + distinctCount).length;
-            let total = 0;
 
-            formatter.writeLine(chalk.bold(`${distinctCount} Loop(s) found for ${p.fullName}\n`));
-            if (distinctCount > 0) {
-                formatter.writeLine(`Affected Packages:`);
-                for (const [pkgName, loopsForPkg] of loopPathMap) {
-                    const loopCountStr = `${loopsForPkg.size}x`.padStart(5);
-
-                    formatter.writeLine(`- ${loopCountStr} ${pkgName}`);
-                }
-
-                for (const [pkgName, loopsForPkg] of loopPathMap) {
-                    formatter.writeLine(
-                        chalk.bgGray(`\n${loopsForPkg.size} Loop(s) found for ${pkgName}`)
-                    );
-
-                    let i = 0;
-                    for (const loop of loopsForPkg) {
-                        const iStr = `${total + i++ + 1}`.padStart(loopPadding);
-
-                        formatter.writeLine(`[${iStr}/${distinctCount}] ${loop}`);
-                    }
-
-                    total += loopsForPkg.size;
-                }
-            }
+            await reportService.process();
         }
     }
 }
