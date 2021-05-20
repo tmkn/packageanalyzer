@@ -65,5 +65,8 @@
     "ora": "^5.1.0",
     "semver": "^7.3.2",
     "spdx-satisfies": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=14.17.0"
   }
 }

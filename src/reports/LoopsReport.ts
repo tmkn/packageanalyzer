@@ -22,7 +22,6 @@ export class LoopsReport implements IReport<ILoopParams> {
     }
 
     async report(pkg: Package, formatter: IFormatter): Promise<void> {
-        console.log(1337, pkg.fullName);
         if (!isValidDependencyType(this.type)) {
             throw new Error(
                 `Please only specify "dependencies" or "devDependencies" for the --type argument`

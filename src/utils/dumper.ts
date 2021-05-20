@@ -6,6 +6,8 @@ import { OnlinePackageProvider } from "../providers/online";
 import { PackageVersion, Visitor } from "../visitors/visitor";
 import { OraLogger } from "./logger";
 import { DependencyMetrics } from "../extensions/metrics/DependencyMetrics";
+import { IPackageVersionProvider } from "../providers/folder";
+import { INpmPackage, INpmPackageVersion, isUnpublished, IUnpublishedNpmPackage } from "../npm";
 
 export class DependencyDumper {
     pkg?: Package;
@@ -58,5 +60,85 @@ export class DependencyDumper {
         const parts = pkgName.split(`/`).filter(part => part !== ``);
 
         return path.join(baseDir, ...parts);
+    }
+}
+
+export class DependencyDumperProvider implements IPackageVersionProvider {
+    private _cache: Map<string, INpmPackage | IUnpublishedNpmPackage> = new Map();
+    private _initialized: Promise<void>;
+
+    get size(): number {
+        return this._cache.size;
+    }
+
+    constructor(private _dir: string) {
+        this._initialized = this._populateCache();
+    }
+
+    async getPackageInfo(name: string): Promise<INpmPackage | IUnpublishedNpmPackage | undefined> {
+        await this._initialized;
+
+        return this._cache.get(name);
+    }
+
+    async getPackageByVersion(name: string, version?: string): Promise<INpmPackageVersion> {
+        const data = await this.getPackageInfo(name);
+
+        if (typeof data === "undefined") throw new Error(`No data found for package ${name}`);
+
+        if (isUnpublished(data)) throw new Error(`Package ${name} was unpublished`);
+
+        version = version ?? data["dist-tags"].latest;
+
+        const versionData = data.versions[version];
+
+        if (typeof versionData === "undefined")
+            throw new Error(`No data found for version ${version} for package ${name}`);
+
+        return versionData;
+    }
+    async *getPackagesByVersion(
+        modules: PackageVersion[]
+    ): AsyncIterableIterator<INpmPackageVersion> {
+        for (const [name, version] of modules) {
+            yield this.getPackageByVersion(name, version);
+        }
+    }
+
+    private async _populateCache(): Promise<void> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const filePaths = await this._readDir(this._dir);
+
+                for (const filePath of filePaths) {
+                    try {
+                        const file: string = (await fs.readFile(filePath)).toString();
+                        const json = JSON.parse(file);
+
+                        if (json.name) {
+                            this._cache.set(json.name, json);
+                        }
+                    } catch {}
+                }
+            } finally {
+                resolve();
+            }
+        });
+    }
+
+    private async _readDir(dir: string): Promise<string[]> {
+        let files: string[] = [];
+
+        const folderContent = await fs.readdir(dir, { withFileTypes: true });
+
+        for (const file of folderContent) {
+            if (file.isDirectory()) {
+                files = [...files, ...(await this._readDir(path.join(dir, file.name)))];
+            } else if (file.isFile()) {
+                files.push(path.join(dir, file.name));
+            }
+        }
+
+        return files.filter(file => file.endsWith(`.json`));
     }
 }

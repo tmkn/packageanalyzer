@@ -1,7 +1,8 @@
+import * as path from "path";
+
 import { Command } from "clipanion";
 
-import { IReports, ReportService } from "../reports/ReportService";
-import { TreeReport } from "../reports/TreeReport";
+import { ReportService } from "../reports/ReportService";
 
 export class ReportCommand extends Command {
     @Command.String(`--config`, {
@@ -11,10 +12,8 @@ export class ReportCommand extends Command {
 
     @Command.Path(`report`)
     async execute() {
-        //const test: TestReport = require(`./abc`);
-        const config: IReports = {
-            reports: [new TreeReport({ package: `react` }), new TreeReport({ package: `fastify` })]
-        };
+        //const config = require(path.join(process.cwd(), `tests`, `sampleReport.js`));
+        const config = require(this.config);
         const reportService = new ReportService(config, this.context.stdout);
 
         await reportService.process();

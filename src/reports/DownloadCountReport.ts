@@ -6,6 +6,7 @@ import { IReport } from "./Report";
 
 export interface IDownloadParams {
     pkg: string;
+    url?: string;
 }
 
 export class DownloadReport implements IReport<IDownloadParams> {
@@ -18,7 +19,7 @@ export class DownloadReport implements IReport<IDownloadParams> {
     }
 
     async report(pkg: Package, formatter: IFormatter): Promise<void> {
-        await cliDownloads(pkg.name, null, formatter);
+        await cliDownloads(pkg.name, this.params.url ?? null, formatter);
     }
 }
 

@@ -1,9 +1,10 @@
 module.exports = {
-    "roots": [
+    roots: [
       "<rootDir>/tests"
     ],
-    "transform": {
+    transform: {
       "^.+\\.tsx?$": "ts-jest"
     },
-    testEnvironment: "node"
+    testEnvironment: "node",
+    coveragePathIgnorePatterns: ["/node_modules/", "<rootDir>/build/"]
   }

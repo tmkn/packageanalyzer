@@ -1,18 +1,19 @@
 import * as path from "path";
-import { FileSystemPackageProvider } from "../src/providers/folder";
+
 import { LoopsReport } from "../src/reports/LoopsReport";
 import { ReportService } from "../src/reports/ReportService";
+import { DependencyDumperProvider } from "../src/utils/dumper";
 import { TestWritable } from "./common";
 
 describe(`LoopsReport Test`, () => {
     const rootPath = path.join("tests", "data", "loopsdata");
-    let provider: FileSystemPackageProvider;
+    let provider: DependencyDumperProvider;
 
     beforeAll(() => {
-        provider = new FileSystemPackageProvider(rootPath);
+        provider = new DependencyDumperProvider(rootPath);
     });
 
-    test(`blabla`, async () => {
+    test(`works`, async () => {
         const report = new LoopsReport({
             package: `@webassemblyjs/ast@1.9.0`,
             type: `dependencies`
@@ -31,7 +32,23 @@ describe(`LoopsReport Test`, () => {
 
         await reportService.process();
 
-        console.dir(provider.size, writer.lines);
-        //expect(writer.lines.length).toBeGreaterThan(0);
+        expect(writer.lines.length).toBeGreaterThan(0);
+    });
+
+    test(`Throws on illegal dependency type`, async () => {
+        expect.assertions(1);
+
+        try {
+            const report = new LoopsReport({
+                package: `foo`,
+                //@ts-expect-error
+                type: `xxx`
+            });
+
+            //@ts-expect-error
+            await report.report();
+        } catch (e) {
+            expect(e).toBeInstanceOf(Error);
+        }
     });
 });
