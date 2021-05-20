@@ -4,10 +4,6 @@ import { FileSystemPackageProvider } from "../src/providers/folder";
 import { ReportService } from "../src/reports/ReportService";
 import { TestReport, TestWritable } from "./common";
 
-describe(`Report Tests`, () => {
-    test.todo(`Test Report`);
-});
-
 describe(`ReportService Tests`, () => {
     const rootPath = path.join("tests", "data", "testproject1");
     const provider = new FileSystemPackageProvider(rootPath);
