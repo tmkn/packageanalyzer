@@ -1,6 +1,6 @@
 import { get } from "lodash";
+import { DecoratorData, DecoratorKey, IDecorator } from "../extensions/decorators/Decorator";
 
-import { DecoratorType, IDecoratorStatic } from "../extensions/decorators/Decorator";
 import { INpmPackageVersion } from "../npm";
 
 interface IDeprecatedInfo {
@@ -26,15 +26,15 @@ interface IPackage<T> {
 
     getData(key: string): unknown;
 
-    getDecoratorData<E extends IDecoratorStatic<any, []>>(decorator: E): DecoratorType<E>;
-    setDecoratorData(key: Symbol, data: any): void;
+    getDecoratorData<E extends IDecorator<any, any>>(decorator: E): DecoratorData<E>;
+    setDecoratorData<E extends IDecorator<any, any>>(decorator: E, data: DecoratorData<E>): void;
 }
 
 export class Package implements IPackage<Package> {
     parent: Package | null = null;
     isLoop = false;
 
-    private _decoratorData: Map<Symbol, any> = new Map();
+    private _decoratorData: Map<IDecorator<any, any>, any> = new Map();
     private readonly _dependencies: Package[] = [];
 
     constructor(private readonly _data: Readonly<INpmPackageVersion>) {}
@@ -130,17 +130,20 @@ export class Package implements IPackage<Package> {
         return get(this._data, key);
     }
 
-    getDecoratorData<T extends IDecoratorStatic<any, any[]>>(decorator: T): DecoratorType<T> {
-        const data = this._decoratorData.get(decorator.key);
+    getDecoratorData<E extends IDecorator<any, unknown>>(key: DecoratorKey<E>): DecoratorData<E> {
+        const data = this._decoratorData.get(key);
 
         if (typeof data === "undefined") {
-            throw new Error(`No extension data found for ${decorator.toString()}`);
+            throw new Error(`No extension data found for ${key.toString()}`);
         }
 
         return data;
     }
 
-    setDecoratorData(key: Symbol, data: any): void {
+    setDecoratorData<E extends IDecorator<any, unknown>>(
+        key: DecoratorKey<E>,
+        data: DecoratorData<E>
+    ): void {
         this._decoratorData.set(key, data);
     }
 }

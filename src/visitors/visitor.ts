@@ -14,7 +14,7 @@ interface IVisitorConstructor {
         entry: PackageVersion,
         provider: IPackageVersionProvider,
         logger: ILogger,
-        decorators?: IDecorator<any>[],
+        decorators?: IDecorator<any, any>[],
         maxDepth?: number
     ): IPackageVisitor;
 }
@@ -33,7 +33,7 @@ export const Visitor: IVisitorConstructor = class Visitor implements IPackageVis
         private readonly _entry: PackageVersion,
         private readonly _provider: IPackageVersionProvider,
         private readonly _logger: ILogger,
-        private readonly _decorators: IDecorator<any>[] = [],
+        private readonly _decorators: IDecorator<any, any>[] = [],
         private readonly _maxDepth: number = Infinity
     ) {}
 

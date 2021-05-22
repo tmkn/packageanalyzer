@@ -18,7 +18,7 @@ export class ReleaseMetrics {
 
     private _getPublished(p: Package): Date | undefined {
         try {
-            const { published } = p.getDecoratorData(ReleaseDecorator);
+            const { published } = p.getDecoratorData<ReleaseDecorator>("releaseinfo");
 
             return published;
         } catch {

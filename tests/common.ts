@@ -22,7 +22,7 @@ interface ITestReport {
     pkg: PackageVersion;
     report: (pkg: Package, formatter: IFormatter) => Promise<void>;
 
-    decorators?: IDecorator<any>[];
+    decorators?: IDecorator<any, any>[];
     provider?: IPackageVersionProvider;
     type?: DependencyTypes;
     depth?: number;
@@ -32,7 +32,7 @@ export class TestReport implements IReport<ITestReport> {
     name = `Test Report`;
     pkg: PackageVersion;
 
-    decorators?: IDecorator<any>[];
+    decorators?: IDecorator<any, any>[];
     provider?: IPackageVersionProvider;
     type?: DependencyTypes;
     depth?: number;

@@ -9,7 +9,7 @@ export interface IReport<T extends {}> {
     readonly params: T;
     readonly pkg: PackageVersion;
 
-    readonly decorators?: IDecorator<any>[];
+    readonly decorators?: IDecorator<any, any>[];
     readonly provider?: IPackageVersionProvider;
     readonly type?: DependencyTypes;
     readonly depth?: number;
