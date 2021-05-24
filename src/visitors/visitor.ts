@@ -4,7 +4,7 @@ import * as fs from "fs";
 import { IPackageVersionProvider } from "../providers/folder";
 import { Package } from "../package/package";
 import { INpmKeyValue, INpmPackageVersion } from "../npm";
-import { ILogger } from "../utils/logger";
+import { ILogger, numPadding } from "../utils/logger";
 import { IDecorator } from "../extensions/decorators/Decorator";
 
 export type PackageVersion = [name: string, version?: string];
@@ -109,13 +109,19 @@ export const Visitor: IVisitorConstructor = class Visitor implements IPackageVis
     }
 
     private async _addDecorator(p: Package): Promise<void> {
-        for (const decorator of this._decorators) {
+        const totalDecorators = this._decorators.length;
+
+        for (const [i, decorator] of this._decorators.entries()) {
             try {
-                this._logger.log(`[${decorator.name}]${p.fullName}`);
+                const decoratorMsg = `[${p.fullName}][Decorator: ${numPadding(
+                    i,
+                    totalDecorators
+                )} - ${decorator.name}]`;
+                this._logger.log(decoratorMsg);
 
                 const data = await decorator.apply({
                     p,
-                    logger: (msg: string) => this._logger.log(msg)
+                    logger: (msg: string) => this._logger.log(`${decoratorMsg} - ${msg}`)
                 });
 
                 p.setDecoratorData(decorator.key, data);
