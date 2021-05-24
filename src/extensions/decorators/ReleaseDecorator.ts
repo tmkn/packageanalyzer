@@ -1,27 +1,15 @@
 import { INpmPackageProvider } from "../../providers/folder";
-import { IApplyArgs, IDecoratorStatic } from "./Decorator";
+import { IApplyArgs, IDecorator } from "./Decorator";
 
 interface IReleaseData {
     published: Date;
 }
 
-const ReleaseExtensionSymbol = Symbol();
-
-export const ReleaseDecorator: IDecoratorStatic<
-    IReleaseData,
-    [INpmPackageProvider]
-> = class ReleaseExtension {
-    static get key(): Symbol {
-        return ReleaseExtensionSymbol;
-    }
-
+export class ReleaseDecorator implements IDecorator<"releaseinfo", IReleaseData> {
     constructor(private _provider: INpmPackageProvider) {}
 
     readonly name: string = `ReleaseDecorator`;
-
-    get key(): Symbol {
-        return ReleaseExtension.key;
-    }
+    readonly key = "releaseinfo";
 
     async apply({ p }: IApplyArgs): Promise<IReleaseData> {
         const info = await this._provider.getPackageInfo(p.name);
@@ -37,4 +25,4 @@ export const ReleaseDecorator: IDecoratorStatic<
             published: new Date(released)
         };
     }
-};
+}

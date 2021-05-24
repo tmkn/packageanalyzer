@@ -32,7 +32,7 @@ export class AnalyzeReport implements IReport<IAnalyzeParams> {
     pkg: PackageVersion;
     type: DependencyTypes;
     provider?: IPackageVersionProvider;
-    decorators?: IDecorator<any>[] = [];
+    decorators?: IDecorator<any, any>[] = [];
 
     constructor(readonly params: IAnalyzeParams) {
         if (params.package) {
