@@ -26,8 +26,8 @@ interface IPackage<T> {
 
     getData(key: string): unknown;
 
-    getDecoratorData<E extends IDecorator<any, any>>(decorator: E): DecoratorData<E> | undefined;
-    setDecoratorData<E extends IDecorator<any, any>>(decorator: E, data: DecoratorData<E>): void;
+    getDecoratorData<T extends IDecorator<any, any>>(decorator: T): DecoratorData<T> | undefined;
+    setDecoratorData<T extends IDecorator<any, any>>(decorator: T, data: DecoratorData<T>): void;
 }
 
 export class Package implements IPackage<Package> {
