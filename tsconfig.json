@@ -6,7 +6,8 @@
         "target": "es6",
         "module": "commonjs",
         "declaration": true,
-        "experimentalDecorators": true
+        "experimentalDecorators": true,
+        "noImplicitOverride": true
     },
     "include": ["src", "tests"]
 
