@@ -21,7 +21,7 @@ export class AnalyzeCommand extends Command {
     @Command.Boolean(`--full`, { description: `show all information` })
     public full: boolean = false;
 
-    static usage = Command.Usage({
+    static override usage = Command.Usage({
         description: `analyze a npm package or a local project`,
         details: `
             This command will print information about a NPM package or about a local project.\n

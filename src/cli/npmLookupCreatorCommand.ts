@@ -6,7 +6,7 @@ export class NpmDumpLookupCreatorCommand extends Command {
     @Command.String(`--npmfile`, { description: `path to a npmdump.json` })
     public npmFile?: string;
 
-    static usage = Command.Usage({
+    static override usage = Command.Usage({
         category: `Developer Tools`,
         description: `creates a lookup file from a NPM dump`,
         details: `
