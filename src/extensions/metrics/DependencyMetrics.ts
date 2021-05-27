@@ -33,7 +33,7 @@ export class DependencyMetrics {
     }
 
     //todo possible multiple matches
-    get mostReferred(): [string, number] {
+    get mostReferred(): [Name, number] {
         const mostReferred: Map<string, number> = new Map();
         let max = 0;
         let name = "";
@@ -79,7 +79,7 @@ export class DependencyMetrics {
         return all;
     }
 
-    get distinctByName(): Set<string> {
+    get distinctByName(): Set<Name> {
         const distinct: Set<string> = new Set();
 
         this._p.visit(d => distinct.add(d.name), true);
@@ -103,7 +103,7 @@ export class DependencyMetrics {
         return map;
     }
 
-    get sorted(): Map<string, Map<string, Package>> {
+    get sorted(): Map<Name, Map<Version, Package>> {
         const sorted: Map<string, Map<string, Package>> = new Map();
 
         this._p.visit(d => {
@@ -117,5 +117,48 @@ export class DependencyMetrics {
         }, true);
 
         return sorted;
+    }
+}
+
+//utility functions for the dependency tree
+export class DependencyMetrics2 {
+    constructor(private _p: Package, private _includeSelf: boolean) {}
+
+    get transitiveCount(): number {
+        throw new Error(`Not Implemented`);
+    }
+
+    get distinctNameCount(): number {
+        throw new Error(`Not Implemented`);
+    }
+
+    get distinctVersionCount(): number {
+        throw new Error(`Not Implemented`);
+    }
+
+    get distinctNames(): Set<Name> {
+        throw new Error(`Not Implemented`);
+    }
+
+    //todo multiple matches
+    get mostReferred(): [Name, number] {
+        throw new Error(`Not Implemented`);
+    }
+
+    //todo possible multiple matches
+    get mostDirectDependencies(): Package {
+        throw new Error(`Not Implemented`);
+    }
+
+    get mostVersions(): VersionSummary {
+        throw new Error(`Not Implemented`);
+    }
+
+    get all(): Package[] {
+        throw new Error(`Not Implemented`);
+    }
+
+    get group(): Map<Name, Map<Version, Package>> {
+        throw new Error(`Not Implemented`);
     }
 }
