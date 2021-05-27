@@ -9,23 +9,13 @@ import { IDecorator } from "../extensions/decorators/Decorator";
 
 export type PackageVersion = [name: string, version?: string];
 
-interface IVisitorConstructor {
-    new (
-        entry: PackageVersion,
-        provider: IPackageVersionProvider,
-        logger: ILogger,
-        decorators?: IDecorator<any, any>[],
-        maxDepth?: number
-    ): IPackageVisitor;
-}
-
-export interface IPackageVisitor {
+interface IPackageVisitor {
     visit: (depType?: DependencyTypes) => Promise<Package>;
 }
 
 export type DependencyTypes = "dependencies" | "devDependencies";
 
-export const Visitor: IVisitorConstructor = class Visitor implements IPackageVisitor {
+export class Visitor implements IPackageVisitor {
     private _depthStack: string[] = [];
     private _depType: DependencyTypes = "dependencies";
 
