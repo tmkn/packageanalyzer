@@ -24,7 +24,7 @@ export class DependencyDumper {
     async save(baseDir: string): Promise<void> {
         if (!this.pkg || !this._provider) throw new Error(`pkg or provider is undefined`);
 
-        const distinct: Set<string> = new DependencyMetrics(this.pkg).distinctByName;
+        const distinct: Set<string> = new DependencyMetrics(this.pkg).withSelf.distinctNames;
         const logger = new OraLogger();
 
         fs.mkdir(baseDir, { recursive: true });

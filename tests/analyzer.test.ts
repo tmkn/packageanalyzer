@@ -63,7 +63,7 @@ describe(`Package Tests`, () => {
     });
 
     test(`Checks package with most direct dependencies`, () => {
-        const mostDeps = new DependencyMetrics(p).mostDependencies;
+        const mostDeps = new DependencyMetrics(p).mostDirectDependencies;
 
         expect(mostDeps.name).toBe("react");
         expect(mostDeps.version).toBe("16.8.6");
@@ -98,7 +98,7 @@ describe(`Package Tests`, () => {
     });
 
     test(`Checks for package with most versions (all equal)`, () => {
-        const mostVersions = new DependencyMetrics(p).mostVersions;
+        const mostVersions = new DependencyMetrics(p).withSelf.mostVersions;
 
         expect(mostVersions.size).toBe(8);
 
@@ -176,11 +176,11 @@ describe(`Package Tests`, () => {
     });
 
     test(`Check all`, () => {
-        expect(new DependencyMetrics(p).all.length).toBe(14);
+        expect(new DependencyMetrics(p).withSelf.all.length).toBe(14);
     });
 
     test(`Check distinct`, () => {
-        expect(new DependencyMetrics(p).distinctByName.size).toBe(8);
+        expect(new DependencyMetrics(p).withSelf.distinctNames.size).toBe(8);
     });
 
     test(`Check loops`, () => {
