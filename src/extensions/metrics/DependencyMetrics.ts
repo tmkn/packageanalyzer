@@ -121,44 +121,123 @@ export class DependencyMetrics {
 }
 
 //utility functions for the dependency tree
-export class DependencyMetrics2 {
+class BaseDependencyMetrics {
     constructor(private _p: Package, private _includeSelf: boolean) {}
 
     get transitiveCount(): number {
-        throw new Error(`Not Implemented`);
+        let count = 0;
+
+        this._p.visit(() => count++, this._includeSelf);
+
+        return count;
     }
 
     get distinctNameCount(): number {
-        throw new Error(`Not Implemented`);
+        return this.distinctNames.size;
     }
 
     get distinctVersionCount(): number {
-        throw new Error(`Not Implemented`);
+        const packageNames: Set<string> = new Set();
+
+        this._p.visit(d => packageNames.add(d.fullName), this._includeSelf);
+
+        return packageNames.size;
     }
 
     get distinctNames(): Set<Name> {
-        throw new Error(`Not Implemented`);
+        const distinct: Set<string> = new Set();
+
+        this._p.visit(d => distinct.add(d.name), this._includeSelf);
+
+        return distinct;
     }
 
     //todo multiple matches
     get mostReferred(): [Name, number] {
-        throw new Error(`Not Implemented`);
+        const mostReferred: Map<string, number> = new Map();
+        let max = 0;
+        let name = "";
+
+        this._p.visit(d => {
+            const entry = mostReferred.get(d.name);
+
+            if (entry) {
+                mostReferred.set(d.name, entry + 1);
+            } else {
+                mostReferred.set(d.name, 1);
+            }
+        }, this._includeSelf);
+
+        for (const [pkgName, count] of mostReferred) {
+            if (count > max) {
+                max = count;
+                name = pkgName;
+            }
+        }
+
+        return [name, max];
     }
 
     //todo possible multiple matches
     get mostDirectDependencies(): Package {
-        throw new Error(`Not Implemented`);
+        let most: Package = this._p;
+
+        this._p.visit(d => {
+            if (most.directDependencies.length < d.directDependencies.length) {
+                most = d;
+            }
+        }, this._includeSelf);
+
+        return most;
     }
 
     get mostVersions(): VersionSummary {
-        throw new Error(`Not Implemented`);
+        let max = 0;
+        let map: VersionSummary = new Map();
+
+        for (const [name, versions] of this.group) {
+            if (versions.size > max) {
+                max = versions.size;
+                map = new Map([[name, new Set(versions.keys())]]);
+            } else if (max === versions.size) {
+                map.set(name, new Set(versions.keys()));
+            }
+        }
+
+        return map;
     }
 
     get all(): Package[] {
-        throw new Error(`Not Implemented`);
+        const all: Package[] = [];
+
+        this._p.visit(d => all.push(d), this._includeSelf);
+
+        return all;
     }
 
     get group(): Map<Name, Map<Version, Package>> {
-        throw new Error(`Not Implemented`);
+        const sorted: Map<string, Map<string, Package>> = new Map();
+
+        this._p.visit(d => {
+            const packageName = sorted.get(d.name);
+
+            if (packageName) {
+                packageName.set(d.version, d);
+            } else {
+                sorted.set(d.name, new Map([[d.version, d]]));
+            }
+        }, this._includeSelf);
+
+        return sorted;
+    }
+}
+
+export class DependencyMetrics2 extends BaseDependencyMetrics {
+    withSelf: BaseDependencyMetrics;
+
+    constructor(_p: Package, _includeSelf: boolean = false) {
+        super(_p, _includeSelf);
+
+        this.withSelf = new BaseDependencyMetrics(_p, true);
     }
 }

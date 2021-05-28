@@ -120,7 +120,7 @@ export class Visitor implements IPackageVisitor {
             }
         }
     }
-};
+}
 
 export function getPackageVersionfromString(name: string): PackageVersion {
     if (name.startsWith(`@`)) {
