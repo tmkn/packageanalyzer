@@ -182,9 +182,9 @@ function printLoops(p: Package, paddingLeft: number, formatter: IFormatter): voi
     }
 }
 
-function printMostDependencies(p: Package, formatter: IFormatter): void {
+function printMostDependencies(pkgs: Package[], formatter: IFormatter): void {
     formatter.writeGroup([
-        [`Most direct dependencies`, `"${p.name}": ${p.directDependencies.length}`]
+        [`Most direct dependencies`, `"[${pkgs.map(p => p.name).join(`, `)}]": ${pkgs[0].directDependencies.length}`]
     ]);
 }
 

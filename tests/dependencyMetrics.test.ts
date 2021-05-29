@@ -25,7 +25,7 @@ describe(`Dependency Metrics Tests`, () => {
     });
 
     test(`Checks package with most direct dependencies`, () => {
-        const mostDeps = new DependencyMetrics(p).mostDirectDependencies;
+        const [mostDeps] = new DependencyMetrics(p).mostDirectDependencies;
 
         expect(mostDeps.name).toBe("react");
         expect(mostDeps.version).toBe("16.8.6");

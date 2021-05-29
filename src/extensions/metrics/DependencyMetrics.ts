@@ -63,13 +63,15 @@ class BaseDependencyMetrics {
         return [name, max];
     }
 
-    //todo possible multiple matches
-    get mostDirectDependencies(): Package {
-        let most: Package = this._p;
+    get mostDirectDependencies(): Package[] {
+        let most: Package[] = [this._p];
 
         this._p.visit(d => {
-            if (most.directDependencies.length < d.directDependencies.length) {
-                most = d;
+            if(d.directDependencies.length > most[0].directDependencies.length) {
+                most = [d];
+            }
+            else if(d.directDependencies.length === most[0].directDependencies.length) {
+                most.push(d);
             }
         }, this._includeSelf);
 
