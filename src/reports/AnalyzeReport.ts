@@ -192,9 +192,8 @@ function printMostDependencies(pkgs: Package[], formatter: IFormatter): void {
 }
 
 function printMostReferred(arg: [string, number][], formatter: IFormatter): void {
-    const str: string = `[${[...arg.values()].map(([name]) => name).join(`, `)}]: ${
-        [...arg.keys()][0]
-    }`;
+    const [, num] = [...arg.values()][0];
+    const str: string = `"[${[...arg.values()].map(([name]) => name).join(`, `)}]": ${num}`;
 
     formatter.writeGroup([[`Most referred package`, `${str}`]]);
 }
