@@ -7,9 +7,7 @@ import { PathMetrics } from "./PathMetrics";
 export function printDependencyTree(p: Package, formatter: IFormatter): void {
     const converter: ITreeFormatter<Package> = {
         getLabel: data =>
-            `${data.fullName} (${
-                new DependencyMetrics(data).transitiveCount
-            } dependencies)`,
+            `${data.fullName} (${new DependencyMetrics(data).transitiveCount} dependencies)`,
         getChildren: data => data.directDependencies
     };
 

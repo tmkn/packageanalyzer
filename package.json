@@ -17,7 +17,7 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "test:clean": "node build/tests/clean.js",
-    "prettier": "prettier --write \"{src,tests,utility}/**/{*.ts,*.js}\"",
+    "prettier": "prettier --parser babel-ts --write \"{src,tests,utility}/**/{*.ts,*.js}\"",
     "pa": "node build/src/cli.js",
     "preview": "npm pack && tar -xvzf *.tgz && rm -rf package *.tgz",
     "lint": "eslint \"src/**\" \"tests/**\"",

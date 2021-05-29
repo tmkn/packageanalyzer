@@ -9,7 +9,11 @@ import { DependencyTypes, PackageVersion } from "../src/visitors/visitor";
 export class TestWritable extends Writable {
     public lines: string[] = [];
 
-    override _write(chunk: any, encoding: BufferEncoding, callback: (error?: Error | null) => void): void {
+    override _write(
+        chunk: any,
+        encoding: BufferEncoding,
+        callback: (error?: Error | null) => void
+    ): void {
         const data: string = chunk.toString();
 
         this.lines.push(data.trimEnd());

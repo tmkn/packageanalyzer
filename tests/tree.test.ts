@@ -98,9 +98,7 @@ describe(`Tree Tests`, () => {
 
         const converter: ITreeFormatter<Package> = {
             getLabel: data => [
-                `${data.fullName} (${
-                    new DependencyMetrics(data).transitiveCount
-                } dependencies)`,
+                `${data.fullName} (${new DependencyMetrics(data).transitiveCount} dependencies)`,
                 `License: ${new LicenseMetrics(data).license}`
             ],
             getChildren: data => data.directDependencies

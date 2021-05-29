@@ -50,19 +50,23 @@ class BaseDependencyMetrics {
             }
         }, this._includeSelf);
 
-        let max: number = [...mostReferred.values()].reduce((prev, current) => current > prev ? current : prev, 0);
+        let max: number = [...mostReferred.values()].reduce(
+            (prev, current) => (current > prev ? current : prev),
+            0
+        );
 
-        return [...mostReferred.entries()].filter(([, count]) => count === max).map(([name, count]) => [name, count]);
+        return [...mostReferred.entries()]
+            .filter(([, count]) => count === max)
+            .map(([name, count]) => [name, count]);
     }
 
     get mostDirectDependencies(): Package[] {
         let most: Package[] = [this._p];
 
         this._p.visit(d => {
-            if(d.directDependencies.length > most[0].directDependencies.length) {
+            if (d.directDependencies.length > most[0].directDependencies.length) {
                 most = [d];
-            }
-            else if(d.directDependencies.length === most[0].directDependencies.length) {
+            } else if (d.directDependencies.length === most[0].directDependencies.length) {
                 most.push(d);
             }
         }, this._includeSelf);
