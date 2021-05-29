@@ -37,11 +37,8 @@ class BaseDependencyMetrics {
         return distinct;
     }
 
-    //todo multiple matches
-    get mostReferred(): [Name, number] {
+    get mostReferred(): [Name, number][] {
         const mostReferred: Map<string, number> = new Map();
-        let max = 0;
-        let name = "";
 
         this._p.visit(d => {
             const entry = mostReferred.get(d.name);
@@ -53,14 +50,9 @@ class BaseDependencyMetrics {
             }
         }, this._includeSelf);
 
-        for (const [pkgName, count] of mostReferred) {
-            if (count > max) {
-                max = count;
-                name = pkgName;
-            }
-        }
+        let max: number = [...mostReferred.values()].reduce((prev, current) => current > prev ? current : prev, 0);
 
-        return [name, max];
+        return [...mostReferred.entries()].filter(([, count]) => count === max).map(([name, count]) => [name, count]);
     }
 
     get mostDirectDependencies(): Package[] {

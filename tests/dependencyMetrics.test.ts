@@ -33,7 +33,7 @@ describe(`Dependency Metrics Tests`, () => {
     });
 
     test(`Checks package that is most referred`, () => {
-        const [name, times] = new DependencyMetrics(p).mostReferred;
+        const [[name, times]] = new DependencyMetrics(p).mostReferred;
 
         expect(name).toBe("loose-envify");
         expect(times).toBe(3);
