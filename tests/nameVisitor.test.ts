@@ -35,15 +35,15 @@ describe(`visitFromFolder Tests`, () => {
     });
 
     test(`Checks transitive dependencies`, () => {
-        expect(new DependencyMetrics(p).transitiveDependenciesCount).toBe(4279);
+        expect(new DependencyMetrics(p).transitiveCount).toBe(4279);
     });
 
     test(`Checks distinct dependencies by name`, () => {
-        expect(new DependencyMetrics(p).distinctByNameCount).toBe(308);
+        expect(new DependencyMetrics(p).distinctNameCount).toBe(308);
     });
 
     test(`Checks distinct dependencies by name and version`, () => {
-        expect(new DependencyMetrics(p).distinctByVersionCount).toBe(333);
+        expect(new DependencyMetrics(p).distinctVersionCount).toBe(333);
     });
 
     test(`Checks visit method`, () => {

@@ -72,13 +72,13 @@ async function printAllStatistics(p: Package, formatter: IFormatter): Promise<vo
     await printNewest(p, formatter);
     printDependencyCount(p, formatter);
     printDistinctDependencies(
-        new DependencyMetrics(p).distinctByNameCount,
-        new DependencyMetrics(p).distinctByVersionCount,
+        new DependencyMetrics(p).distinctNameCount,
+        new DependencyMetrics(p).distinctVersionCount,
         PaddingLeft,
         formatter
     );
     printMostReferred(new DependencyMetrics(p).mostReferred, formatter);
-    printMostDependencies(new DependencyMetrics(p).mostDependencies, formatter);
+    printMostDependencies(new DependencyMetrics(p).mostDirectDependencies, formatter);
     printMostVersion(new DependencyMetrics(p).mostVersions, PaddingLeft, formatter);
     printLoops(p, PaddingLeft, formatter);
     printLicenseInfo(new LicenseMetrics(p).licensesByGroup, PaddingLeft, formatter);
@@ -86,9 +86,9 @@ async function printAllStatistics(p: Package, formatter: IFormatter): Promise<vo
 
 function printBasicStatistics(p: Package, formatter: IFormatter): void {
     printDependencyCount(p, formatter);
-    printSimpleDistinctDependencies(new DependencyMetrics(p).distinctByNameCount, formatter);
+    printSimpleDistinctDependencies(new DependencyMetrics(p).distinctNameCount, formatter);
     printMostReferred(new DependencyMetrics(p).mostReferred, formatter);
-    printMostDependencies(new DependencyMetrics(p).mostDependencies, formatter);
+    printMostDependencies(new DependencyMetrics(p).mostDirectDependencies, formatter);
     printMostVersion(new DependencyMetrics(p).mostVersions, PaddingLeft, formatter);
     printSimpleLicenseInfo(new LicenseMetrics(p).licensesByGroup, PaddingLeft, formatter);
 }
@@ -96,7 +96,7 @@ function printBasicStatistics(p: Package, formatter: IFormatter): void {
 function printDependencyCount(p: Package, formatter: IFormatter): void {
     formatter.writeGroup([
         [`Direct dependencies`, `${p.directDependencies.length}`],
-        [`Transitive dependencies`, `${new DependencyMetrics(p).transitiveDependenciesCount}`]
+        [`Transitive dependencies`, `${new DependencyMetrics(p).transitiveCount}`]
     ]);
 }
 
@@ -182,14 +182,16 @@ function printLoops(p: Package, paddingLeft: number, formatter: IFormatter): voi
     }
 }
 
-function printMostDependencies(p: Package, formatter: IFormatter): void {
+function printMostDependencies(pkgs: Package[], formatter: IFormatter): void {
     formatter.writeGroup([
-        [`Most direct dependencies`, `"${p.name}": ${p.directDependencies.length}`]
+        [`Most direct dependencies`, `"[${pkgs.map(p => p.name).join(`, `)}]": ${pkgs[0].directDependencies.length}`]
     ]);
 }
 
-function printMostReferred(arg: [string, number], formatter: IFormatter): void {
-    formatter.writeGroup([[`Most referred package`, `"${arg[0]}": ${arg[1]}x`]]);
+function printMostReferred(arg: [string, number][], formatter: IFormatter): void {
+    const str: string = `[${[...arg.values()].map(([name]) => name).join(`, `)}]: ${[...arg.keys()][0]}`;
+
+    formatter.writeGroup([[`Most referred package`, `${str}`]]);
 }
 
 function printMostVersion(

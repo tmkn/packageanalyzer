@@ -8,7 +8,7 @@ export function printDependencyTree(p: Package, formatter: IFormatter): void {
     const converter: ITreeFormatter<Package> = {
         getLabel: data =>
             `${data.fullName} (${
-                new DependencyMetrics(data).transitiveDependenciesCount
+                new DependencyMetrics(data).transitiveCount
             } dependencies)`,
         getChildren: data => data.directDependencies
     };

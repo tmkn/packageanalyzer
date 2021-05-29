@@ -130,7 +130,7 @@ function _createServer(): Promise<MockNpmServer> {
 }
 
 export async function createServer(): Promise<MockNpmServer> {
-    const maxRetries = 20;
+    const maxRetries = 100;
     let server: MockNpmServer | null = null;
 
     return new Promise(async (resolve, reject) => {

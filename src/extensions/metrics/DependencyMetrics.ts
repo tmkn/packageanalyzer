@@ -5,38 +5,40 @@ type Version = string;
 
 export type VersionSummary = Map<Name, Set<Version>>;
 
-export class DependencyMetrics {
-    constructor(private _p: Package) {}
+//utility functions for the dependency tree
+class BaseDependencyMetrics {
+    constructor(private _p: Package, private _includeSelf: boolean) {}
 
-    get transitiveDependenciesCount(): number {
+    get transitiveCount(): number {
         let count = 0;
 
-        this._p.visit(() => count++);
+        this._p.visit(() => count++, this._includeSelf);
 
         return count;
     }
 
-    get distinctByNameCount(): number {
+    get distinctNameCount(): number {
+        return this.distinctNames.size;
+    }
+
+    get distinctVersionCount(): number {
         const packageNames: Set<string> = new Set();
 
-        this._p.visit(d => packageNames.add(d.name));
+        this._p.visit(d => packageNames.add(d.fullName), this._includeSelf);
 
         return packageNames.size;
     }
 
-    get distinctByVersionCount(): number {
-        const packageNames: Set<string> = new Set();
+    get distinctNames(): Set<Name> {
+        const distinct: Set<string> = new Set();
 
-        this._p.visit(d => packageNames.add(d.fullName));
+        this._p.visit(d => distinct.add(d.name), this._includeSelf);
 
-        return packageNames.size;
+        return distinct;
     }
 
-    //todo possible multiple matches
-    get mostReferred(): [string, number] {
+    get mostReferred(): [Name, number][] {
         const mostReferred: Map<string, number> = new Map();
-        let max = 0;
-        let name = "";
 
         this._p.visit(d => {
             const entry = mostReferred.get(d.name);
@@ -46,52 +48,33 @@ export class DependencyMetrics {
             } else {
                 mostReferred.set(d.name, 1);
             }
-        }, true);
+        }, this._includeSelf);
 
-        for (const [pkgName, count] of mostReferred) {
-            if (count > max) {
-                max = count;
-                name = pkgName;
-            }
-        }
+        let max: number = [...mostReferred.values()].reduce((prev, current) => current > prev ? current : prev, 0);
 
-        return [name, max];
+        return [...mostReferred.entries()].filter(([, count]) => count === max).map(([name, count]) => [name, count]);
     }
 
-    //todo possible multiple matches
-    get mostDependencies(): Package {
-        let most: Package = this._p;
+    get mostDirectDependencies(): Package[] {
+        let most: Package[] = [this._p];
 
         this._p.visit(d => {
-            if (most.directDependencies.length < d.directDependencies.length) {
-                most = d;
+            if(d.directDependencies.length > most[0].directDependencies.length) {
+                most = [d];
             }
-        });
+            else if(d.directDependencies.length === most[0].directDependencies.length) {
+                most.push(d);
+            }
+        }, this._includeSelf);
 
         return most;
-    }
-
-    get all(): Package[] {
-        const all: Package[] = [];
-
-        this._p.visit(d => all.push(d), true);
-
-        return all;
-    }
-
-    get distinctByName(): Set<string> {
-        const distinct: Set<string> = new Set();
-
-        this._p.visit(d => distinct.add(d.name), true);
-
-        return distinct;
     }
 
     get mostVersions(): VersionSummary {
         let max = 0;
         let map: VersionSummary = new Map();
 
-        for (const [name, versions] of this.sorted) {
+        for (const [name, versions] of this.group) {
             if (versions.size > max) {
                 max = versions.size;
                 map = new Map([[name, new Set(versions.keys())]]);
@@ -103,7 +86,15 @@ export class DependencyMetrics {
         return map;
     }
 
-    get sorted(): Map<string, Map<string, Package>> {
+    get all(): Package[] {
+        const all: Package[] = [];
+
+        this._p.visit(d => all.push(d), this._includeSelf);
+
+        return all;
+    }
+
+    get group(): Map<Name, Map<Version, Package>> {
         const sorted: Map<string, Map<string, Package>> = new Map();
 
         this._p.visit(d => {
@@ -114,8 +105,18 @@ export class DependencyMetrics {
             } else {
                 sorted.set(d.name, new Map([[d.version, d]]));
             }
-        }, true);
+        }, this._includeSelf);
 
         return sorted;
+    }
+}
+
+export class DependencyMetrics extends BaseDependencyMetrics {
+    withSelf: BaseDependencyMetrics;
+
+    constructor(_p: Package, _includeSelf: boolean = false) {
+        super(_p, _includeSelf);
+
+        this.withSelf = new BaseDependencyMetrics(_p, true);
     }
 }
