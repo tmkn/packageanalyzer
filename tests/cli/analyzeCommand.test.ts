@@ -5,7 +5,7 @@ import { BaseContext } from "clipanion";
 
 import { cli } from "../../src/cli";
 import { OnlinePackageProvider } from "../../src/providers/online";
-import { createServer, MockNpmServer } from "../server";
+import { createMockNpmServer, MockNpmServer } from "../server";
 
 describe(`Analyze Command`, () => {
     const mockContext: BaseContext = {
@@ -18,7 +18,7 @@ describe(`Analyze Command`, () => {
     let provider: OnlinePackageProvider;
 
     beforeAll(async () => {
-        server = await createServer();
+        server = await createMockNpmServer();
         provider = new OnlinePackageProvider(`http://localhost:${server.port}`);
     });
 

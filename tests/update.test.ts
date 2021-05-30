@@ -6,14 +6,14 @@ import {
     updateInfo
 } from "../src/utils/update";
 import { OnlinePackageProvider } from "../src/providers/online";
-import { createServer, MockNpmServer } from "./server";
+import { createMockNpmServer, MockNpmServer } from "./server";
 
 describe(`Update Tests`, () => {
     let server: MockNpmServer;
     let provider: OnlinePackageProvider;
 
     beforeAll(async () => {
-        server = await createServer();
+        server = await createMockNpmServer();
         provider = new OnlinePackageProvider(`http://localhost:${server.port}`);
     });
 

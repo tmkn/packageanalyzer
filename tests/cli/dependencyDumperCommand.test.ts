@@ -3,7 +3,7 @@ import { promises as fs } from "fs";
 import { PassThrough } from "stream";
 
 import { cli } from "../../src/cli";
-import { createServer, MockNpmServer } from "../server";
+import { createMockNpmServer, MockNpmServer } from "../server";
 import { DependencyDumperCommand } from "../../src/cli/dependencyDumpCommand";
 import { TestWritable } from "../common";
 
@@ -12,7 +12,7 @@ describe(`Dependency Dumper`, () => {
     const outputFolder = path.join(process.cwd(), `tmp`, `dump`);
 
     beforeAll(async () => {
-        server = await createServer();
+        server = await createMockNpmServer();
     });
 
     test(`works`, async () => {

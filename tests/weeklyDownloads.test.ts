@@ -2,13 +2,13 @@ import { getDownloadsLastWeek } from "../src/npm";
 import { DownloadReport } from "../src/reports/DownloadCountReport";
 import { Formatter } from "../src/utils/formatter";
 import { TestWritable } from "./common";
-import { createServer, MockNpmServer } from "./server";
+import { createMockNpmServer, MockNpmServer } from "./server";
 
 describe(`Download Tests`, () => {
     let server: MockNpmServer;
 
     beforeAll(async () => {
-        server = await createServer();
+        server = await createMockNpmServer();
     });
 
     afterAll(() => server.close());
@@ -24,7 +24,7 @@ describe(`DownloadCountReport Tests`, () => {
     let server: MockNpmServer;
 
     beforeAll(async () => {
-        server = await createServer();
+        server = await createMockNpmServer();
     });
 
     afterAll(() => server.close());

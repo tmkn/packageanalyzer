@@ -62,7 +62,7 @@ export class MockNpmServer {
 
                     res.json(mock);
                 }
-            } else if (name === "_downloads" || name === "react") {
+            } else if (name === "_downloads") {
                 res.json({
                     downloads: 8609192,
                     start: "2020-11-27",
@@ -119,7 +119,7 @@ function getPort() {
     return i++;
 }
 
-function _createServer(): Promise<MockNpmServer> {
+function _createMockNpmServer(): Promise<MockNpmServer> {
     return new Promise((resolve, reject) => {
         const server: MockNpmServer = new MockNpmServer(
             getPort(),
@@ -129,14 +129,85 @@ function _createServer(): Promise<MockNpmServer> {
     });
 }
 
-export async function createServer(): Promise<MockNpmServer> {
+export async function createMockNpmServer(): Promise<MockNpmServer> {
     const maxRetries = 100;
     let server: MockNpmServer | null = null;
 
     return new Promise(async (resolve, reject) => {
         for (let i = 0; i < maxRetries; i++) {
             try {
-                server = await _createServer();
+                server = await _createMockNpmServer();
+
+                break;
+            } catch (e) {}
+        }
+
+        if (server) {
+            resolve(server);
+        } else reject();
+    });
+}
+
+export class MockDownloadServer {
+    private _server: Server;
+
+    constructor(public readonly port: number, private _success?: Cb, private _failure?: Cb) {
+        const app = express();
+
+        app.get(`/:name`, (req, res) => {
+            const { name } = req.params;
+
+            if (name === "_downloads" || name === "react") {
+                res.json({
+                    downloads: 8609192,
+                    start: "2020-11-27",
+                    end: "2020-12-03",
+                    package: "react"
+                });
+            }
+        });
+
+        this._server = app
+            .listen(this.port, () => {
+                process.stdout.write(`Started MockDownloadServer\n`);
+                if (this._success) this._success();
+            })
+            .on("error", e => {
+                process.stderr.write(e.message);
+
+                if (this._failure) this._failure();
+            });
+    }
+
+    close(): Promise<void> {
+        return new Promise(resolve => {
+            this._server.close(e => {
+                if (e) process.stderr.write(e.message);
+
+                resolve();
+            });
+        });
+    }
+}
+
+function _createMockDownloadServer(): Promise<MockDownloadServer> {
+    return new Promise((resolve, reject) => {
+        const server: MockDownloadServer = new MockDownloadServer(
+            getPort(),
+            () => resolve(server),
+            () => reject()
+        );
+    });
+}
+
+export async function createMockDownloadServer(): Promise<MockDownloadServer> {
+    const maxRetries = 100;
+    let server: MockDownloadServer | null = null;
+
+    return new Promise(async (resolve, reject) => {
+        for (let i = 0; i < maxRetries; i++) {
+            try {
+                server = await _createMockDownloadServer();
 
                 break;
             } catch (e) {}

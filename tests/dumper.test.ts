@@ -2,7 +2,7 @@ import * as path from "path";
 import { promises as fs } from "fs";
 
 import { DependencyDumper, DependencyDumperProvider } from "../src/utils/dumper";
-import { createServer, MockNpmServer } from "./server";
+import { createMockNpmServer, MockNpmServer } from "./server";
 import { DependencyUtilities } from "../src/extensions/utilities/DependencyUtilities";
 
 describe(`DependencyDumper Tests`, () => {
@@ -10,7 +10,7 @@ describe(`DependencyDumper Tests`, () => {
     const outputFolder = path.join(process.cwd(), `tmp`, `dump`);
 
     beforeAll(async () => {
-        server = await createServer();
+        server = await createMockNpmServer();
     });
 
     test(`Correctly collect package & dependencies from online registry`, async () => {

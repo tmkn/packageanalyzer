@@ -1,7 +1,7 @@
 import { OnlinePackageProvider } from "../src/providers/online";
 import { Visitor } from "../src/visitors/visitor";
 import { OraLogger } from "../src/utils/logger";
-import { createServer, MockNpmServer } from "./server";
+import { createMockNpmServer, MockNpmServer } from "./server";
 import { ReleaseDecorator } from "../src/extensions/decorators/ReleaseDecorator";
 import { ReleaseUtilities } from "../src/extensions/utilities/ReleaseUtilities";
 
@@ -10,7 +10,7 @@ describe(`OnlineProvider Tests`, () => {
     let provider: OnlinePackageProvider;
 
     beforeAll(async () => {
-        server = await createServer();
+        server = await createMockNpmServer();
         provider = new OnlinePackageProvider(`http://localhost:${server.port}`);
     });
 
