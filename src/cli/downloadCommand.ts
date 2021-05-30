@@ -17,11 +17,14 @@ export class DownloadCommand extends Command {
         examples: [[`Show the download count for a NPM package`, `$0 loops --package typescript`]]
     });
 
+    public static DownloadUrl?: string;
+
     @Command.Path(`downloads`)
     async execute() {
         if (typeof this.package !== "undefined") {
             const params: IDownloadParams = {
-                pkg: this.package
+                pkg: this.package,
+                url: DownloadCommand.DownloadUrl
             };
             const downloadReport = new DownloadReport(params);
 

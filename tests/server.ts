@@ -62,7 +62,7 @@ export class MockNpmServer {
 
                     res.json(mock);
                 }
-            } else if (name === "_downloads") {
+            } else if (name === "_downloads" || name === "react") {
                 res.json({
                     downloads: 8609192,
                     start: "2020-11-27",
