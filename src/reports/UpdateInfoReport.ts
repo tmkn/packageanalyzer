@@ -13,6 +13,7 @@ export interface IUpdateInfoParams {
     package: string;
     provider: OnlinePackageProvider;
 }
+
 export class UpdateInfoReport implements IReport<IUpdateInfoParams> {
     name = `Update Info Report`;
     pkg: PackageVersion;

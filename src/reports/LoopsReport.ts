@@ -11,6 +11,7 @@ export interface ILoopParams {
     package: string;
     type: DependencyTypes;
 }
+
 export class LoopsReport implements IReport<ILoopParams> {
     name = `Loop Report`;
     pkg: PackageVersion;
