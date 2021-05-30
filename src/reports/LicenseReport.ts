@@ -1,7 +1,7 @@
 import * as chalk from "chalk";
 
 import { defaultDependencyType } from "../cli/common";
-import { LicenseMetrics } from "../extensions/metrics/LicenseMetrics";
+import { LicenseUtilities } from "../extensions/utilities/LicenseUtilities";
 import { Package } from "../package/package";
 import { FileSystemPackageProvider, IPackageVersionProvider } from "../providers/folder";
 import { npmOnline } from "../providers/online";
@@ -75,12 +75,12 @@ class LicenseCheckPrinter {
         const groups: Map<string, Map<Package, ILicenseCheckResult>> = new Map();
 
         for (const [p, result] of this._licenseCheckResult.allChecks) {
-            const existingGroup = groups.get(new LicenseMetrics(p).license);
+            const existingGroup = groups.get(new LicenseUtilities(p).license);
 
             if (existingGroup) {
                 existingGroup.set(p, result);
             } else {
-                groups.set(new LicenseMetrics(p).license, new Map([[p, result]]));
+                groups.set(new LicenseUtilities(p).license, new Map([[p, result]]));
             }
         }
 
@@ -111,7 +111,7 @@ class LicenseCheckPrinter {
         const sorted = [...data].sort(([pa1], [pa2]) => pa1.name.localeCompare(pa2.name));
 
         for (const [p, result] of sorted) {
-            const str = `${p.fullName.padEnd(padding + 1)}${new LicenseMetrics(p).license}`;
+            const str = `${p.fullName.padEnd(padding + 1)}${new LicenseUtilities(p).license}`;
 
             if (result.ok) {
                 this._formatter.writeLine(`${chalk.green(str)}`);

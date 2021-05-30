@@ -7,8 +7,8 @@ import { ITreeFormatter, print } from "../src/utils/tree";
 import { Package } from "../src/package/package";
 import { Formatter } from "../src/utils/formatter";
 import { TestWritable } from "./common";
-import { DependencyMetrics } from "../src/extensions/metrics/DependencyMetrics";
-import { LicenseMetrics } from "../src/extensions/metrics/LicenseMetrics";
+import { DependencyUtilities } from "../src/extensions/utilities/DependencyUtilities";
+import { LicenseUtilities } from "../src/extensions/utilities/LicenseUtilities";
 
 const output = `
 testproject1@1.0.0
@@ -98,8 +98,8 @@ describe(`Tree Tests`, () => {
 
         const converter: ITreeFormatter<Package> = {
             getLabel: data => [
-                `${data.fullName} (${new DependencyMetrics(data).transitiveCount} dependencies)`,
-                `License: ${new LicenseMetrics(data).license}`
+                `${data.fullName} (${new DependencyUtilities(data).transitiveCount} dependencies)`,
+                `License: ${new LicenseUtilities(data).license}`
             ],
             getChildren: data => data.directDependencies
         };

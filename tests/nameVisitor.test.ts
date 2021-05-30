@@ -4,8 +4,8 @@ import { FileSystemPackageProvider } from "../src/providers/folder";
 import { Package } from "../src/package/package";
 import { Visitor } from "../src/visitors/visitor";
 import { OraLogger } from "../src/utils/logger";
-import { LicenseMetrics } from "../src/extensions/metrics/LicenseMetrics";
-import { DependencyMetrics } from "../src/extensions/metrics/DependencyMetrics";
+import { LicenseUtilities } from "../src/extensions/utilities/LicenseUtilities";
+import { DependencyUtilities } from "../src/extensions/utilities/DependencyUtilities";
 
 describe(`visitFromFolder Tests`, () => {
     let p: Package;
@@ -35,15 +35,15 @@ describe(`visitFromFolder Tests`, () => {
     });
 
     test(`Checks transitive dependencies`, () => {
-        expect(new DependencyMetrics(p).transitiveCount).toBe(4279);
+        expect(new DependencyUtilities(p).transitiveCount).toBe(4279);
     });
 
     test(`Checks distinct dependencies by name`, () => {
-        expect(new DependencyMetrics(p).distinctNameCount).toBe(308);
+        expect(new DependencyUtilities(p).distinctNameCount).toBe(308);
     });
 
     test(`Checks distinct dependencies by name and version`, () => {
-        expect(new DependencyMetrics(p).distinctVersionCount).toBe(333);
+        expect(new DependencyUtilities(p).distinctVersionCount).toBe(333);
     });
 
     test(`Checks visit method`, () => {
@@ -150,7 +150,7 @@ describe(`visitFromFolder Tests`, () => {
     });
 
     test(`Test group packages by license`, () => {
-        const [{ license, names }, ...rest] = new LicenseMetrics(p).licensesByGroup;
+        const [{ license, names }, ...rest] = new LicenseUtilities(p).licensesByGroup;
 
         expect(license).toBe("MIT");
         expect(names.length).toBe(239);

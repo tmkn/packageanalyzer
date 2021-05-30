@@ -3,7 +3,7 @@ import { promises as fs } from "fs";
 
 import { DependencyDumper, DependencyDumperProvider } from "../src/utils/dumper";
 import { createServer, MockNpmServer } from "./server";
-import { DependencyMetrics } from "../src/extensions/metrics/DependencyMetrics";
+import { DependencyUtilities } from "../src/extensions/utilities/DependencyUtilities";
 
 describe(`DependencyDumper Tests`, () => {
     let server: MockNpmServer;
@@ -33,7 +33,7 @@ describe(`DependencyDumper Tests`, () => {
 
         const folder = await fs.readdir(outputFolder);
 
-        expect(new DependencyMetrics(dumper.pkg!).withSelf.distinctNames.size).toEqual(folder.length);
+        expect(new DependencyUtilities(dumper.pkg!).withSelf.distinctNames.size).toEqual(folder.length);
     });
 
     test(`Throws on undefined pkg`, async () => {

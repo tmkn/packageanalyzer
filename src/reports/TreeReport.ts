@@ -1,5 +1,5 @@
 import { defaultDependencyType } from "../cli/common";
-import { printDependencyTree } from "../extensions/metrics/LoopMetrics";
+import { printDependencyTree } from "../extensions/utilities/LoopUtilities";
 import { Package } from "../package/package";
 import { FileSystemPackageProvider, IPackageVersionProvider } from "../providers/folder";
 import { npmOnline } from "../providers/online";

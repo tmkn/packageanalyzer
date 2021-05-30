@@ -5,7 +5,7 @@ import { Package } from "../package/package";
 import { OnlinePackageProvider } from "../providers/online";
 import { PackageVersion, Visitor } from "../visitors/visitor";
 import { OraLogger } from "./logger";
-import { DependencyMetrics } from "../extensions/metrics/DependencyMetrics";
+import { DependencyUtilities } from "../extensions/utilities/DependencyUtilities";
 import { IPackageVersionProvider } from "../providers/folder";
 import { INpmPackage, INpmPackageVersion, isUnpublished, IUnpublishedNpmPackage } from "../npm";
 
@@ -24,7 +24,7 @@ export class DependencyDumper {
     async save(baseDir: string): Promise<void> {
         if (!this.pkg || !this._provider) throw new Error(`pkg or provider is undefined`);
 
-        const distinct: Set<string> = new DependencyMetrics(this.pkg).withSelf.distinctNames;
+        const distinct: Set<string> = new DependencyUtilities(this.pkg).withSelf.distinctNames;
         const logger = new OraLogger();
 
         fs.mkdir(baseDir, { recursive: true });
