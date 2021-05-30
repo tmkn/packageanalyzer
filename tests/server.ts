@@ -62,14 +62,14 @@ export class MockNpmServer {
 
                     res.json(mock);
                 }
-            } else if (name === "_downloads") {
+            } /*else if (name === "_downloads") {
                 res.json({
                     downloads: 8609192,
                     start: "2020-11-27",
                     end: "2020-12-03",
                     package: "react"
                 });
-            } else {
+            } */ else {
                 const data = this._cache.get(name);
 
                 if (typeof data === "undefined") {
