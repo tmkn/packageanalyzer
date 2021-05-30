@@ -4,9 +4,9 @@ import { Package } from "../src/package/package";
 import { FileSystemPackageProvider } from "../src/providers/folder";
 import { getPackageVersionFromPackageJson, Visitor } from "../src/visitors/visitor";
 import { OraLogger } from "../src/utils/logger";
-import { DependencyMetrics } from "../src/extensions/metrics/DependencyMetrics";
+import { DependencyUtilities } from "../src/extensions/utilities/DependencyUtilities";
 
-describe(`Dependency Metrics Tests`, () => {
+describe(`Dependency Utilities Tests`, () => {
     let p: Package;
 
     beforeAll(async () => {
@@ -22,7 +22,7 @@ describe(`Dependency Metrics Tests`, () => {
     });
 
     test(`Checks package with most direct dependencies`, () => {
-        const [mostDeps] = new DependencyMetrics(p).mostDirectDependencies;
+        const [mostDeps] = new DependencyUtilities(p).mostDirectDependencies;
 
         expect(mostDeps.name).toBe("react");
         expect(mostDeps.version).toBe("16.8.6");
@@ -30,7 +30,7 @@ describe(`Dependency Metrics Tests`, () => {
     });
 
     test(`Checks package that is most referred`, () => {
-        const [[name, times]] = new DependencyMetrics(p).mostReferred;
+        const [[name, times]] = new DependencyUtilities(p).mostReferred;
 
         expect(name).toBe("loose-envify");
         expect(times).toBe(3);
@@ -46,7 +46,7 @@ describe(`Dependency Metrics Tests`, () => {
         );
         const p: Package = await visitor.visit();
 
-        for (const [name, versions] of new DependencyMetrics(p).mostVersions) {
+        for (const [name, versions] of new DependencyUtilities(p).mostVersions) {
             expect(name).toBe("kind-of");
 
             expect(versions.has("3.2.2")).toBe(true);
@@ -57,7 +57,7 @@ describe(`Dependency Metrics Tests`, () => {
     });
 
     test(`Checks for package with most versions (all equal)`, () => {
-        const mostVersions = new DependencyMetrics(p).withSelf.mostVersions;
+        const mostVersions = new DependencyUtilities(p).withSelf.mostVersions;
 
         expect(mostVersions.size).toBe(8);
 
@@ -93,10 +93,10 @@ describe(`Dependency Metrics Tests`, () => {
     });
 
     test(`Check all`, () => {
-        expect(new DependencyMetrics(p).withSelf.all.length).toBe(14);
+        expect(new DependencyUtilities(p).withSelf.all.length).toBe(14);
     });
 
     test(`Check distinct`, () => {
-        expect(new DependencyMetrics(p).withSelf.distinctNames.size).toBe(8);
+        expect(new DependencyUtilities(p).withSelf.distinctNames.size).toBe(8);
     });
 });

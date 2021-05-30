@@ -6,7 +6,7 @@ type Version = string;
 export type VersionSummary = Map<Name, Set<Version>>;
 
 //utility functions for the dependency tree
-class BaseDependencyMetrics {
+class BaseDependencyUtilities {
     constructor(private _p: Package, private _includeSelf: boolean) {}
 
     get transitiveCount(): number {
@@ -115,12 +115,12 @@ class BaseDependencyMetrics {
     }
 }
 
-export class DependencyMetrics extends BaseDependencyMetrics {
-    withSelf: BaseDependencyMetrics;
+export class DependencyUtilities extends BaseDependencyUtilities {
+    withSelf: BaseDependencyUtilities;
 
     constructor(_p: Package, _includeSelf: boolean = false) {
         super(_p, _includeSelf);
 
-        this.withSelf = new BaseDependencyMetrics(_p, true);
+        this.withSelf = new BaseDependencyUtilities(_p, true);
     }
 }

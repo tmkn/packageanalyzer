@@ -1,7 +1,7 @@
 import * as chalk from "chalk";
 
 import { isValidDependencyType } from "../cli/common";
-import { LoopMetrics } from "../extensions/metrics/LoopMetrics";
+import { LoopUtilities } from "../extensions/utilities/LoopUtilities";
 import { Package } from "../package/package";
 import { IFormatter } from "../utils/formatter";
 import { DependencyTypes, getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
@@ -28,7 +28,7 @@ export class LoopsReport implements IReport<ILoopParams> {
             );
         }
 
-        const loopPathMap = new LoopMetrics(pkg).loopPathMap;
+        const loopPathMap = new LoopUtilities(pkg).loopPathMap;
         const distinctCount: number = [...loopPathMap].reduce((i, [, loops]) => i + loops.size, 0);
         const loopPadding = ("" + distinctCount).length;
         let total = 0;

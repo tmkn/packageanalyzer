@@ -5,8 +5,8 @@ import { IPackageVersionProvider, FileSystemPackageProvider } from "../src/provi
 import { INpmPackageVersion } from "../src/npm";
 import { getPackageVersionFromPackageJson, Visitor } from "../src/visitors/visitor";
 import { OraLogger } from "../src/utils/logger";
-import { LoopMetrics } from "../src/extensions/metrics/LoopMetrics";
-import { LicenseMetrics } from "../src/extensions/metrics/LicenseMetrics";
+import { LoopUtilities } from "../src/extensions/utilities/LoopUtilities";
+import { LicenseUtilities } from "../src/extensions/utilities/LicenseUtilities";
 
 describe(`visitFromFolder Tests`, () => {
     let p: Package;
@@ -36,7 +36,7 @@ describe(`visitFromFolder Tests`, () => {
     });
 
     test(`Checks license`, () => {
-        expect(`ISC`).toBe(new LicenseMetrics(p).license);
+        expect(`ISC`).toBe(new LicenseUtilities(p).license);
     });
 
     test(`Throws on missing package.json`, async () => {
@@ -58,7 +58,7 @@ describe(`visitFromFolder Tests`, () => {
     });
 
     test(`Check loops`, () => {
-        expect(new LoopMetrics(p).loops.length).toBe(50);
+        expect(new LoopUtilities(p).loops.length).toBe(50);
     });
 
     test(`Check direct dependecies`, async () => {
@@ -80,16 +80,16 @@ describe(`visitFromFolder Tests`, () => {
             "@webassemblyjs/wast-printer"
         ];
 
-        expect([...new LoopMetrics(p).loopPathMap.keys()].sort()).toEqual(expected.sort());
+        expect([...new LoopUtilities(p).loopPathMap.keys()].sort()).toEqual(expected.sort());
     });
 
     test(`Check distinct loop count`, () => {
-        expect(new LoopMetrics(p).distinctLoopCount).toBe(8);
+        expect(new LoopUtilities(p).distinctLoopCount).toBe(8);
     });
 
     test(`Check loopPathString`, () => {
-        const { loopPathMap } = new LoopMetrics(p);
-        const [pkgName] = [...new LoopMetrics(p).loopPathMap.keys()];
+        const { loopPathMap } = new LoopUtilities(p);
+        const [pkgName] = [...new LoopUtilities(p).loopPathMap.keys()];
         const [loopPath] = [...(loopPathMap.get(pkgName) ?? new Set())].sort();
         const expectedLoopPath =
             "@webassemblyjs/ast@1.8.5 → @webassemblyjs/helper-module-context@1.8.5 → @webassemblyjs/ast@1.8.5";

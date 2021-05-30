@@ -8,7 +8,7 @@ type License = string;
 export type LicenseSummary = Map<Name, Map<Version, License>>;
 export type GroupedLicenseSummary = Array<{ license: string; names: string[] }>;
 
-export class LicenseMetrics {
+export class LicenseUtilities {
     constructor(private _p: Package) {}
 
     get license(): string {
@@ -50,7 +50,7 @@ export class LicenseMetrics {
 
         this._p.visit(d => {
             const packageKey = licenseMap.get(d.name);
-            const license = new LicenseMetrics(d).license;
+            const license = new LicenseUtilities(d).license;
 
             if (!packageKey) {
                 licenseMap.set(d.name, new Map([[d.version, license]]));

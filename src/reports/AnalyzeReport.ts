@@ -3,11 +3,11 @@ import * as chalk from "chalk";
 import { daysAgo, defaultDependencyType } from "../cli/common";
 import { IDecorator } from "../extensions/decorators/Decorator";
 import { ReleaseDecorator } from "../extensions/decorators/ReleaseDecorator";
-import { DependencyMetrics, VersionSummary } from "../extensions/metrics/DependencyMetrics";
-import { GroupedLicenseSummary, LicenseMetrics } from "../extensions/metrics/LicenseMetrics";
-import { LoopMetrics } from "../extensions/metrics/LoopMetrics";
-import { PathMetrics } from "../extensions/metrics/PathMetrics";
-import { ReleaseMetrics } from "../extensions/metrics/ReleaseMetrics";
+import { DependencyUtilities, VersionSummary } from "../extensions/utilities/DependencyUtilities";
+import { GroupedLicenseSummary, LicenseUtilities } from "../extensions/utilities/LicenseUtilities";
+import { LoopUtilities } from "../extensions/utilities/LoopUtilities";
+import { PathUtilities } from "../extensions/utilities/PathUtilities";
+import { ReleaseUtilities } from "../extensions/utilities/ReleaseUtilities";
 import { Package } from "../package/package";
 import { FileSystemPackageProvider, IPackageVersionProvider } from "../providers/folder";
 import { npmOnline } from "../providers/online";
@@ -72,39 +72,39 @@ async function printAllStatistics(p: Package, formatter: IFormatter): Promise<vo
     await printNewest(p, formatter);
     printDependencyCount(p, formatter);
     printDistinctDependencies(
-        new DependencyMetrics(p).distinctNameCount,
-        new DependencyMetrics(p).distinctVersionCount,
+        new DependencyUtilities(p).distinctNameCount,
+        new DependencyUtilities(p).distinctVersionCount,
         PaddingLeft,
         formatter
     );
-    printMostReferred(new DependencyMetrics(p).mostReferred, formatter);
-    printMostDependencies(new DependencyMetrics(p).mostDirectDependencies, formatter);
-    printMostVersion(new DependencyMetrics(p).mostVersions, PaddingLeft, formatter);
+    printMostReferred(new DependencyUtilities(p).mostReferred, formatter);
+    printMostDependencies(new DependencyUtilities(p).mostDirectDependencies, formatter);
+    printMostVersion(new DependencyUtilities(p).mostVersions, PaddingLeft, formatter);
     printLoops(p, PaddingLeft, formatter);
-    printLicenseInfo(new LicenseMetrics(p).licensesByGroup, PaddingLeft, formatter);
+    printLicenseInfo(new LicenseUtilities(p).licensesByGroup, PaddingLeft, formatter);
 }
 
 function printBasicStatistics(p: Package, formatter: IFormatter): void {
     printDependencyCount(p, formatter);
-    printSimpleDistinctDependencies(new DependencyMetrics(p).distinctNameCount, formatter);
-    printMostReferred(new DependencyMetrics(p).mostReferred, formatter);
-    printMostDependencies(new DependencyMetrics(p).mostDirectDependencies, formatter);
-    printMostVersion(new DependencyMetrics(p).mostVersions, PaddingLeft, formatter);
-    printSimpleLicenseInfo(new LicenseMetrics(p).licensesByGroup, PaddingLeft, formatter);
+    printSimpleDistinctDependencies(new DependencyUtilities(p).distinctNameCount, formatter);
+    printMostReferred(new DependencyUtilities(p).mostReferred, formatter);
+    printMostDependencies(new DependencyUtilities(p).mostDirectDependencies, formatter);
+    printMostVersion(new DependencyUtilities(p).mostVersions, PaddingLeft, formatter);
+    printSimpleLicenseInfo(new LicenseUtilities(p).licensesByGroup, PaddingLeft, formatter);
 }
 
 function printDependencyCount(p: Package, formatter: IFormatter): void {
     formatter.writeGroup([
         [`Direct dependencies`, `${p.directDependencies.length}`],
-        [`Transitive dependencies`, `${new DependencyMetrics(p).transitiveCount}`]
+        [`Transitive dependencies`, `${new DependencyUtilities(p).transitiveCount}`]
     ]);
 }
 
 async function printNewest(p: Package, formatter: IFormatter): Promise<void> {
-    const { newest } = new ReleaseMetrics(p);
+    const { newest } = new ReleaseUtilities(p);
 
     if (newest) {
-        const { published } = new ReleaseMetrics(newest);
+        const { published } = new ReleaseUtilities(newest);
 
         if (published)
             formatter.writeGroup([
@@ -112,16 +112,16 @@ async function printNewest(p: Package, formatter: IFormatter): Promise<void> {
                     `Newest package`,
                     `${newest.fullName} - ${published.toUTCString()} ${daysAgo(published)}`
                 ],
-                [`Newest package path`, new PathMetrics(newest).pathString]
+                [`Newest package path`, new PathUtilities(newest).pathString]
             ]);
     }
 }
 
 async function printOldest(p: Package, formatter: IFormatter): Promise<void> {
-    const { oldest } = new ReleaseMetrics(p);
+    const { oldest } = new ReleaseUtilities(p);
 
     if (oldest) {
-        const { published } = new ReleaseMetrics(oldest);
+        const { published } = new ReleaseUtilities(oldest);
 
         if (published)
             formatter.writeGroup([
@@ -129,13 +129,13 @@ async function printOldest(p: Package, formatter: IFormatter): Promise<void> {
                     `Oldest package`,
                     `${oldest.fullName} - ${published.toUTCString()} ${daysAgo(published)}`
                 ],
-                [`Oldest package path`, new PathMetrics(oldest).pathString]
+                [`Oldest package path`, new PathUtilities(oldest).pathString]
             ]);
     }
 }
 
 async function printPublished(p: Package, formatter: IFormatter): Promise<void> {
-    const { published } = new ReleaseMetrics(p);
+    const { published } = new ReleaseUtilities(p);
 
     if (!published) return;
 
@@ -163,12 +163,12 @@ function printSimpleDistinctDependencies(byName: number, formatter: IFormatter):
 }
 
 function printLoops(p: Package, paddingLeft: number, formatter: IFormatter): void {
-    const { loops, loopPathMap, distinctLoopCount } = new LoopMetrics(p);
+    const { loops, loopPathMap, distinctLoopCount } = new LoopUtilities(p);
 
     formatter.writeGroup([[`Loops`, `${loops.length} (${distinctLoopCount} distinct)`]]);
 
     if (distinctLoopCount > 0) {
-        const [first] = loops.map(l => new PathMetrics(l).pathString).sort();
+        const [first] = loops.map(l => new PathUtilities(l).pathString).sort();
         const identBlock: [string, ...string[]] = [``];
 
         identBlock.push(`affected Packages: [${[...loopPathMap.keys()].join(", ")}]`);

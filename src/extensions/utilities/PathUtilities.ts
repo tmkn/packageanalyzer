@@ -1,6 +1,6 @@
 import { Package } from "../../package/package";
 
-export class PathMetrics {
+export class PathUtilities {
     constructor(private _p: Package) {}
 
     get path(): Array<[string, string]> {

@@ -8,9 +8,9 @@ import {
     Visitor
 } from "../src/visitors/visitor";
 import { OraLogger } from "../src/utils/logger";
-import { LoopMetrics } from "../src/extensions/metrics/LoopMetrics";
-import { LicenseMetrics } from "../src/extensions/metrics/LicenseMetrics";
-import { PathMetrics } from "../src/extensions/metrics/PathMetrics";
+import { LoopUtilities } from "../src/extensions/utilities/LoopUtilities";
+import { LicenseUtilities } from "../src/extensions/utilities/LicenseUtilities";
+import { PathUtilities } from "../src/extensions/utilities/PathUtilities";
 
 describe(`Package Tests`, () => {
     let p: Package;
@@ -28,7 +28,7 @@ describe(`Package Tests`, () => {
     });
 
     test(`Check licenses`, () => {
-        const licenses = new LicenseMetrics(p).licenses;
+        const licenses = new LicenseUtilities(p).licenses;
 
         const names: string[] = [
             "testproject1",
@@ -66,14 +66,14 @@ describe(`Package Tests`, () => {
 
         expect.assertions(1);
         if (react) {
-            const path = new PathMetrics(react).pathString;
+            const path = new PathUtilities(react).pathString;
 
             expect(path).toBe(`testproject1@1.0.0 → react@16.8.6`);
         }
     });
 
     test(`Check path for root`, () => {
-        const path = new PathMetrics(p).path;
+        const path = new PathUtilities(p).path;
         const [[name, version]] = path;
 
         expect(path.length).toBe(1);
@@ -87,7 +87,7 @@ describe(`Package Tests`, () => {
         expect.assertions(7);
 
         if (pa2) {
-            const path = new PathMetrics(pa2).path;
+            const path = new PathUtilities(pa2).path;
             const [[name1, version1], [name2, version2], [name3, version3]] = path;
 
             expect(path.length).toBe(3);
@@ -104,7 +104,7 @@ describe(`Package Tests`, () => {
     });
 
     test(`Check loops`, () => {
-        expect(new LoopMetrics(p).loops.length).toBe(0);
+        expect(new LoopUtilities(p).loops.length).toBe(0);
     });
 
     test(`Deprecation flag`, () => {
