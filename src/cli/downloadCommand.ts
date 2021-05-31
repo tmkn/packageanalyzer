@@ -9,7 +9,7 @@ export class DownloadCommand extends Command {
     })
     public package?: string;
 
-    static override usage = Command.Usage({
+    static /*override*/ usage = Command.Usage({
         description: `show the download count for a NPM package`,
         details: `
             This command will show show the download count for a NPM package.

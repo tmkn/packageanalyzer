@@ -28,7 +28,7 @@ export class LicenseCheckCommand extends Command {
     @Command.String(`--folder`, { description: `path to a package.json` })
     public folder?: string;
 
-    static override usage = Command.Usage({
+    static /*override*/ usage = Command.Usage({
         description: `check the licenses for all packages in the dependency tree`,
         details: `
             This command will print license informations for all packages found in the dependency tree.\n
