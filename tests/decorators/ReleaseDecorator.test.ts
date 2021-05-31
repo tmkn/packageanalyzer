@@ -1,9 +1,9 @@
-import { Package } from "../src";
-import { ReleaseDecorator } from "../src/extensions/decorators/ReleaseDecorator";
-import { INpmPackage, INpmPackageVersion, IUnpublishedNpmPackage } from "../src/npm";
-import { INpmPackageProvider } from "../src/providers/folder";
+import { Package } from "../../src";
+import { ReleaseDecorator } from "../../src/extensions/decorators/ReleaseDecorator";
+import { INpmPackage, INpmPackageVersion, IUnpublishedNpmPackage } from "../../src/npm";
+import { INpmPackageProvider } from "../../src/providers/folder";
 
-describe(`ReleaseExtension Tests`, () => {
+describe(`ReleaseDecorator Tests`, () => {
     const logStub = {
         logger: function () {}
     };

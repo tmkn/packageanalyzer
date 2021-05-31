@@ -1,8 +1,8 @@
 import * as path from "path";
 
-import { FileSystemPackageProvider } from "../src/providers/folder";
-import { ReportService } from "../src/reports/ReportService";
-import { TestReport, TestWritable } from "./common";
+import { FileSystemPackageProvider } from "../../src/providers/folder";
+import { ReportService } from "../../src/reports/ReportService";
+import { TestReport, TestWritable } from "../common";
 
 describe(`ReportService Tests`, () => {
     const rootPath = path.join("tests", "data", "testproject1");
