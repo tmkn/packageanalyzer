@@ -6,7 +6,7 @@ describe(`Formatter Tests`, () => {
     class TestWriter extends Writable {
         lines: string[] = [];
 
-        override _write(
+        /*override*/ _write(
             chunk: any,
             encoding: BufferEncoding,
             callback: (error?: Error | null) => void

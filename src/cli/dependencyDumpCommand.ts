@@ -19,7 +19,7 @@ export class DependencyDumperCommand extends Command {
     })
     public registry: string = `http://registry.npmjs.com`;
 
-    static override usage = Command.Usage({
+    static /*override*/ usage = Command.Usage({
         category: `Developer Tools`,
         description: `looks up a package from an online registry and dumps the package.json`,
         details: `

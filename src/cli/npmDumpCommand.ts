@@ -14,7 +14,7 @@ export class NpmDumpCommand extends Command {
     })
     public package?: string;
 
-    static override usage = Command.Usage({
+    static /*override*/ usage = Command.Usage({
         category: `Developer Tools`,
         description: `looks up a package from a NPM dump`,
         details: `
