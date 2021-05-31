@@ -52,8 +52,6 @@ export class Visitor implements IPackageVisitor {
             }
 
             return root;
-        } catch (e) {
-            throw e;
         } finally {
             this._logger.stop();
         }
@@ -91,8 +89,6 @@ export class Visitor implements IPackageVisitor {
                     }
                 }
             }
-        } catch (e) {
-            throw e;
         } finally {
             this._depthStack.pop();
         }
