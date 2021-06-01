@@ -186,10 +186,7 @@ function printMostDependencies(pkgs: Package[], formatter: IFormatter): void {
     const names = pkgs.map(p => p.name).join(`, `);
 
     formatter.writeGroup([
-        [
-            `Most direct dependencies`,
-            `"[${names}]": ${pkgs[0].directDependencies.length}`
-        ]
+        [`Most direct dependencies`, `"[${names}]": ${pkgs[0].directDependencies.length}`]
     ]);
 }
 
