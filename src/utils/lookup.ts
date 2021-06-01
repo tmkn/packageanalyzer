@@ -2,6 +2,7 @@ import * as path from "path";
 import * as fs from "fs";
 import * as readline from "readline";
 import * as os from "os";
+import * as crypto from "crypto";
 
 import { INpmDumpRow } from "../npm";
 import { getPercentage } from "../providers/flatFile";
@@ -103,7 +104,7 @@ function saveLookupFile(lookupFile: string, lookups: ReadonlyArray<ILookupEntry>
 
 /* istanbul ignore next */
 function random(max: number) {
-    return Math.floor(Math.random() * Math.floor(max));
+    return crypto.randomInt(0, max);
 }
 
 /* istanbul ignore next */
