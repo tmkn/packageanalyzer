@@ -1,6 +1,0 @@
-tsconfig.json
-jest.config.js
-.prettierrc.json
-tests
-coverage
-.nyc_output
