@@ -8,7 +8,7 @@
 
 ![App Banner](./banner.png)
 
-A framework to analyze Node.js projects.
+A framework to introspect Node.js projects.
 
 Stats are fun!
 
