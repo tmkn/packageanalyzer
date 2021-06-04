@@ -4,15 +4,46 @@
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=tmkn_packageanalyzer&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=tmkn_packageanalyzer)
 [![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=tmkn_packageanalyzer&metric=sqale_index)](https://sonarcloud.io/dashboard?id=tmkn_packageanalyzer)
 
-> Work in progress!
-
+> A sample output of the `analyze` command
 ![App Banner](./banner.png)
 
 A framework to introspect Node.js projects.
 
 Stats are fun!
 
+## Prints various statistics:
+* Number of transitive dependencies
+* Number of distinct dependencies
+* Most referred package
+* Package with most direct dependencies
+* Package with most versions
+* Licenses
+
 ## Install
+```
+yarn add @tmkn/packageanalyzer
+```
+
+## Usage
+The package analyzer is both a CLI and a framework.
+
+As such it provides the following CLI options (non exhaustive!):
+### Analyze latest version of a package
+`pkga analyze --package typescript`
+### Analyze specific version of a package
+`pkga analyze --package typescript@3.5.1`
+### Analyze local folder
+`pkga analyze --folder path/to/folder/with/package.json`
+### Print dependency tree
+`pkga tree --package typescript`
+### Print licenses
+`pkga license --package typescript`
+### Run custom report
+`pkga report --config path/to/custom/report.js`
+
+Please see [Writing custom reports](https://github.com/tmkn/packageanalyzer/wiki/Using-Custom-Reports) on how to use the package analyzer programatically.
+
+## Setting up the dev environment
 ```
 git clone https://github.com/tmkn/packageanalyzer.git
 yarn install
@@ -20,23 +51,6 @@ yarn build
 ```
 See [ARCHITECTURE.md](ARCHITECTURE.md) for a quick tour around the code
 
-## Usage
-### Analyze latest version of a package
-`pkga analyze --package typescript`
-### Analyze specific version of a package
-`pkga analyze --package typescript@3.5.1`
-### Analyze local folder
-`pkga analyze --folder path/to/folder`
-
-## Prints various statistics:
-* Number of transitive dependencies
-* Number of unique dependencies
-* List most referred package
-* List Package with most direct dependencies
-* List package with most versions
-* Which kind of licenses are used
-
-## Development
 ### Watch mode
 `yarn dev`
 ### Build
@@ -44,14 +58,17 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for a quick tour around the code
 ## Tests
 ### Run tests
 `yarn test`
+### Code Coverage
+`yarn test:coverage`
 ### Watch tests
 `yarn test:watch`
 
 ## Roadmap
 * Stabilize API
-* Provide option to specify a series of checks that should be run
-* Provide package health check (number of open tickets, release velocity etc)
-* Provide check for deprecated packages/unnecessary polyfills
+* Better ux for missing cli/reports parameters
+* Finding a better shorthand name
+* Release v1 :)
+* Documentation
 
 ## License
 MIT
