@@ -1,3 +1,5 @@
+import * as path from "path";
+
 import { Command } from "clipanion";
 
 import { ReportService } from "../reports/ReportService";
@@ -18,7 +20,10 @@ export class ReportCommand extends Command {
 
     @Command.Path(`report`)
     async execute() {
-        const config = require(this.config);
+        const importPath: string = path.isAbsolute(this.config)
+            ? this.config
+            : path.join(process.cwd(), this.config);
+        const config = require(importPath);
         const reportService = new ReportService(config, this.context.stdout);
 
         await reportService.process();
