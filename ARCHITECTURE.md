@@ -28,17 +28,24 @@ You may want to add custom data to each package in the dependency tree.
 This could be the actual source code or download stats or number of open issues in the GitHub repository, short, anything else that cannot be found in the `package.json`.
 To add that kind of data you use a `Decorator`.
 ```typescript
-export interface IDecorator<T> {
-    readonly key: Symbol;
+export interface IApplyArgs {
+    p: Package;
+    logger: (msg: string) => void;
+}
+
+export interface IDecorator<K extends string, T> {
+    readonly key: K;
     readonly name: string;
-    apply: (p: Package) => Promise<T>;
+    apply: (args: IApplyArgs) => Promise<T>;
 }
 ```
 During the traversal of the dependency tree, the `apply` method will be called for every dependency.
 
-To access the data on the `Package` class you use the `getDecoratorData` method, like:
+It will be called with the current `package` and a method log progress. The value that it will return will be added as custom data to the package.
+
+To access the data on the `Package` class you use the `getDecoratorData` method and provide the `key` of the decorator:
 ```typescript
-const { published } = p.getDecoratorData(ReleaseDecorator);
+const data = p.getDecoratorData("releaseinfo");
 ```
 
 ### Providers
@@ -80,7 +87,7 @@ interface IVisitorConstructor {
 
 `decorators` optionally specify decorators that you want to use during the tree traversal
 
-The `Visitor` also contains a method `visit`:
+The `Visitor` also contains a `visit` method:
 ```typescript
 export interface IPackageVisitor {
     visit: (depType?: DependencyTypes) => Promise<Package>;

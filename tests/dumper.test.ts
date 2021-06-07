@@ -33,7 +33,9 @@ describe(`DependencyDumper Tests`, () => {
 
         const folder = await fs.readdir(outputFolder);
 
-        expect(new DependencyUtilities(dumper.pkg!).withSelf.distinctNames.size).toEqual(folder.length);
+        expect(new DependencyUtilities(dumper.pkg!).withSelf.distinctNames.size).toEqual(
+            folder.length
+        );
     });
 
     test(`Throws on undefined pkg`, async () => {
