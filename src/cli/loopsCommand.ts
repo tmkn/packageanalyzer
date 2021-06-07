@@ -15,7 +15,7 @@ export class LoopsCommand extends Command {
     })
     public type?: string = defaultDependencyType;
 
-    static /*override*/ usage = Command.Usage({
+    static override usage = Command.Usage({
         description: `show loops in the dependency tree`,
         details: `
             This command will show loops in the dependency tree.\n

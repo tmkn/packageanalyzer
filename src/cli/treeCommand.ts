@@ -23,7 +23,7 @@ export class TreeCommand extends Command {
     })
     public folder?: string;
 
-    static /*override*/ usage = Command.Usage({
+    static override usage = Command.Usage({
         description: `show the dependency tree of a NPM package or a local project`,
         details: `
             This command will print the dependency tree of a NPM package or a local project.\n

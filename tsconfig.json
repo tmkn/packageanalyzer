@@ -1,6 +1,7 @@
 {
     "compilerOptions": {
         "strict": true,
+        "noImplicitOverride": true,
         "outDir": "build",
         "sourceMap": true,
         "lib": ["es2020"],

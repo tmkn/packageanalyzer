@@ -9,7 +9,7 @@ import { DependencyTypes, PackageVersion } from "../src/visitors/visitor";
 export class TestWritable extends Writable {
     public lines: string[] = [];
 
-    /*override*/ _write(
+    override _write(
         chunk: any,
         encoding: BufferEncoding,
         callback: (error?: Error | null) => void

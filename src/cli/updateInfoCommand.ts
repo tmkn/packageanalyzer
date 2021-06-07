@@ -11,7 +11,7 @@ export class UpdateInfoCommand extends Command {
     })
     public package?: string;
 
-    static /*override*/ usage = Command.Usage({
+    static override usage = Command.Usage({
         description: `gets update info from a npm package`,
         details: `
             This command will print update information about a NPM package.
