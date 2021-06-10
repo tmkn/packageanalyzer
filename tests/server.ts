@@ -115,7 +115,7 @@ export class MockNpmServer {
 
 let i = 3000;
 
-function getPort() {
+export function getPort(): number {
     return i++;
 }
 

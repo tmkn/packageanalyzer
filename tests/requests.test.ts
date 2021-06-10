@@ -2,12 +2,13 @@ import { Server } from "http";
 
 import * as express from "express";
 import { downloadHttpJson } from "../src/utils/requests";
+import { getPort } from "./server";
 
 describe(`Request Tests`, () => {
     let server: Server;
     const threshold = 200;
     const artificalDelay = 2000;
-    const port = 3000;
+    const port = getPort();
 
     if (threshold >= artificalDelay) {
         process.stdout.write(
