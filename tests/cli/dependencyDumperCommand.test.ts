@@ -3,12 +3,12 @@ import { promises as fs } from "fs";
 import { PassThrough } from "stream";
 
 import { cli } from "../../src/cli";
-import { createMockNpmServer, MockNpmServer } from "../server";
+import { createMockNpmServer, IMockServer } from "../server";
 import { DependencyDumperCommand } from "../../src/cli/dependencyDumpCommand";
 import { TestWritable } from "../common";
 
 describe(`Dependency Dumper`, () => {
-    let server: MockNpmServer;
+    let server: IMockServer;
     const outputFolder = path.join(process.cwd(), `tmp`, `dump`);
 
     beforeAll(async () => {

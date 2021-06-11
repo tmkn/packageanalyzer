@@ -3,7 +3,7 @@ import { PassThrough } from "stream";
 import { BaseContext } from "clipanion";
 
 import { cli } from "../../src/cli";
-import { createMockDownloadServer, MockDownloadServer } from "../server";
+import { createMockDownloadServer, IMockServer } from "../server";
 import { DownloadCommand } from "../../src/cli/downloadCommand";
 import { TestWritable } from "../common";
 
@@ -15,7 +15,7 @@ describe(`Download Command`, () => {
         stderr: new PassThrough()
     };
 
-    let server: MockDownloadServer;
+    let server: IMockServer;
 
     beforeAll(async () => {
         server = await createMockDownloadServer();

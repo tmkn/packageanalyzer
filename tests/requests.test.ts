@@ -1,55 +1,31 @@
-import { Server } from "http";
-
-import * as express from "express";
 import { downloadHttpJson } from "../src/utils/requests";
-import { getPort } from "./server";
+import { createMockRequestServer, IMockServer } from "./server";
 
 describe(`Request Tests`, () => {
-    let server: Server;
+    let server: IMockServer;
     const threshold = 200;
-    const artificalDelay = 2000;
-    const port = getPort();
 
-    if (threshold >= artificalDelay) {
-        process.stdout.write(
-            `Make sure threshold is lower than artifical delay to correctly trigger retries`
-        );
-    }
-
-    beforeAll(() => {
-        const app = express();
-        let stallCalls = 0;
-
-        app.get("/echo", (req, res) => res.json({ hello: "world" }));
-        app.get("/stall", (req, res) => {
-            stallCalls++;
-
-            if (stallCalls >= 4) res.json({ worked: "after all" });
-            else setTimeout(() => res.json({ hello: "world" }), artificalDelay);
-        });
-        app.get("/stall2", (req, res) => {
-            setTimeout(() => res.json({ hello: "world" }), artificalDelay);
-        });
-        app.get("/notjson", (req, res) => res.send("not json"));
-        app.get("/forbidden", (req, res) => res.status(401).json({ message: "forbidden" }));
-
-        server = app.listen(port, () => process.stdout.write(`Started Server\n`));
+    beforeAll(async () => {
+        server = await createMockRequestServer();
     });
 
     test(`Returns json`, async () => {
-        const response = await downloadHttpJson(`http://localhost:${port}/echo`, threshold);
+        const response = await downloadHttpJson(`http://localhost:${server.port}/echo`, threshold);
 
         expect(response).toEqual({ hello: "world" });
     });
 
     test(`Auto retries after a timeout`, async () => {
-        const response = await downloadHttpJson(`http://localhost:${port}/stall`, threshold);
+        const response = await downloadHttpJson(`http://localhost:${server.port}/stall`, threshold);
 
         expect(response).toEqual({ worked: "after all" });
     });
 
     test(`Returns null after all retries have been exhausted`, async () => {
-        const response = await downloadHttpJson(`http://localhost:${port}/stall2`, threshold);
+        const response = await downloadHttpJson(
+            `http://localhost:${server.port}/stall2`,
+            threshold
+        );
 
         expect(response).toBe(null);
     });
@@ -61,20 +37,19 @@ describe(`Request Tests`, () => {
     });
 
     test(`Returns null if response is not json`, async () => {
-        const response = await downloadHttpJson(`http://localhost:${port}/notjson`, threshold);
+        const response = await downloadHttpJson(
+            `http://localhost:${server.port}/notjson`,
+            threshold
+        );
 
         expect(response).toBe(null);
     });
 
     test(`Returns null if status code is not 200`, async () => {
-        const response = await downloadHttpJson(`http://localhost:${port}/forbidden`);
+        const response = await downloadHttpJson(`http://localhost:${server.port}/forbidden`);
 
         expect(response).toBe(null);
     });
 
-    afterAll(() => {
-        server.close(e => {
-            if (e) process.stderr.write(e.message);
-        });
-    });
+    afterAll(() => server.close());
 });

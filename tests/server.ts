@@ -3,13 +3,46 @@
 import * as path from "path";
 import * as fs from "fs";
 import { Server } from "http";
+
 import * as express from "express";
 
 import { INpmPackage, isUnpublished } from "../src/npm";
 
+let i = 3000;
+
+export function getPort(): number {
+    return i++;
+}
+
 type Cb = () => void;
 
-export class MockNpmServer {
+export interface IMockServer {
+    port: number;
+    close(): Promise<void>;
+}
+
+export async function createMockServer(
+    createServer: () => Promise<IMockServer>
+): Promise<IMockServer> {
+    const maxRetries = 100;
+    let server: IMockServer | null = null;
+
+    return new Promise(async (resolve, reject) => {
+        for (let i = 0; i < maxRetries; i++) {
+            try {
+                server = await createServer();
+
+                break;
+            } catch (e) {}
+        }
+
+        if (server) {
+            resolve(server);
+        } else reject();
+    });
+}
+
+class MockNpmServer implements IMockServer {
     private _server: Server;
     private _dataPath = path.join("tests", "data", "mockserverdata");
     private _cache: Map<string, Readonly<INpmPackage>> = new Map();
@@ -113,12 +146,6 @@ export class MockNpmServer {
     }
 }
 
-let i = 3000;
-
-export function getPort(): number {
-    return i++;
-}
-
 function _createMockNpmServer(): Promise<MockNpmServer> {
     return new Promise((resolve, reject) => {
         const server: MockNpmServer = new MockNpmServer(
@@ -129,26 +156,11 @@ function _createMockNpmServer(): Promise<MockNpmServer> {
     });
 }
 
-export async function createMockNpmServer(): Promise<MockNpmServer> {
-    const maxRetries = 100;
-    let server: MockNpmServer | null = null;
-
-    return new Promise(async (resolve, reject) => {
-        for (let i = 0; i < maxRetries; i++) {
-            try {
-                server = await _createMockNpmServer();
-
-                break;
-            } catch (e) {}
-        }
-
-        if (server) {
-            resolve(server);
-        } else reject();
-    });
+export async function createMockNpmServer(): Promise<IMockServer> {
+    return createMockServer(_createMockNpmServer);
 }
 
-export class MockDownloadServer {
+export class MockDownloadServer implements IMockServer {
     private _server: Server;
 
     constructor(public readonly port: number, private _success?: Cb, private _failure?: Cb) {
@@ -200,21 +212,64 @@ function _createMockDownloadServer(): Promise<MockDownloadServer> {
     });
 }
 
-export async function createMockDownloadServer(): Promise<MockDownloadServer> {
-    const maxRetries = 100;
-    let server: MockDownloadServer | null = null;
+export async function createMockDownloadServer(): Promise<IMockServer> {
+    return createMockServer(_createMockDownloadServer);
+}
 
-    return new Promise(async (resolve, reject) => {
-        for (let i = 0; i < maxRetries; i++) {
-            try {
-                server = await _createMockDownloadServer();
+class MockRequestServer implements IMockServer {
+    private _server: Server;
+    private _artificalDelay = 2000;
 
-                break;
-            } catch (e) {}
-        }
+    constructor(public readonly port: number, private _success?: Cb, private _failure?: Cb) {
+        const app = express();
+        let stallCalls = 0;
 
-        if (server) {
-            resolve(server);
-        } else reject();
+        app.get("/echo", (req, res) => res.json({ hello: "world" }));
+        app.get("/stall", (req, res) => {
+            stallCalls++;
+
+            if (stallCalls >= 4) res.json({ worked: "after all" });
+            else setTimeout(() => res.json({ hello: "world" }), this._artificalDelay);
+        });
+        app.get("/stall2", (req, res) => {
+            setTimeout(() => res.json({ hello: "world" }), this._artificalDelay);
+        });
+        app.get("/notjson", (req, res) => res.send("not json"));
+        app.get("/forbidden", (req, res) => res.status(401).json({ message: "forbidden" }));
+
+        this._server = app
+            .listen(this.port, () => {
+                process.stdout.write(`Started MockRequestServer\n`);
+                if (this._success) this._success();
+            })
+            .on("error", e => {
+                process.stderr.write(e.message);
+
+                if (this._failure) this._failure();
+            });
+    }
+
+    close(): Promise<void> {
+        return new Promise(resolve => {
+            this._server.close(e => {
+                if (e) process.stderr.write(e.message);
+
+                resolve();
+            });
+        });
+    }
+}
+
+function _createMockRequestServer(): Promise<MockRequestServer> {
+    return new Promise((resolve, reject) => {
+        const server: MockRequestServer = new MockRequestServer(
+            getPort(),
+            () => resolve(server),
+            () => reject()
+        );
     });
+}
+
+export async function createMockRequestServer(): Promise<IMockServer> {
+    return createMockServer(_createMockRequestServer);
 }

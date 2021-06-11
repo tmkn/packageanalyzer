@@ -1,10 +1,10 @@
 import { DownloadReport } from "../../src/reports/DownloadCountReport";
 import { Formatter } from "../../src/utils/formatter";
 import { TestWritable } from "./../common";
-import { createMockDownloadServer, MockDownloadServer } from "./../server";
+import { createMockDownloadServer, IMockServer } from "./../server";
 
 describe(`DownloadCountReport Tests`, () => {
-    let server: MockDownloadServer;
+    let server: IMockServer;
 
     beforeAll(async () => {
         server = await createMockDownloadServer();
