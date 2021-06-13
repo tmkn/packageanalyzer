@@ -2,11 +2,11 @@ import * as path from "path";
 import { promises as fs } from "fs";
 
 import { DependencyDumper, DependencyDumperProvider } from "../src/utils/dumper";
-import { createMockNpmServer, MockNpmServer } from "./server";
+import { createMockNpmServer, IMockServer } from "./server";
 import { DependencyUtilities } from "../src/extensions/utilities/DependencyUtilities";
 
 describe(`DependencyDumper Tests`, () => {
-    let server: MockNpmServer;
+    let server: IMockServer;
     const outputFolder = path.join(process.cwd(), `tmp`, `dump`);
 
     beforeAll(async () => {

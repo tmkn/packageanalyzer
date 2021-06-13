@@ -1,8 +1,8 @@
 import { getDownloadsLastWeek } from "../src/npm";
-import { createMockDownloadServer, MockDownloadServer } from "./server";
+import { createMockDownloadServer, IMockServer } from "./server";
 
 describe(`Download Tests`, () => {
-    let server: MockDownloadServer;
+    let server: IMockServer;
 
     beforeAll(async () => {
         server = await createMockDownloadServer();

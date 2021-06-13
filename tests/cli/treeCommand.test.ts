@@ -5,7 +5,7 @@ import { BaseContext } from "clipanion";
 
 import { cli } from "../../src/cli";
 import { OnlinePackageProvider } from "../../src/providers/online";
-import { createMockNpmServer, MockNpmServer } from "../server";
+import { createMockNpmServer, IMockServer } from "../server";
 
 describe(`Tree Command`, () => {
     const mockContext: BaseContext = {
@@ -14,7 +14,7 @@ describe(`Tree Command`, () => {
         stderr: new PassThrough()
     };
 
-    let server: MockNpmServer;
+    let server: IMockServer;
     let provider: OnlinePackageProvider;
 
     beforeAll(async () => {

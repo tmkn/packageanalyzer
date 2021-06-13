@@ -6,10 +6,10 @@ import {
     updateInfo
 } from "../src/utils/update";
 import { OnlinePackageProvider } from "../src/providers/online";
-import { createMockNpmServer, MockNpmServer } from "./server";
+import { createMockNpmServer, IMockServer } from "./server";
 
 describe(`Update Tests`, () => {
-    let server: MockNpmServer;
+    let server: IMockServer;
     let provider: OnlinePackageProvider;
 
     beforeAll(async () => {
