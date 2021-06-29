@@ -11,6 +11,8 @@ A framework to introspect Node.js projects.
 
 Stats are fun!
 
+Please see the [Wiki](https://github.com/tmkn/packageanalyzer/wiki) for a more in depth introduction.
+
 ## Prints various statistics:
 * Number of transitive dependencies
 * Number of distinct dependencies
