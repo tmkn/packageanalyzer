@@ -1,23 +1,20 @@
-import { Command } from "clipanion";
+import { Command, Option } from "clipanion";
 
 import { getPackageVersionfromString } from "../visitors/visitor";
 import { DependencyDumper } from "../utils/dumper";
 
 export class DependencyDumperCommand extends Command {
-    @Command.String(`--package`, {
+    public package?: string = Option.String(`--package`, {
         description: `the package to dump e.g. typescript, typescript@3.5.1`
-    })
-    public package?: string;
+    });
 
-    @Command.String(`--folder`, {
+    public folder?: string = Option.String(`--folder`, {
         description: `folder to output the dump`
-    })
-    public folder?: string;
+    });
 
-    @Command.String(`--registry`, {
+    public registry: string = Option.String(`--registry`, `http://registry.npmjs.com`, {
         description: `online registry`
-    })
-    public registry: string = `http://registry.npmjs.com`;
+    });
 
     static override usage = Command.Usage({
         category: `Developer Tools`,
@@ -33,7 +30,7 @@ export class DependencyDumperCommand extends Command {
         ]
     });
 
-    @Command.Path(`dependencydump`)
+    static override paths = [[`dependencydump`]];
     async execute() {
         try {
             if (!this.package || !this.folder) {

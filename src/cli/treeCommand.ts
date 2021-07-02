@@ -1,4 +1,4 @@
-import { Command } from "clipanion";
+import { Command, Option } from "clipanion";
 
 import { npmOnline } from "../providers/online";
 import { DependencyTypes } from "../visitors/visitor";
@@ -8,20 +8,17 @@ import { ReportService } from "../reports/ReportService";
 import { ITreeReportParams, TreeReport } from "../reports/TreeReport";
 
 export class TreeCommand extends Command {
-    @Command.String(`--package`, {
+    public package?: string = Option.String(`--package`, {
         description: `the package to display the dependency tree e.g. typescript@3.5.1`
-    })
-    public package?: string;
+    });
 
-    @Command.String(`--type`, {
+    public type: DependencyTypes = Option.String(`--type`, defaultDependencyType, {
         description: `the type of dependencies you want to analzye, "dependencies" or "devDependencies"`
-    })
-    public type?: DependencyTypes = defaultDependencyType;
+    });
 
-    @Command.String(`--folder`, {
+    public folder?: string = Option.String(`--folder`, {
         description: `path to a package.json`
-    })
-    public folder?: string;
+    });
 
     static override usage = Command.Usage({
         description: `show the dependency tree of a NPM package or a local project`,
@@ -49,7 +46,7 @@ export class TreeCommand extends Command {
         ]
     });
 
-    @Command.Path(`tree`)
+    static override paths = [[`tree`]];
     async execute() {
         const params: ITreeReportParams = {
             type: this.type,

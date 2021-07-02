@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { Cli, Command } from "clipanion";
+import { Cli, Builtins } from "clipanion";
 
 import { AnalyzeCommand } from "./cli/analyzeCommand";
 import { UpdateInfoCommand } from "./cli/updateInfoCommand";
@@ -35,8 +35,8 @@ cli.register(NpmDumpLookupCreatorCommand);
 cli.register(DependencyDumperCommand);
 
 //built in commands
-cli.register(Command.Entries.Help);
-cli.register(Command.Entries.Version);
+cli.register(Builtins.HelpCommand);
+cli.register(Builtins.VersionCommand);
 
 if (require.main === module) {
     cli.runExit(process.argv.slice(2), {
