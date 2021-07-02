@@ -1,32 +1,27 @@
-import { Command } from "clipanion";
+import { Command, Option } from "clipanion";
 
 import { ILicenseParams, LicenseReport } from "../reports/LicenseReport";
 import { ReportService } from "../reports/ReportService";
 import { defaultDependencyType, isValidDependencyType } from "./common";
 
 export class LicenseCheckCommand extends Command {
-    @Command.String(`--package`, {
+    public package?: string = Option.String(`--package`, {
         description: `the package to analyze e.g. typescript, typescript@3.5.1`
-    })
-    public package?: string;
+    });
 
-    @Command.String(`--type`, {
+    public type: string = Option.String(`--type`, defaultDependencyType, {
         description: `the type of dependencies you want to analzye, "dependencies" or "devDependencies"`
-    })
-    public type?: string = defaultDependencyType;
+    });
 
-    @Command.Array(`--allow`, {
+    public allowList?: string[] = Option.Array(`--allow`, {
         description: `the type of dependencies you want to allow"`
-    })
-    public allowList?: string[];
+    });
 
-    @Command.Boolean(`--grouped`, {
+    public grouped: boolean = Option.Boolean(`--grouped`, false, {
         description: `specificies if the data should be grouped by license`
-    })
-    public grouped: boolean = false;
+    });
 
-    @Command.String(`--folder`, { description: `path to a package.json` })
-    public folder?: string;
+    public folder?: string = Option.String(`--folder`, { description: `path to a package.json` });
 
     static override usage = Command.Usage({
         description: `check the licenses for all packages in the dependency tree`,
@@ -58,7 +53,7 @@ export class LicenseCheckCommand extends Command {
         ]
     });
 
-    @Command.Path(`license`)
+    static override paths = [[`license`]];
     async execute() {
         if (!isValidDependencyType(this.type)) {
             throw new Error(

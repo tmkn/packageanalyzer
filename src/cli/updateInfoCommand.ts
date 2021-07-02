@@ -1,4 +1,4 @@
-import { Command } from "clipanion";
+import { Command, Option } from "clipanion";
 
 import { npmOnline } from "../providers/online";
 import { Formatter } from "../utils/formatter";
@@ -6,10 +6,9 @@ import { IUpdateInfoParams, UpdateInfoReport } from "../reports/UpdateInfoReport
 import { ReportService } from "../reports/ReportService";
 
 export class UpdateInfoCommand extends Command {
-    @Command.String(`--package`, {
+    public package?: string = Option.String(`--package`, {
         description: `the package to retrieve update info from e.g. typescript@3.5.1`
-    })
-    public package?: string;
+    });
 
     static override usage = Command.Usage({
         description: `gets update info from a npm package`,
@@ -24,7 +23,7 @@ export class UpdateInfoCommand extends Command {
         ]
     });
 
-    @Command.Path(`update`)
+    static override paths = [[`update`]];
     async execute() {
         const formatter = new Formatter(this.context.stdout);
 

@@ -1,19 +1,17 @@
-import { Command } from "clipanion";
+import { Command, Option } from "clipanion";
 
 import { defaultDependencyType, isValidDependencyType } from "./common";
 import { ILoopParams, LoopsReport } from "../reports/LoopsReport";
 import { ReportService } from "../reports/ReportService";
 
 export class LoopsCommand extends Command {
-    @Command.String(`--package`, {
+    public package?: string = Option.String(`--package`, {
         description: `the package to retrieve the loop info e.g. typescript@3.5.1`
-    })
-    public package?: string;
+    });
 
-    @Command.String(`--type`, {
+    public type: string = Option.String(`--type`, defaultDependencyType, {
         description: `the type of dependencies you want to analzye, "dependencies" or "devDependencies"`
-    })
-    public type?: string = defaultDependencyType;
+    });
 
     static override usage = Command.Usage({
         description: `show loops in the dependency tree`,
@@ -37,7 +35,7 @@ export class LoopsCommand extends Command {
         ]
     });
 
-    @Command.Path(`loops`)
+    static override paths = [[`loops`]];
     async execute() {
         if (!isValidDependencyType(this.type)) {
             throw new Error(

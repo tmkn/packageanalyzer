@@ -1,13 +1,12 @@
-import { Command } from "clipanion";
+import { Command, Option } from "clipanion";
 
 import { DownloadReport, IDownloadParams } from "../reports/DownloadCountReport";
 import { ReportService } from "../reports/ReportService";
 
 export class DownloadCommand extends Command {
-    @Command.String(`--package`, {
+    public package?: string = Option.String(`--package`, {
         description: `the package to retrieve the download count e.g. typescript@3.5.1`
-    })
-    public package?: string;
+    });
 
     static override usage = Command.Usage({
         description: `show the download count for a NPM package`,
@@ -19,7 +18,8 @@ export class DownloadCommand extends Command {
 
     public static DownloadUrl?: string;
 
-    @Command.Path(`downloads`)
+    static override paths = [[`downloads`]];
+
     async execute() {
         if (typeof this.package !== "undefined") {
             const params: IDownloadParams = {

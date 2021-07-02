@@ -1,10 +1,9 @@
-import { Command } from "clipanion";
+import { Command, Option } from "clipanion";
 
 import { createLookupFile } from "../utils/lookup";
 
 export class NpmDumpLookupCreatorCommand extends Command {
-    @Command.String(`--npmfile`, { description: `path to a npmdump.json` })
-    public npmFile?: string;
+    public npmFile?: string = Option.String(`--npmfile`, { description: `path to a npmdump.json` });
 
     static override usage = Command.Usage({
         category: `Developer Tools`,
@@ -20,7 +19,7 @@ export class NpmDumpLookupCreatorCommand extends Command {
         ]
     });
 
-    @Command.Path(`lookupfile`)
+    static override paths = [[`lookupfile`]];
     async execute() {
         if (typeof this.npmFile !== "undefined") {
             await createLookupFile(this.npmFile);
