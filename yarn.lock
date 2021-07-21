@@ -1258,9 +1258,9 @@ cli-spinners@^2.5.0:
   integrity sha512-PC+AmIuK04E6aeSs/pUccSujsTzBhu4HzC2dL+CfJB/Jcc2qTRbEwZQDfIUpt2Xl8BodYBEq8w4fc0kU2I9DjQ==
 
 clipanion@^3.0.0-rc.12:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/clipanion/-/clipanion-3.0.0.tgz#efe35d17f46d9cf71be5eb11c36e9a05caa6cf68"
-  integrity sha512-Ae2/PVkgMM/EbiGugE0p0QcjXyuh5hP+yzpJYaIElQ0g0kkuQKEHuYkLyk4K8gNkO1KKlHZ6UWgxRaTOMtmiLw==
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/clipanion/-/clipanion-3.0.1.tgz#cba44989fa18a625d7d02800ea98c835e973fc26"
+  integrity sha512-/ujK3YJ1MGjGr18w99Gl9XZjy4xcC/5bZRJXsgvYG6GbUTO4CTKriC+oUxDbo8G+G/dxDqSJhm8QIDnK6iH6Ig==
   dependencies:
     typanion "^3.3.1"
 
