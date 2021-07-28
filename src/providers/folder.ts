@@ -13,9 +13,8 @@ export interface INpmPackageProvider {
 export interface IPackageVersionProvider extends Partial<INpmPackageProvider> {
     //load version specific data, loads latest version if no version is specified
     size: number;
-    getPackageByVersion: (name: string, version?: string) => Promise<INpmPackageVersion>;
+    getPackageByVersion: (...args: PackageVersion) => Promise<INpmPackageVersion>;
     getPackagesByVersion: (modules: PackageVersion[]) => AsyncIterableIterator<INpmPackageVersion>;
-    //getMainFile: (name: string, version: string) => Promise<string>;
 }
 
 //gathers packages from a node_modules folder
