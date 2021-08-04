@@ -1,6 +1,6 @@
 import { IDecorator } from "../extensions/decorators/Decorator";
 import { Package } from "../package/package";
-import { IPackageVersionProvider } from "../providers/folder";
+import { IPackageVersionProvider } from "../providers/provider";
 import { IFormatter } from "../utils/formatter";
 import { DependencyTypes, PackageVersion } from "../visitors/visitor";
 

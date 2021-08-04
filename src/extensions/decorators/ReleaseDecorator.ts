@@ -1,4 +1,4 @@
-import { INpmPackageProvider } from "../../providers/folder";
+import { INpmPackageProvider } from "../../providers/provider";
 import { IApplyArgs, IDecorator } from "./Decorator";
 
 interface IReleaseData {

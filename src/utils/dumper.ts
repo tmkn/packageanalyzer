@@ -6,8 +6,8 @@ import { OnlinePackageProvider } from "../providers/online";
 import { PackageVersion, Visitor } from "../visitors/visitor";
 import { OraLogger } from "./logger";
 import { DependencyUtilities } from "../extensions/utilities/DependencyUtilities";
-import { IPackageVersionProvider } from "../providers/folder";
 import { INpmPackage, INpmPackageVersion, isUnpublished, IUnpublishedNpmPackage } from "../npm";
+import { IPackageVersionProvider } from "../providers/provider";
 
 export class DependencyDumper {
     pkg?: Package;

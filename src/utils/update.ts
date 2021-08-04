@@ -1,6 +1,6 @@
 import * as semver from "semver";
 import { isUnpublished, INpmPackage } from "../npm";
-import { INpmPackageProvider } from "../providers/folder";
+import { INpmPackageProvider } from "../providers/provider";
 
 interface IReleaseInfo {
     version: string;

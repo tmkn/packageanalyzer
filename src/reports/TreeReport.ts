@@ -1,8 +1,9 @@
 import { defaultDependencyType } from "../cli/common";
 import { printDependencyTree } from "../extensions/utilities/LoopUtilities";
 import { Package } from "../package/package";
-import { FileSystemPackageProvider, IPackageVersionProvider } from "../providers/folder";
+import { FileSystemPackageProvider } from "../providers/folder";
 import { npmOnline } from "../providers/online";
+import { IPackageVersionProvider } from "../providers/provider";
 import { IFormatter } from "../utils/formatter";
 import {
     DependencyTypes,

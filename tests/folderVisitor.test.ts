@@ -1,12 +1,13 @@
 import * as path from "path";
 
 import { Package } from "../src/package/package";
-import { IPackageVersionProvider, FileSystemPackageProvider } from "../src/providers/folder";
+import { FileSystemPackageProvider } from "../src/providers/folder";
 import { INpmPackageVersion } from "../src/npm";
 import { getPackageVersionFromPackageJson, Visitor } from "../src/visitors/visitor";
 import { OraLogger } from "../src/utils/logger";
 import { LoopUtilities } from "../src/extensions/utilities/LoopUtilities";
 import { LicenseUtilities } from "../src/extensions/utilities/LicenseUtilities";
+import { IPackageVersionProvider } from "../src/providers/provider";
 
 describe(`visitFromFolder Tests`, () => {
     let p: Package;

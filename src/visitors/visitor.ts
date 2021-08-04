@@ -1,11 +1,11 @@
 import * as path from "path";
 import * as fs from "fs";
 
-import { IPackageVersionProvider } from "../providers/folder";
 import { Package } from "../package/package";
 import { INpmKeyValue, INpmPackageVersion } from "../npm";
 import { ILogger, numPadding } from "../utils/logger";
 import { IDecorator } from "../extensions/decorators/Decorator";
+import { IPackageVersionProvider } from "../providers/provider";
 
 export type PackageVersion = [name: string, version?: string];
 

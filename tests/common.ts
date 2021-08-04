@@ -1,7 +1,7 @@
 import { Writable } from "stream";
 import { IDecorator } from "../src/extensions/decorators/Decorator";
 import { Package } from "../src/package/package";
-import { IPackageVersionProvider } from "../src/providers/folder";
+import { IPackageVersionProvider } from "../src/providers/provider";
 import { IReport } from "../src/reports/Report";
 import { IFormatter } from "../src/utils/formatter";
 import { DependencyTypes, PackageVersion } from "../src/visitors/visitor";

@@ -1,7 +1,7 @@
 import { Package } from "../../src";
 import { ReleaseDecorator } from "../../src/extensions/decorators/ReleaseDecorator";
 import { INpmPackage, INpmPackageVersion, IUnpublishedNpmPackage } from "../../src/npm";
-import { INpmPackageProvider } from "../../src/providers/folder";
+import { INpmPackageProvider } from "../../src/providers/provider";
 
 describe(`ReleaseDecorator Tests`, () => {
     const logStub = {

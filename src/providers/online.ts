@@ -1,9 +1,9 @@
 import * as semver from "semver";
 
-import { IPackageVersionProvider } from "./folder";
 import { INpmPackage, INpmPackageVersion, IUnpublishedNpmPackage, isUnpublished } from "../npm";
 import { downloadHttpJson } from "../utils/requests";
 import { PackageVersion } from "../visitors/visitor";
+import { IPackageVersionProvider } from "./provider";
 
 //loads npm data from the web
 export class OnlinePackageProvider implements IPackageVersionProvider {

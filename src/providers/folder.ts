@@ -4,18 +4,7 @@ import * as semver from "semver";
 
 import { INpmPackageVersion, INpmPackage, IUnpublishedNpmPackage } from "../npm";
 import { PackageVersion } from "../visitors/visitor";
-
-export interface INpmPackageProvider {
-    getPackageInfo(name: string): Promise<INpmPackage | IUnpublishedNpmPackage | undefined>;
-}
-
-//loads npm data from a folder
-export interface IPackageVersionProvider extends Partial<INpmPackageProvider> {
-    //load version specific data, loads latest version if no version is specified
-    size: number;
-    getPackageByVersion: (...args: PackageVersion) => Promise<INpmPackageVersion>;
-    getPackagesByVersion: (modules: PackageVersion[]) => AsyncIterableIterator<INpmPackageVersion>;
-}
+import { IPackageVersionProvider } from "./provider";
 
 //gathers packages from a node_modules folder
 export class FileSystemPackageProvider implements IPackageVersionProvider {

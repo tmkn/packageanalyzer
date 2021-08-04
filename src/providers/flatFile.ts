@@ -6,9 +6,9 @@ import * as semver from "semver";
 
 import { OraLogger } from "../utils/logger";
 
-import { IPackageVersionProvider } from "./folder";
 import { INpmPackageVersion, INpmPackage, INpmDumpRow, IUnpublishedNpmPackage } from "../npm";
 import { PackageVersion } from "../visitors/visitor";
+import { IPackageVersionProvider } from "./provider";
 
 //parses npm data from https://replicate.npmjs.com/_all_docs?limit=4&include_docs=true
 //needs a lookup file
