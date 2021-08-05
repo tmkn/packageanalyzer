@@ -1,7 +1,7 @@
 import * as path from "path";
 
 import { FileSystemPackageProvider } from "../src/providers/folder";
-import { INpmPackageVersion } from "../src/npm";
+import { IPackageJson } from "../src/npm";
 
 describe(`NodeModulesProvider Tests`, () => {
     let provider: FileSystemPackageProvider;
@@ -11,14 +11,10 @@ describe(`NodeModulesProvider Tests`, () => {
         provider = new FileSystemPackageProvider(destination);
     });
 
-    test(`Found all dependencies`, () => {
-        expect(provider.size).toBe(7);
-    });
-
     test(`Found "js-tokens" dependency`, async () => {
         const name = "js-tokens";
         const version = "4.0.0";
-        const dep = await provider.getPackageByVersion(name, version);
+        const dep = await provider.getPackageJson(name, version);
 
         expect(dep.name).toBe(name);
         expect(dep.version).toBe(version);
@@ -27,7 +23,7 @@ describe(`NodeModulesProvider Tests`, () => {
     test(`Found "loose-envify" dependency`, async () => {
         const name = "loose-envify";
         const version = "1.4.0";
-        const dep = await provider.getPackageByVersion(name, version);
+        const dep = await provider.getPackageJson(name, version);
 
         expect(dep.name).toBe(name);
         expect(dep.version).toBe(version);
@@ -36,7 +32,7 @@ describe(`NodeModulesProvider Tests`, () => {
     test(`Found "object-assign" dependency`, async () => {
         const name = "object-assign";
         const version = "4.1.1";
-        const dep = await provider.getPackageByVersion(name, version);
+        const dep = await provider.getPackageJson(name, version);
 
         expect(dep.name).toBe(name);
         expect(dep.version).toBe(version);
@@ -45,7 +41,7 @@ describe(`NodeModulesProvider Tests`, () => {
     test(`Found "prop-types" dependency`, async () => {
         const name = "prop-types";
         const version = "15.7.2";
-        const dep = await provider.getPackageByVersion(name, version);
+        const dep = await provider.getPackageJson(name, version);
 
         expect(dep.name).toBe(name);
         expect(dep.version).toBe(version);
@@ -54,7 +50,7 @@ describe(`NodeModulesProvider Tests`, () => {
     test(`Found "react-is" dependency`, async () => {
         const name = "react-is";
         const version = "16.8.6";
-        const dep = await provider.getPackageByVersion(name, version);
+        const dep = await provider.getPackageJson(name, version);
 
         expect(dep.name).toBe(name);
         expect(dep.version).toBe(version);
@@ -63,7 +59,7 @@ describe(`NodeModulesProvider Tests`, () => {
     test(`Found "react" dependency`, async () => {
         const name = "react";
         const version = "16.8.6";
-        const dep = await provider.getPackageByVersion(name, version);
+        const dep = await provider.getPackageJson(name, version);
 
         expect(dep.name).toBe(name);
         expect(dep.version).toBe(version);
@@ -72,7 +68,7 @@ describe(`NodeModulesProvider Tests`, () => {
     test(`Found "scheduler" dependency`, async () => {
         const name = "scheduler";
         const version = "0.13.6";
-        const dep = await provider.getPackageByVersion(name, version);
+        const dep = await provider.getPackageJson(name, version);
 
         expect(dep.name).toBe(name);
         expect(dep.version).toBe(version);
@@ -82,7 +78,7 @@ describe(`NodeModulesProvider Tests`, () => {
         expect.assertions(1);
 
         try {
-            await provider.getPackageByVersion("doesntexist", "1.0.0");
+            await provider.getPackageJson("doesntexist", "1.0.0");
         } catch (e) {
             expect(e).toBeInstanceOf(Error);
         }
@@ -93,9 +89,9 @@ describe(`NodeModulesProvider Tests`, () => {
             ["scheduler", "0.13.6"],
             ["react", "16.8.6"]
         ];
-        const pkgs: INpmPackageVersion[] = [];
+        const pkgs: IPackageJson[] = [];
 
-        for await (const pkg of provider.getPackagesByVersion(wanted)) {
+        for await (const pkg of provider.getPackageJsons(wanted)) {
             pkgs.push(pkg);
         }
 
@@ -114,7 +110,7 @@ describe(`NodeModulesProvider Tests`, () => {
             ];
 
             /* eslint-disable */
-            for await (const pkgs of provider.getPackagesByVersion(wanted)) {
+            for await (const pkgs of provider.getPackageJsons(wanted)) {
             }
             /* eslint-enable */
         } catch (e) {

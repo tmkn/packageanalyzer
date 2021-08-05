@@ -1,7 +1,7 @@
 import { get } from "lodash";
 import { DecoratorData, DecoratorKey, IDecorator } from "../extensions/decorators/Decorator";
 
-import { INpmPackageVersion } from "../npm";
+import { IPackageJson } from "../npm";
 
 interface IDeprecatedInfo {
     deprecated: boolean;
@@ -40,7 +40,7 @@ export class Package implements IPackage<Package> {
     private _decoratorData: Map<IDecorator<any, any>, any> = new Map();
     private readonly _dependencies: Package[] = [];
 
-    constructor(private readonly _data: Readonly<INpmPackageVersion>) {}
+    constructor(private readonly _data: Readonly<IPackageJson>) {}
 
     get name(): string {
         return this._data.name;

@@ -78,7 +78,7 @@ describe(`DependencyDumper Provider`, () => {
         const expectedVersions: string[] = [`1.9.0`, `1.11.0`];
         const actualVersions: string[] = [];
 
-        for await (const pkg of provider.getPackagesByVersion([
+        for await (const pkg of provider.getPackageJsons([
             [`@webassemblyjs/ast`, `1.9.0`],
             [`@webassemblyjs/ast`]
         ])) {
@@ -88,15 +88,11 @@ describe(`DependencyDumper Provider`, () => {
         expect(expectedVersions).toEqual(actualVersions);
     });
 
-    test(`Correctly returns size`, async () => {
-        expect(provider.size).toEqual(10);
-    });
-
     test(`Throws on non existing package`, async () => {
         expect.assertions(1);
 
         try {
-            await provider.getPackageByVersion(`doesntexist`);
+            await provider.getPackageJson(`doesntexist`);
         } catch (e) {
             expect(e).toBeInstanceOf(Error);
         }
@@ -106,7 +102,7 @@ describe(`DependencyDumper Provider`, () => {
         expect.assertions(1);
 
         try {
-            await provider.getPackageByVersion(`@webassemblyjs/ast`, `x.x.x`);
+            await provider.getPackageJson(`@webassemblyjs/ast`, `x.x.x`);
         } catch (e) {
             expect(e).toBeInstanceOf(Error);
         }

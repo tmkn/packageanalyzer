@@ -13,28 +13,28 @@ describe(`License Tests`, () => {
     });
 
     test(`Check react license`, async () => {
-        const dep = await provider.getPackageByVersion("react");
+        const dep = await provider.getPackageJson("react");
         const p = new Package(dep);
 
         expect(new LicenseUtilities(p).license).toBe(`MIT`);
     });
 
     test(`Check deep-is license`, async () => {
-        const dep = await provider.getPackageByVersion("deep-is");
+        const dep = await provider.getPackageJson("deep-is");
         const p = new Package(dep);
 
         expect(new LicenseUtilities(p).license).toBe(`MIT`);
     });
 
     test(`Check license for complex type`, async () => {
-        const dep = await provider.getPackageByVersion("wronglicense");
+        const dep = await provider.getPackageJson("wronglicense");
         const p = new Package(dep);
 
         expect(new LicenseUtilities(p).license).toEqual(`{"foo":{"bar":"MIT"}}`);
     });
 
     test(`No license check`, async () => {
-        const dep = await provider.getPackageByVersion("wronglicense2");
+        const dep = await provider.getPackageJson("wronglicense2");
         const p = new Package(dep);
 
         expect(new LicenseUtilities(p).license.startsWith(`PARSE ERROR`)).toBe(true);

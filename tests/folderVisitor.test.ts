@@ -2,12 +2,12 @@ import * as path from "path";
 
 import { Package } from "../src/package/package";
 import { FileSystemPackageProvider } from "../src/providers/folder";
-import { INpmPackageVersion } from "../src/npm";
+import { IPackageJson } from "../src/npm";
 import { getPackageVersionFromPackageJson, Visitor } from "../src/visitors/visitor";
 import { OraLogger } from "../src/utils/logger";
 import { LoopUtilities } from "../src/extensions/utilities/LoopUtilities";
 import { LicenseUtilities } from "../src/extensions/utilities/LicenseUtilities";
-import { IPackageVersionProvider } from "../src/providers/provider";
+import { IPackageJsonProvider } from "../src/providers/provider";
 
 describe(`visitFromFolder Tests`, () => {
     let p: Package;
@@ -106,19 +106,19 @@ describe(`visitFromName Error Handling`, () => {
         }
     }
 
-    class MockProvider implements IPackageVersionProvider {
+    class MockProvider implements IPackageJsonProvider {
         size = 0;
 
-        getPackageByVersion(
+        getPackageJson(
             name: string /* eslint-disable-line */,
             version?: string | undefined /* eslint-disable-line */
-        ): Promise<INpmPackageVersion> {
+        ): Promise<IPackageJson> {
             throw new CustomError(`getPackageByVersion not implemented`);
         }
 
-        getPackagesByVersion(
+        getPackageJsons(
             modules: [string, string?][] /* eslint-disable-line */
-        ): AsyncIterableIterator<INpmPackageVersion> {
+        ): AsyncIterableIterator<IPackageJson> {
             throw new Error(`getPackagesByVersion not implemented`);
         }
     }

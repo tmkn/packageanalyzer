@@ -2,7 +2,7 @@ export { Visitor, getPackageVersionfromString } from "./visitors/visitor";
 export type { PackageVersion } from "./visitors/visitor";
 export { Package } from "./package/package";
 export { npmOnline, OnlinePackageProvider } from "./providers/online";
-export type { IPackageVersionProvider } from "./providers/provider";
+export type { IPackageJsonProvider } from "./providers/provider";
 export { OraLogger } from "../src/utils/logger";
 
 export { TreeReport } from "./reports/TreeReport";

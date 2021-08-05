@@ -1,7 +1,7 @@
 import { Writable } from "stream";
 import { IDecorator } from "../src/extensions/decorators/Decorator";
 import { Package } from "../src/package/package";
-import { IPackageVersionProvider } from "../src/providers/provider";
+import { IPackageJsonProvider } from "../src/providers/provider";
 import { IReport } from "../src/reports/Report";
 import { IFormatter } from "../src/utils/formatter";
 import { DependencyTypes, PackageVersion } from "../src/visitors/visitor";
@@ -27,7 +27,7 @@ interface ITestReport {
     report: (pkg: Package, formatter: IFormatter) => Promise<void>;
 
     decorators?: IDecorator<any, any>[];
-    provider?: IPackageVersionProvider;
+    provider?: IPackageJsonProvider;
     type?: DependencyTypes;
     depth?: number;
 }
@@ -37,7 +37,7 @@ export class TestReport implements IReport<ITestReport> {
     pkg: PackageVersion;
 
     decorators?: IDecorator<any, any>[];
-    provider?: IPackageVersionProvider;
+    provider?: IPackageJsonProvider;
     type?: DependencyTypes;
     depth?: number;
 

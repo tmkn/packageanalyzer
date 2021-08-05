@@ -3,7 +3,7 @@ import * as chalk from "chalk";
 import { daysAgo } from "../cli/common";
 import { Package } from "../package/package";
 import { OnlinePackageProvider } from "../providers/online";
-import { IPackageVersionProvider } from "../providers/provider";
+import { IPackageJsonProvider } from "../providers/provider";
 import { IFormatter } from "../utils/formatter";
 import { updateInfo } from "../utils/update";
 import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
@@ -17,7 +17,7 @@ export interface IUpdateInfoParams {
 export class UpdateInfoReport implements IReport<IUpdateInfoParams> {
     name = `Update Info Report`;
     pkg: PackageVersion;
-    provider: IPackageVersionProvider;
+    provider: IPackageJsonProvider;
     depth: number = 0;
 
     constructor(readonly params: IUpdateInfoParams) {

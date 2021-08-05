@@ -6,16 +6,16 @@ import * as semver from "semver";
 
 import { OraLogger } from "../utils/logger";
 
-import { INpmPackageVersion, INpmPackage, INpmDumpRow, IUnpublishedNpmPackage } from "../npm";
+import { IPackageJson, IPackageMetadata, INpmDumpRow, IUnpublishedPackageMetadata } from "../npm";
 import { PackageVersion } from "../visitors/visitor";
-import { IPackageVersionProvider } from "./provider";
+import { IPackageJsonProvider } from "./provider";
 
 //parses npm data from https://replicate.npmjs.com/_all_docs?limit=4&include_docs=true
 //needs a lookup file
-export class FlatFileProvider implements IPackageVersionProvider {
+export class FlatFileProvider implements IPackageJsonProvider {
     private _lookup: Map<string, ILookupInfo> = new Map();
     private _lookupFile: string;
-    private _cache: Map<string, INpmPackage> = new Map();
+    private _cache: Map<string, IPackageMetadata> = new Map();
     private _initialized = false;
     private _logger = new OraLogger();
 
@@ -30,19 +30,17 @@ export class FlatFileProvider implements IPackageVersionProvider {
         }
     }
 
-    get size(): number {
-        return this._lookup.size;
-    }
-
     constructor(private _file: string) {
         this._lookupFile = FlatFileProvider.getLookupFile(this._file);
     }
 
-    async getPackageInfo(name: string): Promise<INpmPackage | IUnpublishedNpmPackage | undefined> {
+    async getPackageInfo(
+        name: string
+    ): Promise<IPackageMetadata | IUnpublishedPackageMetadata | undefined> {
         return this._getPackage(name);
     }
 
-    async getPackageByVersion(name: string, version?: string): Promise<INpmPackageVersion> {
+    async getPackageJson(name: string, version?: string): Promise<IPackageJson> {
         if (!this._initialized) {
             await this.parseLookupFile();
             this._initialized = true;
@@ -69,11 +67,9 @@ export class FlatFileProvider implements IPackageVersionProvider {
         }
     }
 
-    async *getPackagesByVersion(
-        modules: PackageVersion[]
-    ): AsyncIterableIterator<INpmPackageVersion> {
+    async *getPackageJsons(modules: PackageVersion[]): AsyncIterableIterator<IPackageJson> {
         for (const [name, version] of modules) {
-            yield this.getPackageByVersion(name, version);
+            yield this.getPackageJson(name, version);
         }
     }
 
@@ -115,7 +111,7 @@ export class FlatFileProvider implements IPackageVersionProvider {
         return name;
     }
 
-    private _getPackage(name: string): INpmPackage {
+    private _getPackage(name: string): IPackageMetadata {
         const cachedPkg = this._getFromCache(name);
 
         if (typeof cachedPkg !== "undefined") return cachedPkg;
@@ -123,7 +119,7 @@ export class FlatFileProvider implements IPackageVersionProvider {
         return this._getFromLookup(name);
     }
 
-    private _getFromLookup(pkgName: string): INpmPackage {
+    private _getFromLookup(pkgName: string): IPackageMetadata {
         const lookupInfo = this._lookup.get(pkgName);
 
         if (typeof lookupInfo === "undefined")
@@ -143,7 +139,7 @@ export class FlatFileProvider implements IPackageVersionProvider {
         return pkg;
     }
 
-    private _getFromCache(pkgName: string): INpmPackage | undefined {
+    private _getFromCache(pkgName: string): IPackageMetadata | undefined {
         return this._cache.get(pkgName);
     }
 }

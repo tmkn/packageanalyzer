@@ -2,14 +2,14 @@ import * as path from "path";
 import * as fs from "fs";
 import * as semver from "semver";
 
-import { INpmPackageVersion, INpmPackage, IUnpublishedNpmPackage } from "../npm";
+import { IPackageJson } from "../npm";
 import { PackageVersion } from "../visitors/visitor";
-import { IPackageVersionProvider } from "./provider";
+import { IPackageJsonProvider } from "./provider";
 
 //gathers packages from a node_modules folder
-export class FileSystemPackageProvider implements IPackageVersionProvider {
+export class FileSystemPackageProvider implements IPackageJsonProvider {
     private _paths: Set<string> = new Set();
-    private readonly _cache: Map<string, Map<string, INpmPackageVersion>> = new Map();
+    private readonly _cache: Map<string, Map<string, IPackageJson>> = new Map();
 
     constructor(_folder: string) {
         const matches = this._findPackageJson(_folder);
@@ -48,7 +48,7 @@ export class FileSystemPackageProvider implements IPackageVersionProvider {
         for (const pkgPath of this._paths) {
             try {
                 const content = fs.readFileSync(pkgPath, "utf8");
-                const pkg: INpmPackageVersion = JSON.parse(content);
+                const pkg: IPackageJson = JSON.parse(content);
 
                 this.addPackage(pkg);
             } catch (e) {
@@ -63,17 +63,7 @@ export class FileSystemPackageProvider implements IPackageVersionProvider {
         }
     }
 
-    get size(): number {
-        let size = 0;
-
-        for (const [, versions] of this._cache) {
-            size += versions.size;
-        }
-
-        return size;
-    }
-
-    addPackage(pkg: INpmPackageVersion): void {
+    addPackage(pkg: IPackageJson): void {
         const { name, version } = pkg;
         const versions = this._cache.get(name);
 
@@ -88,20 +78,15 @@ export class FileSystemPackageProvider implements IPackageVersionProvider {
         }
     }
 
-    async *getPackagesByVersion(
-        modules: PackageVersion[]
-    ): AsyncIterableIterator<INpmPackageVersion> {
+    async *getPackageJsons(modules: PackageVersion[]): AsyncIterableIterator<IPackageJson> {
         for (const pkgVersion of modules) {
-            yield this.getPackageByVersion(...pkgVersion);
+            yield this.getPackageJson(...pkgVersion);
         }
     }
 
-    async getPackageByVersion(
-        name: string,
-        version?: string | undefined
-    ): Promise<INpmPackageVersion> {
+    async getPackageJson(name: string, version?: string | undefined): Promise<IPackageJson> {
         const versions = this._cache.get(name);
-        let pkg: INpmPackageVersion;
+        let pkg: IPackageJson;
 
         if (typeof versions === "undefined") {
             throw new Error(`Couldn't find package ${name}`);

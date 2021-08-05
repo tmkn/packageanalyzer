@@ -1,6 +1,6 @@
 import * as semver from "semver";
-import { isUnpublished, INpmPackage } from "../npm";
-import { INpmPackageProvider } from "../providers/provider";
+import { isUnpublished, IPackageMetadata } from "../npm";
+import { IPackageMetaDataProvider } from "../providers/provider";
 
 interface IReleaseInfo {
     version: string;
@@ -32,7 +32,7 @@ export function getMinorVersionString(rawVersion: string): string {
     return `^${cleanVersion(rawVersion)}`;
 }
 
-function latestVersion(pkgInfo: INpmPackage): IReleaseInfo {
+function latestVersion(pkgInfo: IPackageMetadata): IReleaseInfo {
     const latest = pkgInfo["dist-tags"].latest;
 
     return {
@@ -41,7 +41,7 @@ function latestVersion(pkgInfo: INpmPackage): IReleaseInfo {
     };
 }
 
-function getMaxSatisfyingVersion(pkgInfo: INpmPackage, version: string): string {
+function getMaxSatisfyingVersion(pkgInfo: IPackageMetadata, version: string): string {
     const versions: string[] = [...Object.keys(pkgInfo.versions)];
     const maxSatisfying = semver.maxSatisfying(versions, version);
 
@@ -50,7 +50,7 @@ function getMaxSatisfyingVersion(pkgInfo: INpmPackage, version: string): string 
     return maxSatisfying;
 }
 
-function getReleaseDate(pkgInfo: INpmPackage, version: string): string {
+function getReleaseDate(pkgInfo: IPackageMetadata, version: string): string {
     const releaseDate = pkgInfo.time[version];
 
     if (typeof releaseDate === "undefined")
@@ -59,8 +59,11 @@ function getReleaseDate(pkgInfo: INpmPackage, version: string): string {
     return releaseDate;
 }
 
-async function getNpmPackage(name: string, provider: INpmPackageProvider): Promise<INpmPackage> {
-    const pkgInfo = await provider.getPackageInfo(name);
+async function getNpmPackage(
+    name: string,
+    provider: IPackageMetaDataProvider
+): Promise<IPackageMetadata> {
+    const pkgInfo = await provider.getPackageMetadata(name);
 
     if (typeof pkgInfo === "undefined" || isUnpublished(pkgInfo))
         throw new Error(`Couldn't get data`);
@@ -71,7 +74,7 @@ async function getNpmPackage(name: string, provider: INpmPackageProvider): Promi
 export async function updateCheck(
     name: string,
     version: string,
-    provider: INpmPackageProvider
+    provider: IPackageMetaDataProvider
 ): Promise<IReleaseInfo> {
     const pkgInfo = await getNpmPackage(name, provider);
     const maxSatisfying = getMaxSatisfyingVersion(pkgInfo, version);
@@ -86,7 +89,7 @@ export async function updateCheck(
 export async function updateInfo(
     name: string,
     version: string,
-    provider: INpmPackageProvider
+    provider: IPackageMetaDataProvider
 ): Promise<IUpdateResult> {
     const bugfixVersionString = getBugfixVersionString(version);
     const minorVersionString = getMinorVersionString(version);

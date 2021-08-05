@@ -30,10 +30,6 @@ describe(`OnlineProvider Tests`, () => {
         expect(p.version).toBe("16.8.6");
     });
 
-    test(`Check size`, () => {
-        expect(provider.size).toBe(406);
-    });
-
     test(`Check oldest package`, async () => {
         const visitor = new Visitor(["react", "16.8.1"], provider, new OraLogger(), [
             new ReleaseDecorator(provider)
@@ -66,7 +62,7 @@ describe(`OnlineProvider Tests`, () => {
         expect.assertions(1);
 
         try {
-            await provider.getPackageByVersion("unpublished");
+            await provider.getPackageJson("unpublished");
         } catch (e) {
             expect(e).toBeInstanceOf(Error);
         }

@@ -1,6 +1,6 @@
 import { downloadHttpJson } from "./utils/requests";
 
-export interface INpmPackageVersion {
+export interface IPackageJson {
     author: INpmUser;
     dependencies?: INpmKeyValue;
     deprecated?: string;
@@ -19,9 +19,11 @@ export interface INpmPackageVersion {
     repository: INpmRepository;
     scripts: INpmKeyValue;
     version: string;
+
+    [key: string]: unknown;
 }
 
-export interface IUnpublishedNpmPackage {
+export interface IUnpublishedPackageMetadata {
     name: string;
     time: INpmKeyValue & IUnpublishedInfo;
 }
@@ -62,7 +64,7 @@ export interface IMalformedLicenseField {
     url: string;
 }
 
-export interface INpmPackage {
+export interface IPackageMetadata {
     author: INpmUser;
     description: string;
     "dist-tags": INpmKeyValue[] & { latest: string };
@@ -76,7 +78,7 @@ export interface INpmPackage {
     repository: INpmRepository;
     time: INpmKeyValue;
     users: { [index: string]: boolean };
-    versions: { [index: string]: INpmPackageVersion };
+    versions: { [index: string]: IPackageJson };
 }
 
 //https://github.com/npm/registry/blob/master/docs/download-counts.md
@@ -120,14 +122,14 @@ interface INpmPackageRow {
 }
 
 export interface INpmDumpRow {
-    doc: INpmPackage;
+    doc: IPackageMetadata;
     id: string;
     key: string;
 }
 
 export function isUnpublished(
-    data: IUnpublishedNpmPackage | INpmPackage
-): data is IUnpublishedNpmPackage {
+    data: IUnpublishedPackageMetadata | IPackageMetadata
+): data is IUnpublishedPackageMetadata {
     if (typeof data === "object" && data !== null) {
         if ("time" in data) {
             if ("unpublished" in data.time) return true;
