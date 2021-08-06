@@ -6,7 +6,7 @@ import { Server } from "http";
 
 import * as express from "express";
 
-import { INpmPackage, isUnpublished } from "../src/npm";
+import { IPackageMetadata, isUnpublished } from "../src/npm";
 
 let i = 3000;
 
@@ -77,7 +77,7 @@ export async function createMockServer(server: AbstractMockServer): Promise<void
 class MockNpmServer extends AbstractMockServer {
     name = `MockNpmServer`;
     private _dataPath = path.join("tests", "data", "mockserverdata");
-    private _cache: Map<string, Readonly<INpmPackage>> = new Map();
+    private _cache: Map<string, Readonly<IPackageMetadata>> = new Map();
 
     setup() {
         this._populateCache();
@@ -119,7 +119,7 @@ class MockNpmServer extends AbstractMockServer {
 
                 if (typeof data === "undefined") res.status(404).send({ error: "Not found" });
                 else {
-                    const mock: INpmPackage = { ...data };
+                    const mock: IPackageMetadata = { ...data };
 
                     mock.time = {};
 

@@ -13,19 +13,19 @@ describe(`flatFileProvider Tests`, () => {
     });
 
     test(`Get latest version`, async () => {
-        const pkg = await provider.getPackageByVersion(`ux-company-announcement`);
+        const pkg = await provider.getPackageJson(`ux-company-announcement`);
 
         expect(pkg.version).toBe("1.4.1");
     });
 
     test(`Get specific version`, async () => {
-        const pkg = await provider.getPackageByVersion(`ux-company-announcement`, `1.1.1`);
+        const pkg = await provider.getPackageJson(`ux-company-announcement`, `1.1.1`);
 
         expect(pkg.version).toBe("1.1.1");
     });
 
     test(`Get by semantic version`, async () => {
-        const pkg = await provider.getPackageByVersion(`ux-company-announcement`, `^2.0.0`);
+        const pkg = await provider.getPackageJson(`ux-company-announcement`, `^2.0.0`);
 
         expect(pkg.version).toBe("2.1.2");
     });
@@ -34,7 +34,7 @@ describe(`flatFileProvider Tests`, () => {
         expect.assertions(1);
 
         try {
-            await provider.getPackageByVersion(`ux-company-announcement`, `9.1.1`);
+            await provider.getPackageJson(`ux-company-announcement`, `9.1.1`);
         } catch (e) {
             expect(e).toBeInstanceOf(Error);
         }
@@ -44,7 +44,7 @@ describe(`flatFileProvider Tests`, () => {
         expect.assertions(1);
 
         try {
-            await provider.getPackageByVersion(`doesntexist`);
+            await provider.getPackageJson(`doesntexist`);
         } catch (e) {
             expect(e).toBeInstanceOf(Error);
         }
@@ -56,14 +56,10 @@ describe(`flatFileProvider Tests`, () => {
             [`ux-copy-job-page`]
         ];
 
-        for await (const pkg of provider.getPackagesByVersion(packages)) {
+        for await (const pkg of provider.getPackageJsons(packages)) {
             if (pkg.name === `ux-company-announcement`) expect(pkg.version).toBe(`1.1.1`);
             else if (pkg.name === `ux-copy-job-page`) expect(pkg.version).toBe(`2.0.48`);
         }
-    });
-
-    test(`Get size`, async () => {
-        expect(provider.size).toBe(10);
     });
 
     test(`Get package info`, async () => {

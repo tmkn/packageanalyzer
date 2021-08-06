@@ -1,11 +1,11 @@
 import * as path from "path";
 import * as fs from "fs";
 
-import { IPackageVersionProvider } from "../providers/folder";
 import { Package } from "../package/package";
-import { INpmKeyValue, INpmPackageVersion } from "../npm";
+import { INpmKeyValue, IPackageJson } from "../npm";
 import { ILogger, numPadding } from "../utils/logger";
 import { IDecorator } from "../extensions/decorators/Decorator";
+import { IPackageJsonProvider } from "../providers/provider";
 
 export type PackageVersion = [name: string, version?: string];
 
@@ -21,7 +21,7 @@ export class Visitor implements IPackageVisitor {
 
     constructor(
         private readonly _entry: PackageVersion,
-        private readonly _provider: IPackageVersionProvider,
+        private readonly _provider: IPackageJsonProvider,
         private readonly _logger: ILogger,
         private readonly _decorators: IDecorator<any, any>[] = [],
         private readonly _maxDepth: number = Infinity
@@ -30,7 +30,7 @@ export class Visitor implements IPackageVisitor {
     async visit(depType = this._depType): Promise<Package> {
         try {
             const [name, version] = this._entry;
-            const rootPkg = await this._provider.getPackageByVersion(name, version);
+            const rootPkg = await this._provider.getPackageJson(name, version);
             const root: Package = new Package(rootPkg);
 
             this._logger.start();
@@ -64,9 +64,9 @@ export class Visitor implements IPackageVisitor {
         try {
             const dependencyField = typeof dependencies !== "undefined" ? dependencies : {};
             const dependencyArray = Object.entries(dependencyField);
-            const packages: INpmPackageVersion[] = [];
+            const packages: IPackageJson[] = [];
 
-            for await (const resolvedDependencies of this._provider.getPackagesByVersion(
+            for await (const resolvedDependencies of this._provider.getPackageJsons(
                 dependencyArray
             )) {
                 packages.push(resolvedDependencies);
@@ -147,7 +147,7 @@ export function getPackageVersionFromPackageJson(folder: string): PackageVersion
 
     try {
         const content = fs.readFileSync(packageJsonPath, "utf8");
-        const pkg: INpmPackageVersion = JSON.parse(content);
+        const pkg: IPackageJson = JSON.parse(content);
 
         return [pkg.name, pkg.version];
     } catch (e) {

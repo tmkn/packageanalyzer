@@ -1,7 +1,7 @@
 import { Package } from "../../src";
 import { ReleaseDecorator } from "../../src/extensions/decorators/ReleaseDecorator";
-import { INpmPackage, INpmPackageVersion, IUnpublishedNpmPackage } from "../../src/npm";
-import { INpmPackageProvider } from "../../src/providers/folder";
+import { IPackageMetadata, IPackageJson, IUnpublishedPackageMetadata } from "../../src/npm";
+import { IPackageMetaDataProvider } from "../../src/providers/provider";
 
 describe(`ReleaseDecorator Tests`, () => {
     const logStub = {
@@ -11,25 +11,25 @@ describe(`ReleaseDecorator Tests`, () => {
     test(`Correctly returns info`, async () => {
         const timestamp = "0";
         const version = "1.0.0";
-        const provider = new (class implements INpmPackageProvider {
-            async getPackageInfo(
+        const provider = new (class implements IPackageMetaDataProvider {
+            async getPackageMetadata(
                 name: string
-            ): Promise<INpmPackage | IUnpublishedNpmPackage | undefined> {
-                const data: Partial<INpmPackage> = {
+            ): Promise<IPackageMetadata | IUnpublishedPackageMetadata | undefined> {
+                const data: Partial<IPackageMetadata> = {
                     time: {
                         [version]: timestamp
                     }
                 };
 
-                return data as INpmPackage;
+                return data as IPackageMetadata;
             }
         })();
         const extension = new ReleaseDecorator(provider);
-        const data: Partial<INpmPackageVersion> = {
+        const data: Partial<IPackageJson> = {
             name: "foo",
             version: version
         };
-        const p = new Package(data as INpmPackageVersion);
+        const p = new Package(data as IPackageJson);
 
         const extensionData = await extension.apply({ p, ...logStub });
 
@@ -37,41 +37,41 @@ describe(`ReleaseDecorator Tests`, () => {
     });
 
     test(`Throws on missing data`, async () => {
-        const provider = new (class implements INpmPackageProvider {
-            async getPackageInfo(
+        const provider = new (class implements IPackageMetaDataProvider {
+            async getPackageMetadata(
                 name: string
-            ): Promise<INpmPackage | IUnpublishedNpmPackage | undefined> {
+            ): Promise<IPackageMetadata | IUnpublishedPackageMetadata | undefined> {
                 return undefined;
             }
         })();
         const extension = new ReleaseDecorator(provider);
-        const data: Partial<INpmPackageVersion> = {
+        const data: Partial<IPackageJson> = {
             name: "foo",
             version: "1.0.0"
         };
-        const p = new Package(data as INpmPackageVersion);
+        const p = new Package(data as IPackageJson);
 
         await expect(extension.apply({ p, ...logStub })).rejects.toThrowError();
     });
 
     test(`Throws on missing version entry`, async () => {
-        const provider = new (class implements INpmPackageProvider {
-            async getPackageInfo(
+        const provider = new (class implements IPackageMetaDataProvider {
+            async getPackageMetadata(
                 name: string
-            ): Promise<INpmPackage | IUnpublishedNpmPackage | undefined> {
-                const data: Partial<INpmPackage> = {
+            ): Promise<IPackageMetadata | IUnpublishedPackageMetadata | undefined> {
+                const data: Partial<IPackageMetadata> = {
                     time: {}
                 };
 
-                return data as INpmPackage;
+                return data as IPackageMetadata;
             }
         })();
         const extension = new ReleaseDecorator(provider);
-        const data: Partial<INpmPackageVersion> = {
+        const data: Partial<IPackageJson> = {
             name: "foo",
             version: "1.0.0"
         };
-        const p = new Package(data as INpmPackageVersion);
+        const p = new Package(data as IPackageJson);
 
         await expect(extension.apply({ p, ...logStub })).rejects.toThrowError();
     });

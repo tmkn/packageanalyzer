@@ -6,8 +6,8 @@ import { OnlinePackageProvider } from "../providers/online";
 import { PackageVersion, Visitor } from "../visitors/visitor";
 import { OraLogger } from "./logger";
 import { DependencyUtilities } from "../extensions/utilities/DependencyUtilities";
-import { IPackageVersionProvider } from "../providers/folder";
-import { INpmPackage, INpmPackageVersion, isUnpublished, IUnpublishedNpmPackage } from "../npm";
+import { IPackageMetadata, IPackageJson, isUnpublished, IUnpublishedPackageMetadata } from "../npm";
+import { IPackageJsonProvider } from "../providers/provider";
 
 export class DependencyDumper {
     pkg?: Package;
@@ -33,7 +33,7 @@ export class DependencyDumper {
 
         try {
             for (const [i, dependency] of [...distinct].sort().entries()) {
-                const data = await this._provider.getPackageInfo(dependency);
+                const data = await this._provider.getPackageMetadata(dependency);
                 const folder = this._getFolder(baseDir, dependency);
                 const fullPath = path.join(folder, `package.json`);
 
@@ -63,25 +63,23 @@ export class DependencyDumper {
     }
 }
 
-export class DependencyDumperProvider implements IPackageVersionProvider {
-    private _cache: Map<string, INpmPackage | IUnpublishedNpmPackage> = new Map();
+export class DependencyDumperProvider implements IPackageJsonProvider {
+    private _cache: Map<string, IPackageMetadata | IUnpublishedPackageMetadata> = new Map();
     private _initialized: Promise<void>;
-
-    get size(): number {
-        return this._cache.size;
-    }
 
     constructor(private _dir: string) {
         this._initialized = this._populateCache();
     }
 
-    async getPackageInfo(name: string): Promise<INpmPackage | IUnpublishedNpmPackage | undefined> {
+    async getPackageInfo(
+        name: string
+    ): Promise<IPackageMetadata | IUnpublishedPackageMetadata | undefined> {
         await this._initialized;
 
         return this._cache.get(name);
     }
 
-    async getPackageByVersion(name: string, version?: string): Promise<INpmPackageVersion> {
+    async getPackageJson(name: string, version?: string): Promise<IPackageJson> {
         const data = await this.getPackageInfo(name);
 
         if (typeof data === "undefined") throw new Error(`No data found for package ${name}`);
@@ -97,11 +95,9 @@ export class DependencyDumperProvider implements IPackageVersionProvider {
 
         return versionData;
     }
-    async *getPackagesByVersion(
-        modules: PackageVersion[]
-    ): AsyncIterableIterator<INpmPackageVersion> {
+    async *getPackageJsons(modules: PackageVersion[]): AsyncIterableIterator<IPackageJson> {
         for (const [name, version] of modules) {
-            yield this.getPackageByVersion(name, version);
+            yield this.getPackageJson(name, version);
         }
     }
 

@@ -1,6 +1,6 @@
 import { IDecorator } from "../extensions/decorators/Decorator";
 import { Package } from "../package/package";
-import { IPackageVersionProvider } from "../providers/folder";
+import { IPackageJsonProvider } from "../providers/provider";
 import { IFormatter } from "../utils/formatter";
 import { DependencyTypes, PackageVersion } from "../visitors/visitor";
 
@@ -10,7 +10,7 @@ export interface IReport<T extends {}> {
     readonly pkg: PackageVersion;
 
     readonly decorators?: IDecorator<any, any>[];
-    readonly provider?: IPackageVersionProvider;
+    readonly provider?: IPackageJsonProvider;
     readonly type?: DependencyTypes;
     readonly depth?: number;
 

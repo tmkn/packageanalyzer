@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import { INpmPackageVersion } from "../src/npm";
+import { IPackageJson } from "../src/npm";
 
 function getFolderRecursively(folder: string): string[] {
     try {
@@ -43,10 +43,10 @@ function cleanFolder(paths: string[]): void {
 }
 
 //strips sensitive data in package.json
-function stripSensitiveKeys(data: INpmPackageVersion): INpmPackageVersion {
+function stripSensitiveKeys(data: IPackageJson): IPackageJson {
     for (const [key] of Object.entries(data)) {
         if (key.startsWith(`_`)) {
-            delete data[key as keyof INpmPackageVersion];
+            delete data[key as keyof IPackageJson];
         }
     }
 
@@ -55,7 +55,7 @@ function stripSensitiveKeys(data: INpmPackageVersion): INpmPackageVersion {
 
 function cleanJson(file: string): void {
     const content = fs.readFileSync(file, "utf8");
-    let data: INpmPackageVersion = JSON.parse(content);
+    let data: IPackageJson = JSON.parse(content);
 
     data = stripSensitiveKeys(data);
 

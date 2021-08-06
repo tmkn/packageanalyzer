@@ -3,8 +3,9 @@ import * as chalk from "chalk";
 import { defaultDependencyType } from "../cli/common";
 import { LicenseUtilities } from "../extensions/utilities/LicenseUtilities";
 import { Package } from "../package/package";
-import { FileSystemPackageProvider, IPackageVersionProvider } from "../providers/folder";
+import { FileSystemPackageProvider } from "../providers/folder";
 import { npmOnline } from "../providers/online";
+import { IPackageJsonProvider } from "../providers/provider";
 import { IFormatter } from "../utils/formatter";
 import {
     createWhitelistLicenseCheckReport,
@@ -30,7 +31,7 @@ export interface ILicenseParams {
 export class LicenseReport implements IReport<ILicenseParams> {
     name = `License Report`;
     readonly pkg: PackageVersion;
-    provider: IPackageVersionProvider;
+    provider: IPackageJsonProvider;
     type: DependencyTypes;
 
     allowList: string[];
