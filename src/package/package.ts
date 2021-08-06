@@ -19,7 +19,7 @@ interface IPackage<T> {
 
     addDependency: (dependency: T) => void;
 
-    visit: (callback: (dependency: T) => void, includeSelf: boolean, start: T) => void;
+    visit: (callback: (dependency: T) => void, includeSelf: boolean) => void;
     getPackagesBy: (filter: (pkg: T) => boolean) => T[];
     getPackagesByName: (name: string, version?: string) => T[];
     getPackageByName: (name: string, version?: string) => T | null;
@@ -82,14 +82,13 @@ export class Package implements IPackage<Package> {
 
     visit(
         callback: (dependency: Package) => void,
-        includeSelf = false,
-        start: Package = this
+        includeSelf = false
     ): void {
         if (includeSelf) callback(this);
 
-        for (const child of start._dependencies) {
+        for (const child of this._dependencies) {
             callback(child);
-            this.visit(callback, false, child);
+            child.visit(callback, false);
         }
     }
 
@@ -100,8 +99,7 @@ export class Package implements IPackage<Package> {
             d => {
                 if (filter(d)) matches.push(d);
             },
-            true,
-            this
+            true
         );
 
         return matches;
