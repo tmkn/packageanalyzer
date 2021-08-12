@@ -61,7 +61,7 @@ class BaseDependencyUtilities {
     }
 
     get mostDirectDependencies(): Package[] {
-        let most: Package[] = [this._p];
+        let most: [first: Package, ...rest: Package[]] = [this._p];
 
         this._p.visit(d => {
             if (d.directDependencies.length > most[0].directDependencies.length) {
