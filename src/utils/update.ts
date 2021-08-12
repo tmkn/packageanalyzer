@@ -37,7 +37,7 @@ function latestVersion(pkgInfo: IPackageMetadata): IReleaseInfo {
 
     return {
         version: latest,
-        releaseDate: pkgInfo.time[latest]
+        releaseDate: pkgInfo.time[latest] ?? `unknown`
     };
 }
 
