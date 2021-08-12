@@ -116,7 +116,12 @@ function verifyLookups(srcFile: string, lookups: ReadonlyArray<ILookupEntry>): v
     ];
 
     for (const i of tests) {
-        verifySingleLookup(srcFile, lookups[i]);
+        const lookup = lookups[i];
+
+        if(!lookup)
+            throw new Error(`Lookup was undefined`);
+
+        verifySingleLookup(srcFile, lookup);
     }
 }
 
