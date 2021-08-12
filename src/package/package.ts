@@ -122,9 +122,7 @@ export class Package implements IPackage<Package> {
     getPackageByName(name: string, version?: string): Package | null {
         const matches: Package[] = this.getPackagesByName(name, version);
 
-        if (matches.length > 0) return matches[0];
-
-        return null;
+        return matches[0] ?? null;
     }
 
     getData(key: string): unknown {
