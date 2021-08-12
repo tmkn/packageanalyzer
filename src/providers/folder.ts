@@ -95,6 +95,10 @@ export class FileSystemPackageProvider implements IPackageJsonProvider {
         //load latest available version
         if (typeof version === "undefined") {
             const [latestVersion] = [...versions.keys()].slice(-1);
+
+            if(!latestVersion)
+                throw new Error(`Couldn't get latest version for ${name}`);
+
             const specificVersion = versions.get(latestVersion);
 
             //should never happen..
