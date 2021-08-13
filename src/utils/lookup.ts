@@ -118,8 +118,7 @@ function verifyLookups(srcFile: string, lookups: ReadonlyArray<ILookupEntry>): v
     for (const i of tests) {
         const lookup = lookups[i];
 
-        if(!lookup)
-            throw new Error(`Lookup was undefined`);
+        if (!lookup) throw new Error(`Lookup was undefined`);
 
         verifySingleLookup(srcFile, lookup);
     }

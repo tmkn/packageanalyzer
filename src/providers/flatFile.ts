@@ -53,7 +53,7 @@ export class FlatFileProvider implements IPackageJsonProvider {
             const latest = pkgInfo["dist-tags"].latest;
             const latestPackageJson = pkgInfo.versions[latest];
 
-            if(!latestPackageJson)
+            if (!latestPackageJson)
                 throw new Error(`Couldn't find latest version ${latest} for package ${name}`);
 
             return latestPackageJson;
@@ -69,7 +69,7 @@ export class FlatFileProvider implements IPackageJsonProvider {
 
             const specificPackageJson = pkgInfo.versions[resolvedVersion];
 
-            if(!specificPackageJson)
+            if (!specificPackageJson)
                 throw new Error(`Couldn't find version: ${resolvedVersion} for package ${name}`);
 
             return specificPackageJson;
@@ -98,9 +98,11 @@ export class FlatFileProvider implements IPackageJsonProvider {
             try {
                 parsedBytes += Buffer.byteLength(line, "utf8");
                 const name = this._parseLine(line, ++lineNum);
-    
-                this._logger.log(`Parsing Lookup [${getPercentage(parsedBytes, fileSize)}%] ${name}`);
-            } catch(e) {
+
+                this._logger.log(
+                    `Parsing Lookup [${getPercentage(parsedBytes, fileSize)}%] ${name}`
+                );
+            } catch (e) {
                 this._logger.log(`Couldn't parse line: ${lineNum}`);
             }
         }
@@ -110,8 +112,7 @@ export class FlatFileProvider implements IPackageJsonProvider {
     private _parseLine(line: string, lineNum: number): string {
         const [name, offset, length] = line.split(" ").map(l => l.trim());
 
-        if(!name || !offset || !length)
-            throw new Error(`Couldn't parse line`);
+        if (!name || !offset || !length) throw new Error(`Couldn't parse line`);
 
         const _offset: number = parseInt(offset);
         const _length: number = parseInt(length);
