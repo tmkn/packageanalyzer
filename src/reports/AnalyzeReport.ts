@@ -189,13 +189,9 @@ function printLoops(p: Package, paddingLeft: number, formatter: IFormatter): voi
 
 function printMostDependencies(pkgs: Package[], formatter: IFormatter): void {
     const names = pkgs.map(p => p.name).join(`, `);
+    const count = pkgs[0]?.directDependencies.length.toString() ?? `(error)`;
 
-    formatter.writeGroup([
-        [
-            `Most direct dependencies`,
-            `"[${names}]": ${pkgs[0]?.directDependencies.length ?? `(error)`}`
-        ]
-    ]);
+    formatter.writeGroup([[`Most direct dependencies`, `"[${names}]": ${count}`]]);
 }
 
 function printMostReferred(mostReferred: IMostReferred, formatter: IFormatter): void {
