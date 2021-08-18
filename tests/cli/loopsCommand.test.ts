@@ -3,7 +3,7 @@ import { PassThrough } from "stream";
 
 import { BaseContext } from "clipanion";
 
-import { cli } from "../../src/cli";
+import { cli } from "../../src/cli/cli";
 import { FileSystemPackageProvider } from "../../src/providers/folder";
 
 describe(`Loops Command`, () => {

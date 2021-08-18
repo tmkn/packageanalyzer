@@ -2,7 +2,7 @@ import { PassThrough } from "stream";
 
 import { BaseContext } from "clipanion";
 
-import { cli } from "../../src/cli";
+import { cli } from "../../src/cli/cli";
 import { createMockDownloadServer, IMockServer } from "../server";
 import { DownloadCommand } from "../../src/cli/downloadCommand";
 import { TestWritable } from "../common";

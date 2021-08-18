@@ -1,4 +1,4 @@
-import { cli } from "../../src/cli";
+import { cli } from "../../src/cli/cli";
 import { NpmDumpLookupCreatorCommand } from "../../src/cli/npmLookupCreatorCommand";
 
 describe(`Npmdump Lookup Creater`, () => {

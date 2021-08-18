@@ -1,7 +1,7 @@
 import * as path from "path";
 import { PassThrough } from "stream";
 
-import { cli } from "../../src/cli";
+import { cli } from "../../src/cli/cli";
 import { TestWritable } from "../common";
 import { ReportCommand } from "../../src/cli/reportCommand";
 
