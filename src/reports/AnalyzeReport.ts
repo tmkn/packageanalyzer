@@ -198,7 +198,9 @@ function printMostReferred(mostReferred: IMostReferred, formatter: IFormatter): 
     let str: string = `(none)`;
 
     try {
-        const names = [...mostReferred.pkgs.values()].map(([name]) => name).join(`, `);
+        if (mostReferred.pkgs.length === 0) throw new Error();
+
+        const names = [...mostReferred.pkgs.values()].map(name => name).join(`, `);
         str = `"[${names}]": ${mostReferred.count}`;
     } catch {
     } finally {
