@@ -64,7 +64,12 @@ export class OnlinePackageProvider implements IPackageJsonProvider, IPackageMeta
             throw new Error(`Couldn't resolve version ${version} for "${name}"`);
         }
 
-        return info.versions[resolvedVersion];
+        const packageJson = info.versions[resolvedVersion];
+
+        if (!packageJson)
+            throw new Error(`No package.json found for version ${resolvedVersion} for ${name}`);
+
+        return packageJson;
     }
 }
 

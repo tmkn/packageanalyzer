@@ -80,10 +80,7 @@ export class Package implements IPackage<Package> {
         this._dependencies.push(dependency);
     }
 
-    visit(
-        callback: (dependency: Package) => void,
-        includeSelf = false
-    ): void {
+    visit(callback: (dependency: Package) => void, includeSelf = false): void {
         if (includeSelf) callback(this);
 
         for (const child of this._dependencies) {
@@ -95,12 +92,9 @@ export class Package implements IPackage<Package> {
     getPackagesBy(filter: (pkg: Package) => boolean): Package[] {
         const matches: Package[] = [];
 
-        this.visit(
-            d => {
-                if (filter(d)) matches.push(d);
-            },
-            true
-        );
+        this.visit(d => {
+            if (filter(d)) matches.push(d);
+        }, true);
 
         return matches;
     }
@@ -122,9 +116,7 @@ export class Package implements IPackage<Package> {
     getPackageByName(name: string, version?: string): Package | null {
         const matches: Package[] = this.getPackagesByName(name, version);
 
-        if (matches.length > 0) return matches[0];
-
-        return null;
+        return matches[0] ?? null;
     }
 
     getData(key: string): unknown {

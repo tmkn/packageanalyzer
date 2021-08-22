@@ -68,5 +68,15 @@ describe(`OnlineProvider Tests`, () => {
         }
     });
 
+    test(`Should throw on missing package.json for specific version`, async () => {
+        expect.assertions(1);
+
+        try {
+            await provider.getPackageJson("undefined-version", "5.0.0");
+        } catch (e) {
+            expect(e).toBeInstanceOf(Error);
+        }
+    });
+
     afterAll(() => server.close());
 });

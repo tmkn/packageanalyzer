@@ -3,7 +3,11 @@ import * as chalk from "chalk";
 import { daysAgo, defaultDependencyType } from "../cli/common";
 import { IDecorator } from "../extensions/decorators/Decorator";
 import { ReleaseDecorator } from "../extensions/decorators/ReleaseDecorator";
-import { DependencyUtilities, VersionSummary } from "../extensions/utilities/DependencyUtilities";
+import {
+    DependencyUtilities,
+    IMostReferred,
+    VersionSummary
+} from "../extensions/utilities/DependencyUtilities";
 import { GroupedLicenseSummary, LicenseUtilities } from "../extensions/utilities/LicenseUtilities";
 import { LoopUtilities } from "../extensions/utilities/LoopUtilities";
 import { PathUtilities } from "../extensions/utilities/PathUtilities";
@@ -185,19 +189,19 @@ function printLoops(p: Package, paddingLeft: number, formatter: IFormatter): voi
 
 function printMostDependencies(pkgs: Package[], formatter: IFormatter): void {
     const names = pkgs.map(p => p.name).join(`, `);
+    const count = pkgs[0]?.directDependencies.length.toString() ?? `(error)`;
 
-    formatter.writeGroup([
-        [`Most direct dependencies`, `"[${names}]": ${pkgs[0].directDependencies.length}`]
-    ]);
+    formatter.writeGroup([[`Most direct dependencies`, `"[${names}]": ${count}`]]);
 }
 
-function printMostReferred(arg: [string, number][], formatter: IFormatter): void {
+function printMostReferred(mostReferred: IMostReferred, formatter: IFormatter): void {
     let str: string = `(none)`;
 
     try {
-        const [, num] = [...arg.values()][0];
-        const names = [...arg.values()].map(([name]) => name).join(`, `);
-        str = `"[${names}]": ${num}`;
+        if (mostReferred.pkgs.length === 0) throw new Error();
+
+        const names = [...mostReferred.pkgs.values()].map(name => name).join(`, `);
+        str = `"[${names}]": ${mostReferred.count}`;
     } catch {
     } finally {
         formatter.writeGroup([[`Most referred package`, `${str}`]]);

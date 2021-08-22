@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+        "rootDir": ".",
         "strict": true,
         "noImplicitOverride": true,
         "outDir": "build",
@@ -8,7 +9,12 @@
         "target": "es2020",
         "module": "commonjs",
         "declaration": true,
+        "declarationMap": true,
         "isolatedModules": true
     },
-    "include": ["src", "tests"]
+    "include": [],
+    "references": [
+        { "path": "./src" },
+        { "path": "./tests" }
+    ]
 }

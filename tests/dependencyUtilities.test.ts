@@ -30,10 +30,10 @@ describe(`Dependency Utilities Tests`, () => {
     });
 
     test(`Checks package that is most referred`, () => {
-        const [[name, times]] = new DependencyUtilities(p).mostReferred;
+        const { pkgs, count } = new DependencyUtilities(p).mostReferred;
 
-        expect(name).toBe("loose-envify");
-        expect(times).toBe(3);
+        expect(pkgs[0]).toBe("loose-envify");
+        expect(count).toBe(3);
     });
 
     test(`Checks for package with most versions`, async () => {

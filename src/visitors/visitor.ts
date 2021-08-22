@@ -119,27 +119,19 @@ export class Visitor implements IPackageVisitor {
 }
 
 export function getPackageVersionfromString(name: string): PackageVersion {
-    if (name.startsWith(`@`)) {
-        const parts = name.slice(1).split("@");
+    const isScoped: boolean = name.startsWith(`@`);
+    const [part1, part2, ...rest] = isScoped ? name.slice(1).split("@") : name.split("@");
 
-        if (parts.length === 1) {
-            return [`@${parts[0]}`, undefined];
-        } else if (parts.length === 2) {
-            if (parts[1].trim() !== "") return [`@${parts[0]}`, parts[1]];
-        }
+    if (rest.length > 0) throw new Error(`Too many split tokens`);
 
-        throw new Error(`Unable to determine version from "${name}"`);
-    } else {
-        const parts = name.split("@");
+    if (part1) {
+        if (part2?.trim()?.length === 0)
+            throw new Error(`Unable to determine version from "${name}"`);
 
-        if (parts.length === 1) {
-            return [`${parts[0]}`, undefined];
-        } else if (parts.length === 2) {
-            if (parts[1].trim() !== "") return [`${parts[0]}`, parts[1]];
-        }
-
-        throw new Error(`Unable to determine version from "${name}"`);
+        return isScoped ? [`@${part1}`, part2] : [part1, part2];
     }
+
+    throw new Error(`Couldn't parse fullName token`);
 }
 
 export function getPackageVersionFromPackageJson(folder: string): PackageVersion {

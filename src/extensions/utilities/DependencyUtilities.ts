@@ -5,6 +5,11 @@ type Version = string;
 
 export type VersionSummary = Map<Name, Set<Version>>;
 
+export interface IMostReferred {
+    pkgs: string[];
+    count: number;
+}
+
 //utility functions for the dependency tree
 class BaseDependencyUtilities {
     constructor(private _p: Package, private _includeSelf: boolean) {}
@@ -37,7 +42,7 @@ class BaseDependencyUtilities {
         return distinct;
     }
 
-    get mostReferred(): [Name, number][] {
+    get mostReferred(): IMostReferred {
         const mostReferred: Map<string, number> = new Map();
 
         this._p.visit(d => {
@@ -55,13 +60,16 @@ class BaseDependencyUtilities {
             0
         );
 
-        return [...mostReferred.entries()]
-            .filter(([, count]) => count === max)
-            .map(([name, count]) => [name, count]);
+        return {
+            count: max,
+            pkgs: [...mostReferred.entries()]
+                .filter(([, count]) => count === max)
+                .map(([name]) => name)
+        };
     }
 
     get mostDirectDependencies(): Package[] {
-        let most: Package[] = [this._p];
+        let most: [first: Package, ...rest: Package[]] = [this._p];
 
         this._p.visit(d => {
             if (d.directDependencies.length > most[0].directDependencies.length) {

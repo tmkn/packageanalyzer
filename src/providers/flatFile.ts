@@ -51,8 +51,12 @@ export class FlatFileProvider implements IPackageJsonProvider {
         //get latest version
         if (typeof version === "undefined") {
             const latest = pkgInfo["dist-tags"].latest;
+            const latestPackageJson = pkgInfo.versions[latest];
 
-            return pkgInfo.versions[latest];
+            if (!latestPackageJson)
+                throw new Error(`Couldn't find latest version ${latest} for package ${name}`);
+
+            return latestPackageJson;
         }
         //get specific version
         else {
@@ -63,7 +67,12 @@ export class FlatFileProvider implements IPackageJsonProvider {
                 throw new Error(`Couldn't resolve ${version} for ${name}`);
             }
 
-            return pkgInfo.versions[resolvedVersion];
+            const specificPackageJson = pkgInfo.versions[resolvedVersion];
+
+            if (!specificPackageJson)
+                throw new Error(`Couldn't find version: ${resolvedVersion} for package ${name}`);
+
+            return specificPackageJson;
         }
     }
 
@@ -86,16 +95,25 @@ export class FlatFileProvider implements IPackageJsonProvider {
         this._logger.start();
 
         for await (const line of rl) {
-            parsedBytes += Buffer.byteLength(line, "utf8");
-            const name = this._parseLine(line, ++lineNum);
+            try {
+                parsedBytes += Buffer.byteLength(line, "utf8");
+                const name = this._parseLine(line, ++lineNum);
 
-            this._logger.log(`Parsing Lookup [${getPercentage(parsedBytes, fileSize)}%] ${name}`);
+                this._logger.log(
+                    `Parsing Lookup [${getPercentage(parsedBytes, fileSize)}%] ${name}`
+                );
+            } catch (e) {
+                this._logger.log(`Couldn't parse line: ${lineNum}`);
+            }
         }
         this._logger.stop();
     }
 
     private _parseLine(line: string, lineNum: number): string {
         const [name, offset, length] = line.split(" ").map(l => l.trim());
+
+        if (!name || !offset || !length) throw new Error(`Couldn't parse line`);
+
         const _offset: number = parseInt(offset);
         const _length: number = parseInt(length);
         //due to the way newlines are interpreted between different os, we need to correct the offset

@@ -1,4 +1,4 @@
-import { cli } from "../../src/cli";
+import { cli } from "../../src/cli/cli";
 import { NpmDumpCommand } from "../../src/cli/npmDumpCommand";
 
 describe(`Npmdump Command`, () => {

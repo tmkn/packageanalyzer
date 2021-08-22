@@ -3,7 +3,7 @@ import { PassThrough } from "stream";
 
 import { BaseContext } from "clipanion";
 
-import { cli } from "../../src/cli";
+import { cli } from "../../src/cli/cli";
 import { OnlinePackageProvider } from "../../src/providers/online";
 import { createMockNpmServer, IMockServer } from "../server";
 

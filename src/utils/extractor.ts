@@ -35,6 +35,9 @@ export class Extractor {
                 partialDir.length > 0
                     ? `${p.fullName}.json`.split(partialDir)[1]
                     : `${p.fullName}.json`;
+
+            if (!fileName) throw new Error(`fileName is undefined`);
+
             const filePath = path.join(packageDir, fileName);
 
             if (!fs.existsSync(packageDir)) fs.mkdirSync(packageDir, { recursive: true });
@@ -51,7 +54,11 @@ export class Extractor {
         const [name] = getPackageVersionfromString(pkgName);
 
         if (name.startsWith(`@`)) {
-            return name.split("/")[0];
+            const token = name.split("/")[0];
+
+            if (!token) throw new Error(`Couldn't get package dir`);
+
+            return token;
         }
 
         return "";

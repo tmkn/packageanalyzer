@@ -2,7 +2,7 @@ import * as path from "path";
 import { promises as fs } from "fs";
 import { PassThrough } from "stream";
 
-import { cli } from "../../src/cli";
+import { cli } from "../../src/cli/cli";
 import { createMockNpmServer, IMockServer } from "../server";
 import { DependencyDumperCommand } from "../../src/cli/dependencyDumpCommand";
 import { TestWritable } from "../common";
