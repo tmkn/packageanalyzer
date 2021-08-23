@@ -72,7 +72,6 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for a quick tour around the code
 * Better ux for missing cli/reports parameters
 * Finding a better shorthand name
 * Release v1 :)
-* Documentation
 
 ## License
 MIT
