@@ -13,7 +13,7 @@ A framework to introspect Node.js projects.
 
 Stats are fun!
 
-Please see the [Wiki](https://github.com/tmkn/packageanalyzer/wiki) for a more in depth introduction.
+Please see the [Documentation](http://packageanalyzer-docs.vercel.app/) for a more in depth introduction.
 
 ## Prints various statistics:
 * Number of transitive dependencies
@@ -45,7 +45,7 @@ As such it provides the following CLI options (non exhaustive!):
 ### Run custom report
 `pkga report --config path/to/custom/report.js`
 
-Please see [Writing custom reports](https://github.com/tmkn/packageanalyzer/wiki/Using-Custom-Reports) on how to use the package analyzer programatically.
+Please see [Using custom reports](https://packageanalyzer-docs.vercel.app/docs/guides/custom_reports) on how to use the package analyzer programatically.
 
 ## Setting up the dev environment
 ```
