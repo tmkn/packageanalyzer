@@ -77,7 +77,9 @@ export async function createLookupFile(srcFile: string): Promise<void> {
         verifyLookups(srcFile, creator.lookups);
         saveLookupFile(lookupFile, creator.lookups);
     } catch (e) {
-        log(e.message);
+        const msg: string = e instanceof Error ? e.message : `Error creating lookup file`;
+
+        log(msg);
     }
 }
 
