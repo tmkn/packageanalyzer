@@ -20,6 +20,7 @@ export class OraLogger implements ILogger {
 
     log(msg: string): void {
         this._logger.text = msg;
+        this._logger.render();
     }
 
     error(msg: string): void {
