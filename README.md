@@ -53,7 +53,7 @@ git clone https://github.com/tmkn/packageanalyzer.git
 yarn install
 yarn build
 ```
-See [ARCHITECTURE.md](ARCHITECTURE.md) for a quick tour around the code
+See [Core Concepts](https://packageanalyzer-docs.vercel.app/docs/core_concepts/provider) for a quick tour around the code
 
 ### Watch mode
 `yarn dev`
