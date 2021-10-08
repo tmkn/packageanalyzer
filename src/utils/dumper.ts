@@ -8,13 +8,14 @@ import { OraLogger } from "./logger";
 import { DependencyUtilities } from "../extensions/utilities/DependencyUtilities";
 import { IPackageMetadata, IPackageJson, isUnpublished, IUnpublishedPackageMetadata } from "../npm";
 import { IPackageJsonProvider } from "../providers/provider";
+import { Url } from "./requests";
 
 export class DependencyDumper {
     pkg?: Package;
 
     private _provider?: OnlinePackageProvider;
 
-    async collect(pkg: PackageVersion, repoUrl: string): Promise<void> {
+    async collect(pkg: PackageVersion, repoUrl: Url): Promise<void> {
         this._provider = new OnlinePackageProvider(repoUrl);
 
         const visitor = new Visitor(pkg, this._provider, new OraLogger());

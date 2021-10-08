@@ -1,7 +1,7 @@
 import * as semver from "semver";
 
 import { IPackageMetadata, IPackageJson, IUnpublishedPackageMetadata, isUnpublished } from "../npm";
-import { downloadHttpJson } from "../utils/requests";
+import { downloadJson, Url } from "../utils/requests";
 import { PackageVersion } from "../visitors/visitor";
 import { IPackageJsonProvider, IPackageMetaDataProvider } from "./provider";
 
@@ -9,7 +9,7 @@ import { IPackageJsonProvider, IPackageMetaDataProvider } from "./provider";
 export class OnlinePackageProvider implements IPackageJsonProvider, IPackageMetaDataProvider {
     private readonly _cache: Map<string, IPackageMetadata> = new Map();
 
-    constructor(private _url: string) {}
+    constructor(private _url: Url) {}
 
     async getPackageMetadata(
         name: string
@@ -19,7 +19,7 @@ export class OnlinePackageProvider implements IPackageJsonProvider, IPackageMeta
         if (typeof cachedInfo !== "undefined") {
             return cachedInfo;
         } else {
-            const data = await downloadHttpJson<IPackageMetadata>(
+            const data = await downloadJson<IPackageMetadata>(
                 `${this._url}/${encodeURIComponent(name)}`
             );
 
@@ -73,4 +73,4 @@ export class OnlinePackageProvider implements IPackageJsonProvider, IPackageMeta
     }
 }
 
-export const npmOnline = new OnlinePackageProvider(`http://registry.npmjs.com`);
+export const npmOnline = new OnlinePackageProvider(`https://registry.npmjs.com`);

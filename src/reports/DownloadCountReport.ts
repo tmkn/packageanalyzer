@@ -1,12 +1,13 @@
 import { getDownloadsLastWeek } from "../npm";
 import { Package } from "../package/package";
 import { IFormatter } from "../utils/formatter";
+import { Url } from "../utils/requests";
 import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
 import { IReport } from "./Report";
 
 export interface IDownloadParams {
     pkg: string;
-    url?: string;
+    url?: Url;
 }
 
 export class DownloadReport implements IReport<IDownloadParams> {
@@ -23,7 +24,7 @@ export class DownloadReport implements IReport<IDownloadParams> {
     }
 }
 
-async function cliDownloads(pkg: string, url: string | null, formatter: IFormatter): Promise<void> {
+async function cliDownloads(pkg: string, url: Url | null, formatter: IFormatter): Promise<void> {
     try {
         const downloads =
             url !== null ? await getDownloadsLastWeek(pkg, url) : await getDownloadsLastWeek(pkg);

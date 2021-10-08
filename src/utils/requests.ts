@@ -1,30 +1,44 @@
 import * as http from "http";
 import * as https from "https";
 
-function downloadHttp(url: string, timeoutLimit: number): Promise<string> {
+export type Url = `http://${string}` | `https://${string}`;
+
+function download(url: Url, timeoutLimit: number): Promise<string> {
     return new Promise<string>((resolve, reject) => {
-        http.get(url, res => {
-            try {
-                const { statusCode } = res;
-                let data = "";
+        //todo check if TS 4.5 can make sense of startsWith
+        /**
+         * if startsWith http
+         * elseif startsWith https
+         * else reject
+         */
+        if (!url.startsWith(`http://`) && !url.startsWith(`https://`))
+            reject(`Wrong protocol: ${url}`);
 
-                if (statusCode !== 200) {
-                    reject(`Server Error '${url}'`);
-                    clearTimeout(id);
+        const protocol = url.startsWith(`http://`) ? http : https;
+
+        protocol
+            .get(url, res => {
+                try {
+                    const { statusCode } = res;
+                    let data = "";
+
+                    if (statusCode !== 200) {
+                        reject(`Server Error '${url}'`);
+                        clearTimeout(id);
+                    }
+
+                    res.setEncoding("utf8");
+                    res.on("data", chunk => {
+                        data += chunk;
+                    });
+                    res.on("end", () => {
+                        resolve(data);
+                        clearTimeout(id);
+                    });
+                } catch (e) {
+                    reject();
                 }
-
-                res.setEncoding("utf8");
-                res.on("data", chunk => {
-                    data += chunk;
-                });
-                res.on("end", () => {
-                    resolve(data);
-                    clearTimeout(id);
-                });
-            } catch (e) {
-                reject();
-            }
-        })
+            })
             .on("error", () => {
                 reject();
                 clearTimeout(id);
@@ -41,8 +55,8 @@ function downloadHttp(url: string, timeoutLimit: number): Promise<string> {
     });
 }
 
-export async function downloadHttpJson<T extends object>(
-    url: string,
+export async function downloadJson<T extends object>(
+    url: Url,
     timeoutLimit = 10000
 ): Promise<T | null> {
     const maxRetries = 4;
@@ -50,7 +64,7 @@ export async function downloadHttpJson<T extends object>(
 
     while (retries < maxRetries) {
         try {
-            const response = await downloadHttp(url, timeoutLimit);
+            const response = await download(url, timeoutLimit);
 
             return JSON.parse(response);
         } catch (e) {
@@ -61,35 +75,4 @@ export async function downloadHttpJson<T extends object>(
     }
 
     return null;
-}
-
-/* istanbul ignore next */
-export function downloadJsonHttps<T extends object>(url: string): Promise<T> {
-    return new Promise<T>((resolve, reject) => {
-        https
-            .get(url, res => {
-                const { statusCode } = res;
-                let data = "";
-
-                if (statusCode !== 200) {
-                    reject(`Server Error '${url}'`);
-                }
-
-                res.setEncoding("utf8");
-                res.on("data", chunk => {
-                    data += chunk;
-                });
-                res.on("end", () => {
-                    try {
-                        resolve(JSON.parse(data));
-                    } catch {
-                        reject(`Parse Error`);
-                    }
-                });
-            })
-            .on("error", e => {
-                console.log(url);
-                reject(e);
-            });
-    });
 }

@@ -1,4 +1,4 @@
-import { downloadHttpJson } from "./utils/requests";
+import { downloadJson, Url } from "./utils/requests";
 
 export interface IPackageJson {
     author: INpmUser;
@@ -98,9 +98,9 @@ export interface INpmDownloadRangeStatistic extends INpmDownloadBaseStatistic {
 
 export async function getDownloadsLastWeek(
     name: string,
-    url: string = `http://api.npmjs.org/downloads/point/last-week/`
+    url: Url = `https://api.npmjs.org/downloads/point/last-week/`
 ): Promise<INpmDownloadStatistic> {
-    const json = await downloadHttpJson<INpmDownloadStatistic>(`${url}${encodeURIComponent(name)}`);
+    const json = await downloadJson<INpmDownloadStatistic>(`${url}${encodeURIComponent(name)}`);
 
     if (json !== null) return json;
 

@@ -2,6 +2,7 @@ import { Command, Option } from "clipanion";
 
 import { getPackageVersionfromString } from "../visitors/visitor";
 import { DependencyDumper } from "../utils/dumper";
+import { Url } from "../utils/requests";
 
 export class DependencyDumperCommand extends Command {
     public package?: string = Option.String(`--package`, {
@@ -12,7 +13,7 @@ export class DependencyDumperCommand extends Command {
         description: `folder to output the dump`
     });
 
-    public registry: string = Option.String(`--registry`, `http://registry.npmjs.com`, {
+    public registry: Url = Option.String(`--registry`, `https://registry.npmjs.com`, {
         description: `online registry`
     });
 
