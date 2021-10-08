@@ -2,6 +2,7 @@ import { Command, Option } from "clipanion";
 
 import { DownloadReport, IDownloadParams } from "../reports/DownloadCountReport";
 import { ReportService } from "../reports/ReportService";
+import { Url } from "../utils/requests";
 
 export class DownloadCommand extends Command {
     public package?: string = Option.String(`--package`, {
@@ -16,7 +17,7 @@ export class DownloadCommand extends Command {
         examples: [[`Show the download count for a NPM package`, `$0 loops --package typescript`]]
     });
 
-    public static DownloadUrl?: string;
+    public static DownloadUrl?: Url;
 
     static override paths = [[`downloads`]];
 
