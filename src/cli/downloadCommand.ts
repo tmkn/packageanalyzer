@@ -1,4 +1,5 @@
 import { Command, Option } from "clipanion";
+import { OnlinePackageProvider } from "..";
 
 import { DownloadReport, IDownloadParams } from "../reports/DownloadCountReport";
 import { ReportService } from "../reports/ReportService";
@@ -18,6 +19,7 @@ export class DownloadCommand extends Command {
     });
 
     public static DownloadUrl?: Url;
+    public static PackageProvider?: OnlinePackageProvider;
 
     static override paths = [[`downloads`]];
 
@@ -28,6 +30,7 @@ export class DownloadCommand extends Command {
                 url: DownloadCommand.DownloadUrl
             };
             const downloadReport = new DownloadReport(params);
+            downloadReport.provider = DownloadCommand.PackageProvider;
 
             const reportService = new ReportService(
                 {

@@ -3,9 +3,10 @@ import { PassThrough } from "stream";
 import { BaseContext } from "clipanion";
 
 import { cli } from "../../src/cli/cli";
-import { createMockDownloadServer, IMockServer } from "../server";
+import { createMockDownloadServer, IMockServer, createMockNpmServer } from "../server";
 import { DownloadCommand } from "../../src/cli/downloadCommand";
 import { TestWritable } from "../common";
+import { OnlinePackageProvider } from "../../src/providers/online";
 
 describe(`Download Command`, () => {
     const stdout = new TestWritable();
@@ -15,10 +16,12 @@ describe(`Download Command`, () => {
         stderr: new PassThrough()
     };
 
-    let server: IMockServer;
+    let downloadServer: IMockServer;
+    let npmServer: IMockServer;
 
     beforeAll(async () => {
-        server = await createMockDownloadServer();
+        downloadServer = await createMockDownloadServer();
+        npmServer = await createMockNpmServer();
     });
 
     test(`--package`, async () => {
@@ -26,7 +29,10 @@ describe(`Download Command`, () => {
 
         expect.assertions(1);
         command.context = mockContext;
-        DownloadCommand.DownloadUrl = `http://localhost:${server.port}/`;
+        DownloadCommand.DownloadUrl = `http://localhost:${downloadServer.port}/`;
+        DownloadCommand.PackageProvider = new OnlinePackageProvider(
+            `http://localhost:${npmServer.port}`
+        );
 
         await command.execute();
 
@@ -34,5 +40,8 @@ describe(`Download Command`, () => {
         expect(line).toContain(`8609192`);
     });
 
-    afterAll(() => server.close());
+    afterAll(async () => {
+        await downloadServer.close();
+        await npmServer.close();
+    });
 });
