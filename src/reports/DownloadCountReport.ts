@@ -1,5 +1,6 @@
 import { getDownloadsLastWeek } from "../npm";
 import { Package } from "../package/package";
+import { IPackageJsonProvider } from "../providers/provider";
 import { IFormatter } from "../utils/formatter";
 import { Url } from "../utils/requests";
 import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
@@ -14,6 +15,7 @@ export class DownloadReport implements IReport<IDownloadParams> {
     name = `Download Report`;
     pkg: PackageVersion;
     depth: number = 0;
+    provider?: IPackageJsonProvider;
 
     constructor(readonly params: IDownloadParams) {
         this.pkg = getPackageVersionfromString(params.pkg);
