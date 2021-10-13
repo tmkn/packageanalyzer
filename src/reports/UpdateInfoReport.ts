@@ -3,24 +3,24 @@ import * as chalk from "chalk";
 import { daysAgo } from "../cli/common";
 import { Package } from "../package/package";
 import { OnlinePackageProvider } from "../providers/online";
-import { IPackageJsonProvider } from "../providers/provider";
 import { IFormatter } from "../utils/formatter";
 import { updateInfo } from "../utils/update";
 import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
-import { IReport } from "./Report";
+import { AbstractReport } from "./Report";
 
 export interface IUpdateInfoParams {
     package: string;
     provider: OnlinePackageProvider;
 }
 
-export class UpdateInfoReport implements IReport<IUpdateInfoParams> {
+export class UpdateInfoReport extends AbstractReport<IUpdateInfoParams> {
     name = `Update Info Report`;
     pkg: PackageVersion;
-    provider: IPackageJsonProvider;
-    depth: number = 0;
 
     constructor(readonly params: IUpdateInfoParams) {
+        super();
+
+        this.depth = 0;
         this.pkg = getPackageVersionfromString(params.package);
         this.provider = params.provider;
     }

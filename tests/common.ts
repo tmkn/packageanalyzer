@@ -2,7 +2,7 @@ import { Writable } from "stream";
 import { IDecorator } from "../src/extensions/decorators/Decorator";
 import { Package } from "../src/package/package";
 import { IPackageJsonProvider } from "../src/providers/provider";
-import { IReport } from "../src/reports/Report";
+import { AbstractReport } from "../src/reports/Report";
 import { IFormatter } from "../src/utils/formatter";
 import { DependencyTypes, PackageVersion } from "../src/visitors/visitor";
 
@@ -32,16 +32,13 @@ interface ITestReport {
     depth?: number;
 }
 
-export class TestReport implements IReport<ITestReport> {
+export class TestReport extends AbstractReport<ITestReport> {
     name = `Test Report`;
     pkg: PackageVersion;
 
-    decorators?: IDecorator<any, any>[];
-    provider?: IPackageJsonProvider;
-    type?: DependencyTypes;
-    depth?: number;
-
     constructor(public params: ITestReport) {
+        super();
+
         this.pkg = params.pkg;
 
         this.decorators = params.decorators;
