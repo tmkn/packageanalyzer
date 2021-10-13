@@ -1,23 +1,23 @@
 import { getDownloadsLastWeek } from "../npm";
 import { Package } from "../package/package";
-import { IPackageJsonProvider } from "../providers/provider";
 import { IFormatter } from "../utils/formatter";
 import { Url } from "../utils/requests";
 import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
-import { IReport } from "./Report";
+import { AbstractReport } from "./Report";
 
 export interface IDownloadParams {
     pkg: string;
     url?: Url;
 }
 
-export class DownloadReport implements IReport<IDownloadParams> {
+export class DownloadReport extends AbstractReport<IDownloadParams> {
     name = `Download Report`;
     pkg: PackageVersion;
-    depth: number = 0;
-    provider?: IPackageJsonProvider;
 
     constructor(readonly params: IDownloadParams) {
+        super();
+
+        this.depth = 0;
         this.pkg = getPackageVersionfromString(params.pkg);
     }
 

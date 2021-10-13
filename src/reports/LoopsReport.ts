@@ -5,19 +5,20 @@ import { LoopUtilities } from "../extensions/utilities/LoopUtilities";
 import { Package } from "../package/package";
 import { IFormatter } from "../utils/formatter";
 import { DependencyTypes, getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
-import { IReport } from "./Report";
+import { AbstractReport } from "./Report";
 
 export interface ILoopParams {
     package: string;
     type: DependencyTypes;
 }
 
-export class LoopsReport implements IReport<ILoopParams> {
+export class LoopsReport extends AbstractReport<ILoopParams> {
     name = `Loop Report`;
     pkg: PackageVersion;
-    type: DependencyTypes;
 
     constructor(readonly params: ILoopParams) {
+        super();
+
         this.pkg = getPackageVersionfromString(params.package);
         this.type = params.type;
     }

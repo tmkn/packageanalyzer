@@ -19,7 +19,6 @@ describe(`LoopsReport Test`, () => {
             type: `dependencies`
         });
 
-        //@ts-expect-error
         report.provider = provider;
 
         const writer = new TestWritable();

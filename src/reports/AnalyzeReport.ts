@@ -1,7 +1,6 @@
 import * as chalk from "chalk";
 
 import { daysAgo, defaultDependencyType } from "../cli/common";
-import { IDecorator } from "../extensions/decorators/Decorator";
 import { ReleaseDecorator } from "../extensions/decorators/ReleaseDecorator";
 import {
     DependencyUtilities,
@@ -15,7 +14,6 @@ import { ReleaseUtilities } from "../extensions/utilities/ReleaseUtilities";
 import { Package } from "../package/package";
 import { FileSystemPackageProvider } from "../providers/folder";
 import { npmOnline } from "../providers/online";
-import { IPackageJsonProvider } from "../providers/provider";
 import { IFormatter } from "../utils/formatter";
 import {
     DependencyTypes,
@@ -23,7 +21,7 @@ import {
     getPackageVersionfromString,
     PackageVersion
 } from "../visitors/visitor";
-import { IReport } from "./Report";
+import { AbstractReport } from "./Report";
 
 export interface IAnalyzeParams {
     package?: string;
@@ -32,14 +30,13 @@ export interface IAnalyzeParams {
     full: boolean;
 }
 
-export class AnalyzeReport implements IReport<IAnalyzeParams> {
+export class AnalyzeReport extends AbstractReport<IAnalyzeParams> {
     name = `Analyze Report`;
     pkg: PackageVersion;
-    type: DependencyTypes;
-    provider?: IPackageJsonProvider;
-    decorators?: IDecorator<any, any>[] = [];
 
     constructor(readonly params: IAnalyzeParams) {
+        super();
+
         if (params.package) {
             this.pkg = getPackageVersionfromString(params.package);
             this.provider = npmOnline;

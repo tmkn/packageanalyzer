@@ -3,7 +3,6 @@ import { printDependencyTree } from "../extensions/utilities/LoopUtilities";
 import { Package } from "../package/package";
 import { FileSystemPackageProvider } from "../providers/folder";
 import { npmOnline } from "../providers/online";
-import { IPackageJsonProvider } from "../providers/provider";
 import { IFormatter } from "../utils/formatter";
 import {
     DependencyTypes,
@@ -11,7 +10,7 @@ import {
     getPackageVersionfromString,
     PackageVersion
 } from "../visitors/visitor";
-import { IReport } from "./Report";
+import { AbstractReport } from "./Report";
 
 export interface ITreeReportParams {
     package?: string;
@@ -19,13 +18,13 @@ export interface ITreeReportParams {
     type?: DependencyTypes;
 }
 
-export class TreeReport implements IReport<ITreeReportParams> {
+export class TreeReport extends AbstractReport<ITreeReportParams> {
     name = `Tree Report`;
     pkg: PackageVersion;
-    type: DependencyTypes;
-    provider?: IPackageJsonProvider;
 
     constructor(readonly params: ITreeReportParams) {
+        super();
+
         this.type = params.type ?? defaultDependencyType;
 
         if (params.package) {

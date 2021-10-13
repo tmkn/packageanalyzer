@@ -16,3 +16,16 @@ export interface IReport<T extends {}> {
 
     report(pkg: Package, formatter: IFormatter): Promise<void>;
 }
+
+export abstract class AbstractReport<T extends {}> implements IReport<T> {
+    abstract name: string;
+    abstract params: T;
+    abstract pkg: PackageVersion;
+
+    decorators?: IDecorator<any, any>[] | undefined;
+    provider?: IPackageJsonProvider | undefined;
+    type?: DependencyTypes | undefined;
+    depth?: number | undefined;
+
+    abstract report(pkg: Package, formatter: IFormatter): Promise<void>;
+}

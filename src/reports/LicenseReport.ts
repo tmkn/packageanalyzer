@@ -5,7 +5,6 @@ import { LicenseUtilities } from "../extensions/utilities/LicenseUtilities";
 import { Package } from "../package/package";
 import { FileSystemPackageProvider } from "../providers/folder";
 import { npmOnline } from "../providers/online";
-import { IPackageJsonProvider } from "../providers/provider";
 import { IFormatter } from "../utils/formatter";
 import {
     createWhitelistLicenseCheckReport,
@@ -18,7 +17,7 @@ import {
     getPackageVersionfromString,
     PackageVersion
 } from "../visitors/visitor";
-import { IReport } from "./Report";
+import { AbstractReport } from "./Report";
 
 export interface ILicenseParams {
     package?: string;
@@ -28,16 +27,16 @@ export interface ILicenseParams {
     grouped?: boolean;
 }
 
-export class LicenseReport implements IReport<ILicenseParams> {
+export class LicenseReport extends AbstractReport<ILicenseParams> {
     name = `License Report`;
     readonly pkg: PackageVersion;
-    provider: IPackageJsonProvider;
-    type: DependencyTypes;
 
     allowList: string[];
     grouped: boolean;
 
     constructor(readonly params: ILicenseParams) {
+        super();
+
         if (params.package) {
             this.pkg = getPackageVersionfromString(params.package);
             this.provider = npmOnline;
