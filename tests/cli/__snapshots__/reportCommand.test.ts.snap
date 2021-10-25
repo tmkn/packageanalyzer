@@ -2,7 +2,7 @@
 
 exports[`Report Command works 1`] = `
 Array [
-  "[4m[44mReport: Tree Report[49m[24m",
+  "Report: Tree Report",
   "@webassemblyjs/ast@1.9.0 (14 dependencies)",
   "├── @webassemblyjs/helper-module-context@1.9.0 (1 dependencies)",
   "│   └── @webassemblyjs/ast@1.9.0 (0 dependencies)",
@@ -19,7 +19,7 @@ Array [
   "    ├── @webassemblyjs/helper-fsm@1.9.0 (0 dependencies)",
   "    └── @xtuc/long@4.2.2 (0 dependencies)",
   "",
-  "[4m[44mReport: Tree Report[49m[24m",
+  "Report: Tree Report",
   "@webassemblyjs/ast@1.9.0 (14 dependencies)",
   "├── @webassemblyjs/helper-module-context@1.9.0 (1 dependencies)",
   "│   └── @webassemblyjs/ast@1.9.0 (0 dependencies)",

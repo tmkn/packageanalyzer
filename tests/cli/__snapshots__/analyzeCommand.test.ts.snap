@@ -2,7 +2,7 @@
 
 exports[`Analyze Command --folder --type --full 1`] = `
 Array [
-  "Statistics for [1mtestproject1@1.0.0[22m",
+  "Statistics for testproject1@1.0.0",
   "Direct dependencies:     1",
   "Transitive dependencies: 13",
   "Distinct dependencies:",
@@ -22,7 +22,7 @@ Array [
 
 exports[`Analyze Command --package --type --full 1`] = `
 Array [
-  "Statistics for [1mreact@16.8.1[22m",
+  "Statistics for react@16.8.1",
   "Published: Wed, 06 Feb 2019 18:15:25 GMT (992 days ago)",
   "Oldest package:      object-assign@4.1.1 - Mon, 16 Jan 2017 15:35:15 GMT (1743 days ago)",
   "Oldest package path: react@16.8.1 → object-assign@4.1.1",
@@ -46,7 +46,7 @@ Array [
 
 exports[`Analyze Command --package --type 1`] = `
 Array [
-  "Statistics for [1mreact@16.8.1[22m",
+  "Statistics for react@16.8.1",
   "Direct dependencies:     4",
   "Transitive dependencies: 12",
   "Distinct dependencies: 6",

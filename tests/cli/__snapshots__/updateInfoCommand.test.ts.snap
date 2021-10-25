@@ -2,7 +2,7 @@
 
 exports[`Update Info Command --package 1`] = `
 Array [
-  "[1mUpdate Info for react@16.8.1[22m",
+  "Update Info for react@16.8.1",
   "Semantic match: 16.8.1  (992 days ago)",
   "Latest bugfix:  16.8.6 (942 days ago)",
   "Latest minor:   16.14.0 (376 days ago)",
