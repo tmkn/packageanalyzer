@@ -187,7 +187,7 @@ describe(`Checks Name and Version extraction`, () => {
         expect(() => getPackageVersionfromString(`foo@2@ bla`)).toThrow();
     });
 
-    test(`Fails to parse, throws forr foo@`, () => {
+    test(`Fails to parse, throws for foo@`, () => {
         expect(() => getPackageVersionfromString(`foo@`)).toThrow();
     });
 });

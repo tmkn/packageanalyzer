@@ -1,0 +1,61 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Analyze Command --folder --type --full 1`] = `
+Array [
+  "Statistics for [1mtestproject1@1.0.0[22m",
+  "Direct dependencies:     1",
+  "Transitive dependencies: 13",
+  "Distinct dependencies:",
+  "    7: distinct name",
+  "    7: distinct name and version",
+  "Most referred package: \\"[loose-envify, js-tokens, object-assign]\\": 3",
+  "Most direct dependencies: \\"[react]\\": 4",
+  "Package(s) with multiple versions:",
+  "    (none)",
+  "Loops: 0 (0 distinct)",
+  "Licenses:",
+  "    MIT - [js-tokens, loose-envify, object-assign, prop-types, +3 more]",
+  "    ISC - [testproject1]",
+  "",
+]
+`;
+
+exports[`Analyze Command --package --type --full 1`] = `
+Array [
+  "Statistics for [1mreact@16.8.1[22m",
+  "Published: Wed, 06 Feb 2019 18:15:25 GMT (992 days ago)",
+  "Oldest package:      object-assign@4.1.1 - Mon, 16 Jan 2017 15:35:15 GMT (1743 days ago)",
+  "Oldest package path: react@16.8.1 → object-assign@4.1.1",
+  "Newest package:      react-is@16.13.1 - Thu, 19 Mar 2020 19:53:28 GMT (585 days ago)",
+  "Newest package path: react@16.8.1 → prop-types@15.7.2 → react-is@16.13.1",
+  "Direct dependencies:     4",
+  "Transitive dependencies: 12",
+  "Distinct dependencies:",
+  "    6: distinct name",
+  "    6: distinct name and version",
+  "Most referred package: \\"[loose-envify, js-tokens, object-assign]\\": 3",
+  "Most direct dependencies: \\"[react]\\": 4",
+  "Package(s) with multiple versions:",
+  "    (none)",
+  "Loops: 0 (0 distinct)",
+  "Licenses:",
+  "    MIT - [js-tokens, loose-envify, object-assign, prop-types, +3 more]",
+  "",
+]
+`;
+
+exports[`Analyze Command --package --type 1`] = `
+Array [
+  "Statistics for [1mreact@16.8.1[22m",
+  "Direct dependencies:     4",
+  "Transitive dependencies: 12",
+  "Distinct dependencies: 6",
+  "Most referred package: \\"[loose-envify, js-tokens, object-assign]\\": 3",
+  "Most direct dependencies: \\"[react]\\": 4",
+  "Package(s) with multiple versions:",
+  "    (none)",
+  "Licenses:",
+  "    7x MIT",
+  "",
+]
+`;

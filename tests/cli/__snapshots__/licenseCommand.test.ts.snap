@@ -1,0 +1,91 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`License Check Command --folder 1`] = `
+Array [
+  "[91mjs-tokens@4.0.0     MIT[39m",
+  "[91mloose-envify@1.4.0  MIT[39m",
+  "[91mobject-assign@4.1.1 MIT[39m",
+  "[91mprop-types@15.7.2   MIT[39m",
+  "[91mreact@16.8.6        MIT[39m",
+  "[91mreact-is@16.8.6     MIT[39m",
+  "[91mscheduler@0.13.6    MIT[39m",
+  "
+7/7 packages failed the license check",
+  "[91mjs-tokens@4.0.0     MIT[39m",
+  "[91mloose-envify@1.4.0  MIT[39m",
+  "[91mobject-assign@4.1.1 MIT[39m",
+  "[91mprop-types@15.7.2   MIT[39m",
+  "[91mreact@16.8.6        MIT[39m",
+  "[91mreact-is@16.8.6     MIT[39m",
+  "[91mscheduler@0.13.6    MIT[39m",
+  "",
+]
+`;
+
+exports[`License Check Command --package --allow 1`] = `
+Array [
+  "[91mjs-tokens@4.0.0     MIT[39m",
+  "[91mloose-envify@1.4.0  MIT[39m",
+  "[91mobject-assign@4.1.1 MIT[39m",
+  "[91mprop-types@15.7.2   MIT[39m",
+  "[91mreact-is@16.13.1    MIT[39m",
+  "[91mscheduler@0.13.6    MIT[39m",
+  "
+6/6 packages failed the license check",
+  "[91mjs-tokens@4.0.0     MIT[39m",
+  "[91mloose-envify@1.4.0  MIT[39m",
+  "[91mobject-assign@4.1.1 MIT[39m",
+  "[91mprop-types@15.7.2   MIT[39m",
+  "[91mreact-is@16.13.1    MIT[39m",
+  "[91mscheduler@0.13.6    MIT[39m",
+  "",
+]
+`;
+
+exports[`License Check Command --package --grouped 1`] = `
+Array [
+  "[91mjs-tokens@4.0.0     MIT[39m",
+  "[91mloose-envify@1.4.0  MIT[39m",
+  "[91mobject-assign@4.1.1 MIT[39m",
+  "[91mprop-types@15.7.2   MIT[39m",
+  "[91mreact-is@16.13.1    MIT[39m",
+  "[91mscheduler@0.13.6    MIT[39m",
+  "
+6/6 packages failed the license check",
+  "[91mjs-tokens@4.0.0     MIT[39m",
+  "[91mloose-envify@1.4.0  MIT[39m",
+  "[91mobject-assign@4.1.1 MIT[39m",
+  "[91mprop-types@15.7.2   MIT[39m",
+  "[91mreact-is@16.13.1    MIT[39m",
+  "[91mscheduler@0.13.6    MIT[39m",
+  "",
+]
+`;
+
+exports[`License Check Command --package --type 1`] = `
+Array [
+  "
+All packages passed the license check",
+  "",
+]
+`;
+
+exports[`License Check Command --package 1`] = `
+Array [
+  "[91mjs-tokens@4.0.0     MIT[39m",
+  "[91mloose-envify@1.4.0  MIT[39m",
+  "[91mobject-assign@4.1.1 MIT[39m",
+  "[91mprop-types@15.7.2   MIT[39m",
+  "[91mreact-is@16.13.1    MIT[39m",
+  "[91mscheduler@0.13.6    MIT[39m",
+  "
+6/6 packages failed the license check",
+  "[91mjs-tokens@4.0.0     MIT[39m",
+  "[91mloose-envify@1.4.0  MIT[39m",
+  "[91mobject-assign@4.1.1 MIT[39m",
+  "[91mprop-types@15.7.2   MIT[39m",
+  "[91mreact-is@16.13.1    MIT[39m",
+  "[91mscheduler@0.13.6    MIT[39m",
+  "",
+]
+`;

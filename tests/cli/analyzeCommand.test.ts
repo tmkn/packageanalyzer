@@ -6,6 +6,7 @@ import { BaseContext } from "clipanion";
 import { cli } from "../../src/cli/cli";
 import { OnlinePackageProvider } from "../../src/providers/online";
 import { createMockNpmServer, IMockServer } from "../server";
+import { TestWritable } from "../common";
 
 describe(`Analyze Command`, () => {
     const mockContext: BaseContext = {
@@ -23,6 +24,7 @@ describe(`Analyze Command`, () => {
     });
 
     test(`--package --type --full`, async () => {
+        const stdout = new TestWritable();
         const command = cli.process([
             `analyze`,
             `--package`,
@@ -32,12 +34,17 @@ describe(`Analyze Command`, () => {
             `--full`
         ]);
 
-        expect.assertions(0);
+        expect.assertions(1);
         command.context = mockContext;
+        mockContext.stdout = stdout;
+
         await command.execute();
+
+        expect(stdout.lines).toMatchSnapshot();
     });
 
     test(`--package --type`, async () => {
+        const stdout = new TestWritable();
         const command = cli.process([
             `analyze`,
             `--package`,
@@ -46,12 +53,17 @@ describe(`Analyze Command`, () => {
             `dependencies`
         ]);
 
-        expect.assertions(0);
+        expect.assertions(1);
         command.context = mockContext;
+        mockContext.stdout = stdout;
+
         await command.execute();
+
+        expect(stdout.lines).toMatchSnapshot();
     });
 
     test(`--folder --type --full`, async () => {
+        const stdout = new TestWritable();
         const command = cli.process([
             `analyze`,
             `--folder`,
@@ -61,10 +73,13 @@ describe(`Analyze Command`, () => {
             `--full`
         ]);
 
-        expect.assertions(0);
+        expect.assertions(1);
         command.context = mockContext;
+        mockContext.stdout = stdout;
 
         await command.execute();
+
+        expect(stdout.lines).toMatchSnapshot();
     });
 
     afterAll(() => server.close());

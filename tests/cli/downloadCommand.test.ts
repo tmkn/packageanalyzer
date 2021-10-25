@@ -36,8 +36,7 @@ describe(`Download Command`, () => {
 
         await command.execute();
 
-        const [line] = stdout.lines;
-        expect(line).toContain(`8609192`);
+        expect(stdout.lines).toMatchSnapshot();
     });
 
     afterAll(async () => {
