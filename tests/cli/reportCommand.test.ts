@@ -23,6 +23,6 @@ describe(`Report Command`, () => {
         };
         await command.execute();
 
-        expect(stdout.lines.map(l => l.trimEnd())).toMatchSnapshot();
+        expect(stdout.lines).toMatchSnapshot();
     });
 });
