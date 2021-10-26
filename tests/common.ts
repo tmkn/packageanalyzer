@@ -7,7 +7,18 @@ import { IFormatter } from "../src/utils/formatter";
 import { DependencyTypes, PackageVersion } from "../src/visitors/visitor";
 
 export class TestWritable extends Writable {
-    public lines: string[] = [];
+    private static _pattern = [
+        "[\\u001B\\u009B][[\\]()#;?]*(?:(?:(?:(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]+)*|[a-zA-Z\\d]+(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]*)*)?\\u0007)",
+        "(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PR-TZcf-ntqry=><~]))"
+    ].join("|");
+
+    private static _regex = new RegExp(this._pattern, "g");
+
+    private _lines: string[] = [];
+
+    public get lines(): string[] {
+        return this._lines.map(l => l.replace(TestWritable._regex, ""));
+    }
 
     override _write(
         chunk: any,
@@ -16,7 +27,7 @@ export class TestWritable extends Writable {
     ): void {
         const data: string = chunk.toString();
 
-        this.lines.push(data.trimEnd());
+        this._lines.push(data.trimEnd());
 
         callback();
     }

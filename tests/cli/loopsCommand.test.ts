@@ -5,11 +5,13 @@ import { BaseContext } from "clipanion";
 
 import { cli } from "../../src/cli/cli";
 import { FileSystemPackageProvider } from "../../src/providers/folder";
+import { TestWritable } from "../common";
 
 describe(`Loops Command`, () => {
+    const stdout = new TestWritable();
     const mockContext: BaseContext = {
         stdin: process.stdin,
-        stdout: new PassThrough(),
+        stdout,
         stderr: new PassThrough()
     };
 
@@ -22,12 +24,15 @@ describe(`Loops Command`, () => {
             `dependencies`
         ]);
 
-        expect.assertions(0);
-        command.context = mockContext;
-
+        //todo use provider
         const rootPath = path.join("tests", "data", "testproject2");
         const provider = new FileSystemPackageProvider(rootPath);
 
+        expect.assertions(1);
+        command.context = mockContext;
+
         await command.execute();
+
+        expect(stdout.lines).toMatchSnapshot();
     });
 });

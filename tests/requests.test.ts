@@ -7,6 +7,8 @@ describe(`Request Tests`, () => {
 
     beforeAll(async () => {
         server = await createMockRequestServer();
+
+        jest.useRealTimers();
     });
 
     test(`Returns json`, async () => {

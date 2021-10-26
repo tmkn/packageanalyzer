@@ -6,6 +6,7 @@ import { BaseContext } from "clipanion";
 import { cli } from "../../src/cli/cli";
 import { OnlinePackageProvider } from "../../src/providers/online";
 import { createMockNpmServer, IMockServer } from "../server";
+import { TestWritable } from "../common";
 
 describe(`Tree Command`, () => {
     const mockContext: BaseContext = {
@@ -23,6 +24,7 @@ describe(`Tree Command`, () => {
     });
 
     test(`--package --type`, async () => {
+        const stdout = new TestWritable();
         const command = cli.process([
             `tree`,
             `--package`,
@@ -31,12 +33,17 @@ describe(`Tree Command`, () => {
             `dependencies`
         ]);
 
-        expect.assertions(0);
+        expect.assertions(1);
+        mockContext.stdout = stdout;
         command.context = mockContext;
+
         await command.execute();
+
+        expect(stdout.lines).toMatchSnapshot();
     });
 
     test(`--folder --type`, async () => {
+        const stdout = new TestWritable();
         const command = cli.process([
             `tree`,
             `--folder`,
@@ -45,10 +52,13 @@ describe(`Tree Command`, () => {
             `dependencies`
         ]);
 
-        expect.assertions(0);
+        expect.assertions(1);
+        mockContext.stdout = stdout;
         command.context = mockContext;
 
         await command.execute();
+
+        expect(stdout.lines).toMatchSnapshot();
     });
 
     afterAll(() => server.close());
