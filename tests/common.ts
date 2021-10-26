@@ -17,7 +17,7 @@ export class TestWritable extends Writable {
     private _lines: string[] = [];
 
     public get lines(): string[] {
-        return this._lines.map(l => l.replace(TestWritable._regex, ''));
+        return this._lines.map(l => l.replace(TestWritable._regex, ""));
     }
 
     override _write(
