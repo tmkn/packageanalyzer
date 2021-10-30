@@ -30,7 +30,8 @@
         ],
         "@typescript-eslint/no-use-before-define": "off",
         "@typescript-eslint/explicit-function-return-type": "off",
-        "@typescript-eslint/no-this-alias": "off"
+        "@typescript-eslint/no-this-alias": "off",
+        "@typescript-eslint/no-inferrable-types": "off"
     },
     "extends": ["plugin:@typescript-eslint/recommended"]
 }
