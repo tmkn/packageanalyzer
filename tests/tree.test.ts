@@ -10,58 +10,6 @@ import { TestWritable } from "./common";
 import { DependencyUtilities } from "../src/extensions/utilities/DependencyUtilities";
 import { LicenseUtilities } from "../src/extensions/utilities/LicenseUtilities";
 
-const output = `
-testproject1@1.0.0
-└── react@16.8.6
-    ├── loose-envify@1.4.0
-    │   └── js-tokens@4.0.0
-    ├── object-assign@4.1.1
-    ├── prop-types@15.7.2
-    │   ├── loose-envify@1.4.0
-    │   │   └── js-tokens@4.0.0
-    │   ├── object-assign@4.1.1
-    │   └── react-is@16.8.6
-    └── scheduler@0.13.6
-        ├── loose-envify@1.4.0
-        │   └── js-tokens@4.0.0
-        └── object-assign@4.1.1
-`
-    .split("\n")
-    .slice(1, -1);
-
-const multilineOutput = `
-testproject1@1.0.0 (13 dependencies)
-License: ISC
-└── react@16.8.6 (12 dependencies)
-    License: MIT
-    ├── loose-envify@1.4.0 (1 dependencies)
-    │   License: MIT
-    │   └── js-tokens@4.0.0 (0 dependencies)
-    │       License: MIT
-    ├── object-assign@4.1.1 (0 dependencies)
-    │   License: MIT
-    ├── prop-types@15.7.2 (4 dependencies)
-    │   License: MIT
-    │   ├── loose-envify@1.4.0 (1 dependencies)
-    │   │   License: MIT
-    │   │   └── js-tokens@4.0.0 (0 dependencies)
-    │   │       License: MIT
-    │   ├── object-assign@4.1.1 (0 dependencies)
-    │   │   License: MIT
-    │   └── react-is@16.8.6 (0 dependencies)
-    │       License: MIT
-    └── scheduler@0.13.6 (3 dependencies)
-        License: MIT
-        ├── loose-envify@1.4.0 (1 dependencies)
-        │   License: MIT
-        │   └── js-tokens@4.0.0 (0 dependencies)
-        │       License: MIT
-        └── object-assign@4.1.1 (0 dependencies)
-            License: MIT
-`
-    .split("\n")
-    .slice(1, -1);
-
 describe(`Tree Tests`, () => {
     test(`Print tree`, async () => {
         const rootPath = path.join("tests", "data", "testproject1");
@@ -83,7 +31,7 @@ describe(`Tree Tests`, () => {
 
         print<Package>(p, converter, formatter);
 
-        expect(stdout.lines).toEqual(output);
+        expect(stdout.lines).toMatchSnapshot();
     });
 
     test(`Print tree with multi lines`, async () => {
@@ -109,6 +57,6 @@ describe(`Tree Tests`, () => {
 
         print<Package>(p, converter, formatter);
 
-        expect(stdout.lines).toEqual(multilineOutput);
+        expect(stdout.lines).toMatchSnapshot();
     });
 });
