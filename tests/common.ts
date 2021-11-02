@@ -14,10 +14,15 @@ export class TestWritable extends Writable {
 
     private static _regex = new RegExp(this._pattern, "g");
 
-    private _lines: string[] = [];
+    private _output: string = "";
 
     public get lines(): string[] {
-        return this._lines.map(l => l.replace(TestWritable._regex, ""));
+        if (this._output === "") return [];
+
+        //remove ansi escape codes, azure doesn't like them
+        let cleaned: string = this._output.replace(TestWritable._regex, "");
+
+        return cleaned.split("\n");
     }
 
     override _write(
@@ -27,7 +32,7 @@ export class TestWritable extends Writable {
     ): void {
         const data: string = chunk.toString();
 
-        this._lines.push(data.trimEnd());
+        this._output += data.toString();
 
         callback();
     }

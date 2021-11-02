@@ -26,7 +26,6 @@ describe(`Update Info Command`, () => {
         jest.setSystemTime(new Date(`2021-10-26`).getTime());
     });
 
-
     test(`--package`, async () => {
         const command = cli.process([`update`, `--package`, `react@16.8.1`]);
 

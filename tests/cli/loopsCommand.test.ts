@@ -6,6 +6,7 @@ import { BaseContext } from "clipanion";
 import { cli } from "../../src/cli/cli";
 import { FileSystemPackageProvider } from "../../src/providers/folder";
 import { TestWritable } from "../common";
+import { LoopsCommand } from "../../src/cli/loopsCommand";
 
 describe(`Loops Command`, () => {
     const stdout = new TestWritable();
@@ -24,12 +25,12 @@ describe(`Loops Command`, () => {
             `dependencies`
         ]);
 
-        //todo use provider
         const rootPath = path.join("tests", "data", "testproject2");
         const provider = new FileSystemPackageProvider(rootPath);
 
         expect.assertions(1);
         command.context = mockContext;
+        LoopsCommand.PackageProvider = provider;
 
         await command.execute();
 

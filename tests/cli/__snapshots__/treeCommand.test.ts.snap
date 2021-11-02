@@ -17,6 +17,7 @@ Array [
   "        │   └── js-tokens@4.0.0 (0 dependencies)",
   "        └── object-assign@4.1.1 (0 dependencies)",
   "",
+  "",
 ]
 `;
 
@@ -35,6 +36,7 @@ Array [
   "    ├── loose-envify@1.4.0 (1 dependencies)",
   "    │   └── js-tokens@4.0.0 (0 dependencies)",
   "    └── object-assign@4.1.1 (0 dependencies)",
+  "",
   "",
 ]
 `;
