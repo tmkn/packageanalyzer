@@ -35,7 +35,9 @@ export class LoopsReport extends AbstractReport<ILoopParams> {
         const loopPadding = ("" + distinctCount).length;
         let total = 0;
 
-        formatter.writeLine(`${chalk.bold(`${distinctCount} Loop(s) found for ${pkg.fullName}`)}\n`);
+        formatter.writeLine(
+            `${chalk.bold(`${distinctCount} Loop(s) found for ${pkg.fullName}`)}\n`
+        );
         if (distinctCount > 0) {
             formatter.writeLine(`Affected Packages:`);
             for (const [pkgName, loopsForPkg] of loopPathMap) {
