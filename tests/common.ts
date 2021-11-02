@@ -17,7 +17,15 @@ export class TestWritable extends Writable {
     private _lines: string[] = [];
 
     public get lines(): string[] {
-        return this._lines.map(l => l.replace(TestWritable._regex, ""));
+        let lines: string[] = [];
+
+        for(const line of this._lines) {
+            const cleaned = line.replace(TestWritable._regex, "");  //remove ansi escape codes, azure doesn't like them
+
+            lines.push(...cleaned.split("\n"));
+        }
+
+        return lines;
     }
 
     override _write(

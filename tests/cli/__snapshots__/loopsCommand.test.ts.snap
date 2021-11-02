@@ -2,27 +2,27 @@
 
 exports[`Loops Command --package --type 1`] = `
 Array [
-  "8 Loop(s) found for testproject2@1.0.0
-",
+  "8 Loop(s) found for testproject2@1.0.0",
+  "",
   "Affected Packages:",
   "-    3x @webassemblyjs/ast",
   "-    2x @webassemblyjs/wast-parser",
   "-    1x @webassemblyjs/helper-module-context",
   "-    2x @webassemblyjs/wast-printer",
-  "
-3 Loop(s) found for @webassemblyjs/ast",
+  "",
+  "3 Loop(s) found for @webassemblyjs/ast",
   "[1/8] @webassemblyjs/ast@1.8.5 → @webassemblyjs/helper-module-context@1.8.5 → @webassemblyjs/ast@1.8.5",
   "[2/8] @webassemblyjs/ast@1.8.5 → @webassemblyjs/wast-parser@1.8.5 → @webassemblyjs/ast@1.8.5",
   "[3/8] @webassemblyjs/ast@1.8.5 → @webassemblyjs/wast-parser@1.8.5 → @webassemblyjs/helper-code-frame@1.8.5 → @webassemblyjs/wast-printer@1.8.5 → @webassemblyjs/ast@1.8.5",
-  "
-2 Loop(s) found for @webassemblyjs/wast-parser",
+  "",
+  "2 Loop(s) found for @webassemblyjs/wast-parser",
   "[4/8] @webassemblyjs/wast-parser@1.8.5 → @webassemblyjs/helper-code-frame@1.8.5 → @webassemblyjs/wast-printer@1.8.5 → @webassemblyjs/wast-parser@1.8.5",
   "[5/8] @webassemblyjs/wast-parser@1.8.5 → @webassemblyjs/ast@1.8.5 → @webassemblyjs/wast-parser@1.8.5",
-  "
-1 Loop(s) found for @webassemblyjs/helper-module-context",
+  "",
+  "1 Loop(s) found for @webassemblyjs/helper-module-context",
   "[6/8] @webassemblyjs/helper-module-context@1.8.5 → @webassemblyjs/ast@1.8.5 → @webassemblyjs/helper-module-context@1.8.5",
-  "
-2 Loop(s) found for @webassemblyjs/wast-printer",
+  "",
+  "2 Loop(s) found for @webassemblyjs/wast-printer",
   "[7/8] @webassemblyjs/wast-printer@1.8.5 → @webassemblyjs/ast@1.8.5 → @webassemblyjs/wast-parser@1.8.5 → @webassemblyjs/helper-code-frame@1.8.5 → @webassemblyjs/wast-printer@1.8.5",
   "[8/8] @webassemblyjs/wast-printer@1.8.5 → @webassemblyjs/wast-parser@1.8.5 → @webassemblyjs/helper-code-frame@1.8.5 → @webassemblyjs/wast-printer@1.8.5",
   "",

@@ -9,8 +9,8 @@ Array [
   "react@16.8.6        MIT",
   "react-is@16.8.6     MIT",
   "scheduler@0.13.6    MIT",
-  "
-7/7 packages failed the license check",
+  "",
+  "7/7 packages failed the license check",
   "js-tokens@4.0.0     MIT",
   "loose-envify@1.4.0  MIT",
   "object-assign@4.1.1 MIT",
@@ -30,8 +30,8 @@ Array [
   "prop-types@15.7.2   MIT",
   "react-is@16.13.1    MIT",
   "scheduler@0.13.6    MIT",
-  "
-6/6 packages failed the license check",
+  "",
+  "6/6 packages failed the license check",
   "js-tokens@4.0.0     MIT",
   "loose-envify@1.4.0  MIT",
   "object-assign@4.1.1 MIT",
@@ -50,8 +50,8 @@ Array [
   "prop-types@15.7.2   MIT",
   "react-is@16.13.1    MIT",
   "scheduler@0.13.6    MIT",
-  "
-6/6 packages failed the license check",
+  "",
+  "6/6 packages failed the license check",
   "js-tokens@4.0.0     MIT",
   "loose-envify@1.4.0  MIT",
   "object-assign@4.1.1 MIT",
@@ -64,8 +64,8 @@ Array [
 
 exports[`License Check Command --package --type 1`] = `
 Array [
-  "
-All packages passed the license check",
+  "",
+  "All packages passed the license check",
   "",
 ]
 `;
@@ -78,8 +78,8 @@ Array [
   "prop-types@15.7.2   MIT",
   "react-is@16.13.1    MIT",
   "scheduler@0.13.6    MIT",
-  "
-6/6 packages failed the license check",
+  "",
+  "6/6 packages failed the license check",
   "js-tokens@4.0.0     MIT",
   "loose-envify@1.4.0  MIT",
   "object-assign@4.1.1 MIT",
