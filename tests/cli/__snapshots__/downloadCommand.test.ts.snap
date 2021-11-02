@@ -4,5 +4,6 @@ exports[`Download Command --package 1`] = `
 Array [
   "react: 8609192 Downloads",
   "",
+  "",
 ]
 `;

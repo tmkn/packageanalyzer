@@ -19,6 +19,7 @@ Array [
   "react-is@16.8.6     MIT",
   "scheduler@0.13.6    MIT",
   "",
+  "",
 ]
 `;
 
@@ -38,6 +39,7 @@ Array [
   "prop-types@15.7.2   MIT",
   "react-is@16.13.1    MIT",
   "scheduler@0.13.6    MIT",
+  "",
   "",
 ]
 `;
@@ -59,6 +61,7 @@ Array [
   "react-is@16.13.1    MIT",
   "scheduler@0.13.6    MIT",
   "",
+  "",
 ]
 `;
 
@@ -66,6 +69,7 @@ exports[`License Check Command --package --type 1`] = `
 Array [
   "",
   "All packages passed the license check",
+  "",
   "",
 ]
 `;
@@ -86,6 +90,7 @@ Array [
   "prop-types@15.7.2   MIT",
   "react-is@16.13.1    MIT",
   "scheduler@0.13.6    MIT",
+  "",
   "",
 ]
 `;

@@ -3,6 +3,7 @@
 exports[`Analyze Command --folder --type --full 1`] = `
 Array [
   "Statistics for testproject1@1.0.0",
+  "",
   "Direct dependencies:     1",
   "Transitive dependencies: 13",
   "Distinct dependencies:",
@@ -17,12 +18,14 @@ Array [
   "    MIT - [js-tokens, loose-envify, object-assign, prop-types, +3 more]",
   "    ISC - [testproject1]",
   "",
+  "",
 ]
 `;
 
 exports[`Analyze Command --package --type --full 1`] = `
 Array [
   "Statistics for react@16.8.1",
+  "",
   "Published: Wed, 06 Feb 2019 18:15:25 GMT (992 days ago)",
   "Oldest package:      object-assign@4.1.1 - Mon, 16 Jan 2017 15:35:15 GMT (1743 days ago)",
   "Oldest package path: react@16.8.1 → object-assign@4.1.1",
@@ -41,12 +44,14 @@ Array [
   "Licenses:",
   "    MIT - [js-tokens, loose-envify, object-assign, prop-types, +3 more]",
   "",
+  "",
 ]
 `;
 
 exports[`Analyze Command --package --type 1`] = `
 Array [
   "Statistics for react@16.8.1",
+  "",
   "Direct dependencies:     4",
   "Transitive dependencies: 12",
   "Distinct dependencies: 6",
@@ -56,6 +61,7 @@ Array [
   "    (none)",
   "Licenses:",
   "    7x MIT",
+  "",
   "",
 ]
 `;
