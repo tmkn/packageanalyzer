@@ -1,6 +1,6 @@
 import { Command, Option } from "clipanion";
-import { OnlinePackageProvider } from "..";
 
+import { IPackageJsonProvider } from "../providers/provider";
 import { DownloadReport, IDownloadParams } from "../reports/DownloadCountReport";
 import { ReportService } from "../reports/ReportService";
 import { Url } from "../utils/requests";
@@ -19,7 +19,7 @@ export class DownloadCommand extends Command {
     });
 
     public static DownloadUrl?: Url;
-    public static PackageProvider?: OnlinePackageProvider;
+    public static PackageProvider?: IPackageJsonProvider;
 
     static override paths = [[`downloads`]];
 

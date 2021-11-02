@@ -3,6 +3,7 @@ import { Command, Option } from "clipanion";
 import { defaultDependencyType, isValidDependencyType } from "./common";
 import { ILoopParams, LoopsReport } from "../reports/LoopsReport";
 import { ReportService } from "../reports/ReportService";
+import { IPackageJsonProvider } from "../providers/provider";
 
 export class LoopsCommand extends Command {
     public package?: string = Option.String(`--package`, {
@@ -35,6 +36,8 @@ export class LoopsCommand extends Command {
         ]
     });
 
+    public static PackageProvider?: IPackageJsonProvider;
+
     static override paths = [[`loops`]];
     async execute() {
         if (!isValidDependencyType(this.type)) {
@@ -49,6 +52,8 @@ export class LoopsCommand extends Command {
                 package: this.package
             };
             const loopsReport = new LoopsReport(params);
+
+            loopsReport.provider = LoopsCommand.PackageProvider;
 
             const reportService = new ReportService(
                 {
