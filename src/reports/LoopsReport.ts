@@ -3,9 +3,8 @@ import * as chalk from "chalk";
 import { isValidDependencyType } from "../cli/common";
 import { LoopUtilities } from "../extensions/utilities/LoopUtilities";
 import { Package } from "../package/package";
-import { IFormatter } from "../utils/formatter";
 import { DependencyTypes, getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
-import { AbstractReport } from "./Report";
+import { AbstractReport, IReportContext } from "./Report";
 
 export interface ILoopParams {
     package: string;
@@ -23,7 +22,7 @@ export class LoopsReport extends AbstractReport<ILoopParams> {
         this.type = params.type;
     }
 
-    async report(pkg: Package, formatter: IFormatter): Promise<void> {
+    async report(pkg: Package, { stdoutFormatter }: IReportContext): Promise<void> {
         if (!isValidDependencyType(this.type)) {
             throw new Error(
                 `Please only specify "dependencies" or "devDependencies" for the --type argument`
@@ -35,17 +34,19 @@ export class LoopsReport extends AbstractReport<ILoopParams> {
         const loopPadding = ("" + distinctCount).length;
         let total = 0;
 
-        formatter.writeLine(chalk.bold(`${distinctCount} Loop(s) found for ${pkg.fullName}\n`));
+        stdoutFormatter.writeLine(
+            chalk.bold(`${distinctCount} Loop(s) found for ${pkg.fullName}\n`)
+        );
         if (distinctCount > 0) {
-            formatter.writeLine(`Affected Packages:`);
+            stdoutFormatter.writeLine(`Affected Packages:`);
             for (const [pkgName, loopsForPkg] of loopPathMap) {
                 const loopCountStr = `${loopsForPkg.size}x`.padStart(5);
 
-                formatter.writeLine(`- ${loopCountStr} ${pkgName}`);
+                stdoutFormatter.writeLine(`- ${loopCountStr} ${pkgName}`);
             }
 
             for (const [pkgName, loopsForPkg] of loopPathMap) {
-                formatter.writeLine(
+                stdoutFormatter.writeLine(
                     chalk.bgGray(`\n${loopsForPkg.size} Loop(s) found for ${pkgName}`)
                 );
 
@@ -53,7 +54,7 @@ export class LoopsReport extends AbstractReport<ILoopParams> {
                 for (const loop of loopsForPkg) {
                     const iStr = `${total + i++ + 1}`.padStart(loopPadding);
 
-                    formatter.writeLine(`[${iStr}/${distinctCount}] ${loop}`);
+                    stdoutFormatter.writeLine(`[${iStr}/${distinctCount}] ${loop}`);
                 }
 
                 total += loopsForPkg.size;

@@ -21,7 +21,7 @@ import {
     getPackageVersionfromString,
     PackageVersion
 } from "../visitors/visitor";
-import { AbstractReport } from "./Report";
+import { AbstractReport, IReportContext } from "./Report";
 
 export interface IAnalyzeParams {
     package?: string;
@@ -51,8 +51,8 @@ export class AnalyzeReport extends AbstractReport<IAnalyzeParams> {
         this.type = params.type ?? defaultDependencyType;
     }
 
-    async report(pkg: Package, formatter: IFormatter): Promise<void> {
-        await printStatistics(pkg, this.params.full, formatter);
+    async report(pkg: Package, { stdoutFormatter }: IReportContext): Promise<void> {
+        await printStatistics(pkg, this.params.full, stdoutFormatter);
     }
 }
 

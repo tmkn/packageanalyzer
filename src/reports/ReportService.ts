@@ -13,7 +13,7 @@ export interface IReports {
 }
 
 export class ReportService {
-    constructor(private _config: IReports, private _stdout: Writable) {
+    constructor(private _config: IReports, private _stdout: Writable, private _stderr: Writable) {
         //todo validate _config
     }
 
@@ -22,7 +22,8 @@ export class ReportService {
 
         try {
             for (const report of reports) {
-                const formatter: IFormatter = new Formatter(this._stdout);
+                const stdoutFormatter: IFormatter = new Formatter(this._stdout);
+                const stderrFormatter: IFormatter = new Formatter(this._stderr);
                 const visitor = new Visitor(
                     report.pkg,
                     report.provider ?? npmOnline,
@@ -32,15 +33,17 @@ export class ReportService {
                 );
 
                 if (reports.length > 1)
-                    formatter.writeLine(chalk.underline.bgBlue(`Report: ${report.name}`));
+                    stdoutFormatter.writeLine(chalk.underline.bgBlue(`Report: ${report.name}`));
 
                 const p: Package = await visitor.visit(report.type);
 
-                await report.report(p, formatter);
-                formatter.writeLine(``);
+                await report.report(p, { stdoutFormatter, stderrFormatter });
+                stdoutFormatter.writeLine(``);
             }
-        } catch (e) {
-            console.log(e);
+        } catch (e: any) {
+            const stderrFormatter: IFormatter = new Formatter(this._stderr);
+
+            stderrFormatter.writeLine(e?.toString());
         }
     }
 }

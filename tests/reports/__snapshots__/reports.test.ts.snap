@@ -1,0 +1,8 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ReportService Tests Writes to stderr on throw 1`] = `
+Array [
+  "Error: Whoopsie",
+  "",
+]
+`;

@@ -26,6 +26,25 @@
         {
             "type": "pwa-node",
             "request": "launch",
+            "name": "Launch Sample Report",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/build/src/cli.js",
+            "args": [
+                "report",
+                "--config",
+                "./tests/sampleReport.js"
+            ],
+            "preLaunchTask": "tsc: build - tsconfig.json",
+            "outFiles": [
+                "${workspaceFolder}/build/**/*.js"
+            ],
+            "console" : "integratedTerminal"
+        },
+        {
+            "type": "pwa-node",
+            "request": "launch",
             "name": "Custom Report",
             "skipFiles": [
                 "<node_internals>/**"

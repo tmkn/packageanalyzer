@@ -1,3 +1,4 @@
+import { Package } from "../../src/package/package";
 import { DownloadReport } from "../../src/reports/DownloadCountReport";
 import { Formatter } from "../../src/utils/formatter";
 import { TestWritable } from "./../common";
@@ -17,17 +18,18 @@ describe(`DownloadCountReport Tests`, () => {
             pkg: `_downloads`,
             url: `http://localhost:${server.port}/`
         });
-        const fakePgk = {
-            name: `_downloads`
-        };
-        const writer = new TestWritable();
-        const formatter = new Formatter(writer);
 
         //@ts-expect-error
-        await downloadReport.report(fakePgk, formatter);
+        const fakePgk: Package = {
+            name: `_downloads`
+        };
+        const stdout = new TestWritable();
+        const stdoutFormatter = new Formatter(stdout);
+        const stderr = new TestWritable();
+        const stderrFormatter = new Formatter(stderr);
 
-        const match = writer.lines.find(line => line.includes(`8609192`));
+        await downloadReport.report(fakePgk, { stdoutFormatter, stderrFormatter });
 
-        expect(match).not.toBeUndefined();
+        expect(stdout.lines).toMatchSnapshot();
     });
 });

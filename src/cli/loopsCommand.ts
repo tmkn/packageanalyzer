@@ -59,7 +59,8 @@ export class LoopsCommand extends Command {
                 {
                     reports: [loopsReport]
                 },
-                this.context.stdout
+                this.context.stdout,
+                this.context.stderr
             );
 
             await reportService.process();

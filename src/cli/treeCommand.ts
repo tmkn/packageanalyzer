@@ -67,7 +67,8 @@ export class TreeCommand extends Command {
             {
                 reports: [treeReport]
             },
-            this.context.stdout
+            this.context.stdout,
+            this.context.stderr
         );
 
         await reportService.process();

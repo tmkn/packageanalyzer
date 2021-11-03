@@ -17,7 +17,7 @@ import {
     getPackageVersionfromString,
     PackageVersion
 } from "../visitors/visitor";
-import { AbstractReport } from "./Report";
+import { AbstractReport, IReportContext } from "./Report";
 
 export interface ILicenseParams {
     package?: string;
@@ -50,10 +50,10 @@ export class LicenseReport extends AbstractReport<ILicenseParams> {
         this.grouped = params.grouped ?? false;
     }
 
-    async report(pkg: Package, formatter: IFormatter): Promise<void> {
+    async report(pkg: Package, { stdoutFormatter }: IReportContext): Promise<void> {
         const licenseReport = createWhitelistLicenseCheckReport(pkg, this.allowList ?? [], false);
 
-        printLicenseCheck(licenseReport, this.grouped, formatter);
+        printLicenseCheck(licenseReport, this.grouped, stdoutFormatter);
     }
 }
 

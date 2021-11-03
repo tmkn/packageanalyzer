@@ -9,7 +9,8 @@ describe(`ReportService Tests`, () => {
     const provider = new FileSystemPackageProvider(rootPath);
 
     test(`Executes report method`, async () => {
-        const writer = new TestWritable();
+        const stdout = new TestWritable();
+        const stderr = new TestWritable();
         const cb = jest.fn();
         const testReport = new TestReport({
             pkg: [`react`],
@@ -22,7 +23,8 @@ describe(`ReportService Tests`, () => {
             {
                 reports: [testReport]
             },
-            writer
+            stdout,
+            stderr
         );
 
         await reportService.process();
@@ -30,7 +32,8 @@ describe(`ReportService Tests`, () => {
     });
 
     test(`Executes multiple reports`, async () => {
-        const writer = new TestWritable();
+        const stdout = new TestWritable();
+        const stderr = new TestWritable();
         const cb = jest.fn();
         const testReport = new TestReport({
             pkg: [`react`],
@@ -43,7 +46,8 @@ describe(`ReportService Tests`, () => {
             {
                 reports: [testReport, testReport, testReport]
             },
-            writer
+            stdout,
+            stderr
         );
 
         await reportService.process();
@@ -51,7 +55,8 @@ describe(`ReportService Tests`, () => {
     });
 
     test(`Provides pkg argument`, async () => {
-        const writer = new TestWritable();
+        const stdout = new TestWritable();
+        const stderr = new TestWritable();
         let fullName: string = `Unknown`;
         const testReport = new TestReport({
             pkg: [`react`],
@@ -64,7 +69,8 @@ describe(`ReportService Tests`, () => {
             {
                 reports: [testReport]
             },
-            writer
+            stdout,
+            stderr
         );
 
         await reportService.process();
@@ -73,7 +79,8 @@ describe(`ReportService Tests`, () => {
     });
 
     test(`Provides formatter argument`, async () => {
-        const writer = new TestWritable();
+        const stdout = new TestWritable();
+        const stderr = new TestWritable();
         const token = `Hello World`;
         const testReport = new TestReport({
             pkg: [`react`],
@@ -86,16 +93,18 @@ describe(`ReportService Tests`, () => {
             {
                 reports: [testReport]
             },
-            writer
+            stdout,
+            stderr
         );
 
         await reportService.process();
 
-        expect(writer.lines.find(line => line === token)).toBeDefined();
+        expect(stdout.lines.find(line => line === token)).toBeDefined();
     });
 
     test(`Acknowledges depth setting`, async () => {
-        const writer = new TestWritable();
+        const stdout = new TestWritable();
+        const stderr = new TestWritable();
         let directDependenciesCount1: number = -1;
         let directDependenciesCount2: number = -1;
         const testReport1 = new TestReport({
@@ -118,12 +127,36 @@ describe(`ReportService Tests`, () => {
             {
                 reports: [testReport1, testReport2]
             },
-            writer
+            stdout,
+            stderr
         );
 
         await reportService.process();
 
         expect(directDependenciesCount1).toEqual(0);
         expect(directDependenciesCount2).toEqual(4);
+    });
+
+    test(`Writes to stderr on throw`, async () => {
+        const stdout = new TestWritable();
+        const stderr = new TestWritable();
+        const willThrow = new TestReport({
+            pkg: [`react`],
+            report: async () => {
+                throw new Error(`Whoopsie`);
+            }
+        });
+
+        const reportService = new ReportService(
+            {
+                reports: [willThrow]
+            },
+            stdout,
+            stderr
+        );
+
+        await reportService.process();
+
+        expect(stderr.lines).toMatchSnapshot();
     });
 });

@@ -4,6 +4,11 @@ import { IPackageJsonProvider } from "../providers/provider";
 import { IFormatter } from "../utils/formatter";
 import { DependencyTypes, PackageVersion } from "../visitors/visitor";
 
+export interface IReportContext {
+    stdoutFormatter: IFormatter;
+    stderrFormatter: IFormatter;
+}
+
 export interface IReport<T extends {}> {
     readonly name: string;
     readonly params: T;
@@ -14,7 +19,7 @@ export interface IReport<T extends {}> {
     readonly type?: DependencyTypes;
     readonly depth?: number;
 
-    report(pkg: Package, formatter: IFormatter): Promise<void>;
+    report(pkg: Package, context: IReportContext): Promise<void>;
 }
 
 export abstract class AbstractReport<T extends {}> implements IReport<T> {
@@ -27,5 +32,5 @@ export abstract class AbstractReport<T extends {}> implements IReport<T> {
     type: DependencyTypes | undefined;
     depth: number | undefined;
 
-    abstract report(pkg: Package, formatter: IFormatter): Promise<void>;
+    abstract report(pkg: Package, context: IReportContext): Promise<void>;
 }

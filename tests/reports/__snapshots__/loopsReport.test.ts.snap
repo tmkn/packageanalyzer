@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LoopsReport Test works 1`] = `
+Array [
+  "4 Loop(s) found for @webassemblyjs/ast@1.9.0",
+  "",
+  "Affected Packages:",
+  "-    3x @webassemblyjs/ast",
+  "-    1x @webassemblyjs/wast-parser",
+  "",
+  "3 Loop(s) found for @webassemblyjs/ast",
+  "[1/4] @webassemblyjs/ast@1.9.0 → @webassemblyjs/helper-module-context@1.9.0 → @webassemblyjs/ast@1.9.0",
+  "[2/4] @webassemblyjs/ast@1.9.0 → @webassemblyjs/wast-parser@1.9.0 → @webassemblyjs/ast@1.9.0",
+  "[3/4] @webassemblyjs/ast@1.9.0 → @webassemblyjs/wast-parser@1.9.0 → @webassemblyjs/helper-code-frame@1.9.0 → @webassemblyjs/wast-printer@1.9.0 → @webassemblyjs/ast@1.9.0",
+  "",
+  "1 Loop(s) found for @webassemblyjs/wast-parser",
+  "[4/4] @webassemblyjs/wast-parser@1.9.0 → @webassemblyjs/helper-code-frame@1.9.0 → @webassemblyjs/wast-printer@1.9.0 → @webassemblyjs/wast-parser@1.9.0",
+  "",
+  "",
+]
+`;

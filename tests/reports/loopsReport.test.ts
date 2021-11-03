@@ -21,17 +21,19 @@ describe(`LoopsReport Test`, () => {
 
         report.provider = provider;
 
-        const writer = new TestWritable();
+        const stdout = new TestWritable();
+        const stderr = new TestWritable();
         const reportService = new ReportService(
             {
                 reports: [report]
             },
-            writer
+            stdout,
+            stderr
         );
 
         await reportService.process();
 
-        expect(writer.lines.length).toBeGreaterThan(0);
+        expect(stdout.lines).toMatchSnapshot();
     });
 
     test(`Throws on illegal dependency type`, async () => {
