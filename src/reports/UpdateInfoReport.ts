@@ -3,7 +3,6 @@ import * as chalk from "chalk";
 import { daysAgo } from "../cli/common";
 import { Package } from "../package/package";
 import { OnlinePackageProvider } from "../providers/online";
-import { IFormatter } from "../utils/formatter";
 import { updateInfo } from "../utils/update";
 import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
 import { AbstractReport, IReportContext } from "./Report";
