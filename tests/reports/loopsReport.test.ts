@@ -47,7 +47,7 @@ describe(`LoopsReport Test`, () => {
             });
 
             //@ts-expect-error
-            await report.report();
+            await report.report(null, {});
         } catch (e) {
             expect(e).toBeInstanceOf(Error);
         }
