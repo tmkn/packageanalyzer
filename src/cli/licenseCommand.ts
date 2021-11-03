@@ -74,7 +74,8 @@ export class LicenseCheckCommand extends Command {
             {
                 reports: [licenseReport]
             },
-            this.context.stdout
+            this.context.stdout,
+            this.context.stderr
         );
 
         await reportService.process();

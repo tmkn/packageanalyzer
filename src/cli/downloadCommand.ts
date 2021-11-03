@@ -36,7 +36,8 @@ export class DownloadCommand extends Command {
                 {
                     reports: [downloadReport]
                 },
-                this.context.stdout
+                this.context.stdout,
+                this.context.stderr
             );
 
             await reportService.process();

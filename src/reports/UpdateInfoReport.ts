@@ -3,10 +3,9 @@ import * as chalk from "chalk";
 import { daysAgo } from "../cli/common";
 import { Package } from "../package/package";
 import { OnlinePackageProvider } from "../providers/online";
-import { IFormatter } from "../utils/formatter";
 import { updateInfo } from "../utils/update";
 import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
-import { AbstractReport } from "./Report";
+import { AbstractReport, IReportContext } from "./Report";
 
 export interface IUpdateInfoParams {
     package: string;
@@ -25,11 +24,11 @@ export class UpdateInfoReport extends AbstractReport<IUpdateInfoParams> {
         this.provider = params.provider;
     }
 
-    async report(pkg: Package, formatter: IFormatter): Promise<void> {
+    async report(pkg: Package, { stdoutFormatter }: IReportContext): Promise<void> {
         const [name, version] = this.pkg;
 
         if (typeof version === "undefined") {
-            formatter.writeLine(`Version info is missing (${name})`);
+            stdoutFormatter.writeLine(`Version info is missing (${name})`);
 
             return;
         }
@@ -37,8 +36,8 @@ export class UpdateInfoReport extends AbstractReport<IUpdateInfoParams> {
         const data = await updateInfo(name, version, this.params.provider);
         const updateStr = chalk.bold(`Update Info for ${pkg.fullName}`);
 
-        formatter.writeLine(`${updateStr}\n`);
-        formatter.writeGroup([
+        stdoutFormatter.writeLine(`${updateStr}\n`);
+        stdoutFormatter.writeGroup([
             [
                 `Semantic match`,
                 `${data.latestSemanticMatch.version}  ${daysAgo(

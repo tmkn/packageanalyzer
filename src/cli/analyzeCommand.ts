@@ -55,7 +55,8 @@ export class AnalyzeCommand extends Command {
             {
                 reports: [analyzeReport]
             },
-            this.context.stdout
+            this.context.stdout,
+            this.context.stderr
         );
 
         await reportService.process();

@@ -16,10 +16,11 @@ describe(`Report Command`, () => {
         expect(command).toBeInstanceOf(ReportCommand);
 
         const stdout = new TestWritable();
+        const stderr = new TestWritable();
         command.context = {
             stdin: process.stdin,
             stdout: stdout,
-            stderr: new PassThrough()
+            stderr: stderr
         };
         await command.execute();
 

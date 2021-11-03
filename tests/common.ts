@@ -2,7 +2,7 @@ import { Writable } from "stream";
 import { IDecorator } from "../src/extensions/decorators/Decorator";
 import { Package } from "../src/package/package";
 import { IPackageJsonProvider } from "../src/providers/provider";
-import { AbstractReport } from "../src/reports/Report";
+import { AbstractReport, IReportContext } from "../src/reports/Report";
 import { IFormatter } from "../src/utils/formatter";
 import { DependencyTypes, PackageVersion } from "../src/visitors/visitor";
 
@@ -63,7 +63,7 @@ export class TestReport extends AbstractReport<ITestReport> {
         this.depth = params.depth;
     }
 
-    async report(pkg: Package, formatter: IFormatter): Promise<void> {
-        return this.params.report(pkg, formatter);
+    async report(pkg: Package, { stdoutFormatter }: IReportContext): Promise<void> {
+        return this.params.report(pkg, stdoutFormatter);
     }
 }

@@ -3,14 +3,13 @@ import { printDependencyTree } from "../extensions/utilities/LoopUtilities";
 import { Package } from "../package/package";
 import { FileSystemPackageProvider } from "../providers/folder";
 import { npmOnline } from "../providers/online";
-import { IFormatter } from "../utils/formatter";
 import {
     DependencyTypes,
     getPackageVersionFromPackageJson,
     getPackageVersionfromString,
     PackageVersion
 } from "../visitors/visitor";
-import { AbstractReport } from "./Report";
+import { AbstractReport, IReportContext } from "./Report";
 
 export interface ITreeReportParams {
     package?: string;
@@ -38,7 +37,7 @@ export class TreeReport extends AbstractReport<ITreeReportParams> {
         }
     }
 
-    async report(pkg: Package, formatter: IFormatter): Promise<void> {
-        printDependencyTree(pkg, formatter);
+    async report(pkg: Package, { stdoutFormatter }: IReportContext): Promise<void> {
+        printDependencyTree(pkg, stdoutFormatter);
     }
 }

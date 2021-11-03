@@ -33,12 +33,17 @@ export class NpmDumpCommand extends Command {
     static override paths = [[`npmdump`]];
     async execute() {
         if (typeof this.npmFile !== "undefined" && typeof this.package !== "undefined") {
-            cliResolveFile(this.package, this.npmFile, this.context.stdout);
+            cliResolveFile(this.package, this.npmFile, this.context.stdout, this.context.stderr);
         }
     }
 }
 
-async function cliResolveFile(pkgName: string, npmFile: string, stdout: Writable): Promise<void> {
+async function cliResolveFile(
+    pkgName: string,
+    npmFile: string,
+    stdout: Writable,
+    stderr: Writable
+): Promise<void> {
     try {
         const provider = new FlatFileProvider(npmFile);
         const analyzeReport = new AnalyzeReport({
@@ -52,7 +57,8 @@ async function cliResolveFile(pkgName: string, npmFile: string, stdout: Writable
             {
                 reports: [analyzeReport]
             },
-            process.stdout
+            stdout,
+            stderr
         );
 
         await reportService.process();

@@ -40,7 +40,8 @@ export class UpdateInfoCommand extends Command {
                 {
                     reports: [updateInfoReport]
                 },
-                this.context.stdout
+                this.context.stdout,
+                this.context.stderr
             );
 
             await reportService.process();

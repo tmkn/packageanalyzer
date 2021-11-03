@@ -3,7 +3,7 @@ import { Package } from "../package/package";
 import { IFormatter } from "../utils/formatter";
 import { Url } from "../utils/requests";
 import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
-import { AbstractReport } from "./Report";
+import { AbstractReport, IReportContext } from "./Report";
 
 export interface IDownloadParams {
     pkg: string;
@@ -21,8 +21,8 @@ export class DownloadReport extends AbstractReport<IDownloadParams> {
         this.pkg = getPackageVersionfromString(params.pkg);
     }
 
-    async report(pkg: Package, formatter: IFormatter): Promise<void> {
-        await cliDownloads(pkg.name, this.params.url ?? null, formatter);
+    async report(pkg: Package, { stdoutFormatter }: IReportContext): Promise<void> {
+        await cliDownloads(pkg.name, this.params.url ?? null, stdoutFormatter);
     }
 }
 
