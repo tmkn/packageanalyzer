@@ -11,12 +11,8 @@ import {
     ILicenseCheckResult,
     LicenseCheckReport
 } from "../utils/licenseCheckService";
-import {
-    DependencyTypes,
-    getPackageVersionFromPackageJson,
-    getPackageVersionfromString,
-    PackageVersion
-} from "../visitors/visitor";
+import { getPackageVersionFromPackageJson, getPackageVersionfromString } from "../visitors/utils";
+import { DependencyTypes, PackageVersion } from "../visitors/visitor";
 import { AbstractReport, IReportContext } from "./Report";
 
 export interface ILicenseParams {

@@ -3,12 +3,8 @@ import { printDependencyTree } from "../extensions/utilities/LoopUtilities";
 import { Package } from "../package/package";
 import { FileSystemPackageProvider } from "../providers/folder";
 import { npmOnline } from "../providers/online";
-import {
-    DependencyTypes,
-    getPackageVersionFromPackageJson,
-    getPackageVersionfromString,
-    PackageVersion
-} from "../visitors/visitor";
+import { getPackageVersionFromPackageJson, getPackageVersionfromString } from "../visitors/utils";
+import { DependencyTypes, PackageVersion } from "../visitors/visitor";
 import { AbstractReport, IReportContext } from "./Report";
 
 export interface ITreeReportParams {

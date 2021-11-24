@@ -15,12 +15,8 @@ import { Package } from "../package/package";
 import { FileSystemPackageProvider } from "../providers/folder";
 import { npmOnline } from "../providers/online";
 import { IFormatter } from "../utils/formatter";
-import {
-    DependencyTypes,
-    getPackageVersionFromPackageJson,
-    getPackageVersionfromString,
-    PackageVersion
-} from "../visitors/visitor";
+import { getPackageVersionFromPackageJson, getPackageVersionfromString } from "../visitors/utils";
+import { DependencyTypes, PackageVersion } from "../visitors/visitor";
 import { AbstractReport, IReportContext } from "./Report";
 
 export interface IAnalyzeParams {

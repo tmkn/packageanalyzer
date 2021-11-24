@@ -2,7 +2,8 @@ import { getDownloadsLastWeek } from "../npm";
 import { Package } from "../package/package";
 import { IFormatter } from "../utils/formatter";
 import { Url } from "../utils/requests";
-import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
+import { getPackageVersionfromString } from "../visitors/utils";
+import { PackageVersion } from "../visitors/visitor";
 import { AbstractReport, IReportContext } from "./Report";
 
 export interface IDownloadParams {

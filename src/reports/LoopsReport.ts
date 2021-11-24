@@ -3,7 +3,8 @@ import * as chalk from "chalk";
 import { isValidDependencyType } from "../cli/common";
 import { LoopUtilities } from "../extensions/utilities/LoopUtilities";
 import { Package } from "../package/package";
-import { DependencyTypes, getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
+import { getPackageVersionfromString } from "../visitors/utils";
+import { DependencyTypes, PackageVersion } from "../visitors/visitor";
 import { AbstractReport, IReportContext } from "./Report";
 
 export interface ILoopParams {

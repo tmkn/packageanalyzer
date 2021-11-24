@@ -4,7 +4,8 @@ import * as fs from "fs";
 import { FlatFileProvider } from "../providers/flatFile";
 import { OraLogger } from "./logger";
 import { Package } from "../package/package";
-import { getPackageVersionfromString, PackageVersion, Visitor } from "../visitors/visitor";
+import { PackageVersion, Visitor } from "../visitors/visitor";
+import { getPackageVersionfromString } from "../visitors/utils";
 
 type Formatter = (p: Package) => object;
 type ExtractCallback = (data: string, p: Package, i: number, max: number) => Promise<void>;

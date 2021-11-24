@@ -1,8 +1,8 @@
 import { Command, Option } from "clipanion";
 
-import { getPackageVersionfromString } from "../visitors/visitor";
 import { DependencyDumper } from "../utils/dumper";
 import { Url } from "../utils/requests";
+import { getPackageVersionfromString } from "../visitors/utils";
 
 export class DependencyDumperCommand extends Command {
     public package?: string = Option.String(`--package`, {

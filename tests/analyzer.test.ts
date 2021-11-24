@@ -2,15 +2,15 @@ import * as path from "path";
 
 import { Package } from "../src/package/package";
 import { FileSystemPackageProvider } from "../src/providers/folder";
-import {
-    getPackageVersionfromString,
-    getPackageVersionFromPackageJson,
-    Visitor
-} from "../src/visitors/visitor";
+import { Visitor } from "../src/visitors/visitor";
 import { OraLogger } from "../src/utils/logger";
 import { LoopUtilities } from "../src/extensions/utilities/LoopUtilities";
 import { LicenseUtilities } from "../src/extensions/utilities/LicenseUtilities";
 import { PathUtilities } from "../src/extensions/utilities/PathUtilities";
+import {
+    getPackageVersionFromPackageJson,
+    getPackageVersionfromString
+} from "../src/visitors/utils";
 
 describe(`Package Tests`, () => {
     let p: Package;

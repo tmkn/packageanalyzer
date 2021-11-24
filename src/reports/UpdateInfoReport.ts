@@ -4,7 +4,8 @@ import { daysAgo } from "../cli/common";
 import { Package } from "../package/package";
 import { OnlinePackageProvider } from "../providers/online";
 import { updateInfo } from "../utils/update";
-import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
+import { getPackageVersionfromString } from "../visitors/utils";
+import { PackageVersion } from "../visitors/visitor";
 import { AbstractReport, IReportContext } from "./Report";
 
 export interface IUpdateInfoParams {

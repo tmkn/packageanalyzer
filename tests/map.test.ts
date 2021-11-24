@@ -2,9 +2,10 @@ import * as path from "path";
 
 import { Package } from "../src/package/package";
 import { FileSystemPackageProvider } from "../src/providers/folder";
-import { getPackageVersionFromPackageJson, Visitor } from "../src/visitors/visitor";
+import { Visitor } from "../src/visitors/visitor";
 import { OraLogger } from "../src/utils/logger";
 import { map, MappedDependency } from "../src/utils/map";
+import { getPackageVersionFromPackageJson } from "../src/visitors/utils";
 
 describe(`Map tests`, () => {
     let p: Package;

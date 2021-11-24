@@ -1,7 +1,7 @@
 import * as path from "path";
 
 import { FileSystemPackageProvider } from "../src/providers/folder";
-import { getPackageVersionFromPackageJson, Visitor } from "../src/visitors/visitor";
+import { Visitor } from "../src/visitors/visitor";
 import { OraLogger } from "../src/utils/logger";
 import { ITreeFormatter, print } from "../src/utils/tree";
 import { Package } from "../src/package/package";
@@ -9,6 +9,7 @@ import { Formatter } from "../src/utils/formatter";
 import { TestWritable } from "./common";
 import { DependencyUtilities } from "../src/extensions/utilities/DependencyUtilities";
 import { LicenseUtilities } from "../src/extensions/utilities/LicenseUtilities";
+import { getPackageVersionFromPackageJson } from "../src/visitors/utils";
 
 describe(`Tree Tests`, () => {
     test(`Print tree`, async () => {

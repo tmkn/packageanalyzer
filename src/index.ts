@@ -1,4 +1,5 @@
-export { Visitor, getPackageVersionfromString } from "./visitors/visitor";
+export { Visitor } from "./visitors/visitor";
+export { getPackageVersionfromString } from "./visitors/utils";
 export type { PackageVersion } from "./visitors/visitor";
 export { Package } from "./package/package";
 export { npmOnline, OnlinePackageProvider } from "./providers/online";

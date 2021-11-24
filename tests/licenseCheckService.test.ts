@@ -4,7 +4,8 @@ import { Package } from "../src/package/package";
 import { OraLogger } from "../src/utils/logger";
 import { FileSystemPackageProvider } from "../src/providers/folder";
 import { createWhitelistLicenseCheckReport } from "../src/utils/licenseCheckService";
-import { getPackageVersionFromPackageJson, Visitor } from "../src/visitors/visitor";
+import { Visitor } from "../src/visitors/visitor";
+import { getPackageVersionFromPackageJson } from "../src/visitors/utils";
 
 describe(`License Check Service Tests`, () => {
     let p: Package;
