@@ -3,6 +3,10 @@
   "version": "0.9.9",
   "description": "A tool to analyze a Node.js project/package",
   "main": "./build/src/index.js",
+  "exports": {
+    ".": "./build/src/index.js",
+    "./web": "./build/src/index.web.js"
+  },
   "types": "./build/src/index.d.ts",
   "files": [
     "build/src"
@@ -11,6 +15,7 @@
     "pkga": "./build/src/cli.js"
   },
   "scripts": {
+    "postinstall": "npm run build",
     "build": "tsc -b",
     "dev": "tsc -b --watch",
     "test": "jest",
