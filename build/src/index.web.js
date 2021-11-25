@@ -5,4 +5,5 @@ var visitor_1 = require("./visitors/visitor");
 Object.defineProperty(exports, "Visitor", { enumerable: true, get: function () { return visitor_1.Visitor; } });
 var package_1 = require("./package/package");
 Object.defineProperty(exports, "Package", { enumerable: true, get: function () { return package_1.Package; } });
+//export type { ILogger } from "../src/utils/logger";
 //# sourceMappingURL=index.web.js.map
