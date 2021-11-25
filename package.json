@@ -15,7 +15,6 @@
     "pkga": "./build/src/cli.js"
   },
   "scripts": {
-    "postinstall": "npm run build",
     "build": "tsc -b",
     "dev": "tsc -b --watch",
     "test": "jest",
