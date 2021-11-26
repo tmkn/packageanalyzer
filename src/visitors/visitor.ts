@@ -1,8 +1,9 @@
 import { Package } from "../package/package";
 import { INpmKeyValue, IPackageJson } from "../npm";
-import { ILogger, numPadding } from "../utils/logger";
+import { numPadding } from "../utils/logger";
 import { IDecorator } from "../extensions/decorators/Decorator";
 import { IPackageJsonProvider } from "../providers/provider";
+import { ILogger } from "../utils/ILogger";
 
 export type PackageVersion = [name: string, version?: string];
 

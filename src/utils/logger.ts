@@ -1,11 +1,6 @@
 import * as ora from "ora";
 
-export interface ILogger {
-    start: () => void;
-    stop: () => void;
-    log: (msg: string) => void;
-    error: (msg: string) => void;
-}
+import { ILogger } from "./ILogger";
 
 export class OraLogger implements ILogger {
     private _logger: ora.Ora = ora();

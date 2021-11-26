@@ -1,7 +1,7 @@
 import { Package } from "../package/package";
-import { ILogger } from "../utils/logger";
 import { IDecorator } from "../extensions/decorators/Decorator";
 import { IPackageJsonProvider } from "../providers/provider";
+import { ILogger } from "../utils/ILogger";
 export declare type PackageVersion = [name: string, version?: string];
 interface IPackageVisitor {
     visit: (depType?: DependencyTypes) => Promise<Package>;
