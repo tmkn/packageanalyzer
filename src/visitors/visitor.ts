@@ -1,6 +1,6 @@
 import { Package } from "../package/package";
 import { INpmKeyValue, IPackageJson } from "../npm";
-import { numPadding } from "../utils/logger";
+import { numPadding } from "../utils/Ilogger";
 import { IDecorator } from "../extensions/decorators/Decorator";
 import { IPackageJsonProvider } from "../providers/provider";
 import { ILogger } from "../utils/ILogger";

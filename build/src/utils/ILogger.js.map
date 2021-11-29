@@ -1,1 +1,1 @@
-{"version":3,"file":"ILogger.js","sourceRoot":"","sources":["../../../src/utils/ILogger.ts"],"names":[],"mappings":""}
+{"version":3,"file":"Ilogger.js","sourceRoot":"","sources":["../../../src/utils/Ilogger.ts"],"names":[],"mappings":";;;AAOA,SAAgB,UAAU,CAAC,CAAS,EAAE,KAAa;IAC/C,MAAM,MAAM,GAAG,KAAK,CAAC,QAAQ,EAAE,CAAC,MAAM,CAAC;IACvC,MAAM,QAAQ,GAAG,GAAG,CAAC,GAAG,CAAC,EAAE,CAAC,QAAQ,CAAC,MAAM,CAAC,CAAC;IAE7C,OAAO,GAAG,QAAQ,IAAI,KAAK,EAAE,CAAC;AAClC,CAAC;AALD,gCAKC"}

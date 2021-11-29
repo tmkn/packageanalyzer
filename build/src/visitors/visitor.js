@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Visitor = void 0;
 const package_1 = require("../package/package");
-const logger_1 = require("../utils/logger");
+const Ilogger_1 = require("../utils/Ilogger");
 class Visitor {
     constructor(_entry, _provider, _logger, _decorators = [], _maxDepth = Infinity) {
         this._entry = _entry;
@@ -70,7 +70,7 @@ class Visitor {
         const totalDecorators = this._decorators.length;
         for (const [i, decorator] of this._decorators.entries()) {
             try {
-                const decoratorMsg = `[${p.fullName}][Decorator: ${(0, logger_1.numPadding)(i, totalDecorators)} - ${decorator.name}]`;
+                const decoratorMsg = `[${p.fullName}][Decorator: ${(0, Ilogger_1.numPadding)(i, totalDecorators)} - ${decorator.name}]`;
                 this._logger.log(decoratorMsg);
                 const data = await decorator.apply({
                     p,

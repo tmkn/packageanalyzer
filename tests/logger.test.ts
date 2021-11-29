@@ -1,4 +1,4 @@
-import { numPadding } from "../src/utils/logger";
+import { numPadding } from "../src/utils/Ilogger";
 
 describe(`Logger Tests`, () => {
     test(`Correctly prefixes 1/1`, () => {

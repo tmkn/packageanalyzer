@@ -4,4 +4,5 @@ export interface ILogger {
     log: (msg: string) => void;
     error: (msg: string) => void;
 }
-//# sourceMappingURL=ILogger.d.ts.map
+export declare function numPadding(i: number, total: number): string;
+//# sourceMappingURL=Ilogger.d.ts.map

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.numPadding = exports.OraLogger = void 0;
+exports.OraLogger = void 0;
 const ora = require("ora");
 class OraLogger {
     constructor() {
@@ -24,10 +24,4 @@ class OraLogger {
     }
 }
 exports.OraLogger = OraLogger;
-function numPadding(i, total) {
-    const digits = total.toString().length;
-    const iPadding = `${i + 1}`.padStart(digits);
-    return `${iPadding}/${total}`;
-}
-exports.numPadding = numPadding;
 //# sourceMappingURL=logger.js.map
