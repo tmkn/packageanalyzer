@@ -9,7 +9,7 @@
   },
   "typesVersions": {
     "*": {
-      "./web": [ "./build/src/web/index.d.ts" ]
+      "web": [ "./build/src/web/index.d.ts" ]
     }
   },
   "files": [
