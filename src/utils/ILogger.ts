@@ -11,3 +11,5 @@ export function numPadding(i: number, total: number): string {
 
     return `${iPadding}/${total}`;
 }
+
+export const foo = 3;
