@@ -1,4 +1,4 @@
-const satisfies = require("spdx-satisfies");
+import satisfies from "spdx-satisfies";
 
 import { LicenseUtilities } from "../extensions/utilities/LicenseUtilities";
 import { Package } from "../package/package";
