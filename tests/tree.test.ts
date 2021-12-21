@@ -2,7 +2,7 @@ import * as path from "path";
 
 import { FileSystemPackageProvider } from "../src/providers/folder";
 import { getPackageVersionFromPackageJson, Visitor } from "../src/visitors/visitor";
-import { OraLogger } from "../src/utils/logger";
+import { OraLogger } from "../src/loggers/OraLogger";
 import { ITreeFormatter, print } from "../src/utils/tree";
 import { Package } from "../src/package/package";
 import { Formatter } from "../src/utils/formatter";

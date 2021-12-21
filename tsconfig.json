@@ -10,8 +10,7 @@
         "module": "commonjs",
         "declaration": true,
         "declarationMap": true,
-        "isolatedModules": true,
-        "allowSyntheticDefaultImports": true
+        "isolatedModules": true
     },
     "include": [],
     "references": [

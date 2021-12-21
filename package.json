@@ -4,6 +4,14 @@
   "description": "A tool to analyze a Node.js project/package",
   "main": "./build/src/index.js",
   "types": "./build/src/index.d.ts",
+  "exports": {
+    "./web": "./build/src/index.web.js"
+  },
+  "typesVersions": {
+    "*": {
+      "web": [ "./build/src/index.web.d.ts" ]
+    }
+  },
   "files": [
     "build/src"
   ],

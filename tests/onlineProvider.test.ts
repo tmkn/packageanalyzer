@@ -1,6 +1,6 @@
 import { OnlinePackageProvider } from "../src/providers/online";
 import { Visitor } from "../src/visitors/visitor";
-import { OraLogger } from "../src/utils/logger";
+import { OraLogger } from "../src/loggers/OraLogger";
 import { createMockNpmServer, IMockServer } from "./server";
 import { ReleaseDecorator } from "../src/extensions/decorators/ReleaseDecorator";
 import { ReleaseUtilities } from "../src/extensions/utilities/ReleaseUtilities";

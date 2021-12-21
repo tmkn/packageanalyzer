@@ -1,4 +1,5 @@
-import satisfies from "spdx-satisfies";
+//todo use import syntax, esModule, needs esModuleInterop
+const satisfies = require("spdx-satisfies");
 
 import { LicenseUtilities } from "../extensions/utilities/LicenseUtilities";
 import { Package } from "../package/package";

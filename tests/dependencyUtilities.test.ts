@@ -3,7 +3,7 @@ import * as path from "path";
 import { Package } from "../src/package/package";
 import { FileSystemPackageProvider } from "../src/providers/folder";
 import { getPackageVersionFromPackageJson, Visitor } from "../src/visitors/visitor";
-import { OraLogger } from "../src/utils/logger";
+import { OraLogger } from "../src/loggers/OraLogger";
 import { DependencyUtilities } from "../src/extensions/utilities/DependencyUtilities";
 
 describe(`Dependency Utilities Tests`, () => {

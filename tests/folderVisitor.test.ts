@@ -4,7 +4,7 @@ import { Package } from "../src/package/package";
 import { FileSystemPackageProvider } from "../src/providers/folder";
 import { IPackageJson } from "../src/npm";
 import { getPackageVersionFromPackageJson, Visitor } from "../src/visitors/visitor";
-import { OraLogger } from "../src/utils/logger";
+import { OraLogger } from "../src/loggers/OraLogger";
 import { LoopUtilities } from "../src/extensions/utilities/LoopUtilities";
 import { LicenseUtilities } from "../src/extensions/utilities/LicenseUtilities";
 import { IPackageJsonProvider } from "../src/providers/provider";
