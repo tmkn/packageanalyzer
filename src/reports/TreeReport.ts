@@ -3,12 +3,8 @@ import { printDependencyTree } from "../extensions/utilities/LoopUtilities";
 import { Package } from "../package/package";
 import { FileSystemPackageProvider } from "../providers/folder";
 import { npmOnline } from "../providers/online";
-import {
-    DependencyTypes,
-    getPackageVersionFromPackageJson,
-    getPackageVersionfromString,
-    PackageVersion
-} from "../visitors/visitor";
+import { getPackageVersionFromPath } from "../visitors/util.node";
+import { DependencyTypes, getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
 import { AbstractReport, IReportContext } from "./Report";
 
 export interface ITreeReportParams {
@@ -30,7 +26,7 @@ export class TreeReport extends AbstractReport<ITreeReportParams> {
             this.pkg = getPackageVersionfromString(params.package);
             this.provider = npmOnline;
         } else if (params.folder) {
-            this.pkg = getPackageVersionFromPackageJson(params.folder);
+            this.pkg = getPackageVersionFromPath(params.folder);
             this.provider = new FileSystemPackageProvider(params.folder);
         } else {
             throw new Error(`Needs at least "package" or "folder" option`);

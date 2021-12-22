@@ -3,11 +3,12 @@ import * as path from "path";
 import { Package } from "../src/package/package";
 import { FileSystemPackageProvider } from "../src/providers/folder";
 import { IPackageJson } from "../src/npm";
-import { getPackageVersionFromPackageJson, Visitor } from "../src/visitors/visitor";
+import { Visitor } from "../src/visitors/visitor";
 import { OraLogger } from "../src/loggers/OraLogger";
 import { LoopUtilities } from "../src/extensions/utilities/LoopUtilities";
 import { LicenseUtilities } from "../src/extensions/utilities/LicenseUtilities";
 import { IPackageJsonProvider } from "../src/providers/provider";
+import { getPackageVersionFromPath } from "../src/visitors/util.node";
 
 describe(`visitFromFolder Tests`, () => {
     let p: Package;
@@ -15,11 +16,7 @@ describe(`visitFromFolder Tests`, () => {
     beforeAll(async () => {
         const rootPath = path.join("tests", "data", "testproject2");
         const provider = new FileSystemPackageProvider(rootPath);
-        const visitor = new Visitor(
-            getPackageVersionFromPackageJson(rootPath),
-            provider,
-            new OraLogger()
-        );
+        const visitor = new Visitor(getPackageVersionFromPath(rootPath), provider, new OraLogger());
 
         p = await visitor.visit();
     });
@@ -47,7 +44,7 @@ describe(`visitFromFolder Tests`, () => {
             const rootPath = `folderdoesntexist`;
             const provider = new FileSystemPackageProvider(rootPath);
             const visitor = new Visitor(
-                getPackageVersionFromPackageJson(rootPath),
+                getPackageVersionFromPath(rootPath),
                 provider,
                 new OraLogger()
             );
