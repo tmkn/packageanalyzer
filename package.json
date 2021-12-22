@@ -4,6 +4,14 @@
   "description": "A tool to analyze a Node.js project/package",
   "main": "./build/src/index.js",
   "types": "./build/src/index.d.ts",
+  "exports": {
+    "./web": "./build/src/index.web.js"
+  },
+  "typesVersions": {
+    "*": {
+      "web": [ "./build/src/index.web.d.ts" ]
+    }
+  },
   "files": [
     "build/src"
   ],
@@ -18,11 +26,12 @@
     "test:coverage": "jest --coverage",
     "test:update": "jest --updateSnapshot",
     "test:clean": "node build/tests/clean.js",
-    "prettier": "prettier --write \"{src,tests,utility}/**/{*.ts,*.js}\"",
+    "prettier": "prettier --write \"{src,tests,utility}/**/{*.ts,*.js}\" webpack.web.config.js",
     "pa": "node build/src/cli.js",
     "preview": "npm pack && tar -xvzf *.tgz && rm -rf package *.tgz",
     "lint": "eslint \"src/**\" \"tests/**\"",
     "lint:fix": "eslint \"src/**\" \"tests/**\" --fix",
+    "lint:web": "node ./webpack.web.config.js",
     "prepublishOnly": "npm run build",
     "publish:test": "npm publish --dry-run"
   },
@@ -53,9 +62,12 @@
     "eslint": "^7.14.0",
     "express": "^4.17.1",
     "jest": "^27.0.6",
+    "memory-fs": "^0.5.0",
     "prettier": "^2.2.1",
     "ts-jest": "^27.0.4",
-    "typescript": "^4.3.2"
+    "ts-loader": "^9.2.6",
+    "typescript": "^4.3.2",
+    "webpack": "^5.65.0"
   },
   "dependencies": {
     "chalk": "^4.1.0",

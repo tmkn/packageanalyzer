@@ -1,11 +1,8 @@
-import * as path from "path";
-import * as fs from "fs";
-
 import { Package } from "../package/package";
 import { INpmKeyValue, IPackageJson } from "../npm";
-import { ILogger, numPadding } from "../utils/logger";
 import { IDecorator } from "../extensions/decorators/Decorator";
 import { IPackageJsonProvider } from "../providers/provider";
+import { ILogger } from "../loggers/ILogger";
 
 export type PackageVersion = [name: string, version?: string];
 
@@ -134,15 +131,9 @@ export function getPackageVersionfromString(name: string): PackageVersion {
     throw new Error(`Couldn't parse fullName token`);
 }
 
-export function getPackageVersionFromPackageJson(folder: string): PackageVersion {
-    const packageJsonPath = path.join(folder, `package.json`);
+export function numPadding(i: number, total: number): string {
+    const digits = total.toString().length;
+    const iPadding = `${i + 1}`.padStart(digits);
 
-    try {
-        const content = fs.readFileSync(packageJsonPath, "utf8");
-        const pkg: IPackageJson = JSON.parse(content);
-
-        return [pkg.name, pkg.version];
-    } catch (e) {
-        throw new Error(`Couldn't find package.json in ${folder}`);
-    }
+    return `${iPadding}/${total}`;
 }

@@ -1,6 +1,6 @@
-import { numPadding } from "../src/utils/logger";
+import { numPadding } from "../src/visitors/visitor";
 
-describe(`Logger Tests`, () => {
+describe(`Num Padding Tests`, () => {
     test(`Correctly prefixes 1/1`, () => {
         const msg = numPadding(0, 1);
 

@@ -4,7 +4,7 @@ import { promises as fs } from "fs";
 import { Package } from "../package/package";
 import { OnlinePackageProvider } from "../providers/online";
 import { PackageVersion, Visitor } from "../visitors/visitor";
-import { OraLogger } from "./logger";
+import { OraLogger } from "../loggers/OraLogger";
 import { DependencyUtilities } from "../extensions/utilities/DependencyUtilities";
 import { IPackageMetadata, IPackageJson, isUnpublished, IUnpublishedPackageMetadata } from "../npm";
 import { IPackageJsonProvider } from "../providers/provider";

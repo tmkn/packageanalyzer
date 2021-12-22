@@ -3,7 +3,7 @@ import * as path from "path";
 import { FileSystemPackageProvider } from "../src/providers/folder";
 import { Package } from "../src/package/package";
 import { Visitor } from "../src/visitors/visitor";
-import { OraLogger } from "../src/utils/logger";
+import { OraLogger } from "../src/loggers/OraLogger";
 import { LicenseUtilities } from "../src/extensions/utilities/LicenseUtilities";
 import { DependencyUtilities } from "../src/extensions/utilities/DependencyUtilities";
 

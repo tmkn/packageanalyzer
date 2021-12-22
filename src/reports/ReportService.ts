@@ -4,7 +4,7 @@ import * as chalk from "chalk";
 import { Package } from "../package/package";
 import { npmOnline } from "../providers/online";
 import { Formatter, IFormatter } from "../utils/formatter";
-import { OraLogger } from "../utils/logger";
+import { OraLogger } from "../loggers/OraLogger";
 import { Visitor } from "../visitors/visitor";
 import { IReport } from "./Report";
 
