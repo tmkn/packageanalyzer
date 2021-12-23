@@ -6,14 +6,16 @@ import { cli } from "../../src/cli/cli";
 import { OnlinePackageProvider } from "../../src/providers/online";
 import { createMockNpmServer, IMockServer } from "../server";
 import { TestWritable } from "../common";
+import { UpdateInfoCommand } from "../../src/cli/updateInfoCommand";
 
 describe(`Update Info Command`, () => {
     const stdout = new TestWritable();
+    const stderr = new TestWritable();
 
     const mockContext: BaseContext = {
         stdin: process.stdin,
         stdout,
-        stderr: new PassThrough()
+        stderr
     };
 
     let server: IMockServer;
@@ -22,6 +24,7 @@ describe(`Update Info Command`, () => {
     beforeAll(async () => {
         server = await createMockNpmServer();
         provider = new OnlinePackageProvider(`http://localhost:${server.port}`);
+        UpdateInfoCommand.provider = provider;
 
         jest.setSystemTime(new Date(`2021-10-26`).getTime());
     });
@@ -39,6 +42,7 @@ describe(`Update Info Command`, () => {
 
     afterAll(() => {
         jest.useRealTimers();
+        UpdateInfoCommand.provider = undefined;
 
         return server.close();
     });

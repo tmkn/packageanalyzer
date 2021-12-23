@@ -4,6 +4,7 @@ import { npmOnline } from "../providers/online";
 import { Formatter } from "../utils/formatter";
 import { IUpdateInfoParams, UpdateInfoReport } from "../reports/UpdateInfoReport";
 import { ReportService } from "../reports/ReportService";
+import { IPackageJsonProvider } from "../providers/provider";
 
 export class UpdateInfoCommand extends Command {
     public package?: string = Option.String(`--package`, {
@@ -23,6 +24,8 @@ export class UpdateInfoCommand extends Command {
         ]
     });
 
+    public static provider: IPackageJsonProvider | undefined = undefined;
+
     static override paths = [[`update`]];
     async execute() {
         const formatter = new Formatter(this.context.stdout);
@@ -35,6 +38,7 @@ export class UpdateInfoCommand extends Command {
                 provider: npmOnline
             };
             const updateInfoReport = new UpdateInfoReport(updateInfoParams);
+            updateInfoReport.provider = UpdateInfoCommand.provider;
 
             const reportService = new ReportService(
                 {

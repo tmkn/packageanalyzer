@@ -3,6 +3,7 @@ import { Command, Option } from "clipanion";
 import { defaultDependencyType, isValidDependencyType } from "./common";
 import { AnalyzeReport, IAnalyzeParams } from "../reports/AnalyzeReport";
 import { ReportService } from "../reports/ReportService";
+import { IPackageJsonProvider } from "..";
 
 export class AnalyzeCommand extends Command {
     public package?: string = Option.String(`--package`, {
@@ -34,6 +35,8 @@ export class AnalyzeCommand extends Command {
         ]
     });
 
+    public static provider: IPackageJsonProvider | undefined = undefined;
+
     static override paths = [[`analyze`]];
     async execute() {
         if (!isValidDependencyType(this.type)) {
@@ -50,6 +53,7 @@ export class AnalyzeCommand extends Command {
         };
 
         const analyzeReport = new AnalyzeReport(params);
+        analyzeReport.provider = analyzeReport.provider ?? AnalyzeCommand.provider;
 
         const reportService = new ReportService(
             {

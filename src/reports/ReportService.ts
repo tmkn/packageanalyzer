@@ -22,6 +22,8 @@ export class ReportService {
 
         try {
             for (const report of reports) {
+                this._usesNetworkInTests(report);
+
                 const stdoutFormatter: IFormatter = new Formatter(this._stdout);
                 const stderrFormatter: IFormatter = new Formatter(this._stderr);
                 const visitor = new Visitor(
@@ -44,6 +46,18 @@ export class ReportService {
             const stderrFormatter: IFormatter = new Formatter(this._stderr);
 
             stderrFormatter.writeLine(e?.toString());
+            console.error(e?.toString());
+        }
+    }
+
+    private _usesNetworkInTests({ name, provider }: IReport<any>): void {
+        if (process.env.NODE_ENV === "test") {
+            if (typeof provider === "undefined")
+                throw new Error(`${name}: Unit Test will default to online package provider`);
+
+            if (provider === npmOnline) {
+                throw new Error(`${name}: Unit Test are using the online package provider`);
+            }
         }
     }
 }

@@ -144,7 +144,8 @@ describe(`ReportService Tests`, () => {
             pkg: [`react`],
             report: async () => {
                 throw new Error(`Whoopsie`);
-            }
+            },
+            provider: provider
         });
 
         const reportService = new ReportService(

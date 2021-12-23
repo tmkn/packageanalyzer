@@ -7,6 +7,7 @@ import { cli } from "../../src/cli/cli";
 import { OnlinePackageProvider } from "../../src/providers/online";
 import { createMockNpmServer, IMockServer } from "../server";
 import { TestWritable } from "../common";
+import { AnalyzeCommand } from "../../src/cli/analyzeCommand";
 
 describe(`Analyze Command`, () => {
     const mockContext: BaseContext = {
@@ -23,6 +24,7 @@ describe(`Analyze Command`, () => {
         provider = new OnlinePackageProvider(`http://localhost:${server.port}`);
 
         jest.setSystemTime(new Date(`2021-10-26`).getTime());
+        AnalyzeCommand.provider = provider;
     });
 
     test(`--package --type --full`, async () => {
@@ -86,6 +88,7 @@ describe(`Analyze Command`, () => {
 
     afterAll(() => {
         jest.useRealTimers();
+        AnalyzeCommand.provider = undefined;
 
         return server.close();
     });

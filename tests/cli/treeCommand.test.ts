@@ -7,6 +7,7 @@ import { cli } from "../../src/cli/cli";
 import { OnlinePackageProvider } from "../../src/providers/online";
 import { createMockNpmServer, IMockServer } from "../server";
 import { TestWritable } from "../common";
+import { TreeCommand } from "../../src/cli/treeCommand";
 
 describe(`Tree Command`, () => {
     const mockContext: BaseContext = {
@@ -25,6 +26,7 @@ describe(`Tree Command`, () => {
 
     test(`--package --type`, async () => {
         const stdout = new TestWritable();
+        const stderr = new TestWritable();
         const command = cli.process([
             `tree`,
             `--package`,
@@ -32,9 +34,11 @@ describe(`Tree Command`, () => {
             `--type`,
             `dependencies`
         ]);
+        TreeCommand.provider = provider;
 
         expect.assertions(1);
         mockContext.stdout = stdout;
+        mockContext.stderr = stderr;
         command.context = mockContext;
 
         await command.execute();
@@ -51,6 +55,7 @@ describe(`Tree Command`, () => {
             `--type`,
             `dependencies`
         ]);
+        TreeCommand.provider = undefined;
 
         expect.assertions(1);
         mockContext.stdout = stdout;

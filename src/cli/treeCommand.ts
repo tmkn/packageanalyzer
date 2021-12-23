@@ -1,11 +1,11 @@
 import { Command, Option } from "clipanion";
 
-import { npmOnline } from "../providers/online";
 import { DependencyTypes } from "../visitors/visitor";
 import { FileSystemPackageProvider } from "../providers/folder";
 import { defaultDependencyType } from "./common";
 import { ReportService } from "../reports/ReportService";
 import { ITreeReportParams, TreeReport } from "../reports/TreeReport";
+import { IPackageJsonProvider } from "../providers/provider";
 
 export class TreeCommand extends Command {
     public package?: string = Option.String(`--package`, {
@@ -46,6 +46,8 @@ export class TreeCommand extends Command {
         ]
     });
 
+    public static provider: IPackageJsonProvider | undefined = undefined;
+
     static override paths = [[`tree`]];
     async execute() {
         const params: ITreeReportParams = {
@@ -55,13 +57,7 @@ export class TreeCommand extends Command {
         };
         const treeReport = new TreeReport(params);
 
-        if (typeof this.package !== "undefined" && typeof this.folder !== "undefined") {
-            this.context.stdout.write(`Please specify a package or folder.\n`);
-        } else if (typeof this.package !== "undefined") {
-            treeReport.provider = npmOnline;
-        } else if (typeof this.folder !== "undefined") {
-            treeReport.provider = new FileSystemPackageProvider(this.folder);
-        }
+        treeReport.provider = TreeCommand.provider ?? treeReport.provider;
 
         const reportService = new ReportService(
             {

@@ -1,4 +1,5 @@
 import { Command, Option } from "clipanion";
+import { IPackageJsonProvider } from "../providers/provider";
 
 import { ILicenseParams, LicenseReport } from "../reports/LicenseReport";
 import { ReportService } from "../reports/ReportService";
@@ -53,6 +54,8 @@ export class LicenseCheckCommand extends Command {
         ]
     });
 
+    public static provider: IPackageJsonProvider | undefined = undefined;
+
     static override paths = [[`license`]];
     async execute() {
         if (!isValidDependencyType(this.type)) {
@@ -69,6 +72,7 @@ export class LicenseCheckCommand extends Command {
             grouped: this.grouped
         };
         const licenseReport = new LicenseReport(params);
+        licenseReport.provider = licenseReport.provider ?? LicenseCheckCommand.provider;
 
         const reportService = new ReportService(
             {

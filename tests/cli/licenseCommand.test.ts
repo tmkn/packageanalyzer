@@ -7,6 +7,7 @@ import { cli } from "../../src/cli/cli";
 import { OnlinePackageProvider } from "../../src/providers/online";
 import { createMockNpmServer, IMockServer } from "../server";
 import { TestWritable } from "../common";
+import { LicenseCheckCommand } from "../../src/cli/licenseCommand";
 
 describe(`License Check Command`, () => {
     const mockContext: BaseContext = {
@@ -26,6 +27,7 @@ describe(`License Check Command`, () => {
     test(`--package`, async () => {
         const stdout = new TestWritable();
         const command = cli.process([`license`, `--package`, `react@16.8.1`]);
+        LicenseCheckCommand.provider = provider;
 
         expect.assertions(1);
         mockContext.stdout = stdout;
@@ -39,6 +41,7 @@ describe(`License Check Command`, () => {
     test(`--package --grouped`, async () => {
         const stdout = new TestWritable();
         const command = cli.process([`license`, `--package`, `react@16.8.1`, `--grouped`]);
+        LicenseCheckCommand.provider = provider;
 
         expect.assertions(1);
         mockContext.stdout = stdout;
@@ -58,6 +61,7 @@ describe(`License Check Command`, () => {
             `--type`,
             `devDependencies`
         ]);
+        LicenseCheckCommand.provider = provider;
 
         expect.assertions(1);
         mockContext.stdout = stdout;
@@ -79,6 +83,7 @@ describe(`License Check Command`, () => {
             `--allow`,
             `foo2`
         ]);
+        LicenseCheckCommand.provider = provider;
 
         expect.assertions(1);
         mockContext.stdout = stdout;
@@ -96,6 +101,7 @@ describe(`License Check Command`, () => {
             `--folder`,
             path.join("tests", "data", "testproject1")
         ]);
+        LicenseCheckCommand.provider = undefined;
 
         expect.assertions(1);
         mockContext.stdout = stdout;
@@ -106,5 +112,9 @@ describe(`License Check Command`, () => {
         expect(stdout.lines).toMatchSnapshot();
     });
 
-    afterAll(() => server.close());
+    afterAll(() => {
+        LicenseCheckCommand.provider = undefined;
+
+        return server.close();
+    });
 });

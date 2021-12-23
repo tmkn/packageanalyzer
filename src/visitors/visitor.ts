@@ -69,6 +69,12 @@ export class Visitor implements IPackageVisitor {
                 packages.push(resolvedDependencies);
             }
 
+            /*for(const dependency of dependencyArray) {
+                const foo = await this._provider.getPackageJson(...dependency);
+
+                packages.push(foo);
+            }*/
+
             for (const p of packages) {
                 const dependency = new Package(p);
 
