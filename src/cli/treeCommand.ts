@@ -1,13 +1,10 @@
 import { Command, Option } from "clipanion";
 
 import { DependencyTypes } from "../visitors/visitor";
-import { FileSystemPackageProvider } from "../providers/folder";
-import { defaultDependencyType } from "./common";
-import { ReportService } from "../reports/ReportService";
+import { CliCommand, defaultDependencyType } from "./common";
 import { ITreeReportParams, TreeReport } from "../reports/TreeReport";
-import { IPackageJsonProvider } from "../providers/provider";
 
-export class TreeCommand extends Command {
+export class TreeCommand extends CliCommand<TreeReport> {
     public package?: string = Option.String(`--package`, {
         description: `the package to display the dependency tree e.g. typescript@3.5.1`
     });
@@ -46,10 +43,9 @@ export class TreeCommand extends Command {
         ]
     });
 
-    public static provider: IPackageJsonProvider | undefined = undefined;
-
     static override paths = [[`tree`]];
-    async execute() {
+
+    createReport(): TreeReport {
         const params: ITreeReportParams = {
             type: this.type,
             folder: this.folder,
@@ -57,16 +53,6 @@ export class TreeCommand extends Command {
         };
         const treeReport = new TreeReport(params);
 
-        treeReport.provider = TreeCommand.provider ?? treeReport.provider;
-
-        const reportService = new ReportService(
-            {
-                reports: [treeReport]
-            },
-            this.context.stdout,
-            this.context.stderr
-        );
-
-        await reportService.process();
+        return treeReport;
     }
 }

@@ -1,11 +1,9 @@
 import { Command, Option } from "clipanion";
-import { IPackageJsonProvider } from "../providers/provider";
 
 import { ILicenseParams, LicenseReport } from "../reports/LicenseReport";
-import { ReportService } from "../reports/ReportService";
-import { defaultDependencyType, isValidDependencyType } from "./common";
+import { CliCommand, defaultDependencyType, isValidDependencyType } from "./common";
 
-export class LicenseCheckCommand extends Command {
+export class LicenseCheckCommand extends CliCommand<LicenseReport> {
     public package?: string = Option.String(`--package`, {
         description: `the package to analyze e.g. typescript, typescript@3.5.1`
     });
@@ -54,10 +52,9 @@ export class LicenseCheckCommand extends Command {
         ]
     });
 
-    public static provider: IPackageJsonProvider | undefined = undefined;
-
     static override paths = [[`license`]];
-    async execute() {
+
+    createReport(): LicenseReport {
         if (!isValidDependencyType(this.type)) {
             throw new Error(
                 `Please only specify "dependencies" or "devDependencies" for the --type argument`
@@ -72,16 +69,7 @@ export class LicenseCheckCommand extends Command {
             grouped: this.grouped
         };
         const licenseReport = new LicenseReport(params);
-        licenseReport.provider = licenseReport.provider ?? LicenseCheckCommand.provider;
 
-        const reportService = new ReportService(
-            {
-                reports: [licenseReport]
-            },
-            this.context.stdout,
-            this.context.stderr
-        );
-
-        await reportService.process();
+        return licenseReport;
     }
 }

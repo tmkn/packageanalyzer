@@ -1,11 +1,10 @@
 import { Command, Option } from "clipanion";
 
-import { IPackageJsonProvider } from "../providers/provider";
 import { DownloadReport, IDownloadParams } from "../reports/DownloadCountReport";
-import { ReportService } from "../reports/ReportService";
 import { Url } from "../utils/requests";
+import { CliCommand } from "./common";
 
-export class DownloadCommand extends Command {
+export class DownloadCommand extends CliCommand<DownloadReport> {
     public package?: string = Option.String(`--package`, {
         description: `the package to retrieve the download count e.g. typescript@3.5.1`
     });
@@ -19,28 +18,20 @@ export class DownloadCommand extends Command {
     });
 
     public static DownloadUrl?: Url;
-    public static PackageProvider?: IPackageJsonProvider;
 
     static override paths = [[`downloads`]];
 
-    async execute() {
+    createReport(): DownloadReport {
         if (typeof this.package !== "undefined") {
             const params: IDownloadParams = {
                 pkg: this.package,
                 url: DownloadCommand.DownloadUrl
             };
             const downloadReport = new DownloadReport(params);
-            downloadReport.provider = DownloadCommand.PackageProvider;
 
-            const reportService = new ReportService(
-                {
-                    reports: [downloadReport]
-                },
-                this.context.stdout,
-                this.context.stderr
-            );
-
-            await reportService.process();
+            return downloadReport;
         }
+
+        throw new Error(`--package was undefined`);
     }
 }

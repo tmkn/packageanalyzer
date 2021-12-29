@@ -1,11 +1,9 @@
 import { Command, Option } from "clipanion";
 
-import { defaultDependencyType, isValidDependencyType } from "./common";
+import { CliCommand, defaultDependencyType, isValidDependencyType } from "./common";
 import { AnalyzeReport, IAnalyzeParams } from "../reports/AnalyzeReport";
-import { ReportService } from "../reports/ReportService";
-import { IPackageJsonProvider } from "..";
 
-export class AnalyzeCommand extends Command {
+export class AnalyzeCommand extends CliCommand<AnalyzeReport> {
     public package?: string = Option.String(`--package`, {
         description: `the package to analyze e.g. typescript, typescript@3.5.1`
     });
@@ -35,10 +33,9 @@ export class AnalyzeCommand extends Command {
         ]
     });
 
-    public static provider: IPackageJsonProvider | undefined = undefined;
-
     static override paths = [[`analyze`]];
-    async execute() {
+
+    createReport(): AnalyzeReport {
         if (!isValidDependencyType(this.type)) {
             throw new Error(
                 `Please only specify "dependencies" or "devDependencies" for the --type argument\nReceived ${this.type}\n`
@@ -53,16 +50,7 @@ export class AnalyzeCommand extends Command {
         };
 
         const analyzeReport = new AnalyzeReport(params);
-        analyzeReport.provider = analyzeReport.provider ?? AnalyzeCommand.provider;
 
-        const reportService = new ReportService(
-            {
-                reports: [analyzeReport]
-            },
-            this.context.stdout,
-            this.context.stderr
-        );
-
-        await reportService.process();
+        return analyzeReport;
     }
 }

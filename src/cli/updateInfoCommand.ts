@@ -1,12 +1,10 @@
 import { Command, Option } from "clipanion";
 
 import { npmOnline } from "../providers/online";
-import { Formatter } from "../utils/formatter";
 import { IUpdateInfoParams, UpdateInfoReport } from "../reports/UpdateInfoReport";
-import { ReportService } from "../reports/ReportService";
-import { IPackageJsonProvider } from "../providers/provider";
+import { CliCommand } from "./common";
 
-export class UpdateInfoCommand extends Command {
+export class UpdateInfoCommand extends CliCommand<UpdateInfoReport> {
     public package?: string = Option.String(`--package`, {
         description: `the package to retrieve update info from e.g. typescript@3.5.1`
     });
@@ -24,31 +22,17 @@ export class UpdateInfoCommand extends Command {
         ]
     });
 
-    public static provider: IPackageJsonProvider | undefined = undefined;
+    createReport(): UpdateInfoReport {
+        if (typeof this.package === "undefined") throw new Error(`Please specify a package.`);
+
+        const updateInfoParams: IUpdateInfoParams = {
+            package: this.package,
+            provider: npmOnline
+        };
+        const updateInfoReport = new UpdateInfoReport(updateInfoParams);
+
+        return updateInfoReport;
+    }
 
     static override paths = [[`update`]];
-    async execute() {
-        const formatter = new Formatter(this.context.stdout);
-
-        if (typeof this.package === "undefined") {
-            formatter.writeLine(`Please specify a package.`);
-        } else {
-            const updateInfoParams: IUpdateInfoParams = {
-                package: this.package,
-                provider: npmOnline
-            };
-            const updateInfoReport = new UpdateInfoReport(updateInfoParams);
-            updateInfoReport.provider = UpdateInfoCommand.provider;
-
-            const reportService = new ReportService(
-                {
-                    reports: [updateInfoReport]
-                },
-                this.context.stdout,
-                this.context.stderr
-            );
-
-            await reportService.process();
-        }
-    }
 }

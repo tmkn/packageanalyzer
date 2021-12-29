@@ -1,3 +1,5 @@
+import { BaseContext } from "clipanion";
+
 import { Writable } from "stream";
 import { IDecorator } from "../src/extensions/decorators/Decorator";
 import { Package } from "../src/package/package";
@@ -66,4 +68,27 @@ export class TestReport extends AbstractReport<ITestReport> {
     async report(pkg: Package, { stdoutFormatter }: IReportContext): Promise<void> {
         return this.params.report(pkg, stdoutFormatter);
     }
+}
+
+interface IMockContext {
+    mockContext: BaseContext;
+    stdout: TestWritable;
+    stderr: TestWritable;
+}
+
+export function createMockContext(): IMockContext {
+    const stdout = new TestWritable();
+    const stderr = new TestWritable();
+    const mockContext: BaseContext = {
+        stdin: process.stdin,
+        stdout,
+        stderr,
+        colorDepth: 8
+    };
+
+    return {
+        mockContext,
+        stdout,
+        stderr
+    };
 }

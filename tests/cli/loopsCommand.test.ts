@@ -1,20 +1,12 @@
 import * as path from "path";
-import { PassThrough } from "stream";
-
-import { BaseContext } from "clipanion";
 
 import { cli } from "../../src/cli/cli";
 import { FileSystemPackageProvider } from "../../src/providers/folder";
-import { TestWritable } from "../common";
+import { createMockContext } from "../common";
 import { LoopsCommand } from "../../src/cli/loopsCommand";
 
 describe(`Loops Command`, () => {
-    const stdout = new TestWritable();
-    const mockContext: BaseContext = {
-        stdin: process.stdin,
-        stdout,
-        stderr: new PassThrough()
-    };
+    const { mockContext, stdout } = createMockContext();
 
     test(`--package --type`, async () => {
         const command = cli.process([
@@ -23,14 +15,14 @@ describe(`Loops Command`, () => {
             `testproject2@1.0.0`,
             `--type`,
             `dependencies`
-        ]);
+        ]) as LoopsCommand;
 
         const rootPath = path.join("tests", "data", "testproject2");
         const provider = new FileSystemPackageProvider(rootPath);
 
         expect.assertions(1);
         command.context = mockContext;
-        LoopsCommand.PackageProvider = provider;
+        command.beforeProcess = report => (report.provider = provider);
 
         await command.execute();
 

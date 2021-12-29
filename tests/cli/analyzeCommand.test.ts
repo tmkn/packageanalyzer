@@ -1,21 +1,12 @@
 import * as path from "path";
-import { PassThrough } from "stream";
-
-import { BaseContext } from "clipanion";
 
 import { cli } from "../../src/cli/cli";
 import { OnlinePackageProvider } from "../../src/providers/online";
 import { createMockNpmServer, IMockServer } from "../server";
-import { TestWritable } from "../common";
+import { createMockContext } from "../common";
 import { AnalyzeCommand } from "../../src/cli/analyzeCommand";
 
 describe(`Analyze Command`, () => {
-    const mockContext: BaseContext = {
-        stdin: process.stdin,
-        stdout: new PassThrough(),
-        stderr: new PassThrough()
-    };
-
     let server: IMockServer;
     let provider: OnlinePackageProvider;
 
@@ -24,11 +15,9 @@ describe(`Analyze Command`, () => {
         provider = new OnlinePackageProvider(`http://localhost:${server.port}`);
 
         jest.setSystemTime(new Date(`2021-10-26`).getTime());
-        AnalyzeCommand.provider = provider;
     });
 
     test(`--package --type --full`, async () => {
-        const stdout = new TestWritable();
         const command = cli.process([
             `analyze`,
             `--package`,
@@ -36,11 +25,12 @@ describe(`Analyze Command`, () => {
             `--type`,
             `dependencies`,
             `--full`
-        ]);
+        ]) as AnalyzeCommand;
 
         expect.assertions(1);
+        const { mockContext, stdout } = createMockContext();
         command.context = mockContext;
-        mockContext.stdout = stdout;
+        command.beforeProcess = report => (report.provider = provider);
 
         await command.execute();
 
@@ -48,18 +38,18 @@ describe(`Analyze Command`, () => {
     });
 
     test(`--package --type`, async () => {
-        const stdout = new TestWritable();
         const command = cli.process([
             `analyze`,
             `--package`,
             `react@16.8.1`,
             `--type`,
             `dependencies`
-        ]);
+        ]) as AnalyzeCommand;
 
         expect.assertions(1);
+        const { mockContext, stdout } = createMockContext();
         command.context = mockContext;
-        mockContext.stdout = stdout;
+        command.beforeProcess = report => (report.provider = provider);
 
         await command.execute();
 
@@ -67,7 +57,6 @@ describe(`Analyze Command`, () => {
     });
 
     test(`--folder --type --full`, async () => {
-        const stdout = new TestWritable();
         const command = cli.process([
             `analyze`,
             `--folder`,
@@ -75,11 +64,11 @@ describe(`Analyze Command`, () => {
             `--type`,
             `dependencies`,
             `--full`
-        ]);
+        ]) as AnalyzeCommand;
 
         expect.assertions(1);
+        const { mockContext, stdout } = createMockContext();
         command.context = mockContext;
-        mockContext.stdout = stdout;
 
         await command.execute();
 
@@ -88,7 +77,6 @@ describe(`Analyze Command`, () => {
 
     afterAll(() => {
         jest.useRealTimers();
-        AnalyzeCommand.provider = undefined;
 
         return server.close();
     });

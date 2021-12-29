@@ -17,6 +17,10 @@ export class ReportService {
         //todo validate _config
     }
 
+    get reports(): ReadonlyArray<IReport<any>> {
+        return this._config.reports;
+    }
+
     async process(): Promise<void> {
         const { reports } = this._config;
 
@@ -50,6 +54,7 @@ export class ReportService {
         }
     }
 
+    /* istanbul ignore next */
     private _usesNetworkInTests({ name, provider }: IReport<any>): void {
         if (process.env.NODE_ENV === "test") {
             if (typeof provider === "undefined")

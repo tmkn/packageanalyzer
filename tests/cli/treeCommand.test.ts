@@ -1,21 +1,12 @@
 import * as path from "path";
-import { PassThrough } from "stream";
-
-import { BaseContext } from "clipanion";
 
 import { cli } from "../../src/cli/cli";
 import { OnlinePackageProvider } from "../../src/providers/online";
 import { createMockNpmServer, IMockServer } from "../server";
-import { TestWritable } from "../common";
+import { createMockContext } from "../common";
 import { TreeCommand } from "../../src/cli/treeCommand";
 
 describe(`Tree Command`, () => {
-    const mockContext: BaseContext = {
-        stdin: process.stdin,
-        stdout: new PassThrough(),
-        stderr: new PassThrough()
-    };
-
     let server: IMockServer;
     let provider: OnlinePackageProvider;
 
@@ -25,20 +16,17 @@ describe(`Tree Command`, () => {
     });
 
     test(`--package --type`, async () => {
-        const stdout = new TestWritable();
-        const stderr = new TestWritable();
         const command = cli.process([
             `tree`,
             `--package`,
             `react@16.8.1`,
             `--type`,
             `dependencies`
-        ]);
-        TreeCommand.provider = provider;
+        ]) as TreeCommand;
+        command.beforeProcess = report => (report.provider = provider);
 
         expect.assertions(1);
-        mockContext.stdout = stdout;
-        mockContext.stderr = stderr;
+        const { mockContext, stdout } = createMockContext();
         command.context = mockContext;
 
         await command.execute();
@@ -47,7 +35,6 @@ describe(`Tree Command`, () => {
     });
 
     test(`--folder --type`, async () => {
-        const stdout = new TestWritable();
         const command = cli.process([
             `tree`,
             `--folder`,
@@ -55,10 +42,9 @@ describe(`Tree Command`, () => {
             `--type`,
             `dependencies`
         ]);
-        TreeCommand.provider = undefined;
 
         expect.assertions(1);
-        mockContext.stdout = stdout;
+        const { mockContext, stdout } = createMockContext();
         command.context = mockContext;
 
         await command.execute();
