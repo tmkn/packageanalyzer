@@ -17,10 +17,6 @@ export class ReportService {
         //todo validate _config
     }
 
-    get reports(): ReadonlyArray<IReport<any>> {
-        return this._config.reports;
-    }
-
     async process(): Promise<void> {
         const { reports } = this._config;
 
