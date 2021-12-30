@@ -23,13 +23,14 @@ describe(`License Check Command`, () => {
         ]) as LicenseCheckCommand;
         command.beforeProcess = report => (report.provider = provider);
 
-        expect.assertions(1);
-        const { mockContext, stdout } = createMockContext();
+        expect.assertions(2);
+        const { mockContext, stdout, stderr } = createMockContext();
         command.context = mockContext;
 
         await command.execute();
 
-        expect(stdout.lines).toMatchSnapshot();
+        expect(stdout.lines).toMatchSnapshot(`stdout`);
+        expect(stderr.lines).toMatchSnapshot(`stderr`);
     });
 
     test(`--package --grouped`, async () => {
@@ -41,13 +42,14 @@ describe(`License Check Command`, () => {
         ]) as LicenseCheckCommand;
         command.beforeProcess = report => (report.provider = provider);
 
-        expect.assertions(1);
-        const { mockContext, stdout } = createMockContext();
+        expect.assertions(2);
+        const { mockContext, stdout, stderr } = createMockContext();
         command.context = mockContext;
 
         await command.execute();
 
-        expect(stdout.lines).toMatchSnapshot();
+        expect(stdout.lines).toMatchSnapshot(`stdout`);
+        expect(stderr.lines).toMatchSnapshot(`stderr`);
     });
 
     test(`--package --type`, async () => {
@@ -60,13 +62,14 @@ describe(`License Check Command`, () => {
         ]) as LicenseCheckCommand;
         command.beforeProcess = report => (report.provider = provider);
 
-        expect.assertions(1);
-        const { mockContext, stdout } = createMockContext();
+        expect.assertions(2);
+        const { mockContext, stdout, stderr } = createMockContext();
         command.context = mockContext;
 
         await command.execute();
 
-        expect(stdout.lines).toMatchSnapshot();
+        expect(stdout.lines).toMatchSnapshot(`stdout`);
+        expect(stderr.lines).toMatchSnapshot(`stderr`);
     });
 
     test(`--package --allow`, async () => {
@@ -81,13 +84,14 @@ describe(`License Check Command`, () => {
         ]) as LicenseCheckCommand;
         command.beforeProcess = report => (report.provider = provider);
 
-        expect.assertions(1);
-        const { mockContext, stdout } = createMockContext();
+        expect.assertions(2);
+        const { mockContext, stdout, stderr } = createMockContext();
         command.context = mockContext;
 
         await command.execute();
 
-        expect(stdout.lines).toMatchSnapshot();
+        expect(stdout.lines).toMatchSnapshot(`stdout`);
+        expect(stderr.lines).toMatchSnapshot(`stderr`);
     });
 
     test(`--folder`, async () => {
@@ -97,13 +101,14 @@ describe(`License Check Command`, () => {
             path.join("tests", "data", "testproject1")
         ]) as LicenseCheckCommand;
 
-        expect.assertions(1);
-        const { mockContext, stdout } = createMockContext();
+        expect.assertions(2);
+        const { mockContext, stdout, stderr } = createMockContext();
         command.context = mockContext;
 
         await command.execute();
 
-        expect(stdout.lines).toMatchSnapshot();
+        expect(stdout.lines).toMatchSnapshot(`stdout`);
+        expect(stderr.lines).toMatchSnapshot(`stderr`);
     });
 
     afterAll(() => {

@@ -1,6 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Download Command --package 1`] = `
+exports[`Download Command --package: stderr 1`] = `Array []`;
+
+exports[`Download Command --package: stdout 1`] = `
 Array [
   "react: 8609192 Downloads",
   "",

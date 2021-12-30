@@ -15,9 +15,9 @@ describe(`Download Command`, () => {
 
     test(`--package`, async () => {
         const command = cli.process([`downloads`, `--package`, `react`]) as DownloadCommand;
-        const { mockContext, stdout } = createMockContext();
+        const { mockContext, stdout, stderr } = createMockContext();
 
-        expect.assertions(1);
+        expect.assertions(2);
         command.context = mockContext;
         command.beforeProcess = report =>
             (report.provider = new OnlinePackageProvider(`http://localhost:${npmServer.port}`));
@@ -25,7 +25,8 @@ describe(`Download Command`, () => {
 
         await command.execute();
 
-        expect(stdout.lines).toMatchSnapshot();
+        expect(stdout.lines).toMatchSnapshot(`stdout`);
+        expect(stderr.lines).toMatchSnapshot(`stderr`);
     });
 
     afterAll(async () => {

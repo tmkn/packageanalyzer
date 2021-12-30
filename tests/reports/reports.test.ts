@@ -158,6 +158,7 @@ describe(`ReportService Tests`, () => {
 
         await reportService.process();
 
-        expect(stderr.lines).toMatchSnapshot();
+        expect(stdout.lines).toMatchSnapshot(`stdout`);
+        expect(stderr.lines).toMatchSnapshot(`stderr`);
     });
 });

@@ -18,14 +18,15 @@ describe(`Update Info Command`, () => {
     test(`--package`, async () => {
         const command = cli.process([`update`, `--package`, `react@16.8.1`]) as UpdateInfoCommand;
 
-        expect.assertions(1);
-        const { mockContext, stdout } = createMockContext();
+        expect.assertions(2);
+        const { mockContext, stdout, stderr } = createMockContext();
         command.context = mockContext;
         command.beforeProcess = report => (report.provider = provider);
 
         await command.execute();
 
-        expect(stdout.lines).toMatchSnapshot();
+        expect(stdout.lines).toMatchSnapshot(`stdout`);
+        expect(stderr.lines).toMatchSnapshot(`stderr`);
     });
 
     afterAll(() => {

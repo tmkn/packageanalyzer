@@ -27,14 +27,15 @@ describe(`Analyze Command`, () => {
             `--full`
         ]) as AnalyzeCommand;
 
-        expect.assertions(1);
-        const { mockContext, stdout } = createMockContext();
+        expect.assertions(2);
+        const { mockContext, stdout, stderr } = createMockContext();
         command.context = mockContext;
         command.beforeProcess = report => (report.provider = provider);
 
         await command.execute();
 
-        expect(stdout.lines).toMatchSnapshot();
+        expect(stdout.lines).toMatchSnapshot(`stdout`);
+        expect(stderr.lines).toMatchSnapshot(`stderr`);
     });
 
     test(`--package --type`, async () => {
@@ -46,14 +47,15 @@ describe(`Analyze Command`, () => {
             `dependencies`
         ]) as AnalyzeCommand;
 
-        expect.assertions(1);
-        const { mockContext, stdout } = createMockContext();
+        expect.assertions(2);
+        const { mockContext, stdout, stderr } = createMockContext();
         command.context = mockContext;
         command.beforeProcess = report => (report.provider = provider);
 
         await command.execute();
 
-        expect(stdout.lines).toMatchSnapshot();
+        expect(stdout.lines).toMatchSnapshot(`stdout`);
+        expect(stderr.lines).toMatchSnapshot(`stderr`);
     });
 
     test(`--folder --type --full`, async () => {
@@ -66,13 +68,14 @@ describe(`Analyze Command`, () => {
             `--full`
         ]) as AnalyzeCommand;
 
-        expect.assertions(1);
-        const { mockContext, stdout } = createMockContext();
+        expect.assertions(2);
+        const { mockContext, stdout, stderr } = createMockContext();
         command.context = mockContext;
 
         await command.execute();
 
-        expect(stdout.lines).toMatchSnapshot();
+        expect(stdout.lines).toMatchSnapshot(`stdout`);
+        expect(stderr.lines).toMatchSnapshot(`stderr`);
     });
 
     afterAll(() => {

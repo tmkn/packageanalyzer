@@ -1,6 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Analyze Command --folder --type --full 1`] = `
+exports[`Analyze Command --folder --type --full: stderr 1`] = `Array []`;
+
+exports[`Analyze Command --folder --type --full: stdout 1`] = `
 Array [
   "Statistics for testproject1@1.0.0",
   "",
@@ -22,7 +24,9 @@ Array [
 ]
 `;
 
-exports[`Analyze Command --package --type --full 1`] = `
+exports[`Analyze Command --package --type --full: stderr 1`] = `Array []`;
+
+exports[`Analyze Command --package --type --full: stdout 1`] = `
 Array [
   "Statistics for react@16.8.1",
   "",
@@ -48,7 +52,9 @@ Array [
 ]
 `;
 
-exports[`Analyze Command --package --type 1`] = `
+exports[`Analyze Command --package --type: stderr 1`] = `Array []`;
+
+exports[`Analyze Command --package --type: stdout 1`] = `
 Array [
   "Statistics for react@16.8.1",
   "",

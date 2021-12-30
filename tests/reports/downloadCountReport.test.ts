@@ -30,6 +30,7 @@ describe(`DownloadCountReport Tests`, () => {
 
         await downloadReport.report(fakePgk, { stdoutFormatter, stderrFormatter });
 
-        expect(stdout.lines).toMatchSnapshot();
+        expect(stdout.lines).toMatchSnapshot(`stdout`);
+        expect(stderr.lines).toMatchSnapshot(`stderr`);
     });
 });

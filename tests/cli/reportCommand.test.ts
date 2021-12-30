@@ -14,10 +14,11 @@ describe(`Report Command`, () => {
 
         expect(command).toBeInstanceOf(ReportCommand);
 
-        const { mockContext, stdout } = createMockContext();
+        const { mockContext, stdout, stderr } = createMockContext();
         command.context = mockContext;
         await command.execute();
 
-        expect(stdout.lines).toMatchSnapshot();
+        expect(stdout.lines).toMatchSnapshot(`stdout`);
+        expect(stderr.lines).toMatchSnapshot(`stderr`);
     });
 });

@@ -1,6 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Loops Command --package --type 1`] = `
+exports[`Loops Command --package --type: stderr 1`] = `Array []`;
+
+exports[`Loops Command --package --type: stdout 1`] = `
 Array [
   "8 Loop(s) found for testproject2@1.0.0",
   "",
