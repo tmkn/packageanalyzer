@@ -49,8 +49,6 @@ export class AnalyzeCommand extends CliCommand<AnalyzeReport> {
             full: this.full
         };
 
-        const analyzeReport = new AnalyzeReport(params);
-
-        return analyzeReport;
+        return new AnalyzeReport(params);
     }
 }

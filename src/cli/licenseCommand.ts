@@ -68,8 +68,7 @@ export class LicenseCheckCommand extends CliCommand<LicenseReport> {
             allowList: this.allowList,
             grouped: this.grouped
         };
-        const licenseReport = new LicenseReport(params);
 
-        return licenseReport;
+        return new LicenseReport(params);
     }
 }

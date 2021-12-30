@@ -18,26 +18,22 @@ function download(url: Url, timeoutLimit: number): Promise<string> {
 
         protocol
             .get(url, res => {
-                try {
-                    const { statusCode } = res;
-                    let data = "";
+                const { statusCode } = res;
+                let data = "";
 
-                    if (statusCode !== 200) {
-                        reject(`Server Error '${url}'`);
-                        clearTimeout(id);
-                    }
-
-                    res.setEncoding("utf8");
-                    res.on("data", chunk => {
-                        data += chunk;
-                    });
-                    res.on("end", () => {
-                        resolve(data);
-                        clearTimeout(id);
-                    });
-                } catch (e) {
-                    reject();
+                if (statusCode !== 200) {
+                    reject(`Server Error '${url}'`);
+                    clearTimeout(id);
                 }
+
+                res.setEncoding("utf8");
+                res.on("data", chunk => {
+                    data += chunk;
+                });
+                res.on("end", () => {
+                    resolve(data);
+                    clearTimeout(id);
+                });
             })
             .on("error", () => {
                 reject();

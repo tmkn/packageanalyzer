@@ -27,9 +27,8 @@ export class DownloadCommand extends CliCommand<DownloadReport> {
                 pkg: this.package,
                 url: DownloadCommand.DownloadUrl
             };
-            const downloadReport = new DownloadReport(params);
 
-            return downloadReport;
+            return new DownloadReport(params);
         }
 
         throw new Error(`--package was undefined`);

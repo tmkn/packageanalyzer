@@ -46,9 +46,8 @@ export class LoopsCommand extends CliCommand<LoopsReport> {
                 type: this.type,
                 package: this.package
             };
-            const loopsReport = new LoopsReport(params);
 
-            return loopsReport;
+            return new LoopsReport(params);
         }
 
         throw new Error(`--package was undefined`);

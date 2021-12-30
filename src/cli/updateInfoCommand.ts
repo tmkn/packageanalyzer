@@ -29,9 +29,8 @@ export class UpdateInfoCommand extends CliCommand<UpdateInfoReport> {
             package: this.package,
             provider: npmOnline
         };
-        const updateInfoReport = new UpdateInfoReport(updateInfoParams);
 
-        return updateInfoReport;
+        return new UpdateInfoReport(updateInfoParams);
     }
 
     static override paths = [[`update`]];

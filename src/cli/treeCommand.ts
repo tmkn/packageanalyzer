@@ -51,8 +51,7 @@ export class TreeCommand extends CliCommand<TreeReport> {
             folder: this.folder,
             package: this.package
         };
-        const treeReport = new TreeReport(params);
 
-        return treeReport;
+        return new TreeReport(params);
     }
 }

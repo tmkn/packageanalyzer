@@ -7,6 +7,7 @@ import { Command } from "clipanion";
 import { DependencyTypes } from "../visitors/visitor";
 import { AbstractReport } from "../reports/Report";
 import { ReportService } from "../reports/ReportService";
+import { Formatter, IFormatter } from "../utils/formatter";
 
 export const defaultDependencyType: DependencyTypes = "dependencies";
 
@@ -49,8 +50,10 @@ export abstract class CliCommand<T extends AbstractReport<any>> extends Command 
 
             this.beforeProcess?.(report);
             await reportService.process();
-        } catch (e) {
-            this.context.stderr.write(e);
+        } catch (e: any) {
+            const stderrFormatter: IFormatter = new Formatter(this.context.stderr);
+
+            stderrFormatter.writeLine(e);
         }
     }
 }
