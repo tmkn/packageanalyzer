@@ -1,11 +1,10 @@
 import { Command, Option } from "clipanion";
 
 import { npmOnline } from "../providers/online";
-import { Formatter } from "../utils/formatter";
 import { IUpdateInfoParams, UpdateInfoReport } from "../reports/UpdateInfoReport";
-import { ReportService } from "../reports/ReportService";
+import { CliCommand } from "./common";
 
-export class UpdateInfoCommand extends Command {
+export class UpdateInfoCommand extends CliCommand<UpdateInfoReport> {
     public package?: string = Option.String(`--package`, {
         description: `the package to retrieve update info from e.g. typescript@3.5.1`
     });
@@ -23,28 +22,16 @@ export class UpdateInfoCommand extends Command {
         ]
     });
 
-    static override paths = [[`update`]];
-    async execute() {
-        const formatter = new Formatter(this.context.stdout);
+    createReport(): UpdateInfoReport {
+        if (typeof this.package === "undefined") throw new Error(`Please specify a package.`);
 
-        if (typeof this.package === "undefined") {
-            formatter.writeLine(`Please specify a package.`);
-        } else {
-            const updateInfoParams: IUpdateInfoParams = {
-                package: this.package,
-                provider: npmOnline
-            };
-            const updateInfoReport = new UpdateInfoReport(updateInfoParams);
+        const updateInfoParams: IUpdateInfoParams = {
+            package: this.package,
+            provider: npmOnline
+        };
 
-            const reportService = new ReportService(
-                {
-                    reports: [updateInfoReport]
-                },
-                this.context.stdout,
-                this.context.stderr
-            );
-
-            await reportService.process();
-        }
+        return new UpdateInfoReport(updateInfoParams);
     }
+
+    static override paths = [[`update`]];
 }

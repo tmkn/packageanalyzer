@@ -1,21 +1,10 @@
-import { PassThrough } from "stream";
-
-import { BaseContext } from "clipanion";
-
 import { cli } from "../../src/cli/cli";
 import { OnlinePackageProvider } from "../../src/providers/online";
 import { createMockNpmServer, IMockServer } from "../server";
-import { TestWritable } from "../common";
+import { createMockContext } from "../common";
+import { UpdateInfoCommand } from "../../src/cli/updateInfoCommand";
 
 describe(`Update Info Command`, () => {
-    const stdout = new TestWritable();
-
-    const mockContext: BaseContext = {
-        stdin: process.stdin,
-        stdout,
-        stderr: new PassThrough()
-    };
-
     let server: IMockServer;
     let provider: OnlinePackageProvider;
 
@@ -27,14 +16,17 @@ describe(`Update Info Command`, () => {
     });
 
     test(`--package`, async () => {
-        const command = cli.process([`update`, `--package`, `react@16.8.1`]);
+        const command = cli.process([`update`, `--package`, `react@16.8.1`]) as UpdateInfoCommand;
 
-        expect.assertions(1);
+        expect.assertions(2);
+        const { mockContext, stdout, stderr } = createMockContext();
         command.context = mockContext;
+        command.beforeProcess = report => (report.provider = provider);
 
         await command.execute();
 
-        expect(stdout.lines).toMatchSnapshot();
+        expect(stdout.lines).toMatchSnapshot(`stdout`);
+        expect(stderr.lines).toMatchSnapshot(`stderr`);
     });
 
     afterAll(() => {

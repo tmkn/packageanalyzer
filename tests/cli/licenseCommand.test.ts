@@ -1,20 +1,12 @@
 import * as path from "path";
-import { PassThrough } from "stream";
-
-import { BaseContext } from "clipanion";
 
 import { cli } from "../../src/cli/cli";
 import { OnlinePackageProvider } from "../../src/providers/online";
 import { createMockNpmServer, IMockServer } from "../server";
-import { TestWritable } from "../common";
+import { createMockContext } from "../common";
+import { LicenseCheckCommand } from "../../src/cli/licenseCommand";
 
 describe(`License Check Command`, () => {
-    const mockContext: BaseContext = {
-        stdin: process.stdin,
-        stdout: new PassThrough(),
-        stderr: new PassThrough()
-    };
-
     let server: IMockServer;
     let provider: OnlinePackageProvider;
 
@@ -24,52 +16,63 @@ describe(`License Check Command`, () => {
     });
 
     test(`--package`, async () => {
-        const stdout = new TestWritable();
-        const command = cli.process([`license`, `--package`, `react@16.8.1`]);
+        const command = cli.process([
+            `license`,
+            `--package`,
+            `react@16.8.1`
+        ]) as LicenseCheckCommand;
+        command.beforeProcess = report => (report.provider = provider);
 
-        expect.assertions(1);
-        mockContext.stdout = stdout;
+        expect.assertions(2);
+        const { mockContext, stdout, stderr } = createMockContext();
         command.context = mockContext;
 
         await command.execute();
 
-        expect(stdout.lines).toMatchSnapshot();
+        expect(stdout.lines).toMatchSnapshot(`stdout`);
+        expect(stderr.lines).toMatchSnapshot(`stderr`);
     });
 
     test(`--package --grouped`, async () => {
-        const stdout = new TestWritable();
-        const command = cli.process([`license`, `--package`, `react@16.8.1`, `--grouped`]);
+        const command = cli.process([
+            `license`,
+            `--package`,
+            `react@16.8.1`,
+            `--grouped`
+        ]) as LicenseCheckCommand;
+        command.beforeProcess = report => (report.provider = provider);
 
-        expect.assertions(1);
-        mockContext.stdout = stdout;
+        expect.assertions(2);
+        const { mockContext, stdout, stderr } = createMockContext();
         command.context = mockContext;
 
         await command.execute();
 
-        expect(stdout.lines).toMatchSnapshot();
+        expect(stdout.lines).toMatchSnapshot(`stdout`);
+        expect(stderr.lines).toMatchSnapshot(`stderr`);
     });
 
     test(`--package --type`, async () => {
-        const stdout = new TestWritable();
         const command = cli.process([
             `license`,
             `--package`,
             `react@16.8.1`,
             `--type`,
             `devDependencies`
-        ]);
+        ]) as LicenseCheckCommand;
+        command.beforeProcess = report => (report.provider = provider);
 
-        expect.assertions(1);
-        mockContext.stdout = stdout;
+        expect.assertions(2);
+        const { mockContext, stdout, stderr } = createMockContext();
         command.context = mockContext;
 
         await command.execute();
 
-        expect(stdout.lines).toMatchSnapshot();
+        expect(stdout.lines).toMatchSnapshot(`stdout`);
+        expect(stderr.lines).toMatchSnapshot(`stderr`);
     });
 
     test(`--package --allow`, async () => {
-        const stdout = new TestWritable();
         const command = cli.process([
             `license`,
             `--package`,
@@ -78,33 +81,37 @@ describe(`License Check Command`, () => {
             `foo1`,
             `--allow`,
             `foo2`
-        ]);
+        ]) as LicenseCheckCommand;
+        command.beforeProcess = report => (report.provider = provider);
 
-        expect.assertions(1);
-        mockContext.stdout = stdout;
+        expect.assertions(2);
+        const { mockContext, stdout, stderr } = createMockContext();
         command.context = mockContext;
 
         await command.execute();
 
-        expect(stdout.lines).toMatchSnapshot();
+        expect(stdout.lines).toMatchSnapshot(`stdout`);
+        expect(stderr.lines).toMatchSnapshot(`stderr`);
     });
 
     test(`--folder`, async () => {
-        const stdout = new TestWritable();
         const command = cli.process([
             `license`,
             `--folder`,
             path.join("tests", "data", "testproject1")
-        ]);
+        ]) as LicenseCheckCommand;
 
-        expect.assertions(1);
-        mockContext.stdout = stdout;
+        expect.assertions(2);
+        const { mockContext, stdout, stderr } = createMockContext();
         command.context = mockContext;
 
         await command.execute();
 
-        expect(stdout.lines).toMatchSnapshot();
+        expect(stdout.lines).toMatchSnapshot(`stdout`);
+        expect(stderr.lines).toMatchSnapshot(`stderr`);
     });
 
-    afterAll(() => server.close());
+    afterAll(() => {
+        return server.close();
+    });
 });

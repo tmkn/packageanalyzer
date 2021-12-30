@@ -1,6 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`DownloadCountReport Tests works 1`] = `
+exports[`DownloadCountReport Tests works: stderr 1`] = `Array []`;
+
+exports[`DownloadCountReport Tests works: stdout 1`] = `
 Array [
   "_downloads: 8609192 Downloads",
   "",

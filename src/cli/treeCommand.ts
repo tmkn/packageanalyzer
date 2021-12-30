@@ -1,13 +1,10 @@
 import { Command, Option } from "clipanion";
 
-import { npmOnline } from "../providers/online";
 import { DependencyTypes } from "../visitors/visitor";
-import { FileSystemPackageProvider } from "../providers/folder";
-import { defaultDependencyType } from "./common";
-import { ReportService } from "../reports/ReportService";
+import { CliCommand, defaultDependencyType } from "./common";
 import { ITreeReportParams, TreeReport } from "../reports/TreeReport";
 
-export class TreeCommand extends Command {
+export class TreeCommand extends CliCommand<TreeReport> {
     public package?: string = Option.String(`--package`, {
         description: `the package to display the dependency tree e.g. typescript@3.5.1`
     });
@@ -47,30 +44,14 @@ export class TreeCommand extends Command {
     });
 
     static override paths = [[`tree`]];
-    async execute() {
+
+    createReport(): TreeReport {
         const params: ITreeReportParams = {
             type: this.type,
             folder: this.folder,
             package: this.package
         };
-        const treeReport = new TreeReport(params);
 
-        if (typeof this.package !== "undefined" && typeof this.folder !== "undefined") {
-            this.context.stdout.write(`Please specify a package or folder.\n`);
-        } else if (typeof this.package !== "undefined") {
-            treeReport.provider = npmOnline;
-        } else if (typeof this.folder !== "undefined") {
-            treeReport.provider = new FileSystemPackageProvider(this.folder);
-        }
-
-        const reportService = new ReportService(
-            {
-                reports: [treeReport]
-            },
-            this.context.stdout,
-            this.context.stderr
-        );
-
-        await reportService.process();
+        return new TreeReport(params);
     }
 }

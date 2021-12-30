@@ -1,6 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Analyze Command --folder --type --full 1`] = `
+exports[`Analyze Command --folder --type --full: stderr 1`] = `Array []`;
+
+exports[`Analyze Command --folder --type --full: stdout 1`] = `
 Array [
   "Statistics for testproject1@1.0.0",
   "",
@@ -22,15 +24,17 @@ Array [
 ]
 `;
 
-exports[`Analyze Command --package --type --full 1`] = `
+exports[`Analyze Command --package --type --full: stderr 1`] = `Array []`;
+
+exports[`Analyze Command --package --type --full: stdout 1`] = `
 Array [
   "Statistics for react@16.8.1",
   "",
   "Published: Wed, 06 Feb 2019 18:15:25 GMT (992 days ago)",
   "Oldest package:      object-assign@4.1.1 - Mon, 16 Jan 2017 15:35:15 GMT (1743 days ago)",
   "Oldest package path: react@16.8.1 → object-assign@4.1.1",
-  "Newest package:      react-is@16.13.1 - Thu, 19 Mar 2020 19:53:28 GMT (585 days ago)",
-  "Newest package path: react@16.8.1 → prop-types@15.7.2 → react-is@16.13.1",
+  "Newest package:      scheduler@0.13.6 - Thu, 28 Mar 2019 06:26:26 GMT (942 days ago)",
+  "Newest package path: react@16.8.1 → scheduler@0.13.6",
   "Direct dependencies:     4",
   "Transitive dependencies: 12",
   "Distinct dependencies:",
@@ -48,7 +52,9 @@ Array [
 ]
 `;
 
-exports[`Analyze Command --package --type 1`] = `
+exports[`Analyze Command --package --type: stderr 1`] = `Array []`;
+
+exports[`Analyze Command --package --type: stdout 1`] = `
 Array [
   "Statistics for react@16.8.1",
   "",

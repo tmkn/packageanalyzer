@@ -4,7 +4,6 @@ import { defaultDependencyType } from "../cli/common";
 import { LicenseUtilities } from "../extensions/utilities/LicenseUtilities";
 import { Package } from "../package/package";
 import { FileSystemPackageProvider } from "../providers/folder";
-import { npmOnline } from "../providers/online";
 import { IFormatter } from "../utils/formatter";
 import {
     createWhitelistLicenseCheckReport,
@@ -35,7 +34,6 @@ export class LicenseReport extends AbstractReport<ILicenseParams> {
 
         if (params.package) {
             this.pkg = getPackageVersionfromString(params.package);
-            this.provider = npmOnline;
         } else if (params.folder) {
             this.pkg = getPackageVersionFromPath(params.folder);
             this.provider = new FileSystemPackageProvider(params.folder);

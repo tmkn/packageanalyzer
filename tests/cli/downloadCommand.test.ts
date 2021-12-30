@@ -1,21 +1,10 @@
-import { PassThrough } from "stream";
-
-import { BaseContext } from "clipanion";
-
 import { cli } from "../../src/cli/cli";
 import { createMockDownloadServer, IMockServer, createMockNpmServer } from "../server";
 import { DownloadCommand } from "../../src/cli/downloadCommand";
-import { TestWritable } from "../common";
+import { createMockContext } from "../common";
 import { OnlinePackageProvider } from "../../src/providers/online";
 
 describe(`Download Command`, () => {
-    const stdout = new TestWritable();
-    const mockContext: BaseContext = {
-        stdin: process.stdin,
-        stdout: stdout,
-        stderr: new PassThrough()
-    };
-
     let downloadServer: IMockServer;
     let npmServer: IMockServer;
 
@@ -25,18 +14,19 @@ describe(`Download Command`, () => {
     });
 
     test(`--package`, async () => {
-        const command = cli.process([`downloads`, `--package`, `react`]);
+        const command = cli.process([`downloads`, `--package`, `react`]) as DownloadCommand;
+        const { mockContext, stdout, stderr } = createMockContext();
 
-        expect.assertions(1);
+        expect.assertions(2);
         command.context = mockContext;
+        command.beforeProcess = report =>
+            (report.provider = new OnlinePackageProvider(`http://localhost:${npmServer.port}`));
         DownloadCommand.DownloadUrl = `http://localhost:${downloadServer.port}/`;
-        DownloadCommand.PackageProvider = new OnlinePackageProvider(
-            `http://localhost:${npmServer.port}`
-        );
 
         await command.execute();
 
-        expect(stdout.lines).toMatchSnapshot();
+        expect(stdout.lines).toMatchSnapshot(`stdout`);
+        expect(stderr.lines).toMatchSnapshot(`stderr`);
     });
 
     afterAll(async () => {

@@ -1,6 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`LoopsReport Test works 1`] = `
+exports[`LoopsReport Test works: stderr 1`] = `Array []`;
+
+exports[`LoopsReport Test works: stdout 1`] = `
 Array [
   "4 Loop(s) found for @webassemblyjs/ast@1.9.0",
   "",

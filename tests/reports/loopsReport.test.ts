@@ -33,7 +33,8 @@ describe(`LoopsReport Test`, () => {
 
         await reportService.process();
 
-        expect(stdout.lines).toMatchSnapshot();
+        expect(stdout.lines).toMatchSnapshot(`stdout`);
+        expect(stderr.lines).toMatchSnapshot(`stderr`);
     });
 
     test(`Throws on illegal dependency type`, async () => {

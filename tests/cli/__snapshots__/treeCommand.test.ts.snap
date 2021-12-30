@@ -31,7 +31,7 @@ Array [
   "│   ├── loose-envify@1.4.0 (1 dependencies)",
   "│   │   └── js-tokens@4.0.0 (0 dependencies)",
   "│   ├── object-assign@4.1.1 (0 dependencies)",
-  "│   └── react-is@16.13.1 (0 dependencies)",
+  "│   └── react-is@16.8.6 (0 dependencies)",
   "└── scheduler@0.13.6 (3 dependencies)",
   "    ├── loose-envify@1.4.0 (1 dependencies)",
   "    │   └── js-tokens@4.0.0 (0 dependencies)",

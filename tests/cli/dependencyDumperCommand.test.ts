@@ -1,11 +1,10 @@
 import * as path from "path";
 import { promises as fs } from "fs";
-import { PassThrough } from "stream";
 
 import { cli } from "../../src/cli/cli";
 import { createMockNpmServer, IMockServer } from "../server";
 import { DependencyDumperCommand } from "../../src/cli/dependencyDumpCommand";
-import { TestWritable } from "../common";
+import { createMockContext } from "../common";
 
 describe(`Dependency Dumper`, () => {
     let server: IMockServer;
@@ -31,12 +30,8 @@ describe(`Dependency Dumper`, () => {
         await fs.rm(outputFolder, { recursive: true, force: true });
         await expect(fs.readdir(outputFolder)).rejects.toThrow();
 
-        const stderr = new TestWritable();
-        command.context = {
-            stdin: process.stdin,
-            stdout: new PassThrough(),
-            stderr: stderr
-        };
+        const { mockContext, stderr } = createMockContext();
+        command.context = mockContext;
         await command.execute();
 
         const folder = await fs.readdir(outputFolder);
@@ -60,12 +55,8 @@ describe(`Dependency Dumper`, () => {
         await fs.rm(outputFolder, { recursive: true, force: true });
         await expect(fs.readdir(outputFolder)).rejects.toThrow();
 
-        const stderr = new TestWritable();
-        command.context = {
-            stdin: process.stdin,
-            stdout: new PassThrough(),
-            stderr: stderr
-        };
+        const { mockContext, stderr } = createMockContext();
+        command.context = mockContext;
         await command.execute();
 
         expect(stderr.lines.length).toBeGreaterThan(0);
@@ -87,12 +78,8 @@ describe(`Dependency Dumper`, () => {
         await fs.rm(outputFolder, { recursive: true, force: true });
         await expect(fs.readdir(outputFolder)).rejects.toThrow();
 
-        const stderr = new TestWritable();
-        command.context = {
-            stdin: process.stdin,
-            stdout: new PassThrough(),
-            stderr: stderr
-        };
+        const { mockContext, stderr } = createMockContext();
+        command.context = mockContext;
         (command as any).package = undefined;
         await command.execute();
 

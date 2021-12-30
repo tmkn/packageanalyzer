@@ -35,7 +35,6 @@ export class AnalyzeReport extends AbstractReport<IAnalyzeParams> {
 
         if (params.package) {
             this.pkg = getPackageVersionfromString(params.package);
-            this.provider = npmOnline;
             this.decorators = [new ReleaseDecorator(npmOnline)];
         } else if (params.folder) {
             this.pkg = getPackageVersionFromPath(params.folder);

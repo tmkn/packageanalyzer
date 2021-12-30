@@ -1,8 +1,7 @@
 import * as path from "path";
-import { PassThrough } from "stream";
 
 import { cli } from "../../src/cli/cli";
-import { TestWritable } from "../common";
+import { createMockContext } from "../common";
 import { ReportCommand } from "../../src/cli/reportCommand";
 
 describe(`Report Command`, () => {
@@ -15,15 +14,11 @@ describe(`Report Command`, () => {
 
         expect(command).toBeInstanceOf(ReportCommand);
 
-        const stdout = new TestWritable();
-        const stderr = new TestWritable();
-        command.context = {
-            stdin: process.stdin,
-            stdout: stdout,
-            stderr: stderr
-        };
+        const { mockContext, stdout, stderr } = createMockContext();
+        command.context = mockContext;
         await command.execute();
 
-        expect(stdout.lines).toMatchSnapshot();
+        expect(stdout.lines).toMatchSnapshot(`stdout`);
+        expect(stderr.lines).toMatchSnapshot(`stderr`);
     });
 });
