@@ -7,7 +7,6 @@ import * as semver from "semver";
 import { OraLogger } from "../loggers/OraLogger";
 
 import { IPackageJson, IPackageMetadata, INpmDumpRow, IUnpublishedPackageMetadata } from "../npm";
-import { PackageVersion } from "../visitors/visitor";
 import { IPackageJsonProvider } from "./provider";
 
 //parses npm data from https://replicate.npmjs.com/_all_docs?limit=4&include_docs=true
