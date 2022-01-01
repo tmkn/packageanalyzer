@@ -59,14 +59,14 @@ export class Visitor implements IPackageVisitor {
         dependencies: INpmKeyValue | undefined
     ): Promise<void> {
         try {
-            const dependencyField = typeof dependencies !== "undefined" ? dependencies : {};
-            const dependencyArray = Object.entries(dependencyField);
+            if (typeof dependencies === "undefined") return;
+
             const packages: IPackageJson[] = [];
 
-            for await (const resolvedDependencies of this._provider.getPackageJsons(
-                dependencyArray
-            )) {
-                packages.push(resolvedDependencies);
+            for (const [name, version] of Object.entries(dependencies)) {
+                const resolved = await this._provider.getPackageJson(name, version);
+
+                packages.push(resolved);
             }
 
             for (const p of packages) {

@@ -11,5 +11,4 @@ export interface IPackageMetaDataProvider {
 export interface IPackageJsonProvider {
     //load version specific data, loads latest version if no version is specified
     getPackageJson: (...args: PackageVersion) => Promise<IPackageJson>;
-    getPackageJsons: (modules: PackageVersion[]) => AsyncIterableIterator<IPackageJson>;
 }
