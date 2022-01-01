@@ -3,7 +3,6 @@ import * as fs from "fs";
 import * as semver from "semver";
 
 import { IPackageJson } from "../npm";
-import { PackageVersion } from "../visitors/visitor";
 import { IPackageJsonProvider } from "./provider";
 
 //gathers packages from a node_modules folder
@@ -75,12 +74,6 @@ export class FileSystemPackageProvider implements IPackageJsonProvider {
             if (typeof specificVersion === "undefined") {
                 versions.set(version, pkg);
             }
-        }
-    }
-
-    async *getPackageJsons(modules: PackageVersion[]): AsyncIterableIterator<IPackageJson> {
-        for (const pkgVersion of modules) {
-            yield this.getPackageJson(...pkgVersion);
         }
     }
 

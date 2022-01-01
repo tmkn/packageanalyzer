@@ -96,11 +96,6 @@ export class DependencyDumperProvider implements IPackageJsonProvider {
 
         return versionData;
     }
-    async *getPackageJsons(modules: PackageVersion[]): AsyncIterableIterator<IPackageJson> {
-        for (const [name, version] of modules) {
-            yield this.getPackageJson(name, version);
-        }
-    }
 
     private async _populateCache(): Promise<void> {
         return new Promise(async (resolve, reject) => {

@@ -83,38 +83,4 @@ describe(`NodeModulesProvider Tests`, () => {
             expect(e).toBeInstanceOf(Error);
         }
     });
-
-    test(`Get multiple packages with getPackagesByVersion`, async () => {
-        const wanted: [string, string | undefined][] = [
-            ["scheduler", "0.13.6"],
-            ["react", "16.8.6"]
-        ];
-        const pkgs: IPackageJson[] = [];
-
-        for await (const pkg of provider.getPackageJsons(wanted)) {
-            pkgs.push(pkg);
-        }
-
-        expect(pkgs.length).toBe(2);
-        expect(pkgs[0].name).toBe("scheduler");
-        expect(pkgs[1].name).toBe("react");
-    });
-
-    test(`Throws on missing package in getPackagesByVersion`, async () => {
-        expect.assertions(1);
-
-        try {
-            const wanted: [string, string | undefined][] = [
-                ["doesnexist", "0.13.6"],
-                ["react", "16.8.6"]
-            ];
-
-            /* eslint-disable */
-            for await (const pkgs of provider.getPackageJsons(wanted)) {
-            }
-            /* eslint-enable */
-        } catch (e) {
-            expect(e).toBeInstanceOf(Error);
-        }
-    });
 });

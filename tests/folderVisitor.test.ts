@@ -112,12 +112,6 @@ describe(`visitFromName Error Handling`, () => {
         ): Promise<IPackageJson> {
             throw new CustomError(`getPackageByVersion not implemented`);
         }
-
-        getPackageJsons(
-            modules: [string, string?][] /* eslint-disable-line */
-        ): AsyncIterableIterator<IPackageJson> {
-            throw new Error(`getPackagesByVersion not implemented`);
-        }
     }
 
     test(`Correctly propagates an exception`, async () => {

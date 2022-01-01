@@ -2,7 +2,6 @@ import * as semver from "semver";
 
 import { IPackageMetadata, IPackageJson, IUnpublishedPackageMetadata, isUnpublished } from "../npm";
 import { downloadJson, Url } from "../utils/requests";
-import { PackageVersion } from "../visitors/visitor";
 import { IPackageJsonProvider, IPackageMetaDataProvider } from "./provider";
 
 //loads npm data from the web
@@ -24,12 +23,6 @@ export class OnlinePackageProvider implements IPackageJsonProvider, IPackageMeta
             );
 
             return data === null ? undefined : data;
-        }
-    }
-
-    async *getPackageJsons(modules: PackageVersion[]): AsyncIterableIterator<IPackageJson> {
-        for (const [name, version] of modules) {
-            yield this.getPackageJson(name, version);
         }
     }
 
