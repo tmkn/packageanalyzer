@@ -76,12 +76,6 @@ export class FlatFileProvider implements IPackageJsonProvider {
         }
     }
 
-    async *getPackageJsons(modules: PackageVersion[]): AsyncIterableIterator<IPackageJson> {
-        for (const [name, version] of modules) {
-            yield this.getPackageJson(name, version);
-        }
-    }
-
     async parseLookupFile(): Promise<void> {
         const rl = readline.createInterface({
             input: fs.createReadStream(this._lookupFile),

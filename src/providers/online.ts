@@ -27,12 +27,6 @@ export class OnlinePackageProvider implements IPackageJsonProvider, IPackageMeta
         }
     }
 
-    async *getPackageJsons(modules: PackageVersion[]): AsyncIterableIterator<IPackageJson> {
-        for (const [name, version] of modules) {
-            yield this.getPackageJson(name, version);
-        }
-    }
-
     async getPackageJson(
         name: string,
         version: string | undefined = undefined

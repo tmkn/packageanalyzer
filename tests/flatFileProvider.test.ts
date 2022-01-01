@@ -1,7 +1,6 @@
 import * as path from "path";
 
 import { FlatFileProvider } from "../src/providers/flatFile";
-import { PackageVersion } from "../src/visitors/visitor";
 
 describe(`flatFileProvider Tests`, () => {
     const destination = path.join("tests", "data", "npmdump");
@@ -51,15 +50,11 @@ describe(`flatFileProvider Tests`, () => {
     });
 
     test(`Get packages`, async () => {
-        const packages: PackageVersion[] = [
-            [`ux-company-announcement`, `1.1.1`],
-            [`ux-copy-job-page`]
-        ];
+        const dep1 = await provider.getPackageJson(`ux-company-announcement`, `1.1.1`);
+        const dep2 = await provider.getPackageJson(`ux-copy-job-page`);
 
-        for await (const pkg of provider.getPackageJsons(packages)) {
-            if (pkg.name === `ux-company-announcement`) expect(pkg.version).toBe(`1.1.1`);
-            else if (pkg.name === `ux-copy-job-page`) expect(pkg.version).toBe(`2.0.48`);
-        }
+        expect(dep1.version).toBe(`1.1.1`);
+        expect(dep2.version).toBe(`2.0.48`);
     });
 
     test(`Get package info`, async () => {

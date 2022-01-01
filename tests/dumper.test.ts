@@ -78,12 +78,17 @@ describe(`DependencyDumper Provider`, () => {
         const expectedVersions: string[] = [`1.9.0`, `1.11.0`];
         const actualVersions: string[] = [];
 
-        for await (const pkg of provider.getPackageJsons([
+        /*for await (const pkg of provider.getPackageJsons([
             [`@webassemblyjs/ast`, `1.9.0`],
             [`@webassemblyjs/ast`]
         ])) {
             actualVersions.push(pkg.version);
-        }
+        }*/
+
+        const dep1 = await provider.getPackageJson(`@webassemblyjs/ast`, `1.9.0`);
+        const dep2 = await provider.getPackageJson(`@webassemblyjs/ast`);
+
+        actualVersions.push(...[dep1.version, dep2.version]);
 
         expect(expectedVersions).toEqual(actualVersions);
     });

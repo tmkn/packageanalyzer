@@ -78,12 +78,6 @@ export class FileSystemPackageProvider implements IPackageJsonProvider {
         }
     }
 
-    async *getPackageJsons(modules: PackageVersion[]): AsyncIterableIterator<IPackageJson> {
-        for (const pkgVersion of modules) {
-            yield this.getPackageJson(...pkgVersion);
-        }
-    }
-
     async getPackageJson(name: string, version?: string | undefined): Promise<IPackageJson> {
         const versions = this._cache.get(name);
         let pkg: IPackageJson;
