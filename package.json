@@ -9,7 +9,9 @@
   },
   "typesVersions": {
     "*": {
-      "web": [ "./build/src/index.web.d.ts" ]
+      "web": [
+        "./build/src/index.web.d.ts"
+      ]
     }
   },
   "files": [
@@ -73,6 +75,8 @@
     "chalk": "^4.1.0",
     "clipanion": "^3.2.0-rc.4",
     "dayjs": "^1.9.6",
+    "fp-ts": "^2.11.6",
+    "io-ts": "^2.2.16",
     "lodash": "^4.17.20",
     "ora": "^5.1.0",
     "semver": "^7.3.2",
