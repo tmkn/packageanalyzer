@@ -1,10 +1,10 @@
 import * as t from "io-ts";
 
-import { DependencyTypes } from "../visitors/visitor";
+type _DependencyType = "dependencies" | "devDependencies";
 
-const dependencyType = new t.Type<DependencyTypes>(
+const dependencyType = new t.Type<_DependencyType>(
     "dependencyType",
-    (input: unknown): input is DependencyTypes =>
+    (input: unknown): input is _DependencyType =>
         input === "dependencies" || input === "devDependencies",
     (input, context) => {
         if (input === "dependencies" || input === "devDependencies") {
@@ -20,4 +20,4 @@ const dependencyType = new t.Type<DependencyTypes>(
     t.identity
 );
 
-type DependencyType = t.TypeOf<typeof dependencyType>;
+export type DependencyTypes = t.TypeOf<typeof dependencyType>;

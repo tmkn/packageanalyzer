@@ -2,7 +2,8 @@ import { IDecorator } from "../extensions/decorators/Decorator";
 import { Package } from "../package/package";
 import { IPackageJsonProvider } from "../providers/provider";
 import { IFormatter } from "../utils/formatter";
-import { DependencyTypes, PackageVersion } from "../visitors/visitor";
+import { PackageVersion } from "../visitors/visitor";
+import { DependencyTypes } from "./Validation";
 
 export interface IReportContext {
     stdoutFormatter: IFormatter;

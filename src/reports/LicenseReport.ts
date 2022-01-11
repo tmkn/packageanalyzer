@@ -11,8 +11,9 @@ import {
     LicenseCheckReport
 } from "../utils/licenseCheckService";
 import { getPackageVersionFromPath } from "../visitors/util.node";
-import { DependencyTypes, getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
+import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
 import { AbstractReport, IReportContext } from "./Report";
+import { DependencyTypes } from "./Validation";
 
 export interface ILicenseParams {
     package?: string;

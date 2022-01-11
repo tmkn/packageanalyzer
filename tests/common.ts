@@ -5,8 +5,9 @@ import { IDecorator } from "../src/extensions/decorators/Decorator";
 import { Package } from "../src/package/package";
 import { IPackageJsonProvider } from "../src/providers/provider";
 import { AbstractReport, IReportContext } from "../src/reports/Report";
+import { DependencyTypes } from "../src/reports/Validation";
 import { IFormatter } from "../src/utils/formatter";
-import { DependencyTypes, PackageVersion } from "../src/visitors/visitor";
+import { PackageVersion } from "../src/visitors/visitor";
 
 export class TestWritable extends Writable {
     private static _pattern = [

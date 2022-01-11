@@ -4,10 +4,10 @@ import * as fs from "fs";
 import * as dayjs from "dayjs";
 import { Command } from "clipanion";
 
-import { DependencyTypes } from "../visitors/visitor";
 import { AbstractReport } from "../reports/Report";
 import { ReportService } from "../reports/ReportService";
 import { Formatter, IFormatter } from "../utils/formatter";
+import { DependencyTypes } from "../reports/Validation";
 
 export const defaultDependencyType: DependencyTypes = "dependencies";
 

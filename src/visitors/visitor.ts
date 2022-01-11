@@ -3,14 +3,13 @@ import { INpmKeyValue, IPackageJson } from "../npm";
 import { IDecorator } from "../extensions/decorators/Decorator";
 import { IPackageJsonProvider } from "../providers/provider";
 import { ILogger } from "../loggers/ILogger";
+import { DependencyTypes } from "../reports/Validation";
 
 export type PackageVersion = [name: string, version?: string];
 
 interface IPackageVisitor {
     visit: (depType?: DependencyTypes) => Promise<Package>;
 }
-
-export type DependencyTypes = "dependencies" | "devDependencies";
 
 export class Visitor implements IPackageVisitor {
     private _depthStack: string[] = [];
