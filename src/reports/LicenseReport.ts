@@ -30,8 +30,8 @@ export class LicenseReport extends AbstractReport<ILicenseParams> {
     allowList: string[];
     grouped: boolean;
 
-    constructor(readonly params: ILicenseParams) {
-        super();
+    constructor(override readonly params: ILicenseParams) {
+        super(params);
 
         if (params.package) {
             this.pkg = getPackageVersionfromString(params.package);
@@ -50,6 +50,8 @@ export class LicenseReport extends AbstractReport<ILicenseParams> {
 
         printLicenseCheck(licenseReport, this.grouped, stdoutFormatter);
     }
+
+    validate = undefined;
 }
 
 function printLicenseCheck(

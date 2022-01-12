@@ -17,8 +17,8 @@ export class TreeReport extends AbstractReport<ITreeReportParams> {
     name = `Tree Report`;
     pkg: PackageVersion;
 
-    constructor(readonly params: ITreeReportParams) {
-        super();
+    constructor(override readonly params: ITreeReportParams) {
+        super(params);
 
         this.type = params.type ?? defaultDependencyType;
 
@@ -35,4 +35,6 @@ export class TreeReport extends AbstractReport<ITreeReportParams> {
     async report(pkg: Package, { stdoutFormatter }: IReportContext): Promise<void> {
         printDependencyTree(pkg, stdoutFormatter);
     }
+
+    validate = undefined;
 }

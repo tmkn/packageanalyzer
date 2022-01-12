@@ -55,8 +55,8 @@ export class TestReport extends AbstractReport<ITestReport> {
     name = `Test Report`;
     pkg: PackageVersion;
 
-    constructor(public params: ITestReport) {
-        super();
+    constructor(public override params: ITestReport) {
+        super(params);
 
         this.pkg = params.pkg;
 
@@ -69,6 +69,8 @@ export class TestReport extends AbstractReport<ITestReport> {
     async report(pkg: Package, { stdoutFormatter }: IReportContext): Promise<void> {
         return this.params.report(pkg, stdoutFormatter);
     }
+
+    validate = undefined;
 }
 
 interface IMockContext {

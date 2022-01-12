@@ -16,8 +16,8 @@ export class UpdateInfoReport extends AbstractReport<IUpdateInfoParams> {
     name = `Update Info Report`;
     pkg: PackageVersion;
 
-    constructor(readonly params: IUpdateInfoParams) {
-        super();
+    constructor(override readonly params: IUpdateInfoParams) {
+        super(params);
 
         this.depth = 0;
         this.pkg = getPackageVersionfromString(params.package);
@@ -58,4 +58,6 @@ export class UpdateInfoReport extends AbstractReport<IUpdateInfoParams> {
             ]
         ]);
     }
+
+    validate = undefined;
 }

@@ -1,3 +1,6 @@
+import { isRight } from "fp-ts/lib/Either";
+import * as t from "io-ts";
+
 import { IDecorator } from "../extensions/decorators/Decorator";
 import { Package } from "../package/package";
 import { IPackageJsonProvider } from "../providers/provider";
@@ -12,7 +15,7 @@ export interface IReportContext {
 
 export interface IReport<T extends {}> {
     readonly name: string;
-    readonly params: T;
+    readonly params: T | undefined;
     readonly pkg: PackageVersion;
 
     readonly decorators?: IDecorator<any, any>[];
@@ -21,11 +24,12 @@ export interface IReport<T extends {}> {
     readonly depth?: number;
 
     report(pkg: Package, context: IReportContext): Promise<void>;
+    validate?(): t.Type<T>;
 }
 
 export abstract class AbstractReport<T extends {}> implements IReport<T> {
     abstract name: string;
-    abstract params: T;
+    readonly params: T | undefined = undefined;
     abstract pkg: PackageVersion;
 
     decorators: IDecorator<any, any>[] | undefined;
@@ -33,5 +37,18 @@ export abstract class AbstractReport<T extends {}> implements IReport<T> {
     type: DependencyTypes | undefined;
     depth: number | undefined;
 
+    constructor(params: unknown) {
+        const foo = this.validate?.();
+
+        if (foo) {
+            const data = foo.decode(params);
+
+            if (isRight(data)) {
+                this.params = data.right;
+            }
+        }
+    }
+
     abstract report(pkg: Package, context: IReportContext): Promise<void>;
+    abstract validate?(): t.Type<T, T, unknown>;
 }

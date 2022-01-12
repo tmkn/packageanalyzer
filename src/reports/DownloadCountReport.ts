@@ -14,8 +14,8 @@ export class DownloadReport extends AbstractReport<IDownloadParams> {
     name = `Download Report`;
     pkg: PackageVersion;
 
-    constructor(readonly params: IDownloadParams) {
-        super();
+    constructor(override readonly params: IDownloadParams) {
+        super(params);
 
         this.depth = 0;
         this.pkg = getPackageVersionfromString(params.pkg);
@@ -24,6 +24,8 @@ export class DownloadReport extends AbstractReport<IDownloadParams> {
     async report(pkg: Package, { stdoutFormatter }: IReportContext): Promise<void> {
         await cliDownloads(pkg.name, this.params.url ?? null, stdoutFormatter);
     }
+
+    validate = undefined;
 }
 
 async function cliDownloads(pkg: string, url: Url | null, formatter: IFormatter): Promise<void> {

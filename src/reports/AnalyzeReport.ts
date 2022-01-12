@@ -31,8 +31,8 @@ export class AnalyzeReport extends AbstractReport<IAnalyzeParams> {
     name = `Analyze Report`;
     pkg: PackageVersion;
 
-    constructor(readonly params: IAnalyzeParams) {
-        super();
+    constructor(override readonly params: IAnalyzeParams) {
+        super(params);
 
         if (params.package) {
             this.pkg = getPackageVersionfromString(params.package);
@@ -50,6 +50,8 @@ export class AnalyzeReport extends AbstractReport<IAnalyzeParams> {
     async report(pkg: Package, { stdoutFormatter }: IReportContext): Promise<void> {
         await printStatistics(pkg, this.params.full, stdoutFormatter);
     }
+
+    validate = undefined;
 }
 
 export async function printStatistics(

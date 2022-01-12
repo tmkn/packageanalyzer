@@ -16,8 +16,8 @@ export class LoopsReport extends AbstractReport<ILoopParams> {
     name = `Loop Report`;
     pkg: PackageVersion;
 
-    constructor(readonly params: ILoopParams) {
-        super();
+    constructor(override readonly params: ILoopParams) {
+        super(params);
 
         this.pkg = getPackageVersionfromString(params.package);
         this.type = params.type;
@@ -62,4 +62,6 @@ export class LoopsReport extends AbstractReport<ILoopParams> {
             }
         }
     }
+
+    validate = undefined;
 }
