@@ -1,7 +1,7 @@
 import { Command, Option } from "clipanion";
 
 import { CliCommand, defaultDependencyType, isValidDependencyType } from "./common";
-import { AnalyzeReport, IAnalyzeParams } from "../reports/AnalyzeReport";
+import { AnalyzeReport } from "../reports/AnalyzeReport";
 
 export class AnalyzeCommand extends CliCommand<AnalyzeReport> {
     public package?: string = Option.String(`--package`, {
@@ -42,13 +42,14 @@ export class AnalyzeCommand extends CliCommand<AnalyzeReport> {
             );
         }
 
-        const params: IAnalyzeParams = {
+        const params = {
             folder: this.folder,
             package: this.package,
             type: this.type,
             full: this.full
         };
-
+        //console.log(params);
+        //throw new Error(`foo`);
         return new AnalyzeReport(params);
     }
 }
