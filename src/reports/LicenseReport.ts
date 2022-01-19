@@ -1,3 +1,4 @@
+import * as t from "io-ts";
 import * as chalk from "chalk";
 
 import { defaultDependencyType } from "../cli/common";
@@ -13,15 +14,20 @@ import {
 import { getPackageVersionFromPath } from "../visitors/util.node";
 import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
 import { AbstractReport, IReportContext } from "./Report";
-import { DependencyTypes } from "./Validation";
+import { BaseFolderParameter, BasePackageParameter, dependencyType } from "./Validation";
 
-export interface ILicenseParams {
-    package?: string;
-    folder?: string;
-    type?: DependencyTypes;
-    allowList?: string[];
-    grouped?: boolean;
-}
+const OptionalParams = t.partial({
+    type: dependencyType,
+    allowList: t.array(t.string),
+    grouped: t.boolean
+});
+
+const PackageParams = t.intersection([BasePackageParameter, OptionalParams]);
+const FolderParams = t.intersection([BaseFolderParameter, OptionalParams]);
+
+const LicenseParams = t.union([PackageParams, FolderParams]);
+
+export type ILicenseParams = t.TypeOf<typeof LicenseParams>;
 
 export class LicenseReport extends AbstractReport<ILicenseParams> {
     name = `License Report`;
@@ -30,12 +36,12 @@ export class LicenseReport extends AbstractReport<ILicenseParams> {
     allowList: string[];
     grouped: boolean;
 
-    constructor(override readonly params: ILicenseParams) {
+    constructor(params: ILicenseParams) {
         super(params);
 
-        if (params.package) {
+        if (PackageParams.is(params)) {
             this.pkg = getPackageVersionfromString(params.package);
-        } else if (params.folder) {
+        } else if (FolderParams.is(params)) {
             this.pkg = getPackageVersionFromPath(params.folder);
             this.provider = new FileSystemPackageProvider(params.folder);
         } else throw new Error(`Must provide package or folder option`);
@@ -51,7 +57,9 @@ export class LicenseReport extends AbstractReport<ILicenseParams> {
         printLicenseCheck(licenseReport, this.grouped, stdoutFormatter);
     }
 
-    validate = undefined;
+    validate(): t.Type<ILicenseParams> {
+        return LicenseParams;
+    }
 }
 
 function printLicenseCheck(

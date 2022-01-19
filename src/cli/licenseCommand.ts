@@ -4,23 +4,23 @@ import { ILicenseParams, LicenseReport } from "../reports/LicenseReport";
 import { CliCommand, defaultDependencyType, isValidDependencyType } from "./common";
 
 export class LicenseCheckCommand extends CliCommand<LicenseReport> {
-    public package?: string = Option.String(`--package`, {
+    public package = Option.String(`--package`, {
         description: `the package to analyze e.g. typescript, typescript@3.5.1`
     });
 
-    public type: string = Option.String(`--type`, defaultDependencyType, {
+    public type = Option.String(`--type`, defaultDependencyType, {
         description: `the type of dependencies you want to analzye, "dependencies" or "devDependencies"`
     });
 
-    public allowList?: string[] = Option.Array(`--allow`, {
+    public allowList = Option.Array(`--allow`, {
         description: `the type of dependencies you want to allow"`
     });
 
-    public grouped: boolean = Option.Boolean(`--grouped`, false, {
+    public grouped = Option.Boolean(`--grouped`, false, {
         description: `specificies if the data should be grouped by license`
     });
 
-    public folder?: string = Option.String(`--folder`, { description: `path to a package.json` });
+    public folder = Option.String(`--folder`, { description: `path to a package.json` });
 
     static override usage = Command.Usage({
         description: `check the licenses for all packages in the dependency tree`,
@@ -61,14 +61,28 @@ export class LicenseCheckCommand extends CliCommand<LicenseReport> {
             );
         }
 
-        const params: ILicenseParams = {
-            type: this.type,
-            folder: this.folder,
-            package: this.package,
-            allowList: this.allowList,
-            grouped: this.grouped
-        };
+        if (this.folder) {
+            const params: ILicenseParams = {
+                type: this.type,
+                folder: this.folder,
+                package: this.package,
+                allowList: this.allowList,
+                grouped: this.grouped
+            };
 
-        return new LicenseReport(params);
+            return new LicenseReport(params);
+        } else if (this.package) {
+            const params: ILicenseParams = {
+                type: this.type,
+                folder: this.folder,
+                package: this.package,
+                allowList: this.allowList,
+                grouped: this.grouped
+            };
+
+            return new LicenseReport(params);
+        }
+
+        throw new Error(`No package nor folder option was provided`);
     }
 }
