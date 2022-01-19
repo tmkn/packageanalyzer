@@ -1,3 +1,5 @@
+import * as t from "io-ts";
+
 import { INpmDownloadStatistic } from "../npm";
 import { Package } from "../package/package";
 import { IFormatter } from "../utils/formatter";
@@ -5,27 +7,59 @@ import { downloadJson, Url } from "../utils/requests";
 import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
 import { AbstractReport, IReportContext } from "./Report";
 
-export interface IDownloadParams {
-    pkg: string;
-    url?: Url;
-}
+const urlType = new t.Type<Url>(
+    "urlType",
+    (input: unknown): input is Url =>
+        typeof input === "string" && (input.startsWith(`http://`) || input.startsWith(`https://`)),
+    (input, context) => {
+        if (
+            typeof input === "string" &&
+            (input.startsWith(`http://`) || input.startsWith(`https://`))
+        ) {
+            return t.success(input as Url);
+        }
+
+        return t.failure(
+            input,
+            context,
+            `Expected "dependencies" or "devDependencies" but got "${input}"`
+        );
+    },
+    t.identity
+);
+
+const RequiredParams = t.type({
+    pkg: t.string
+});
+
+const OptionalParams = t.partial({
+    url: urlType
+});
+
+const DownloadParams = t.intersection([RequiredParams, OptionalParams]);
+
+export type IDownloadParams = t.TypeOf<typeof DownloadParams>;
 
 export class DownloadReport extends AbstractReport<IDownloadParams> {
     name = `Download Report`;
     pkg: PackageVersion;
 
-    constructor(override readonly params: IDownloadParams) {
+    constructor(params: unknown) {
         super(params);
 
         this.depth = 0;
-        this.pkg = getPackageVersionfromString(params.pkg);
+
+        if (DownloadParams.is(params)) this.pkg = getPackageVersionfromString(params.pkg);
+        else throw new Error(`pkg was not set`);
     }
 
     async report(pkg: Package, { stdoutFormatter }: IReportContext): Promise<void> {
-        await cliDownloads(pkg.name, this.params.url ?? null, stdoutFormatter);
+        if (this.params) await cliDownloads(pkg.name, this.params.url ?? null, stdoutFormatter);
     }
 
-    validate = undefined;
+    validate(): t.Type<IDownloadParams> {
+        return DownloadParams;
+    }
 }
 
 async function cliDownloads(pkg: string, url: Url | null, formatter: IFormatter): Promise<void> {

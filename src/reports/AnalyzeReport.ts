@@ -1,7 +1,7 @@
 import * as chalk from "chalk";
 import * as t from "io-ts";
 
-import { daysAgo, defaultDependencyType } from "../cli/common";
+import { daysAgo } from "../cli/common";
 import { ReleaseDecorator } from "../extensions/decorators/ReleaseDecorator";
 import {
     DependencyUtilities,
@@ -19,7 +19,7 @@ import { IFormatter } from "../utils/formatter";
 import { getPackageVersionFromPath } from "../visitors/util.node";
 import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
 import { AbstractReport, IReportContext } from "./Report";
-import { dependencyType, DependencyTypes } from "./Validation";
+import { dependencyType } from "./Validation";
 
 const PackageParams = t.type({
     package: t.string,
@@ -54,8 +54,6 @@ export class AnalyzeReport extends AbstractReport<IAnalyzeParams> {
             //todo error handling
             throw new Error(`Received wrong analyze parameters`);
         }
-
-        //this.type = this.params.type ?? defaultDependencyType;
     }
 
     async report(pkg: Package, { stdoutFormatter }: IReportContext): Promise<void> {
