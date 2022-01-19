@@ -45,7 +45,7 @@ export class AnalyzeReport extends AbstractReport<IAnalyzeParams> {
     name = `Analyze Report`;
     pkg: PackageVersion;
 
-    constructor(params: unknown) {
+    constructor(params: IAnalyzeParams) {
         super(params);
 
         if (PackageParams.is(this.params)) {

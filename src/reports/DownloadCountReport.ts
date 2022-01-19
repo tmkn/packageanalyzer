@@ -41,7 +41,7 @@ export class DownloadReport extends AbstractReport<IDownloadParams> {
     name = `Download Report`;
     pkg: PackageVersion;
 
-    constructor(params: unknown) {
+    constructor(params: IDownloadParams) {
         super(params);
 
         this.depth = 0;

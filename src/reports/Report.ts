@@ -37,7 +37,7 @@ export abstract class AbstractReport<T extends {}> implements IReport<T> {
     type: DependencyTypes | undefined;
     depth: number | undefined;
 
-    constructor(params: unknown) {
+    constructor(params: T) {
         const foo = this.validate?.();
 
         if (foo) {
