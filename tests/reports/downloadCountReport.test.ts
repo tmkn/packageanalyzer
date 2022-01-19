@@ -15,7 +15,7 @@ describe(`DownloadCountReport Tests`, () => {
 
     test(`works`, async () => {
         const downloadReport = new DownloadReport({
-            pkg: `_downloads`,
+            package: `_downloads`,
             url: `http://localhost:${server.port}/`
         });
 

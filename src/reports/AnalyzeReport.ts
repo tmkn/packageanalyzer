@@ -19,19 +19,23 @@ import { IFormatter } from "../utils/formatter";
 import { getPackageVersionFromPath } from "../visitors/util.node";
 import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
 import { AbstractReport, IReportContext } from "./Report";
-import { dependencyType } from "./Validation";
+import { BaseFolderParameter, BasePackageParameter, TypeParameter } from "./Validation";
 
-const PackageParams = t.type({
-    package: t.string,
-    type: dependencyType,
-    full: t.boolean
-});
+const PackageParams = t.intersection([
+    BasePackageParameter,
+    TypeParameter,
+    t.type({
+        full: t.boolean
+    })
+]);
 
-const FolderParams = t.type({
-    folder: t.string,
-    type: dependencyType,
-    full: t.boolean
-});
+const FolderParams = t.intersection([
+    BaseFolderParameter,
+    TypeParameter,
+    t.type({
+        full: t.boolean
+    })
+]);
 
 const AnalyzeParams = t.union([PackageParams, FolderParams]);
 

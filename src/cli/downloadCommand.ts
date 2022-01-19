@@ -24,7 +24,7 @@ export class DownloadCommand extends CliCommand<DownloadReport> {
     createReport(): DownloadReport {
         if (typeof this.package !== "undefined") {
             const params: IDownloadParams = {
-                pkg: this.package,
+                package: this.package,
                 url: DownloadCommand.DownloadUrl
             };
 

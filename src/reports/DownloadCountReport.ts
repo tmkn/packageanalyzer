@@ -6,6 +6,7 @@ import { IFormatter } from "../utils/formatter";
 import { downloadJson, Url } from "../utils/requests";
 import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
 import { AbstractReport, IReportContext } from "./Report";
+import { BasePackageParameter } from "./Validation";
 
 const urlType = new t.Type<Url>(
     "urlType",
@@ -28,15 +29,11 @@ const urlType = new t.Type<Url>(
     t.identity
 );
 
-const RequiredParams = t.type({
-    pkg: t.string
-});
-
 const OptionalParams = t.partial({
     url: urlType
 });
 
-const DownloadParams = t.intersection([RequiredParams, OptionalParams]);
+const DownloadParams = t.intersection([BasePackageParameter, OptionalParams]);
 
 export type IDownloadParams = t.TypeOf<typeof DownloadParams>;
 
@@ -49,7 +46,7 @@ export class DownloadReport extends AbstractReport<IDownloadParams> {
 
         this.depth = 0;
 
-        if (DownloadParams.is(params)) this.pkg = getPackageVersionfromString(params.pkg);
+        if (DownloadParams.is(params)) this.pkg = getPackageVersionfromString(params.package);
         else throw new Error(`pkg was not set`);
     }
 

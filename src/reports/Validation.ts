@@ -44,3 +44,15 @@ export const stringType = new t.Type<string>(
     },
     t.identity
 );
+
+export const TypeParameter = t.type({
+    type: dependencyType
+});
+
+export const BasePackageParameter = t.type({
+    package: t.string
+});
+
+export const BaseFolderParameter = t.type({
+    folder: t.string
+});
