@@ -5,7 +5,7 @@ import { ITreeReportParams, TreeReport } from "../reports/TreeReport";
 import { DependencyTypes } from "../reports/Validation";
 
 export class TreeCommand extends CliCommand<TreeReport> {
-    public package?: string = Option.String(`--package`, {
+    public package = Option.String(`--package`, {
         description: `the package to display the dependency tree e.g. typescript@3.5.1`
     });
 
@@ -13,7 +13,7 @@ export class TreeCommand extends CliCommand<TreeReport> {
         description: `the type of dependencies you want to analzye, "dependencies" or "devDependencies"`
     });
 
-    public folder?: string = Option.String(`--folder`, {
+    public folder = Option.String(`--folder`, {
         description: `path to a package.json`
     });
 
@@ -46,12 +46,24 @@ export class TreeCommand extends CliCommand<TreeReport> {
     static override paths = [[`tree`]];
 
     createReport(): TreeReport {
-        const params: ITreeReportParams = {
-            type: this.type,
-            folder: this.folder,
-            package: this.package
-        };
+        if (this.folder) {
+            const params: ITreeReportParams = {
+                type: this.type,
+                folder: this.folder
+            };
 
-        return new TreeReport(params);
+            return new TreeReport(params);
+        }
+
+        if (this.package) {
+            const params: ITreeReportParams = {
+                type: this.type,
+                package: this.package
+            };
+
+            return new TreeReport(params);
+        }
+
+        throw new Error(`No package nor folder option was provided`);
     }
 }
