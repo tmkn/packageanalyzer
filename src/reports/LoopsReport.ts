@@ -1,3 +1,4 @@
+import * as t from "io-ts";
 import * as chalk from "chalk";
 
 import { isValidDependencyType } from "../cli/common";
@@ -5,18 +6,17 @@ import { LoopUtilities } from "../extensions/utilities/LoopUtilities";
 import { Package } from "../package/package";
 import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
 import { AbstractReport, IReportContext } from "./Report";
-import { DependencyTypes } from "./Validation";
+import { BasePackageParameter, TypeParameter } from "./Validation";
 
-export interface ILoopParams {
-    package: string;
-    type: DependencyTypes;
-}
+const LoopParams = t.intersection([BasePackageParameter, TypeParameter]);
+
+export type ILoopParams = t.TypeOf<typeof LoopParams>;
 
 export class LoopsReport extends AbstractReport<ILoopParams> {
     name = `Loop Report`;
     pkg: PackageVersion;
 
-    constructor(override readonly params: ILoopParams) {
+    constructor(params: ILoopParams) {
         super(params);
 
         this.pkg = getPackageVersionfromString(params.package);
@@ -63,5 +63,7 @@ export class LoopsReport extends AbstractReport<ILoopParams> {
         }
     }
 
-    validate = undefined;
+    validate(): t.Type<ILoopParams> {
+        return LoopParams;
+    }
 }
