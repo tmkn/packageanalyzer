@@ -16,9 +16,9 @@ describe(`ReportService Tests`, () => {
             pkg: [`react`],
             report: async () => {
                 cb();
-            },
-            provider: provider
+            }
         });
+        testReport.provider = provider;
         const reportService = new ReportService(
             {
                 reports: [testReport]
@@ -39,9 +39,9 @@ describe(`ReportService Tests`, () => {
             pkg: [`react`],
             report: async () => {
                 cb();
-            },
-            provider: provider
+            }
         });
+        testReport.provider = provider;
         const reportService = new ReportService(
             {
                 reports: [testReport, testReport, testReport]
@@ -62,9 +62,9 @@ describe(`ReportService Tests`, () => {
             pkg: [`react`],
             report: async pkg => {
                 fullName = pkg.fullName;
-            },
-            provider: provider
+            }
         });
+        testReport.provider = provider;
         const reportService = new ReportService(
             {
                 reports: [testReport]
@@ -84,11 +84,11 @@ describe(`ReportService Tests`, () => {
         const token = `Hello World`;
         const testReport = new TestReport({
             pkg: [`react`],
-            report: async (pkg, formatter) => {
-                formatter.writeLine(token);
-            },
-            provider: provider
+            report: async (pkg, context) => {
+                context.stdoutFormatter.writeLine(token);
+            }
         });
+        testReport.provider = provider;
         const reportService = new ReportService(
             {
                 reports: [testReport]
@@ -111,18 +111,18 @@ describe(`ReportService Tests`, () => {
             pkg: [`react`],
             report: async pkg => {
                 directDependenciesCount1 = pkg.directDependencies.length;
-            },
-            provider: provider,
-            depth: 0
+            }
         });
+        testReport1.provider = provider;
+        testReport1.depth = 0;
         const testReport2 = new TestReport({
             pkg: [`react`],
             report: async pkg => {
                 directDependenciesCount2 = pkg.directDependencies.length;
-            },
-            provider: provider,
-            depth: Infinity
+            }
         });
+        testReport2.provider = provider;
+        testReport2.depth = Infinity;
         const reportService = new ReportService(
             {
                 reports: [testReport1, testReport2]
@@ -144,9 +144,9 @@ describe(`ReportService Tests`, () => {
             pkg: [`react`],
             report: async () => {
                 throw new Error(`Whoopsie`);
-            },
-            provider: provider
+            }
         });
+        willThrow.provider = provider;
 
         const reportService = new ReportService(
             {

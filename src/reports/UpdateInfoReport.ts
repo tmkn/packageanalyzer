@@ -1,4 +1,5 @@
 import * as chalk from "chalk";
+import * as t from "io-ts";
 
 import { daysAgo } from "../cli/common";
 import { Package } from "../package/package";
@@ -6,17 +7,44 @@ import { OnlinePackageProvider } from "../providers/online";
 import { updateInfo } from "../utils/update";
 import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
 import { AbstractReport, IReportContext } from "./Report";
+import { BasePackageParameter } from "./Validation";
 
-export interface IUpdateInfoParams {
-    package: string;
-    provider: OnlinePackageProvider;
-}
+export const onlinePackageProviderType = new t.Type<OnlinePackageProvider>(
+    "onlinePackageProviderType",
+    (input: unknown): input is OnlinePackageProvider =>
+        typeof input === "object" &&
+        input !== null &&
+        "getPackageMetadata" in input &&
+        "getPackageJson" in input,
+    (input, context) => {
+        if (
+            typeof input === "object" &&
+            input !== null &&
+            "getPackageMetadata" in input &&
+            "getPackageJson" in input
+        ) {
+            return t.success(input as OnlinePackageProvider);
+        }
+
+        return t.failure(input, context, `Failed to verify OnlinePackageProvider`);
+    },
+    t.identity
+);
+
+const UpdateInfoParams = t.intersection([
+    BasePackageParameter,
+    t.type({
+        provider: onlinePackageProviderType
+    })
+]);
+
+export type IUpdateInfoParams = t.TypeOf<typeof UpdateInfoParams>;
 
 export class UpdateInfoReport extends AbstractReport<IUpdateInfoParams> {
     name = `Update Info Report`;
     pkg: PackageVersion;
 
-    constructor(override readonly params: IUpdateInfoParams) {
+    constructor(params: IUpdateInfoParams) {
         super(params);
 
         this.depth = 0;
@@ -59,5 +87,7 @@ export class UpdateInfoReport extends AbstractReport<IUpdateInfoParams> {
         ]);
     }
 
-    validate = undefined;
+    validate(): t.Type<IUpdateInfoParams> {
+        return UpdateInfoParams;
+    }
 }

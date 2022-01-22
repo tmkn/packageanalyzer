@@ -15,7 +15,7 @@ export interface IReportContext {
 
 export interface IReport<T extends {}> {
     readonly name: string;
-    readonly params: T | undefined;
+    readonly params: T;
     readonly pkg: PackageVersion;
 
     readonly decorators?: IDecorator<any, any>[];
@@ -24,12 +24,12 @@ export interface IReport<T extends {}> {
     readonly depth?: number;
 
     report(pkg: Package, context: IReportContext): Promise<void>;
-    validate?(): t.Type<T>;
+    validate(): t.Type<T>;
 }
 
 export abstract class AbstractReport<T extends {}> implements IReport<T> {
     abstract name: string;
-    readonly params: T | undefined = undefined;
+    readonly params: T;
     abstract pkg: PackageVersion;
 
     decorators: IDecorator<any, any>[] | undefined;
@@ -38,17 +38,15 @@ export abstract class AbstractReport<T extends {}> implements IReport<T> {
     depth: number | undefined;
 
     constructor(params: T) {
-        const foo = this.validate?.();
+        const data = this.validate().decode(params);
 
-        if (foo) {
-            const data = foo.decode(params);
-
-            if (isRight(data)) {
-                this.params = data.right;
-            }
+        if (isRight(data)) {
+            this.params = data.right;
+        } else {
+            throw new Error(`Validation error`);
         }
     }
 
     abstract report(pkg: Package, context: IReportContext): Promise<void>;
-    abstract validate?(): t.Type<T, T, unknown>;
+    abstract validate(): t.Type<T, T, unknown>;
 }

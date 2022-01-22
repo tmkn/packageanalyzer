@@ -1,11 +1,9 @@
+import * as t from "io-ts";
 import { BaseContext } from "clipanion";
 
 import { Writable } from "stream";
-import { IDecorator } from "../src/extensions/decorators/Decorator";
 import { Package } from "../src/package/package";
-import { IPackageJsonProvider } from "../src/providers/provider";
-import { AbstractReport, IReportContext } from "../src/reports/Report";
-import { DependencyTypes } from "../src/reports/Validation";
+import { AbstractReport, IReport, IReportContext } from "../src/reports/Report";
 import { IFormatter } from "../src/utils/formatter";
 import { PackageVersion } from "../src/visitors/visitor";
 
@@ -41,36 +39,50 @@ export class TestWritable extends Writable {
     }
 }
 
-interface ITestReport {
-    pkg: PackageVersion;
-    report: (pkg: Package, formatter: IFormatter) => Promise<void>;
+export const pkgType = new t.Type<PackageVersion>(
+    "pkgType",
+    (input: unknown): input is PackageVersion => Array.isArray(input),
+    (input, context) => {
+        return t.success(input as PackageVersion);
+    },
+    t.identity
+);
 
-    decorators?: IDecorator<any, any>[];
-    provider?: IPackageJsonProvider;
-    type?: DependencyTypes;
-    depth?: number;
-}
+type ReportSignature = IReport<any>["report"];
+
+export const reportType = new t.Type<ReportSignature>(
+    "reportType",
+    (input: unknown): input is ReportSignature => true,
+    (input, context) => {
+        return t.success(input as ReportSignature);
+    },
+    t.identity
+);
+
+const TestReportParams = t.type({
+    pkg: pkgType,
+    report: reportType
+});
+
+export type ITestReport = t.TypeOf<typeof TestReportParams>;
 
 export class TestReport extends AbstractReport<ITestReport> {
     name = `Test Report`;
     pkg: PackageVersion;
 
-    constructor(public override params: ITestReport) {
+    constructor(params: ITestReport) {
         super(params);
 
         this.pkg = params.pkg;
-
-        this.decorators = params.decorators;
-        this.provider = params.provider;
-        this.type = params.type;
-        this.depth = params.depth;
     }
 
-    async report(pkg: Package, { stdoutFormatter }: IReportContext): Promise<void> {
-        return this.params.report(pkg, stdoutFormatter);
+    async report(pkg: Package, context: IReportContext): Promise<void> {
+        return this.params.report(pkg, context);
     }
 
-    validate = undefined;
+    validate(): t.Type<ITestReport> {
+        return TestReportParams;
+    }
 }
 
 interface IMockContext {
