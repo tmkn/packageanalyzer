@@ -24,12 +24,6 @@ export class LoopsReport extends AbstractReport<ILoopParams> {
     }
 
     async report(pkg: Package, { stdoutFormatter }: IReportContext): Promise<void> {
-        if (!isValidDependencyType(this.type)) {
-            throw new Error(
-                `Please only specify "dependencies" or "devDependencies" for the --type argument`
-            );
-        }
-
         const loopPathMap = new LoopUtilities(pkg).loopPathMap;
         const distinctCount: number = [...loopPathMap].reduce((i, [, loops]) => i + loops.size, 0);
         const loopPadding = ("" + distinctCount).length;
