@@ -46,12 +46,11 @@ export class DownloadReport extends AbstractReport<IDownloadParams> {
 
         this.depth = 0;
 
-        if (DownloadParams.is(params)) this.pkg = getPackageVersionfromString(params.package);
-        else throw new Error(`pkg was not set`);
+        this.pkg = getPackageVersionfromString(params.package);
     }
 
     async report(pkg: Package, { stdoutFormatter }: IReportContext): Promise<void> {
-        if (this.params) await cliDownloads(pkg.name, this.params.url ?? null, stdoutFormatter);
+        await cliDownloads(pkg.name, this.params.url ?? null, stdoutFormatter);
     }
 
     validate(): t.Type<IDownloadParams> {

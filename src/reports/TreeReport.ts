@@ -27,11 +27,9 @@ export class TreeReport extends AbstractReport<ITreeReportParams> {
 
         if (PackageParams.is(params)) {
             this.pkg = getPackageVersionfromString(params.package);
-        } else if (FolderParams.is(params)) {
+        } else {
             this.pkg = getPackageVersionFromPath(params.folder);
             this.provider = new FileSystemPackageProvider(params.folder);
-        } else {
-            throw new Error(`Needs at least "package" or "folder" option`);
         }
     }
 

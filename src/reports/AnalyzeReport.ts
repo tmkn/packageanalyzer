@@ -51,17 +51,14 @@ export class AnalyzeReport extends AbstractReport<IAnalyzeParams> {
         if (PackageParams.is(this.params)) {
             this.pkg = getPackageVersionfromString(this.params.package);
             this.decorators = [new ReleaseDecorator(npmOnline)];
-        } else if (FolderParams.is(this.params)) {
+        } else {
             this.pkg = getPackageVersionFromPath(this.params.folder);
             this.provider = new FileSystemPackageProvider(this.params.folder);
-        } else {
-            //todo error handling
-            throw new Error(`Received wrong analyze parameters`);
         }
     }
 
     async report(pkg: Package, { stdoutFormatter }: IReportContext): Promise<void> {
-        if (this.params) await printStatistics(pkg, this.params.full, stdoutFormatter);
+        await printStatistics(pkg, this.params.full, stdoutFormatter);
     }
 
     validate(): t.Type<IAnalyzeParams> {

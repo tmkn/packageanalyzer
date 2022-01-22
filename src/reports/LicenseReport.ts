@@ -41,10 +41,10 @@ export class LicenseReport extends AbstractReport<ILicenseParams> {
 
         if (PackageParams.is(params)) {
             this.pkg = getPackageVersionfromString(params.package);
-        } else if (FolderParams.is(params)) {
+        } else {
             this.pkg = getPackageVersionFromPath(params.folder);
             this.provider = new FileSystemPackageProvider(params.folder);
-        } else throw new Error(`Must provide package or folder option`);
+        }
 
         this.type = params.type ?? defaultDependencyType;
         this.allowList = params.allowList ?? [];
@@ -52,7 +52,7 @@ export class LicenseReport extends AbstractReport<ILicenseParams> {
     }
 
     async report(pkg: Package, { stdoutFormatter }: IReportContext): Promise<void> {
-        const licenseReport = createWhitelistLicenseCheckReport(pkg, this.allowList ?? [], false);
+        const licenseReport = createWhitelistLicenseCheckReport(pkg, this.allowList, false);
 
         printLicenseCheck(licenseReport, this.grouped, stdoutFormatter);
     }
