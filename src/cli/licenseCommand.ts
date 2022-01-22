@@ -65,7 +65,6 @@ export class LicenseCheckCommand extends CliCommand<LicenseReport> {
             const params: ILicenseParams = {
                 type: this.type,
                 folder: this.folder,
-                package: this.package,
                 allowList: this.allowList,
                 grouped: this.grouped
             };
@@ -74,7 +73,6 @@ export class LicenseCheckCommand extends CliCommand<LicenseReport> {
         } else if (this.package) {
             const params: ILicenseParams = {
                 type: this.type,
-                folder: this.folder,
                 package: this.package,
                 allowList: this.allowList,
                 grouped: this.grouped

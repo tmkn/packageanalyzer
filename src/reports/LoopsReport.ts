@@ -1,7 +1,6 @@
 import * as t from "io-ts";
 import * as chalk from "chalk";
 
-import { isValidDependencyType } from "../cli/common";
 import { LoopUtilities } from "../extensions/utilities/LoopUtilities";
 import { Package } from "../package/package";
 import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
