@@ -33,13 +33,13 @@ export function daysAgo(date: string | number | Date): string {
 }
 
 export abstract class CliCommand<T extends AbstractReport<any>> extends Command {
-    abstract createReport(): T;
+    abstract getReport(): T;
 
     beforeProcess: ((report: T) => void) | undefined = undefined;
 
     async execute(): Promise<number | void> {
         try {
-            const report = this.createReport();
+            const report = this.getReport();
             const reportService = new ReportService(
                 {
                     reports: [report]

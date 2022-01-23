@@ -45,7 +45,7 @@ export class TreeCommand extends CliCommand<TreeReport> {
 
     static override paths = [[`tree`]];
 
-    createReport(): TreeReport {
+    getReport(): TreeReport {
         if (this.folder) {
             const params: ITreeReportParams = {
                 type: this.type,

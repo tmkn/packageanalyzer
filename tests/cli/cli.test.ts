@@ -14,7 +14,7 @@ describe(`CLI Utility`, () => {
 describe(`CliCommand Tests`, () => {
     test(`Correctly writes to stderr on exception`, async () => {
         class ThrowCliCommand extends CliCommand<AbstractReport<any>> {
-            createReport(): AbstractReport<any> {
+            getReport(): AbstractReport<any> {
                 throw new Error(`Whoops`);
             }
         }

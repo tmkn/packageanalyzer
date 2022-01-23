@@ -35,7 +35,7 @@ export class AnalyzeCommand extends CliCommand<AnalyzeReport> {
 
     static override paths = [[`analyze`]];
 
-    createReport(): AnalyzeReport {
+    getReport(): AnalyzeReport {
         if (!isValidDependencyType(this.type)) {
             throw new Error(
                 `Please only specify "dependencies" or "devDependencies" for the --type argument\nReceived ${this.type}\n`

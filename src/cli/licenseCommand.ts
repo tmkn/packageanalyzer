@@ -54,7 +54,7 @@ export class LicenseCheckCommand extends CliCommand<LicenseReport> {
 
     static override paths = [[`license`]];
 
-    createReport(): LicenseReport {
+    getReport(): LicenseReport {
         if (!isValidDependencyType(this.type)) {
             throw new Error(
                 `Please only specify "dependencies" or "devDependencies" for the --type argument`
