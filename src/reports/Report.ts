@@ -1,5 +1,6 @@
-import { isRight } from "fp-ts/lib/Either";
+import { isLeft, isRight } from "fp-ts/lib/Either";
 import * as t from "io-ts";
+import reporter from "io-ts-reporters";
 
 import { IDecorator } from "../extensions/decorators/Decorator";
 import { Package } from "../package/package";
@@ -38,11 +39,21 @@ export abstract class AbstractReport<T extends {}> implements IReport<T> {
     depth: number | undefined;
 
     constructor(params: T) {
-        const data = this.validate().decode(params);
+        const result = this.validate().decode(params);
 
-        if (isRight(data)) {
-            this.params = data.right;
+        if (isRight(result)) {
+            this.params = result.right;
         } else {
+            if (isLeft(result)) {
+                const errors: string[] = [];
+
+                for (const error of reporter.report(result)) {
+                    errors.push(...[...new Set<string>(error.split(`\n`))]);
+                }
+
+                throw new Error(errors.join(`\n`));
+            }
+
             throw new Error(`Validation error`);
         }
     }
