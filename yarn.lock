@@ -884,9 +884,9 @@
   integrity sha512-YATxVxgRqNH6nHEIsvg6k2Boc1JHI9ZbH5iWFFv/MTkchz3b1ieGDa5T0a9RznNdI0KhVbdbWSN+KWWrQZRxTw==
 
 "@types/node@*", "@types/node@^17.0.0":
-  version "17.0.10"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-17.0.10.tgz#616f16e9d3a2a3d618136b1be244315d95bd7cab"
-  integrity sha512-S/3xB4KzyFxYGCppyDt68yzBU9ysL88lSdIah4D6cptdcltc4NCPCAMc0+PCpg/lLIyC7IPvj2Z52OJWeIUkog==
+  version "17.0.13"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-17.0.13.tgz#5ed7ed7c662948335fcad6c412bb42d99ea754e3"
+  integrity sha512-Y86MAxASe25hNzlDbsviXl8jQHb0RDvKt4c40ZJQ1Don0AAL0STLZSs4N+6gLEO55pedy7r2cLwS+ZDxPm/2Bw==
 
 "@types/prettier@^2.1.5":
   version "2.3.2"
@@ -1522,9 +1522,9 @@ cli-spinners@^2.5.0:
   integrity sha512-t+4/y50K/+4xcCRosKkA7W4gTr1MySvLV0q+PxmG7FJ5g+66ChKurYjxBCjHggHH3HA5Hh9cy+lcUGWDqVH+4Q==
 
 clipanion@^3.2.0-rc.4:
-  version "3.2.0-rc.5"
-  resolved "https://registry.yarnpkg.com/clipanion/-/clipanion-3.2.0-rc.5.tgz#e52c58139ddd7322c0bdbdb7ba4a6f3a9962ab9e"
-  integrity sha512-qCOhL+TRE6JpmBNkT6v3VhqdWGDYv1DUcPTHfggd1x1njLRS8/i/zShUWW1j4iW2P3nTG3s7GTnHZkjhGxC1gg==
+  version "3.2.0-rc.6"
+  resolved "https://registry.yarnpkg.com/clipanion/-/clipanion-3.2.0-rc.6.tgz#416b17958c1c1c5906ed35911492a6ae87e9e9a7"
+  integrity sha512-lcByFNxi1L/sskjD/YybFZI43bnkm/AuUNFcF5i5Znz6nvWCH9gfq4qkNmAk5MhS/MPY5Im8jiqYH54h23Vc7Q==
   dependencies:
     typanion "^3.3.1"
 
