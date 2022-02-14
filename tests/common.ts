@@ -98,7 +98,8 @@ export function createMockContext(): IMockContext {
         stdin: process.stdin,
         stdout,
         stderr,
-        colorDepth: 8
+        colorDepth: 8,
+        env: {}
     };
 
     return {
