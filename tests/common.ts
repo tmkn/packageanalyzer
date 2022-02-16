@@ -38,7 +38,7 @@ class TestWritable extends Writable {
     }
 }
 
-export const pkgType = new t.Type<PackageVersion>(
+const pkgType = new t.Type<PackageVersion>(
     "pkgType",
     (input: unknown): input is PackageVersion => Array.isArray(input),
     (input, context) => {
@@ -49,7 +49,7 @@ export const pkgType = new t.Type<PackageVersion>(
 
 type ReportSignature = IReport<any>["report"];
 
-export const reportType = new t.Type<ReportSignature>(
+const reportType = new t.Type<ReportSignature>(
     "reportType",
     (input: unknown): input is ReportSignature => true,
     (input, context) => {
@@ -63,13 +63,13 @@ const TestReportParams = t.type({
     report: reportType
 });
 
-export type ITestReport = t.TypeOf<typeof TestReportParams>;
+type ITestReportParams = t.TypeOf<typeof TestReportParams>;
 
-export class TestReport extends AbstractReport<ITestReport> {
+export class TestReport extends AbstractReport<ITestReportParams> {
     name = `Test Report`;
     pkg: PackageVersion;
 
-    constructor(params: ITestReport) {
+    constructor(params: ITestReportParams) {
         super(params);
 
         this.pkg = params.pkg;
@@ -79,7 +79,7 @@ export class TestReport extends AbstractReport<ITestReport> {
         return this.params.report(pkg, context);
     }
 
-    override validate(): t.Type<ITestReport> {
+    override validate(): t.Type<ITestReportParams> {
         return TestReportParams;
     }
 }
