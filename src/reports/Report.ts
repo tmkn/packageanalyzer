@@ -25,7 +25,7 @@ export interface IReport<T extends {}> {
     readonly depth?: number;
 
     report(pkg: Package, context: IReportContext): Promise<void>;
-    validate(): t.Type<T>;
+    validate?(): t.Type<T>;
 }
 
 export abstract class AbstractReport<T extends {}> implements IReport<T> {
@@ -39,25 +39,29 @@ export abstract class AbstractReport<T extends {}> implements IReport<T> {
     depth: number | undefined;
 
     constructor(params: T) {
-        const result = this.validate().decode(params);
+        const result = this.validate?.().decode(params);
 
-        if (isRight(result)) {
-            this.params = result.right;
-        } else {
-            if (isLeft(result)) {
-                const errors: string[] = [];
+        if (result) {
+            if (isRight(result)) {
+                this.params = result.right;
+            } else {
+                if (isLeft(result)) {
+                    const errors: string[] = [];
 
-                for (const error of reporter.report(result)) {
-                    errors.push(...[...new Set<string>(error.split(`\n`))]);
+                    for (const error of reporter.report(result)) {
+                        errors.push(...[...new Set<string>(error.split(`\n`))]);
+                    }
+
+                    throw new Error(errors.join(`\n`));
                 }
 
-                throw new Error(errors.join(`\n`));
+                throw new Error(`Validation error`);
             }
-
-            throw new Error(`Validation error`);
+        } else {
+            this.params = params;
         }
     }
 
     abstract report(pkg: Package, context: IReportContext): Promise<void>;
-    abstract validate(): t.Type<T, T, unknown>;
+    validate?(): t.Type<T, T, unknown>;
 }

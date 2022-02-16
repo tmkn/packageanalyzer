@@ -37,7 +37,7 @@ export class TreeReport extends AbstractReport<ITreeReportParams> {
         printDependencyTree(pkg, stdoutFormatter);
     }
 
-    validate(): t.Type<ITreeReportParams> {
+    override validate(): t.Type<ITreeReportParams> {
         return TreeReportParams;
     }
 }

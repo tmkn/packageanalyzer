@@ -1,7 +1,7 @@
 import { Package } from "../../src/package/package";
 import { DownloadReport } from "../../src/reports/DownloadCountReport";
 import { Formatter } from "../../src/utils/formatter";
-import { TestWritable } from "./../common";
+import { createMockContext } from "./../common";
 import { createMockDownloadServer, IMockServer } from "./../server";
 
 describe(`DownloadCountReport Tests`, () => {
@@ -23,9 +23,8 @@ describe(`DownloadCountReport Tests`, () => {
         const fakePgk: Package = {
             name: `_downloads`
         };
-        const stdout = new TestWritable();
+        const { stdout, stderr } = createMockContext();
         const stdoutFormatter = new Formatter(stdout);
-        const stderr = new TestWritable();
         const stderrFormatter = new Formatter(stderr);
 
         await downloadReport.report(fakePgk, { stdoutFormatter, stderrFormatter });

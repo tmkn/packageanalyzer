@@ -53,7 +53,7 @@ export class DownloadReport extends AbstractReport<IDownloadParams> {
         await cliDownloads(pkg.name, this.params.url ?? null, stdoutFormatter);
     }
 
-    validate(): t.Type<IDownloadParams> {
+    override validate(): t.Type<IDownloadParams> {
         return DownloadParams;
     }
 }

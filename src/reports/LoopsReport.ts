@@ -56,7 +56,7 @@ export class LoopsReport extends AbstractReport<ILoopParams> {
         }
     }
 
-    validate(): t.Type<ILoopParams> {
+    override validate(): t.Type<ILoopParams> {
         return LoopParams;
     }
 }

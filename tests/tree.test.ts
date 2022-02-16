@@ -6,7 +6,7 @@ import { OraLogger } from "../src/loggers/OraLogger";
 import { ITreeFormatter, print } from "../src/utils/tree";
 import { Package } from "../src/package/package";
 import { Formatter } from "../src/utils/formatter";
-import { TestWritable } from "./common";
+import { createMockContext } from "./common";
 import { DependencyUtilities } from "../src/extensions/utilities/DependencyUtilities";
 import { LicenseUtilities } from "../src/extensions/utilities/LicenseUtilities";
 import { getPackageVersionFromPath } from "../src/visitors/util.node";
@@ -23,7 +23,7 @@ describe(`Tree Tests`, () => {
             getChildren: data => data.directDependencies
         };
 
-        const stdout = new TestWritable();
+        const { stdout } = createMockContext();
         const formatter = new Formatter(stdout);
 
         print<Package>(p, converter, formatter);
@@ -45,7 +45,7 @@ describe(`Tree Tests`, () => {
             getChildren: data => data.directDependencies
         };
 
-        const stdout = new TestWritable();
+        const { stdout } = createMockContext();
         const formatter = new Formatter(stdout);
 
         print<Package>(p, converter, formatter);

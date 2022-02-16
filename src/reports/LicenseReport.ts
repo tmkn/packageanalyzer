@@ -57,7 +57,7 @@ export class LicenseReport extends AbstractReport<ILicenseParams> {
         printLicenseCheck(licenseReport, this.grouped, stdoutFormatter);
     }
 
-    validate(): t.Type<ILicenseParams> {
+    override validate(): t.Type<ILicenseParams> {
         return LicenseParams;
     }
 }

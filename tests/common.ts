@@ -4,10 +4,9 @@ import { BaseContext } from "clipanion";
 import { Writable } from "stream";
 import { Package } from "../src/package/package";
 import { AbstractReport, IReport, IReportContext } from "../src/reports/Report";
-import { IFormatter } from "../src/utils/formatter";
 import { PackageVersion } from "../src/visitors/visitor";
 
-export class TestWritable extends Writable {
+class TestWritable extends Writable {
     private static _pattern = [
         "[\\u001B\\u009B][[\\]()#;?]*(?:(?:(?:(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]+)*|[a-zA-Z\\d]+(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]*)*)?\\u0007)",
         "(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PR-TZcf-ntqry=><~]))"
@@ -80,9 +79,26 @@ export class TestReport extends AbstractReport<ITestReport> {
         return this.params.report(pkg, context);
     }
 
-    validate(): t.Type<ITestReport> {
+    override validate(): t.Type<ITestReport> {
         return TestReportParams;
     }
+}
+
+export interface ITestReportNoValidationParams {
+    foo: string;
+}
+
+export class TestReportNoValidation extends AbstractReport<ITestReportNoValidationParams> {
+    name = `Test Report No Validation`;
+    pkg: PackageVersion;
+
+    constructor(params: ITestReportNoValidationParams) {
+        super(params);
+
+        this.pkg = [params.foo];
+    }
+
+    async report(pkg: Package, context: IReportContext): Promise<void> {}
 }
 
 interface IMockContext {

@@ -87,7 +87,7 @@ export class UpdateInfoReport extends AbstractReport<IUpdateInfoParams> {
         ]);
     }
 
-    validate(): t.Type<IUpdateInfoParams> {
+    override validate(): t.Type<IUpdateInfoParams> {
         return UpdateInfoParams;
     }
 }

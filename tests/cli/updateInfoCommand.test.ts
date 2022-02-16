@@ -29,6 +29,20 @@ describe(`Update Info Command`, () => {
         expect(stderr.lines).toMatchSnapshot(`stderr`);
     });
 
+    test(`Fails on missing version`, async () => {
+        const command = cli.process([`update`, `--package`, `react`]) as UpdateInfoCommand;
+
+        expect.assertions(2);
+        const { mockContext, stdout, stderr } = createMockContext();
+        command.context = mockContext;
+        command.beforeProcess = report => (report.provider = provider);
+
+        await command.execute();
+
+        expect(stdout.lines.length).toBeGreaterThan(0);
+        expect(stderr.lines.length).toBe(0);
+    });
+
     afterAll(() => {
         jest.useRealTimers();
 

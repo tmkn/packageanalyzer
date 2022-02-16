@@ -61,7 +61,7 @@ export class AnalyzeReport extends AbstractReport<IAnalyzeParams> {
         await printStatistics(pkg, this.params.full, stdoutFormatter);
     }
 
-    validate(): t.Type<IAnalyzeParams> {
+    override validate(): t.Type<IAnalyzeParams> {
         return AnalyzeParams;
     }
 }

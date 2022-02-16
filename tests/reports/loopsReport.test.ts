@@ -3,7 +3,7 @@ import * as path from "path";
 import { LoopsReport } from "../../src/reports/LoopsReport";
 import { ReportService } from "../../src/reports/ReportService";
 import { DependencyDumperProvider } from "../../src/utils/dumper";
-import { TestWritable } from "../common";
+import { createMockContext } from "../common";
 
 describe(`LoopsReport Test`, () => {
     const rootPath = path.join("tests", "data", "loopsdata");
@@ -21,8 +21,7 @@ describe(`LoopsReport Test`, () => {
 
         report.provider = provider;
 
-        const stdout = new TestWritable();
-        const stderr = new TestWritable();
+        const { stdout, stderr } = createMockContext();
         const reportService = new ReportService(
             {
                 reports: [report]
