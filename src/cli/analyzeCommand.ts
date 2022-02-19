@@ -4,17 +4,17 @@ import { CliCommand, defaultDependencyType, isValidDependencyType } from "./comm
 import { AnalyzeReport, IAnalyzeParams } from "../reports/AnalyzeReport";
 
 export class AnalyzeCommand extends CliCommand<AnalyzeReport> {
-    public package?: string = Option.String(`--package`, {
+    public package = Option.String(`--package`, {
         description: `the package to analyze e.g. typescript, typescript@3.5.1`
     });
 
-    public type?: string = Option.String(`--type`, defaultDependencyType, {
+    public type = Option.String(`--type`, defaultDependencyType, {
         description: `the type of dependencies you want to analzye, "dependencies" or "devDependencies"`
     });
 
-    public folder?: string = Option.String(`--folder`, { description: `path to a package.json` });
+    public folder = Option.String(`--folder`, { description: `path to a package.json` });
 
-    public full: boolean = Option.Boolean(`--full`, false, { description: `show all information` });
+    public full = Option.Boolean(`--full`, false, { description: `show all information` });
 
     static override usage = Command.Usage({
         description: `analyze a npm package or a local project`,
@@ -35,20 +35,31 @@ export class AnalyzeCommand extends CliCommand<AnalyzeReport> {
 
     static override paths = [[`analyze`]];
 
-    createReport(): AnalyzeReport {
+    getReport(): AnalyzeReport {
         if (!isValidDependencyType(this.type)) {
             throw new Error(
                 `Please only specify "dependencies" or "devDependencies" for the --type argument\nReceived ${this.type}\n`
             );
         }
 
-        const params: IAnalyzeParams = {
-            folder: this.folder,
-            package: this.package,
-            type: this.type,
-            full: this.full
-        };
+        if (this.folder) {
+            const params: IAnalyzeParams = {
+                folder: this.folder,
+                full: this.full,
+                type: this.type
+            };
 
-        return new AnalyzeReport(params);
+            return new AnalyzeReport(params);
+        } else if (this.package) {
+            const params: IAnalyzeParams = {
+                package: this.package,
+                full: this.full,
+                type: this.type
+            };
+
+            return new AnalyzeReport(params);
+        }
+
+        throw new Error(`No package nor folder option was provided`);
     }
 }

@@ -1,34 +1,28 @@
+import * as t from "io-ts";
 import * as chalk from "chalk";
 
-import { isValidDependencyType } from "../cli/common";
 import { LoopUtilities } from "../extensions/utilities/LoopUtilities";
 import { Package } from "../package/package";
-import { DependencyTypes, getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
+import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
 import { AbstractReport, IReportContext } from "./Report";
+import { BasePackageParameter, TypeParameter } from "./Validation";
 
-export interface ILoopParams {
-    package: string;
-    type: DependencyTypes;
-}
+const LoopParams = t.intersection([BasePackageParameter, TypeParameter]);
+
+export type ILoopParams = t.TypeOf<typeof LoopParams>;
 
 export class LoopsReport extends AbstractReport<ILoopParams> {
     name = `Loop Report`;
     pkg: PackageVersion;
 
-    constructor(readonly params: ILoopParams) {
-        super();
+    constructor(params: ILoopParams) {
+        super(params);
 
         this.pkg = getPackageVersionfromString(params.package);
         this.type = params.type;
     }
 
     async report(pkg: Package, { stdoutFormatter }: IReportContext): Promise<void> {
-        if (!isValidDependencyType(this.type)) {
-            throw new Error(
-                `Please only specify "dependencies" or "devDependencies" for the --type argument`
-            );
-        }
-
         const loopPathMap = new LoopUtilities(pkg).loopPathMap;
         const distinctCount: number = [...loopPathMap].reduce((i, [, loops]) => i + loops.size, 0);
         const loopPadding = ("" + distinctCount).length;
@@ -60,5 +54,9 @@ export class LoopsReport extends AbstractReport<ILoopParams> {
                 total += loopsForPkg.size;
             }
         }
+    }
+
+    override validate(): t.Type<ILoopParams> {
+        return LoopParams;
     }
 }

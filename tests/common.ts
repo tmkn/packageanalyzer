@@ -1,14 +1,12 @@
+import * as t from "io-ts";
 import { BaseContext } from "clipanion";
 
 import { Writable } from "stream";
-import { IDecorator } from "../src/extensions/decorators/Decorator";
 import { Package } from "../src/package/package";
-import { IPackageJsonProvider } from "../src/providers/provider";
-import { AbstractReport, IReportContext } from "../src/reports/Report";
-import { IFormatter } from "../src/utils/formatter";
-import { DependencyTypes, PackageVersion } from "../src/visitors/visitor";
+import { AbstractReport, IReport, IReportContext } from "../src/reports/Report";
+import { PackageVersion } from "../src/visitors/visitor";
 
-export class TestWritable extends Writable {
+class TestWritable extends Writable {
     private static _pattern = [
         "[\\u001B\\u009B][[\\]()#;?]*(?:(?:(?:(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]+)*|[a-zA-Z\\d]+(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]*)*)?\\u0007)",
         "(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PR-TZcf-ntqry=><~]))"
@@ -40,34 +38,67 @@ export class TestWritable extends Writable {
     }
 }
 
-interface ITestReport {
-    pkg: PackageVersion;
-    report: (pkg: Package, formatter: IFormatter) => Promise<void>;
+const pkgType = new t.Type<PackageVersion>(
+    "pkgType",
+    (input: unknown): input is PackageVersion => Array.isArray(input),
+    (input, context) => {
+        return t.success(input as PackageVersion);
+    },
+    t.identity
+);
 
-    decorators?: IDecorator<any, any>[];
-    provider?: IPackageJsonProvider;
-    type?: DependencyTypes;
-    depth?: number;
-}
+type ReportSignature = IReport<any>["report"];
 
-export class TestReport extends AbstractReport<ITestReport> {
+const reportType = new t.Type<ReportSignature>(
+    "reportType",
+    (input: unknown): input is ReportSignature => true,
+    (input, context) => {
+        return t.success(input as ReportSignature);
+    },
+    t.identity
+);
+
+const TestReportParams = t.type({
+    pkg: pkgType,
+    report: reportType
+});
+
+type ITestReportParams = t.TypeOf<typeof TestReportParams>;
+
+export class TestReport extends AbstractReport<ITestReportParams> {
     name = `Test Report`;
     pkg: PackageVersion;
 
-    constructor(public params: ITestReport) {
-        super();
+    constructor(params: ITestReportParams) {
+        super(params);
 
         this.pkg = params.pkg;
-
-        this.decorators = params.decorators;
-        this.provider = params.provider;
-        this.type = params.type;
-        this.depth = params.depth;
     }
 
-    async report(pkg: Package, { stdoutFormatter }: IReportContext): Promise<void> {
-        return this.params.report(pkg, stdoutFormatter);
+    async report(pkg: Package, context: IReportContext): Promise<void> {
+        return this.params.report(pkg, context);
     }
+
+    override validate(): t.Type<ITestReportParams> {
+        return TestReportParams;
+    }
+}
+
+export interface ITestReportNoValidationParams {
+    foo: string;
+}
+
+export class TestReportNoValidation extends AbstractReport<ITestReportNoValidationParams> {
+    name = `Test Report No Validation`;
+    pkg: PackageVersion;
+
+    constructor(params: ITestReportNoValidationParams) {
+        super(params);
+
+        this.pkg = [params.foo];
+    }
+
+    async report(pkg: Package, context: IReportContext): Promise<void> {}
 }
 
 interface IMockContext {

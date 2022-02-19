@@ -48,7 +48,8 @@ async function cliResolveFile(
         const provider = new FlatFileProvider(npmFile);
         const analyzeReport = new AnalyzeReport({
             package: pkgName,
-            full: false
+            full: false,
+            type: `dependencies`
         });
 
         analyzeReport.provider = provider;

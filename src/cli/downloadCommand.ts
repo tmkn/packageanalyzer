@@ -21,10 +21,10 @@ export class DownloadCommand extends CliCommand<DownloadReport> {
 
     static override paths = [[`downloads`]];
 
-    createReport(): DownloadReport {
+    getReport(): DownloadReport {
         if (typeof this.package !== "undefined") {
             const params: IDownloadParams = {
-                pkg: this.package,
+                package: this.package,
                 url: DownloadCommand.DownloadUrl
             };
 

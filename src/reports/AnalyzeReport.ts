@@ -1,6 +1,7 @@
 import * as chalk from "chalk";
+import * as t from "io-ts";
 
-import { daysAgo, defaultDependencyType } from "../cli/common";
+import { daysAgo } from "../cli/common";
 import { ReleaseDecorator } from "../extensions/decorators/ReleaseDecorator";
 import {
     DependencyUtilities,
@@ -16,38 +17,52 @@ import { FileSystemPackageProvider } from "../providers/folder";
 import { npmOnline } from "../providers/online";
 import { IFormatter } from "../utils/formatter";
 import { getPackageVersionFromPath } from "../visitors/util.node";
-import { DependencyTypes, getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
+import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
 import { AbstractReport, IReportContext } from "./Report";
+import { BaseFolderParameter, BasePackageParameter, TypeParameter } from "./Validation";
 
-export interface IAnalyzeParams {
-    package?: string;
-    folder?: string;
-    type?: DependencyTypes;
-    full: boolean;
-}
+const PackageParams = t.intersection([
+    BasePackageParameter,
+    TypeParameter,
+    t.type({
+        full: t.boolean
+    })
+]);
+
+const FolderParams = t.intersection([
+    BaseFolderParameter,
+    TypeParameter,
+    t.type({
+        full: t.boolean
+    })
+]);
+
+const AnalyzeParams = t.union([PackageParams, FolderParams]);
+
+export type IAnalyzeParams = t.TypeOf<typeof AnalyzeParams>;
 
 export class AnalyzeReport extends AbstractReport<IAnalyzeParams> {
     name = `Analyze Report`;
     pkg: PackageVersion;
 
-    constructor(readonly params: IAnalyzeParams) {
-        super();
+    constructor(params: IAnalyzeParams) {
+        super(params);
 
-        if (params.package) {
-            this.pkg = getPackageVersionfromString(params.package);
+        if (PackageParams.is(this.params)) {
+            this.pkg = getPackageVersionfromString(this.params.package);
             this.decorators = [new ReleaseDecorator(npmOnline)];
-        } else if (params.folder) {
-            this.pkg = getPackageVersionFromPath(params.folder);
-            this.provider = new FileSystemPackageProvider(params.folder);
         } else {
-            throw new Error(`No package or folder option provided`);
+            this.pkg = getPackageVersionFromPath(this.params.folder);
+            this.provider = new FileSystemPackageProvider(this.params.folder);
         }
-
-        this.type = params.type ?? defaultDependencyType;
     }
 
     async report(pkg: Package, { stdoutFormatter }: IReportContext): Promise<void> {
         await printStatistics(pkg, this.params.full, stdoutFormatter);
+    }
+
+    override validate(): t.Type<IAnalyzeParams> {
+        return AnalyzeParams;
     }
 }
 

@@ -4,10 +4,10 @@ import * as fs from "fs";
 import * as dayjs from "dayjs";
 import { Command } from "clipanion";
 
-import { DependencyTypes } from "../visitors/visitor";
 import { AbstractReport } from "../reports/Report";
 import { ReportService } from "../reports/ReportService";
 import { Formatter, IFormatter } from "../utils/formatter";
+import { DependencyTypes } from "../reports/Validation";
 
 export const defaultDependencyType: DependencyTypes = "dependencies";
 
@@ -33,13 +33,13 @@ export function daysAgo(date: string | number | Date): string {
 }
 
 export abstract class CliCommand<T extends AbstractReport<any>> extends Command {
-    abstract createReport(): T;
+    abstract getReport(): T;
 
     beforeProcess: ((report: T) => void) | undefined = undefined;
 
     async execute(): Promise<number | void> {
         try {
-            const report = this.createReport();
+            const report = this.getReport();
             const reportService = new ReportService(
                 {
                     reports: [report]
