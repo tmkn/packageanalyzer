@@ -5,6 +5,7 @@ import { OnlinePackageProvider } from "../../src/providers/online";
 import { createMockNpmServer, IMockServer } from "../server";
 import { createMockContext } from "../common";
 import { AnalyzeCommand } from "../../src/cli/analyzeCommand";
+import { DependencyDumperProvider } from "../../src/utils/dumper";
 
 describe(`Analyze Command`, () => {
     let server: IMockServer;
@@ -71,6 +72,30 @@ describe(`Analyze Command`, () => {
         expect.assertions(2);
         const { mockContext, stdout, stderr } = createMockContext();
         command.context = mockContext;
+
+        await command.execute();
+
+        expect(stdout.lines).toMatchSnapshot(`stdout`);
+        expect(stderr.lines).toMatchSnapshot(`stderr`);
+    });
+
+    test(`display loops info`, async () => {
+        const rootPath = path.join("tests", "data", "loopsdata");
+        const provider = new DependencyDumperProvider(rootPath);
+
+        const command = cli.process([
+            `analyze`,
+            `--package`,
+            `@webassemblyjs/ast@1.9.0`,
+            `--type`,
+            `dependencies`,
+            `--full`
+        ]) as AnalyzeCommand;
+
+        expect.assertions(2);
+        const { mockContext, stdout, stderr } = createMockContext();
+        command.context = mockContext;
+        command.beforeProcess = report => (report.provider = provider);
 
         await command.execute();
 

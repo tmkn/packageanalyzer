@@ -71,3 +71,37 @@ Array [
   "",
 ]
 `;
+
+exports[`Analyze Command display loops info: stderr 1`] = `Array []`;
+
+exports[`Analyze Command display loops info: stdout 1`] = `
+Array [
+  "Statistics for @webassemblyjs/ast@1.9.0",
+  "",
+  "Published: Sat, 01 Feb 2020 23:20:10 GMT (632 days ago)",
+  "Oldest package:      @xtuc/long@4.2.2 - Mon, 18 Feb 2019 08:20:26 GMT (980 days ago)",
+  "Oldest package path: @webassemblyjs/ast@1.9.0 → @webassemblyjs/wast-parser@1.9.0 → @webassemblyjs/helper-code-frame@1.9.0 → @webassemblyjs/wast-printer@1.9.0 → @xtuc/long@4.2.2",
+  "Newest package:      @webassemblyjs/helper-module-context@1.9.0 - Sat, 01 Feb 2020 23:20:25 GMT (632 days ago)",
+  "Newest package path: @webassemblyjs/ast@1.9.0 → @webassemblyjs/helper-module-context@1.9.0",
+  "Direct dependencies:     3",
+  "Transitive dependencies: 14",
+  "Distinct dependencies:",
+  "    10: distinct name",
+  "    10: distinct name and version",
+  "Most referred package: \\"[@webassemblyjs/ast]\\": 3",
+  "Most direct dependencies: \\"[@webassemblyjs/wast-parser]\\": 6",
+  "Package(s) with multiple versions:",
+  "    (none)",
+  "Loops: 4 (4 distinct)",
+  "",
+  "    affected Packages: [@webassemblyjs/ast, @webassemblyjs/wast-parser]",
+  "    e.g. @webassemblyjs/ast@1.9.0 → @webassemblyjs/helper-module-context@1.9.0 → @webassemblyjs/ast@1.9.0",
+  "    3 additional loops",
+  "Licenses:",
+  "    MIT - [@webassemblyjs/ast, @webassemblyjs/floating-point-hex-parser, @webassemblyjs/helper-api-error, @webassemblyjs/helper-code-frame, +4 more]",
+  "    Apache-2.0 - [@xtuc/long]",
+  "    ISC - [@webassemblyjs/helper-fsm]",
+  "",
+  "",
+]
+`;
