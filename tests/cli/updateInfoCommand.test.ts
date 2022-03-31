@@ -44,7 +44,7 @@ describe(`Update Info Command`, () => {
     });
 
     test(`Fails on wrong provider`, async () => {
-        const command = cli.process([`update`, `--package`, `react`]) as UpdateInfoCommand;
+        const command = cli.process([`update`, `--package`, `react@16.8.1`]) as UpdateInfoCommand;
 
         expect.assertions(2);
         const { mockContext, stdout, stderr } = createMockContext();
