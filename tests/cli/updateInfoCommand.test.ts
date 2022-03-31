@@ -39,8 +39,22 @@ describe(`Update Info Command`, () => {
 
         await command.execute();
 
-        expect(stdout.lines.length).toBeGreaterThan(0);
-        expect(stderr.lines.length).toBe(0);
+        expect(stderr.lines.length).toBeGreaterThan(0);
+        expect(stdout.lines.filter(l => l.trim() !== "").length).toBe(0);
+    });
+
+    test(`Fails on wrong provider`, async () => {
+        const command = cli.process([`update`, `--package`, `react`]) as UpdateInfoCommand;
+
+        expect.assertions(2);
+        const { mockContext, stdout, stderr } = createMockContext();
+        command.context = mockContext;
+        command.beforeProcess = report => (report.provider = undefined);
+
+        await command.execute();
+
+        expect(stderr.lines.length).toBeGreaterThan(0);
+        expect(stdout.lines.filter(l => l.trim() !== "").length).toBe(0);
     });
 
     afterAll(() => {
