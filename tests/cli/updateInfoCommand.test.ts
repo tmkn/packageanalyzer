@@ -3,6 +3,8 @@ import { OnlinePackageProvider } from "../../src/providers/online";
 import { createMockNpmServer, IMockServer } from "../server";
 import { createMockContext } from "../common";
 import { UpdateInfoCommand } from "../../src/cli/updateInfoCommand";
+import { IPackageJsonProvider } from "../../src/providers/provider";
+import { IPackageJson } from "../../src/npm";
 
 describe(`Update Info Command`, () => {
     let server: IMockServer;
@@ -49,10 +51,17 @@ describe(`Update Info Command`, () => {
         expect.assertions(2);
         const { mockContext, stdout, stderr } = createMockContext();
         command.context = mockContext;
-        command.beforeProcess = report => (report.provider = undefined);
+        command.beforeProcess = report => {
+            let wrongProvider = new (class implements IPackageJsonProvider {
+                getPackageJson(name: string, version?: string | undefined): Promise<IPackageJson> {
+                    return provider.getPackageJson(name, version);
+                }
+            })();
+
+            report.provider = wrongProvider;
+        };
 
         await command.execute();
-
         expect(stderr.lines.length).toBeGreaterThan(0);
         expect(stdout.lines.filter(l => l.trim() !== "").length).toBe(0);
     });
