@@ -31,14 +31,7 @@ export const onlinePackageProviderType = new t.Type<OnlinePackageProvider>(
     t.identity
 );
 
-const UpdateInfoParams = t.intersection([
-    BasePackageParameter,
-    t.type({
-        provider: onlinePackageProviderType
-    })
-]);
-
-export type IUpdateInfoParams = t.TypeOf<typeof UpdateInfoParams>;
+export type IUpdateInfoParams = t.TypeOf<typeof BasePackageParameter>;
 
 export class UpdateInfoReport extends AbstractReport<IUpdateInfoParams> {
     name = `Update Info Report`;
@@ -49,7 +42,6 @@ export class UpdateInfoReport extends AbstractReport<IUpdateInfoParams> {
 
         this.depth = 0;
         this.pkg = getPackageVersionfromString(params.package);
-        this.provider = params.provider;
     }
 
     async report(pkg: Package, { stdoutFormatter }: IReportContext): Promise<void> {
@@ -61,7 +53,13 @@ export class UpdateInfoReport extends AbstractReport<IUpdateInfoParams> {
             return;
         }
 
-        const data = await updateInfo(name, version, this.params.provider);
+        if(!onlinePackageProviderType.is(this.provider)) {
+            stdoutFormatter.writeLine(`Provider was undefined`);
+
+            return;
+        }
+
+        const data = await updateInfo(name, version, this.provider);
         const updateStr = chalk.bold(`Update Info for ${pkg.fullName}`);
 
         stdoutFormatter.writeLine(`${updateStr}\n`);
@@ -88,6 +86,6 @@ export class UpdateInfoReport extends AbstractReport<IUpdateInfoParams> {
     }
 
     override validate(): t.Type<IUpdateInfoParams> {
-        return UpdateInfoParams;
+        return BasePackageParameter;
     }
 }
