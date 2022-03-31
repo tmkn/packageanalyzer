@@ -44,21 +44,24 @@ export class UpdateInfoReport extends AbstractReport<IUpdateInfoParams> {
         this.pkg = getPackageVersionfromString(params.package);
     }
 
-    async report(pkg: Package, { stdoutFormatter, stderrFormatter }: IReportContext): Promise<void> {
+    async report(
+        pkg: Package,
+        { stdoutFormatter, stderrFormatter }: IReportContext
+    ): Promise<void> {
         const [name, version] = this.pkg;
 
         try {
             if (typeof version === "undefined") {
                 throw new Error(`Version info is missing (${name})`);
             }
-    
-            if(!onlinePackageProviderType.is(this.provider)) {
+
+            if (!onlinePackageProviderType.is(this.provider)) {
                 throw new Error(`Wrong provider instance`);
             }
-    
+
             const data = await updateInfo(name, version, this.provider);
             const updateStr = chalk.bold(`Update Info for ${pkg.fullName}`);
-    
+
             stdoutFormatter.writeLine(`${updateStr}\n`);
             stdoutFormatter.writeGroup([
                 [
@@ -80,8 +83,7 @@ export class UpdateInfoReport extends AbstractReport<IUpdateInfoParams> {
                     `${data.latestOverall.version} ${daysAgo(data.latestOverall.releaseDate)}`
                 ]
             ]);
-        }
-        catch (e: any) {
+        } catch (e: any) {
             stderrFormatter.writeLine(e?.toString());
         }
     }
