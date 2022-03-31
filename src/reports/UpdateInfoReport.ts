@@ -31,14 +31,7 @@ export const onlinePackageProviderType = new t.Type<OnlinePackageProvider>(
     t.identity
 );
 
-const UpdateInfoParams = t.intersection([
-    BasePackageParameter,
-    t.type({
-        provider: onlinePackageProviderType
-    })
-]);
-
-export type IUpdateInfoParams = t.TypeOf<typeof UpdateInfoParams>;
+export type IUpdateInfoParams = t.TypeOf<typeof BasePackageParameter>;
 
 export class UpdateInfoReport extends AbstractReport<IUpdateInfoParams> {
     name = `Update Info Report`;
@@ -49,45 +42,53 @@ export class UpdateInfoReport extends AbstractReport<IUpdateInfoParams> {
 
         this.depth = 0;
         this.pkg = getPackageVersionfromString(params.package);
-        this.provider = params.provider;
     }
 
-    async report(pkg: Package, { stdoutFormatter }: IReportContext): Promise<void> {
+    async report(
+        pkg: Package,
+        { stdoutFormatter, stderrFormatter }: IReportContext
+    ): Promise<void> {
         const [name, version] = this.pkg;
 
-        if (typeof version === "undefined") {
-            stdoutFormatter.writeLine(`Version info is missing (${name})`);
+        try {
+            if (typeof version === "undefined") {
+                throw new Error(`Version info is missing (${name})`);
+            }
 
-            return;
+            if (!onlinePackageProviderType.is(this.provider)) {
+                throw new Error(`Wrong provider instance`);
+            }
+
+            const data = await updateInfo(name, version, this.provider);
+            const updateStr = chalk.bold(`Update Info for ${pkg.fullName}`);
+
+            stdoutFormatter.writeLine(`${updateStr}\n`);
+            stdoutFormatter.writeGroup([
+                [
+                    `Semantic match`,
+                    `${data.latestSemanticMatch.version}  ${daysAgo(
+                        data.latestSemanticMatch.releaseDate
+                    )}`
+                ],
+                [
+                    `Latest bugfix`,
+                    `${data.latestBugfix.version} ${daysAgo(data.latestBugfix.releaseDate)}`
+                ],
+                [
+                    `Latest minor`,
+                    `${data.latestMinor.version} ${daysAgo(data.latestMinor.releaseDate)}`
+                ],
+                [
+                    `Latest version`,
+                    `${data.latestOverall.version} ${daysAgo(data.latestOverall.releaseDate)}`
+                ]
+            ]);
+        } catch (e: any) {
+            stderrFormatter.writeLine(e?.toString());
         }
-
-        const data = await updateInfo(name, version, this.params.provider);
-        const updateStr = chalk.bold(`Update Info for ${pkg.fullName}`);
-
-        stdoutFormatter.writeLine(`${updateStr}\n`);
-        stdoutFormatter.writeGroup([
-            [
-                `Semantic match`,
-                `${data.latestSemanticMatch.version}  ${daysAgo(
-                    data.latestSemanticMatch.releaseDate
-                )}`
-            ],
-            [
-                `Latest bugfix`,
-                `${data.latestBugfix.version} ${daysAgo(data.latestBugfix.releaseDate)}`
-            ],
-            [
-                `Latest minor`,
-                `${data.latestMinor.version} ${daysAgo(data.latestMinor.releaseDate)}`
-            ],
-            [
-                `Latest version`,
-                `${data.latestOverall.version} ${daysAgo(data.latestOverall.releaseDate)}`
-            ]
-        ]);
     }
 
     override validate(): t.Type<IUpdateInfoParams> {
-        return UpdateInfoParams;
+        return BasePackageParameter;
     }
 }

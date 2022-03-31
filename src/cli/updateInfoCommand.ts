@@ -1,6 +1,5 @@
 import { Command, Option } from "clipanion";
 
-import { npmOnline } from "../providers/online";
 import { IUpdateInfoParams, UpdateInfoReport } from "../reports/UpdateInfoReport";
 import { CliCommand } from "./common";
 
@@ -26,8 +25,7 @@ export class UpdateInfoCommand extends CliCommand<UpdateInfoReport> {
         if (typeof this.package === "undefined") throw new Error(`Please specify a package.`);
 
         const updateInfoParams: IUpdateInfoParams = {
-            package: this.package,
-            provider: npmOnline
+            package: this.package
         };
 
         return new UpdateInfoReport(updateInfoParams);

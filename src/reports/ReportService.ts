@@ -40,7 +40,7 @@ export class ReportService {
                 const p: Package = await visitor.visit(report.type);
 
                 await report.report(p, { stdoutFormatter, stderrFormatter });
-                stdoutFormatter.writeLine(``);
+                stdoutFormatter.writeLine(``); //todo really needed?
             }
         } catch (e: any) {
             const stderrFormatter: IFormatter = new Formatter(this._stderr);
