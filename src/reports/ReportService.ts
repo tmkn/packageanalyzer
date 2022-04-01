@@ -13,9 +13,7 @@ export interface IReports {
 }
 
 export class ReportService {
-    constructor(private _config: IReports, private _stdout: Writable, private _stderr: Writable) {
-        //todo validate _config
-    }
+    constructor(private _config: IReports, private _stdout: Writable, private _stderr: Writable) {}
 
     async process(): Promise<void> {
         const { reports } = this._config;
@@ -40,7 +38,7 @@ export class ReportService {
                 const p: Package = await visitor.visit(report.type);
 
                 await report.report(p, { stdoutFormatter, stderrFormatter });
-                stdoutFormatter.writeLine(``); //todo really needed?
+                stdoutFormatter.writeLine(``);
             }
         } catch (e: any) {
             const stderrFormatter: IFormatter = new Formatter(this._stderr);

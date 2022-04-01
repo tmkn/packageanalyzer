@@ -98,7 +98,7 @@ export class DependencyDumperProvider implements IPackageJsonProvider {
     }
 
     private async _populateCache(): Promise<void> {
-        return new Promise(async (resolve, reject) => {
+        return new Promise(async (resolve, _reject) => {
             try {
                 const filePaths = await this._readDir(this._dir);
 
