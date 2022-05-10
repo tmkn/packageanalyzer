@@ -45,8 +45,8 @@ export class UpdateInfoReport extends AbstractReport<IUpdateInfoParams> {
     }
 
     async report(
-        pkg: Package,
-        { stdoutFormatter, stderrFormatter }: IReportContext
+        { stdoutFormatter, stderrFormatter }: IReportContext,
+        pkg: Package
     ): Promise<void> {
         const [name, version] = this.pkg;
 

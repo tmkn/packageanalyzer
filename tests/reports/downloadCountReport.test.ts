@@ -27,7 +27,7 @@ describe(`DownloadCountReport Tests`, () => {
         const stdoutFormatter = new Formatter(stdout);
         const stderrFormatter = new Formatter(stderr);
 
-        await downloadReport.report(fakePgk, { stdoutFormatter, stderrFormatter });
+        await downloadReport.report({ stdoutFormatter, stderrFormatter }, fakePgk);
 
         expect(stdout.lines).toMatchSnapshot(`stdout`);
         expect(stderr.lines).toMatchSnapshot(`stderr`);

@@ -37,7 +37,7 @@ export class ReportService {
 
                 const p: Package = await visitor.visit(report.type);
 
-                await report.report(p, { stdoutFormatter, stderrFormatter });
+                await report.report({ stdoutFormatter, stderrFormatter }, p);
                 stdoutFormatter.writeLine(``);
             }
         } catch (e: any) {

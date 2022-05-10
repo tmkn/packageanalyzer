@@ -49,7 +49,7 @@ export class DownloadReport extends AbstractReport<IDownloadParams> {
         this.pkg = getPackageVersionfromString(params.package);
     }
 
-    async report(pkg: Package, { stdoutFormatter }: IReportContext): Promise<void> {
+    async report({ stdoutFormatter }: IReportContext, pkg: Package): Promise<void> {
         await cliDownloads(pkg.name, this.params.url ?? null, stdoutFormatter);
     }
 

@@ -75,8 +75,8 @@ export class TestReport extends AbstractReport<ITestReportParams> {
         this.pkg = params.pkg;
     }
 
-    async report(pkg: Package, context: IReportContext): Promise<void> {
-        return this.params.report(pkg, context);
+    async report(context: IReportContext, pkg: Package): Promise<void> {
+        return this.params.report(context, pkg);
     }
 
     override validate(): t.Type<ITestReportParams> {
@@ -98,7 +98,7 @@ export class TestReportNoValidation extends AbstractReport<ITestReportNoValidati
         this.pkg = [params.foo];
     }
 
-    async report(pkg: Package, context: IReportContext): Promise<void> {}
+    async report(context: IReportContext, pkg: Package): Promise<void> {}
 }
 
 interface IMockContext {

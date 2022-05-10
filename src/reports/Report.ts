@@ -24,7 +24,7 @@ export interface IReport<T extends {}> {
     readonly type?: DependencyTypes;
     readonly depth?: number;
 
-    report(pkg: Package, context: IReportContext): Promise<void>;
+    report(context: IReportContext, pkg: Package): Promise<void>;
     validate?(): t.Type<T>;
 }
 
@@ -62,6 +62,6 @@ export abstract class AbstractReport<T extends {}> implements IReport<T> {
         }
     }
 
-    abstract report(pkg: Package, context: IReportContext): Promise<void>;
+    abstract report(context: IReportContext, pkg: Package): Promise<void>;
     validate?(): t.Type<T, T, unknown>;
 }
