@@ -14,31 +14,35 @@ export interface IReportContext {
     stderrFormatter: IFormatter;
 }
 
-export interface IReport<T extends {}> {
+type Args<T> = T extends Array<any> ? Array<Package> : [Package];
+
+export interface IReport<T, P extends {}> {
     readonly name: string;
-    readonly params: T;
-    readonly pkg: PackageVersion;
+    readonly params: P;
+    readonly pkg: T;
 
     readonly decorators?: IDecorator<any, any>[];
     readonly provider?: IPackageJsonProvider;
     readonly type?: DependencyTypes;
     readonly depth?: number;
 
-    report(context: IReportContext, pkg: Package): Promise<void>;
-    validate?(): t.Type<T>;
+    report(context: IReportContext, ...pkg: Args<T>): Promise<void>;
+    validate?(): t.Type<P>;
 }
 
-export abstract class AbstractReport<T extends {}> implements IReport<T> {
+export abstract class AbstractReport<P extends {}>
+    implements IReport<PackageVersion | PackageVersion[], P>
+{
     abstract name: string;
-    readonly params: T;
-    abstract pkg: PackageVersion;
+    readonly params: P;
+    abstract pkg: PackageVersion | PackageVersion[];
 
     decorators: IDecorator<any, any>[] | undefined;
     provider: IPackageJsonProvider | undefined;
     type: DependencyTypes | undefined;
     depth: number | undefined;
 
-    constructor(params: T) {
+    constructor(params: P) {
         const result = this.validate?.().decode(params);
 
         if (result) {
@@ -62,6 +66,6 @@ export abstract class AbstractReport<T extends {}> implements IReport<T> {
         }
     }
 
-    abstract report(context: IReportContext, pkg: Package): Promise<void>;
-    validate?(): t.Type<T, T, unknown>;
+    abstract report(context: IReportContext, ...pkgs: Package[]): Promise<void>;
+    validate?(): t.Type<P, P, unknown>;
 }

@@ -47,7 +47,7 @@ const pkgType = new t.Type<PackageVersion>(
     t.identity
 );
 
-type ReportSignature = IReport<any>["report"];
+type ReportSignature = IReport<PackageVersion | PackageVersion[], any>["report"];
 
 const reportType = new t.Type<ReportSignature>(
     "reportType",

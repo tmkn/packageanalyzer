@@ -5,11 +5,11 @@ import { Package } from "../package/package";
 import { npmOnline } from "../providers/online";
 import { Formatter, IFormatter } from "../utils/formatter";
 import { OraLogger } from "../loggers/OraLogger";
-import { Visitor } from "../visitors/visitor";
+import { PackageVersion, Visitor } from "../visitors/visitor";
 import { IReport } from "./Report";
 
 export interface IReports {
-    reports: IReport<any>[];
+    reports: IReport<PackageVersion | PackageVersion[], any>[];
 }
 
 export class ReportService {
@@ -22,22 +22,22 @@ export class ReportService {
             for (const report of reports) {
                 this._usesNetworkInTests(report);
 
+                const entries: Array<PackageVersion> = isPackageVersionArray(report.pkg)
+                    ? report.pkg
+                    : [report.pkg];
+                const packageArgs: Package[] = [];
+
+                for (const entry of entries) {
+                    packageArgs.push(await this._getPackage(entry, report));
+                }
+
                 const stdoutFormatter: IFormatter = new Formatter(this._stdout);
                 const stderrFormatter: IFormatter = new Formatter(this._stderr);
-                const visitor = new Visitor(
-                    report.pkg,
-                    report.provider ?? npmOnline,
-                    new OraLogger(),
-                    report.decorators,
-                    report.depth
-                );
 
                 if (reports.length > 1)
                     stdoutFormatter.writeLine(chalk.underline.bgBlue(`Report: ${report.name}`));
 
-                const p: Package = await visitor.visit(report.type);
-
-                await report.report({ stdoutFormatter, stderrFormatter }, p);
+                await report.report({ stdoutFormatter, stderrFormatter }, ...packageArgs);
                 stdoutFormatter.writeLine(``);
             }
         } catch (e: any) {
@@ -48,8 +48,26 @@ export class ReportService {
         }
     }
 
+    private async _getPackage(
+        entry: PackageVersion,
+        report: IReport<PackageVersion | PackageVersion[], any>
+    ): Promise<Package> {
+        const visitor = new Visitor(
+            entry,
+            report.provider ?? npmOnline,
+            new OraLogger(),
+            report.decorators,
+            report.depth
+        );
+
+        return visitor.visit(report.type);
+    }
+
     /* istanbul ignore next */
-    private _usesNetworkInTests({ name, provider }: IReport<any>): void {
+    private _usesNetworkInTests({
+        name,
+        provider
+    }: IReport<PackageVersion | PackageVersion[], any>): void {
         if (process.env.NODE_ENV === "test") {
             if (typeof provider === "undefined")
                 throw new Error(`${name}: Unit Test will default to online package provider`);
@@ -59,4 +77,10 @@ export class ReportService {
             }
         }
     }
+}
+
+function isPackageVersionArray(x: PackageVersion | PackageVersion[]): x is PackageVersion[] {
+    const [test] = x;
+    
+    return Array.isArray(test);
 }
