@@ -6,10 +6,10 @@ import { npmOnline } from "../providers/online";
 import { Formatter, IFormatter } from "../utils/formatter";
 import { OraLogger } from "../loggers/OraLogger";
 import { PackageVersion, Visitor } from "../visitors/visitor";
-import { IReport } from "./Report";
+import { EntryTypes, IReport } from "./Report";
 
 export interface IReports {
-    reports: IReport<PackageVersion | PackageVersion[], any>[];
+    reports: IReport<EntryTypes, any>[];
 }
 
 export class ReportService {
@@ -50,7 +50,7 @@ export class ReportService {
 
     private async _getPackage(
         entry: PackageVersion,
-        report: IReport<PackageVersion | PackageVersion[], any>
+        report: IReport<EntryTypes, any>
     ): Promise<Package> {
         const visitor = new Visitor(
             entry,
@@ -64,10 +64,7 @@ export class ReportService {
     }
 
     /* istanbul ignore next */
-    private _usesNetworkInTests({
-        name,
-        provider
-    }: IReport<PackageVersion | PackageVersion[], any>): void {
+    private _usesNetworkInTests({ name, provider }: IReport<EntryTypes, any>): void {
         if (process.env.NODE_ENV === "test") {
             if (typeof provider === "undefined")
                 throw new Error(`${name}: Unit Test will default to online package provider`);
@@ -79,8 +76,8 @@ export class ReportService {
     }
 }
 
-function isPackageVersionArray(x: PackageVersion | PackageVersion[]): x is PackageVersion[] {
+function isPackageVersionArray(x: EntryTypes): x is PackageVersion[] {
     const [test] = x;
-    
+
     return Array.isArray(test);
 }

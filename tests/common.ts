@@ -3,7 +3,7 @@ import { BaseContext } from "clipanion";
 
 import { Writable } from "stream";
 import { Package } from "../src/package/package";
-import { AbstractReport, IReport, IReportContext } from "../src/reports/Report";
+import { AbstractReport, IReportContext, SingleReportMethodSignature } from "../src/reports/Report";
 import { PackageVersion } from "../src/visitors/visitor";
 
 class TestWritable extends Writable {
@@ -47,25 +47,23 @@ const pkgType = new t.Type<PackageVersion>(
     t.identity
 );
 
-type ReportSignature = IReport<PackageVersion | PackageVersion[], any>["report"];
-
-const reportType = new t.Type<ReportSignature>(
+const reportSignature = new t.Type<SingleReportMethodSignature>(
     "reportType",
-    (input: unknown): input is ReportSignature => true,
+    (input: unknown): input is SingleReportMethodSignature => true,
     (input, context) => {
-        return t.success(input as ReportSignature);
+        return t.success(input as SingleReportMethodSignature);
     },
     t.identity
 );
 
 const TestReportParams = t.type({
     pkg: pkgType,
-    report: reportType
+    report: reportSignature
 });
 
 type ITestReportParams = t.TypeOf<typeof TestReportParams>;
 
-export class TestReport extends AbstractReport<ITestReportParams> {
+export class TestReport extends AbstractReport<ITestReportParams, PackageVersion> {
     name = `Test Report`;
     pkg: PackageVersion;
 

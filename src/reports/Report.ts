@@ -14,7 +14,17 @@ export interface IReportContext {
     stderrFormatter: IFormatter;
 }
 
-type Args<T> = T extends Array<any> ? Array<Package> : [Package];
+//type Args<T> = T extends Array<any> ? Array<Package> : [Package];
+//better inferring for 1, 2 and 3 entries
+export type Args<T> = T extends [PackageVersion]
+    ? [Package, ...undefined[]]
+    : T extends [PackageVersion, PackageVersion]
+    ? [Package, Package, ...undefined[]]
+    : T extends [PackageVersion, PackageVersion, PackageVersion]
+    ? [Package, Package, Package, ...undefined[]]
+    : T extends PackageVersion
+    ? [Package]
+    : Array<Package | undefined>;
 
 export interface IReport<T, P extends {}> {
     readonly name: string;
@@ -30,12 +40,18 @@ export interface IReport<T, P extends {}> {
     validate?(): t.Type<P>;
 }
 
-export abstract class AbstractReport<P extends {}>
-    implements IReport<PackageVersion | PackageVersion[], P>
+export type ReportMethodSignature<T> = IReport<T, {}>["report"];
+export type SingleReportMethodSignature = ReportMethodSignature<PackageVersion>;
+//export type MultiReportMethodSignature = ReportMethodSignature<PackageVersion[]>;
+
+export type EntryTypes = PackageVersion | PackageVersion[];
+
+export abstract class AbstractReport<P extends {}, T extends EntryTypes = EntryTypes>
+    implements IReport<T, P>
 {
     abstract name: string;
     readonly params: P;
-    abstract pkg: PackageVersion | PackageVersion[];
+    abstract pkg: T;
 
     decorators: IDecorator<any, any>[] | undefined;
     provider: IPackageJsonProvider | undefined;
@@ -66,6 +82,6 @@ export abstract class AbstractReport<P extends {}>
         }
     }
 
-    abstract report(context: IReportContext, ...pkgs: Package[]): Promise<void>;
+    abstract report(context: IReportContext, ...pkg: Args<T>): Promise<void>;
     validate?(): t.Type<P, P, unknown>;
 }
