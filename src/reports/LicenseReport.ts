@@ -51,7 +51,7 @@ export class LicenseReport extends AbstractReport<ILicenseParams> {
         this.grouped = params.grouped ?? false;
     }
 
-    async report(pkg: Package, { stdoutFormatter }: IReportContext): Promise<void> {
+    async report({ stdoutFormatter }: IReportContext, pkg: Package): Promise<void> {
         const licenseReport = createWhitelistLicenseCheckReport(pkg, this.allowList, false);
 
         printLicenseCheck(licenseReport, this.grouped, stdoutFormatter);

@@ -5,7 +5,6 @@ export type Url = `http://${string}` | `https://${string}`;
 
 function download(url: Url, timeoutLimit: number): Promise<string> {
     return new Promise<string>((resolve, reject) => {
-        //todo check if TS 4.5 can make sense of startsWith
         /**
          * if startsWith http
          * elseif startsWith https

@@ -57,7 +57,7 @@ export class AnalyzeReport extends AbstractReport<IAnalyzeParams> {
         }
     }
 
-    async report(pkg: Package, { stdoutFormatter }: IReportContext): Promise<void> {
+    async report({ stdoutFormatter }: IReportContext, pkg: Package): Promise<void> {
         await printStatistics(pkg, this.params.full, stdoutFormatter);
     }
 

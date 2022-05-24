@@ -1,9 +1,11 @@
+/* istanbul ignore file */
+
 import * as t from "io-ts";
 import { BaseContext } from "clipanion";
 
 import { Writable } from "stream";
 import { Package } from "../src/package/package";
-import { AbstractReport, IReport, IReportContext } from "../src/reports/Report";
+import { AbstractReport, IReportContext, SingleReportMethodSignature } from "../src/reports/Report";
 import { PackageVersion } from "../src/visitors/visitor";
 
 class TestWritable extends Writable {
@@ -47,25 +49,23 @@ const pkgType = new t.Type<PackageVersion>(
     t.identity
 );
 
-type ReportSignature = IReport<any>["report"];
-
-const reportType = new t.Type<ReportSignature>(
+const reportSignature = new t.Type<SingleReportMethodSignature>(
     "reportType",
-    (input: unknown): input is ReportSignature => true,
+    (input: unknown): input is SingleReportMethodSignature => true,
     (input, context) => {
-        return t.success(input as ReportSignature);
+        return t.success(input as SingleReportMethodSignature);
     },
     t.identity
 );
 
 const TestReportParams = t.type({
     pkg: pkgType,
-    report: reportType
+    report: reportSignature
 });
 
 type ITestReportParams = t.TypeOf<typeof TestReportParams>;
 
-export class TestReport extends AbstractReport<ITestReportParams> {
+export class TestReport extends AbstractReport<ITestReportParams, PackageVersion> {
     name = `Test Report`;
     pkg: PackageVersion;
 
@@ -75,8 +75,8 @@ export class TestReport extends AbstractReport<ITestReportParams> {
         this.pkg = params.pkg;
     }
 
-    async report(pkg: Package, context: IReportContext): Promise<void> {
-        return this.params.report(pkg, context);
+    async report(context: IReportContext, pkg: Package): Promise<void> {
+        return this.params.report(context, pkg);
     }
 
     override validate(): t.Type<ITestReportParams> {
@@ -98,7 +98,7 @@ export class TestReportNoValidation extends AbstractReport<ITestReportNoValidati
         this.pkg = [params.foo];
     }
 
-    async report(pkg: Package, context: IReportContext): Promise<void> {}
+    async report(context: IReportContext, pkg: Package): Promise<void> {}
 }
 
 interface IMockContext {
