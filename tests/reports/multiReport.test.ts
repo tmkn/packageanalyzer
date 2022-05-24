@@ -14,10 +14,10 @@ describe(`MultiReport Tests`, () => {
         const { stdout, stderr } = createMockContext();
 
         const multiReport = new MultiReport<[PackageVersion, PackageVersion]>({
-            entries: [[`react`], [`react`]],
+            entries: [[`react`], [`object-assign`]],
             callback: async (_ctx, pkg1, pkg2, pkg3) => {
                 expect(pkg1.fullName).toEqual(`react@16.8.6`);
-                expect(pkg2.fullName).toEqual(`react@16.8.6`);
+                expect(pkg2.fullName).toEqual(`object-assign@4.1.1`);
                 expect(pkg3).toBeUndefined();
             }
         });

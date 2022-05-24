@@ -42,7 +42,6 @@ export interface IReport<T, P extends {}> {
 
 export type ReportMethodSignature<T> = IReport<T, {}>["report"];
 export type SingleReportMethodSignature = ReportMethodSignature<PackageVersion>;
-//export type MultiReportMethodSignature = ReportMethodSignature<PackageVersion[]>;
 
 export type EntryTypes = PackageVersion | PackageVersion[];
 
