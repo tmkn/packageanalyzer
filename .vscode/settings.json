@@ -1,4 +1,7 @@
 {
     "typescript.tsdk": "node_modules/typescript/lib",
-    "editor.bracketPairColorization.enabled": true
+    "editor.bracketPairColorization.enabled": true,
+    "typescript.referencesCodeLens.showOnAllFunctions": true,
+    "typescript.referencesCodeLens.enabled": true,
+    "typescript.implementationsCodeLens.enabled": true
 }
