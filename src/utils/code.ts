@@ -7,8 +7,8 @@ class InMemoryCompilerHost implements ts.CompilerHost {
     getSourceFile(
         fileName: string,
         languageVersion: ts.ScriptTarget,
-        onError?: ((message: string) => void) | undefined,
-        shouldCreateNewSourceFile?: boolean | undefined
+        _onError?: ((message: string) => void) | undefined,
+        _shouldCreateNewSourceFile?: boolean | undefined
     ): ts.SourceFile | undefined {
         const src = this.files.get(fileName);
 
@@ -16,14 +16,14 @@ class InMemoryCompilerHost implements ts.CompilerHost {
             return ts.createSourceFile(fileName, src, languageVersion);
         }
     }
-    getDefaultLibFileName(options: ts.CompilerOptions): string {
+    getDefaultLibFileName(_options: ts.CompilerOptions): string {
         return "lib.d.ts";
     }
     writeFile(
-        filename: string,
-        data: string,
-        writeByteOrderMark: boolean,
-        onError?: (message: string) => void
+        _filename: string,
+        _data: string,
+        _writeByteOrderMark: boolean,
+        _onError?: (message: string) => void
     ) {
         console.log("writeFile not implemented");
     }
