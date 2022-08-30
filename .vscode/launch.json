@@ -43,6 +43,25 @@
             "console" : "integratedTerminal"
         },
         {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch Test Report",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/build/src/cli.js",
+            "args": [
+                "test",
+                "--package",
+                "react"
+            ],
+            //"preLaunchTask": "tsc: build - tsconfig.json",
+            "outFiles": [
+                "${workspaceFolder}/build/**/*.js"
+            ],
+            "console" : "integratedTerminal"
+        },
+        {
             "type": "pwa-node",
             "request": "launch",
             "name": "Custom Report",

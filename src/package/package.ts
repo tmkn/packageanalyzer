@@ -127,7 +127,7 @@ export class Package implements IPackage<Package> {
         const data = this._decoratorData.get(key);
 
         if (typeof data === "undefined") {
-            throw new Error(`No extension data found for ${key.toString()}`);
+            throw new Error(`No decorator data found for "${key.toString()}"`);
         }
 
         return data;

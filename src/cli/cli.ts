@@ -11,6 +11,7 @@ import { NpmDumpLookupCreatorCommand } from "./npmLookupCreatorCommand";
 import { LicenseCheckCommand } from "./licenseCommand";
 import { ReportCommand } from "./reportCommand";
 import { DependencyDumperCommand } from "./dependencyDumpCommand";
+import { TestCommand } from "./testCommand";
 
 export const cli = new Cli({
     binaryLabel: `packageanalyzer`,
@@ -31,6 +32,8 @@ cli.register(LicenseCheckCommand);
 cli.register(NpmDumpCommand);
 cli.register(NpmDumpLookupCreatorCommand);
 cli.register(DependencyDumperCommand);
+
+cli.register(TestCommand);
 
 //built in commands
 cli.register(Builtins.HelpCommand);

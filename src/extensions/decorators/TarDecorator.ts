@@ -1,11 +1,13 @@
 import * as path from "path";
 import * as https from "https";
 import * as zlib from "zlib";
+import { pipeline } from "stream/promises";
 
 import * as tar from "tar";
 
-import { IPackageMetaDataProvider } from "../../providers/provider";
+import { IPackageJsonProvider, IPackageMetaDataProvider } from "../../providers/provider";
 import { IApplyArgs, IDecorator } from "./Decorator";
+import { Writable } from "stream";
 
 interface ITarData {
     files: Map<string, string>;
@@ -17,34 +19,62 @@ class TarEntry {
     constructor(private _tar: tar.ReadEntry) {}
 
     async getFile(): Promise<string> {
-        if(this._text)
-            return this._text;
+        if (this._text) return this._text;
 
         return new Promise<string>((resolve, _reject) => {
             const data: any[] = [];
 
-            this._tar.on("data", chunk => data.push(chunk)).on("end", () => {
-                this._text = data.toString();
-                console.log(16,data);
-                console.log(this._tar);
-                resolve(this._text);
-            });
+            this._tar
+                .on("data", chunk => data.push(chunk))
+                .on("end", () => {
+                    this._text = data.toString();
+                    console.log(16, data);
+                    console.log(this._tar);
+                    resolve(this._text);
+                });
         });
     }
 }
 
 export class TarDecorator implements IDecorator<"tar", ITarData> {
-    constructor(private _provider: IPackageMetaDataProvider) {}
+    constructor(private _provider: IPackageJsonProvider) {}
 
     readonly name: string = `TarDecorator`;
     readonly key = "tar";
 
     async apply({ p }: IApplyArgs): Promise<ITarData> {
-        throw new Error(`Not Implemented`);
+        //const pkgJson = await this._provider.getPackageJson(p.name, p.version);
+        const url = p.getData(`dist.tarball`);
+
+        if (typeof url === "string") {
+            await pipeline(https.get(url));
+
+            const response = https.get(url);
+            const data = response
+                .pipe(zlib.createGunzip())
+                .pipe(new tar.Parse({}))
+                .on("entry", (entry, a, c) => {
+                    /*for await (const chunk of entry) {
+
+                }*/
+                });
+            const files = new Map<string, string>();
+            for (const entry of data) {
+                const file = await new TarEntry(entry).getFile();
+                files.set(entry.path, file);
+            }
+            return { files };
+        }
+
+        return {
+            files: new Map()
+        };
+        //throw new Error(`Not Implemented`);
     }
 }
 
 (async () => {
+    //return;
     console.log(`Hello World`);
     const files = new Map<string, string>();
 
