@@ -48,9 +48,11 @@ export class TestReport extends AbstractReport<ITestReportParams> {
     }
 
     async report({ stdoutFormatter }: IReportContext, pkg: Package): Promise<void> {
-        const data = pkg.getDecoratorData<TarDecorator>(`tar`);
+        pkg.visit(pkg => {
+            const data = pkg.getDecoratorData<TarDecorator>(`tar`);
 
-        stdoutFormatter.writeLine(`Files: ${data.files.size}`);
+            stdoutFormatter.writeLine(`Package: "${pkg.fullName}" | Files: ${data.files.size}`);
+        }, true);
     }
 
     override validate(): t.Type<ITestReportParams> {

@@ -45,7 +45,7 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch Test Report",
+            "name": "Launch Test Command",
             "skipFiles": [
                 "<node_internals>/**"
             ],
