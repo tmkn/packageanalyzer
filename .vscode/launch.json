@@ -5,7 +5,21 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "pwa-node",
+            "name": "Debug Jest Tests",
+            "type": "node",
+            "request": "launch",
+            "runtimeArgs": [
+              "--inspect-brk",
+              "${workspaceRoot}/node_modules/.bin/jest",
+              "--runInBand",
+              "tardecorator"
+            ],
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen"
+          },
+
+        {
+            "type": "node",
             "request": "launch",
             "name": "Analyze Webpack",
             "skipFiles": [
@@ -24,7 +38,7 @@
             "console" : "integratedTerminal"
         },
         {
-            "type": "pwa-node",
+            "type": "node",
             "request": "launch",
             "name": "Launch Sample Report",
             "skipFiles": [
@@ -62,7 +76,7 @@
             "console" : "integratedTerminal"
         },
         {
-            "type": "pwa-node",
+            "type": "node",
             "request": "launch",
             "name": "Custom Report",
             "skipFiles": [

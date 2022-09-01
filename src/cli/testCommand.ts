@@ -1,6 +1,7 @@
 /* istanbul ignore file */
+// Used to quickly try out wip things in the context of the CLI
 
-import { Command, Option } from "clipanion";
+import { Option } from "clipanion";
 import * as t from "io-ts";
 
 import { CliCommand, defaultDependencyType } from "./common";
@@ -8,7 +9,6 @@ import { BasePackageParameter, DependencyTypes, TypeParameter } from "../reports
 import { AbstractReport, IReportContext } from "../reports/Report";
 import { getPackageVersionfromString, Package, PackageVersion } from "../index.web";
 import { TarDecorator } from "../extensions/decorators/TarDecorator";
-import { npmOnline } from "../providers/online";
 
 export class TestCommand extends CliCommand<TestReport> {
     public package = Option.String(`--package`, `typescript`);
@@ -35,7 +35,7 @@ export class TestReport extends AbstractReport<ITestReportParams> {
     name = `Test Report`;
     pkg: PackageVersion;
 
-    override decorators = [new TarDecorator(npmOnline)];
+    override decorators = [new TarDecorator()];
 
     constructor(params: ITestReportParams) {
         super(params);
@@ -49,9 +49,10 @@ export class TestReport extends AbstractReport<ITestReportParams> {
 
     async report({ stdoutFormatter }: IReportContext, pkg: Package): Promise<void> {
         pkg.visit(pkg => {
-            const data = pkg.getDecoratorData<TarDecorator>(`tar`);
+            const { files } = pkg.getDecoratorData<TarDecorator>(`tar`);
 
-            stdoutFormatter.writeLine(`Package: "${pkg.fullName}" | Files: ${data.files.size}`);
+            stdoutFormatter.writeLine(`Package: "${pkg.fullName}" | Files: ${files.size}`);
+            stdoutFormatter.writeLine(JSON.stringify([...files.keys()], null, 4));
         }, true);
     }
 
