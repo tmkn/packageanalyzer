@@ -28,8 +28,6 @@ describe(`TarDecorator Tests`, () => {
 
         const tarDecorator = new TarDecorator();
         const pkgJson: Partial<IPackageJson> = {
-            name: `react`,
-            version: `1.2.3`,
             dist: {
                 tarball: `https://example.com`,
                 shasum: `1234`
@@ -46,11 +44,7 @@ describe(`TarDecorator Tests`, () => {
     it(`uses cache`, async () => {
         const cache: Map<string, ITarData> = new Map();
         const tarDecorator = new TarDecorator(cache);
-        const pkgJson: Partial<IPackageJson> = {
-            name: `react`,
-            version: `1.2.3`
-        };
-        const p: Package = createMockPackage(pkgJson);
+        const p: Package = createMockPackage();
 
         //init cache
         cache.set(p.fullName, {
@@ -68,11 +62,7 @@ describe(`TarDecorator Tests`, () => {
 
     it(`throws on missing tarball url`, async () => {
         const tarDecorator = new TarDecorator();
-        const pkgJson: Partial<IPackageJson> = {
-            name: `react`,
-            version: `1.2.3`
-        };
-        const p: Package = createMockPackage(pkgJson);
+        const p: Package = createMockPackage();
 
         await expect(tarDecorator.apply({ p, ...logStub })).rejects.toThrow();
     });

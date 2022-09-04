@@ -126,7 +126,15 @@ export function createMockContext(): IMockContext {
     };
 }
 
-export function createMockPackage(data: Partial<IPackageJson>): Package {
+export function createMockPackage(data?: Partial<IPackageJson>): Package {
     // @ts-expect-error
-    return new Package(data);
+    const pkgJson: IPackageJson = {
+        ...{
+            name: `mockPackage`,
+            version: `1.2.3`
+        },
+        ...data
+    };
+
+    return new Package(pkgJson);
 }

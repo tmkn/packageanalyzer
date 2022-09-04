@@ -27,7 +27,6 @@ describe(`ReleaseDecorator Tests`, () => {
         })();
         const extension = new ReleaseDecorator(provider);
         const data: Partial<IPackageJson> = {
-            name: "foo",
             version: version
         };
         const p = createMockPackage(data);
@@ -46,11 +45,7 @@ describe(`ReleaseDecorator Tests`, () => {
             }
         })();
         const extension = new ReleaseDecorator(provider);
-        const data: Partial<IPackageJson> = {
-            name: "foo",
-            version: "1.0.0"
-        };
-        const p = createMockPackage(data);
+        const p = createMockPackage();
 
         await expect(extension.apply({ p, ...logStub })).rejects.toThrowError();
     });
@@ -68,11 +63,7 @@ describe(`ReleaseDecorator Tests`, () => {
             }
         })();
         const extension = new ReleaseDecorator(provider);
-        const data: Partial<IPackageJson> = {
-            name: "foo",
-            version: "1.0.0"
-        };
-        const p = createMockPackage(data);
+        const p = createMockPackage();
 
         await expect(extension.apply({ p, ...logStub })).rejects.toThrowError();
     });
