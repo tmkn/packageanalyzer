@@ -59,15 +59,16 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch Test Command",
+            "name": "Launch Diff Command",
             "skipFiles": [
                 "<node_internals>/**"
             ],
             "program": "${workspaceFolder}/build/src/cli.js",
             "args": [
-                "test",
-                "--package",
-                "react"
+                "diff",
+                "--range",
+                "react@16.12.0",
+                "react@18.2.0"
             ],
             //"preLaunchTask": "tsc: build - tsconfig.json",
             "outFiles": [
