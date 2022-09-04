@@ -7,6 +7,7 @@ import { Writable } from "stream";
 import { Package } from "../src/package/package";
 import { AbstractReport, IReportContext, SingleReportMethodSignature } from "../src/reports/Report";
 import { PackageVersion } from "../src/visitors/visitor";
+import { IPackageJson } from "../src/npm";
 
 class TestWritable extends Writable {
     private static _pattern = [
@@ -123,4 +124,17 @@ export function createMockContext(): IMockContext {
         stdout,
         stderr
     };
+}
+
+export function createMockPackage(data?: Partial<IPackageJson>): Package {
+    // @ts-expect-error
+    const pkgJson: IPackageJson = {
+        ...{
+            name: `mockPackage`,
+            version: `1.2.3`
+        },
+        ...data
+    };
+
+    return new Package(pkgJson);
 }

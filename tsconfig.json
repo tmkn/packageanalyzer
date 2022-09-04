@@ -5,7 +5,7 @@
         "noImplicitOverride": true,
         "outDir": "build",
         "sourceMap": true,
-        "lib": ["es2020"],
+        "lib": ["ESNext"],
         "target": "es2020",
         "module": "commonjs",
         "declaration": true,
