@@ -1,4 +1,5 @@
 import * as t from "io-ts";
+import * as chalk from "chalk";
 
 import { defaultDependencyType } from "../cli/common";
 import { DependencyUtilities } from "../extensions/utilities/DependencyUtilities";
@@ -47,12 +48,12 @@ export class DiffReport extends AbstractReport<
         const { transitiveCount: fromTransitiveCount } = new DependencyUtilities(fromPkg);
         const { transitiveCount: toTransitiveCount } = new DependencyUtilities(toPkg);
         const difference = fromTransitiveCount - toTransitiveCount;
-        const info: string = `${fromTransitiveCount}(${fromPkg.fullName}) -> ${toTransitiveCount}(${toPkg.fullName})`;
+        const info: string = `${fromTransitiveCount} (${fromPkg.fullName}) -> ${toTransitiveCount} (${toPkg.fullName})`;
         let msg: string = ``;
 
         if (difference === 0) msg = `Dependency count stayed the same: ${info}`;
-        else if (difference > 0) msg = `Dependency count decreased: ${info}`;
-        else msg = `Dependency count increased: ${info}`;
+        else if (difference > 0) msg = `Dependency count ${chalk.bgGreen(` decreased `)}: ${info}`;
+        else msg = `Dependency count ${chalk.bgRedBright(` increased `)}: ${info}`;
 
         stdoutFormatter.writeIdentation([`Dependency Diff`, msg], 4);
     }
