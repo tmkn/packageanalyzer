@@ -2,6 +2,7 @@ import { Package } from "../../src";
 import { ReleaseDecorator } from "../../src/extensions/decorators/ReleaseDecorator";
 import { IPackageMetadata, IPackageJson, IUnpublishedPackageMetadata } from "../../src/npm";
 import { IPackageMetaDataProvider } from "../../src/providers/provider";
+import { createMockPackage } from "../common";
 
 describe(`ReleaseDecorator Tests`, () => {
     const logStub = {
@@ -29,7 +30,7 @@ describe(`ReleaseDecorator Tests`, () => {
             name: "foo",
             version: version
         };
-        const p = new Package(data as IPackageJson);
+        const p = createMockPackage(data);
 
         const extensionData = await extension.apply({ p, ...logStub });
 
@@ -49,7 +50,7 @@ describe(`ReleaseDecorator Tests`, () => {
             name: "foo",
             version: "1.0.0"
         };
-        const p = new Package(data as IPackageJson);
+        const p = createMockPackage(data);
 
         await expect(extension.apply({ p, ...logStub })).rejects.toThrowError();
     });
@@ -71,7 +72,7 @@ describe(`ReleaseDecorator Tests`, () => {
             name: "foo",
             version: "1.0.0"
         };
-        const p = new Package(data as IPackageJson);
+        const p = createMockPackage(data);
 
         await expect(extension.apply({ p, ...logStub })).rejects.toThrowError();
     });

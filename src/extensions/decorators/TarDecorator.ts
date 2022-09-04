@@ -29,40 +29,41 @@ export class TarDecorator implements IDecorator<"tar", ITarData> {
                 const url = p.getData(`dist.tarball`);
 
                 if (typeof url === "string") {
-                    https
-                        .get(url, res => {
-                            res.on("error", e => reject(e));
+                    https.get(url, res => {
+                        //res.on("error", e => reject(e));
 
-                            pipeline(
-                                res,
-                                new tar.Parse({
-                                    filter: (path, entry) => entry.type === "File",
-                                    onentry: entry => {
-                                        let buffer: Buffer = Buffer.from(``);
+                        pipeline(
+                            res,
+                            new tar.Parse({
+                                filter: (path, entry) => entry.type === "File",
+                                onentry: entry => {
+                                    let buffer: Buffer = Buffer.from(``);
 
-                                        entry.on("data", chunk => {
-                                            buffer += chunk;
-                                        });
+                                    entry.on("data", chunk => {
+                                        buffer += chunk;
+                                    });
 
-                                        entry.on("end", chunk => {
-                                            buffer += chunk;
+                                    entry.on("end", chunk => {
+                                        buffer += chunk;
 
-                                            const file = buffer.toString("utf8");
+                                        const file = buffer.toString("utf8");
 
-                                            files.set(entry.path, file);
-                                        });
-                                    }
-                                }),
-                                error => {
-                                    if (error) reject(error);
-                                    else {
-                                        this._cache.set(p.fullName, { files });
-                                        resolve({ files });
-                                    }
+                                        files.set(entry.path, file);
+                                    });
                                 }
-                            );
-                        })
-                        .on("error", e => reject(e));
+                            }),
+                            error => {
+                                if (error) reject(error);
+                                else {
+                                    this._cache.set(p.fullName, { files });
+                                    resolve({ files });
+                                }
+                            }
+                        );
+                    });
+                    //.on("error", e => reject(e));
+                } else {
+                    reject(new Error(`No tarball url found for ${p.fullName}`));
                 }
             }
         });
