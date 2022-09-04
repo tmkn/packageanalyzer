@@ -1,9 +1,7 @@
-import * as path from "path";
 import * as https from "https";
 
 import * as tar from "tar";
 
-import { IPackageJsonProvider, IPackageMetaDataProvider } from "../../providers/provider";
 import { IApplyArgs, IDecorator } from "./Decorator";
 import { pipeline } from "stream";
 
@@ -30,8 +28,6 @@ export class TarDecorator implements IDecorator<"tar", ITarData> {
 
                 if (typeof url === "string") {
                     https.get(url, res => {
-                        //res.on("error", e => reject(e));
-
                         pipeline(
                             res,
                             new tar.Parse({
@@ -61,7 +57,6 @@ export class TarDecorator implements IDecorator<"tar", ITarData> {
                             }
                         );
                     });
-                    //.on("error", e => reject(e));
                 } else {
                     reject(new Error(`No tarball url found for ${p.fullName}`));
                 }

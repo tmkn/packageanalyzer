@@ -49,17 +49,10 @@ export class TestReport extends AbstractReport<ITestReportParams> {
 
     async report({ stdoutFormatter }: IReportContext, pkg: Package): Promise<void> {
         pkg.visit(pkg => {
-            // const { files } = pkg.getDecoratorData<TarDecorator>(`tar`);
+            const { files } = pkg.getDecoratorData<TarDecorator>(`tar`);
 
-            // stdoutFormatter.writeLine(`Package: "${pkg.fullName}" | Files: ${files.size}`);
-            // stdoutFormatter.writeLine(JSON.stringify([...files.keys()], null, 4));
-            stdoutFormatter.writeIdentation(
-                [
-                    `Package: "${pkg.fullName}"`,
-                    pkg.getData(`dist.tarball`) + `` ?? `tarball not found!`
-                ],
-                4
-            );
+            stdoutFormatter.writeLine(`Package: "${pkg.fullName}" | Files: ${files.size}`);
+            stdoutFormatter.writeLine(JSON.stringify([...files.keys()], null, 4));
         }, true);
     }
 
