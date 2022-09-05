@@ -7,6 +7,7 @@ import { Package } from "../package/package";
 import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
 import { AbstractReport, IReportContext } from "./Report";
 import { BasePackageParameter, TypeParameter } from "./Validation";
+import { DiffUtilities } from "../extensions/utilities/DiffUtilities";
 
 const FromParamenter = t.type({
     from: t.string
@@ -45,6 +46,7 @@ export class DiffReport extends AbstractReport<
         fromPkg: Package,
         toPkg: Package
     ): Promise<void> {
+        const { newMaintainers } = new DiffUtilities(fromPkg, toPkg);
         const { transitiveCount: fromTransitiveCount } = new DependencyUtilities(fromPkg);
         const { transitiveCount: toTransitiveCount } = new DependencyUtilities(toPkg);
         const difference = fromTransitiveCount - toTransitiveCount;
@@ -52,10 +54,18 @@ export class DiffReport extends AbstractReport<
         let msg: string = ``;
 
         if (difference === 0) msg = `Dependency count stayed the same: ${info}`;
-        else if (difference > 0) msg = `Dependency count ${chalk.bgGreen(` decreased `)}: ${info}`;
-        else msg = `Dependency count ${chalk.bgRedBright(` increased `)}: ${info}`;
+        else if (difference > 0) msg = `Dependency count ${chalk.green(`decreased`)}: ${info}`;
+        else msg = `Dependency count ${chalk.redBright(`increased`)}: ${info}`;
 
         stdoutFormatter.writeIdentation([`Dependency Diff`, msg], 4);
+        stdoutFormatter.writeIdentation(
+            [
+                `New Maintainer(s)`,
+                ...(newMaintainers?.map(maintainer => `${maintainer.name} (${maintainer.email})`) ??
+                    [].map(() => ``))
+            ],
+            4
+        );
     }
 
     override validate(): t.Type<IDiffReportParams> {
