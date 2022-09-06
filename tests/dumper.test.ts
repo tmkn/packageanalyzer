@@ -23,6 +23,16 @@ describe(`DependencyDumper Tests`, () => {
         expect(dumper.pkg?.version).toEqual(`16.8.1`);
     });
 
+    test(`Correctly collect package & dependencies via array from online registry`, async () => {
+        const dumper = new DependencyDumper();
+
+        await dumper.collect([["react", "16.8.1"]], `http://localhost:${server.port}`);
+
+        expect(dumper.pkg).not.toBeUndefined();
+        expect(dumper.pkg?.name).toEqual(`react`);
+        expect(dumper.pkg?.version).toEqual(`16.8.1`);
+    });
+
     test(`Save files`, async () => {
         const dumper = new DependencyDumper();
 

@@ -6,7 +6,7 @@ import { npmOnline } from "../providers/online";
 import { Formatter, IFormatter } from "../utils/formatter";
 import { OraLogger } from "../loggers/OraLogger";
 import { PackageVersion, Visitor } from "../visitors/visitor";
-import { EntryTypes, IReport } from "./Report";
+import { EntryTypes, IReport, isPackageVersionArray } from "./Report";
 
 export interface IReports {
     reports: IReport<EntryTypes, any>[];
@@ -74,10 +74,4 @@ export class ReportService {
             }
         }
     }
-}
-
-function isPackageVersionArray(x: EntryTypes): x is PackageVersion[] {
-    const [test] = x;
-
-    return Array.isArray(test);
 }

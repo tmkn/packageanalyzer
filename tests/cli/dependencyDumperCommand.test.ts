@@ -17,7 +17,7 @@ describe(`Dependency Dumper`, () => {
     test(`works`, async () => {
         const command = cli.process([
             `dependencydump`,
-            `--package`,
+            `--packages`,
             `react@16.8.1`,
             `--folder`,
             outputFolder,
@@ -42,7 +42,7 @@ describe(`Dependency Dumper`, () => {
     test(`fails on dumping`, async () => {
         const command = cli.process([
             `dependencydump`,
-            `--package`,
+            `--packages`,
             `react@16.8.1`,
             `--folder`,
             outputFolder,
@@ -62,10 +62,10 @@ describe(`Dependency Dumper`, () => {
         expect(stderr.lines.length).toBeGreaterThan(0);
     }, 10000);
 
-    test(`fails on undefined --package`, async () => {
+    test(`fails on undefined --packages`, async () => {
         const command = cli.process([
             `dependencydump`,
-            `--package`,
+            `--packages`,
             `react@16.8.1`,
             `--folder`,
             outputFolder,
@@ -80,7 +80,7 @@ describe(`Dependency Dumper`, () => {
 
         const { mockContext, stderr } = createMockContext();
         command.context = mockContext;
-        (command as any).package = undefined;
+        (command as any).packages = undefined;
         await command.execute();
 
         expect(stderr.lines.length).toBeGreaterThan(0);

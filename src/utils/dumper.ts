@@ -9,17 +9,25 @@ import { DependencyUtilities } from "../extensions/utilities/DependencyUtilities
 import { IPackageMetadata, IPackageJson, isUnpublished, IUnpublishedPackageMetadata } from "../npm";
 import { IPackageJsonProvider } from "../providers/provider";
 import { Url } from "./requests";
+import { EntryTypes, isPackageVersionArray } from "../reports/Report";
 
 export class DependencyDumper {
     pkg?: Package;
 
     private _provider?: OnlinePackageProvider;
 
-    async collect(pkg: PackageVersion, repoUrl: Url): Promise<void> {
+    async collect(pkg: EntryTypes, repoUrl: Url): Promise<void> {
         this._provider = new OnlinePackageProvider(repoUrl);
 
-        const visitor = new Visitor(pkg, this._provider, new OraLogger());
-        this.pkg = await visitor.visit();
+        if (isPackageVersionArray(pkg)) {
+            for (const entry of pkg) {
+                const visitor = new Visitor(entry, this._provider, new OraLogger());
+                this.pkg = await visitor.visit();
+            }
+        } else {
+            const visitor = new Visitor(pkg, this._provider, new OraLogger());
+            this.pkg = await visitor.visit();
+        }
     }
 
     async save(baseDir: string): Promise<void> {

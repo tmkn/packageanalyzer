@@ -5,8 +5,13 @@ import { DependencyDumper } from "../utils/dumper";
 import { Url } from "../utils/requests";
 
 export class DependencyDumperCommand extends Command {
-    public package?: string = Option.String(`--package`, {
-        description: `the package to dump e.g. typescript, typescript@3.5.1`
+    // public package?: string = Option.String(`--package`, {
+    //     description: `the package to dump e.g. typescript, typescript@3.5.1`
+    // });
+
+    public packages = Option.Array(`--packages`, {
+        //arity: 2,
+        description: `packages to collect (can contain version)`
     });
 
     public folder?: string = Option.String(`--folder`, {
@@ -34,15 +39,16 @@ export class DependencyDumperCommand extends Command {
     static override paths = [[`dependencydump`]];
     async execute() {
         try {
-            if (!this.package || !this.folder) {
+            if (!this.packages || !this.folder) {
                 this.context.stderr.write(`--package or --folder argument missing\n`);
 
                 return;
             }
 
+            const entries = this.packages.map(pkg => getPackageVersionfromString(pkg));
             const dumper = new DependencyDumper();
 
-            await dumper.collect(getPackageVersionfromString(this.package), this.registry);
+            await dumper.collect(entries, this.registry);
             await dumper.save(this.folder);
         } catch (e) {
             this.context.stderr.write(`Something went wrong\n`);
