@@ -5,11 +5,13 @@ import { DependencyDumper } from "../utils/dumper";
 import { Url } from "../utils/requests";
 
 export class DependencyDumperCommand extends Command {
-    public packages = Option.Array(`--packages`, {
+    public packages = Option.Array(`--package`, {
+        required: true,
         description: `packages to collect (can contain version)`
     });
 
-    public folder?: string = Option.String(`--folder`, {
+    public folder: string = Option.String(`--folder`, {
+        required: true,
         description: `folder to output the dump`
     });
 
@@ -26,7 +28,7 @@ export class DependencyDumperCommand extends Command {
         examples: [
             [
                 `Lookup latest package details from a NPM dump`,
-                `$0 dependencydump --packages typescript --packages react --folder /path/to/dump/folder`
+                `$0 dependencydump --package typescript --package react --folder /path/to/dump/folder`
             ]
         ]
     });
@@ -34,11 +36,6 @@ export class DependencyDumperCommand extends Command {
     static override paths = [[`dependencydump`]];
     async execute() {
         try {
-            if (!this.packages || !this.folder) {
-                this.context.stderr.write(`--packages or --folder argument missing\n`);
-
-                return;
-            }
             const entries = this.packages.map(pkg => getPackageVersionfromString(pkg));
             const dumper = new DependencyDumper();
 
