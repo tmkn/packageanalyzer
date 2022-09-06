@@ -1,6 +1,8 @@
 import { INpmUser } from "../../npm";
 import { Package } from "../../package/package";
 
+type UpdateTuple = [from: Package, to: Package];
+
 export class DiffUtilities {
     constructor(private _fromPkg: Package, private _toPkg: Package) {}
 
@@ -39,6 +41,36 @@ export class DiffUtilities {
         }
 
         return false;
+    }
+
+    get newPackages(): Package[] {
+        const newPackages: Package[] = [];
+
+        for (const dep of this._toPkg.directDependencies) {
+            const exists = this._fromPkg.directDependencies.find(
+                oldPkg => oldPkg.name === dep.name
+            );
+
+            if (!exists) newPackages.push(dep);
+        }
+
+        return newPackages;
+    }
+
+    get updatedPackages(): UpdateTuple[] {
+        const updatedPackages: UpdateTuple[] = [];
+
+        for (const to of this._toPkg.directDependencies) {
+            const updatedFrom = this._fromPkg.directDependencies.find(
+                from => from.name === to.name && from.version !== to.version // don't want to include packages that didn't change in version
+            );
+
+            if (updatedFrom) {
+                updatedPackages.push([updatedFrom, to]);
+            }
+        }
+
+        return updatedPackages;
     }
 }
 

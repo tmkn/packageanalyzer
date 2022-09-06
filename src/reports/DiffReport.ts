@@ -46,7 +46,7 @@ export class DiffReport extends AbstractReport<
         fromPkg: Package,
         toPkg: Package
     ): Promise<void> {
-        const { newMaintainers } = new DiffUtilities(fromPkg, toPkg);
+        const { newMaintainers, newPackages, updatedPackages } = new DiffUtilities(fromPkg, toPkg);
         const { transitiveCount: fromTransitiveCount } = new DependencyUtilities(fromPkg);
         const { transitiveCount: toTransitiveCount } = new DependencyUtilities(toPkg);
         const difference = fromTransitiveCount - toTransitiveCount;
@@ -63,6 +63,22 @@ export class DiffReport extends AbstractReport<
                 `New Maintainer(s)`,
                 ...(newMaintainers?.map(maintainer => `${maintainer.name} (${maintainer.email})`) ??
                     [].map(() => ``))
+            ],
+            4
+        );
+
+        stdoutFormatter.writeIdentation(
+            [
+                `New Packages (${toPkg.fullName} -> ${fromPkg.fullName}):`,
+                ...newPackages.map(pkg => pkg.fullName)
+            ],
+            4
+        );
+
+        stdoutFormatter.writeIdentation(
+            [
+                `Updated Packages (${toPkg.fullName} -> ${fromPkg.fullName}):`,
+                ...updatedPackages.map(([from, to]) => `${from.fullName} -> ${to.fullName}`)
             ],
             4
         );
