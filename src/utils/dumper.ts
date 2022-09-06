@@ -12,7 +12,7 @@ import { Url } from "./requests";
 import { EntryTypes, isPackageVersionArray } from "../reports/Report";
 
 export class DependencyDumper {
-    pkg?: Package;
+    pkgs: Package[] = [];
 
     private _provider?: OnlinePackageProvider;
 
@@ -22,18 +22,28 @@ export class DependencyDumper {
         if (isPackageVersionArray(pkg)) {
             for (const entry of pkg) {
                 const visitor = new Visitor(entry, this._provider, new OraLogger());
-                this.pkg = await visitor.visit();
+                const pkg = await visitor.visit();
+                this.pkgs.push(pkg);
             }
         } else {
             const visitor = new Visitor(pkg, this._provider, new OraLogger());
-            this.pkg = await visitor.visit();
+            const p = await visitor.visit();
+            this.pkgs.push(p);
         }
     }
 
     async save(baseDir: string): Promise<void> {
-        if (!this.pkg || !this._provider) throw new Error(`pkg or provider is undefined`);
+        if (!this._provider) throw new Error(`pkg or provider is undefined`);
 
-        const distinct: Set<string> = new DependencyUtilities(this.pkg).withSelf.distinctNames;
+        const distinct: Set<string> = new Set();
+        for (const pkg of this.pkgs) {
+            const _distinct: Set<string> = new DependencyUtilities(pkg).withSelf.distinctNames;
+
+            for (const name of _distinct) {
+                distinct.add(name);
+            }
+        }
+
         const logger = new OraLogger();
 
         fs.mkdir(baseDir, { recursive: true });
@@ -58,9 +68,8 @@ export class DependencyDumper {
                 logger.log(`[${prefix}/${distinct.size}]: ${fullPath}`);
             }
         } finally {
-            logger.log(
-                `Saved ${distinct.size} dependencies for ${this.pkg.fullName} at ${baseDir}`
-            );
+            const names: string = this.pkgs.map(pkg => pkg.fullName).join(`& `);
+            logger.log(`Saved ${distinct.size} dependencies for ${names} at ${baseDir}`);
             logger.stop();
         }
     }

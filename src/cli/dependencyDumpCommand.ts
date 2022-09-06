@@ -5,12 +5,7 @@ import { DependencyDumper } from "../utils/dumper";
 import { Url } from "../utils/requests";
 
 export class DependencyDumperCommand extends Command {
-    // public package?: string = Option.String(`--package`, {
-    //     description: `the package to dump e.g. typescript, typescript@3.5.1`
-    // });
-
     public packages = Option.Array(`--packages`, {
-        //arity: 2,
         description: `packages to collect (can contain version)`
     });
 
@@ -24,14 +19,14 @@ export class DependencyDumperCommand extends Command {
 
     static override usage = Command.Usage({
         category: `Developer Tools`,
-        description: `looks up a package from an online registry and dumps the package.json`,
+        description: `looks up package(s) from an online registry and dumps the package.json`,
         details: `
             This command will look up a package from an online registry and dump the package.json and all of the dependencies package.json.
         `,
         examples: [
             [
                 `Lookup latest package details from a NPM dump`,
-                `$0 dependencydump --package typescript --folder /path/to/dump/folder`
+                `$0 dependencydump --packages typescript --packages react --folder /path/to/dump/folder`
             ]
         ]
     });
@@ -40,11 +35,10 @@ export class DependencyDumperCommand extends Command {
     async execute() {
         try {
             if (!this.packages || !this.folder) {
-                this.context.stderr.write(`--package or --folder argument missing\n`);
+                this.context.stderr.write(`--packages or --folder argument missing\n`);
 
                 return;
             }
-
             const entries = this.packages.map(pkg => getPackageVersionfromString(pkg));
             const dumper = new DependencyDumper();
 
