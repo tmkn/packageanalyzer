@@ -1,86 +1,36 @@
 import * as path from "path";
 
-import { FileSystemPackageProvider } from "../src/providers/folder";
-import { IPackageJson } from "../src/npm";
+import { FolderPackageProvider } from "../src/providers/folder";
 
-describe(`NodeModulesProvider Tests`, () => {
-    let provider: FileSystemPackageProvider;
+describe(`FolderProvider Tests`, () => {
+    const folder = path.join("tests", "data", "multiple");
+
+    let provider: FolderPackageProvider;
 
     beforeAll(() => {
-        const destination = path.join("tests", "data", "testproject1", "node_modules");
-        provider = new FileSystemPackageProvider(destination);
+        provider = new FolderPackageProvider(folder);
     });
 
-    test(`Found "js-tokens" dependency`, async () => {
-        const name = "js-tokens";
-        const version = "4.0.0";
-        const dep = await provider.getPackageJson(name, version);
+    it(`Correctly retrieves based on version`, async () => {
+        const pkgJson = await provider.getPackageJson(`typescript`, `4.5.2`);
 
-        expect(dep.name).toBe(name);
-        expect(dep.version).toBe(version);
+        expect(pkgJson.name).toBe(`typescript`);
+        expect(pkgJson.version).toBe(`4.5.2`);
     });
 
-    test(`Found "loose-envify" dependency`, async () => {
-        const name = "loose-envify";
-        const version = "1.4.0";
-        const dep = await provider.getPackageJson(name, version);
+    it(`Correctly retrieves latest version`, async () => {
+        const pkgJson = await provider.getPackageJson(`typescript`);
 
-        expect(dep.name).toBe(name);
-        expect(dep.version).toBe(version);
+        expect(pkgJson.name).toBe(`typescript`);
+        expect(pkgJson.version).toBe(`4.8.2`);
     });
 
-    test(`Found "object-assign" dependency`, async () => {
-        const name = "object-assign";
-        const version = "4.1.1";
-        const dep = await provider.getPackageJson(name, version);
+    it(`Correctly retrieves metadata`, async () => {
+        const data = await provider.getPackageMetadata(`typescript`);
 
-        expect(dep.name).toBe(name);
-        expect(dep.version).toBe(version);
+        expect(data).toBeDefined();
+        expect(data?.time).toBeDefined();
     });
 
-    test(`Found "prop-types" dependency`, async () => {
-        const name = "prop-types";
-        const version = "15.7.2";
-        const dep = await provider.getPackageJson(name, version);
-
-        expect(dep.name).toBe(name);
-        expect(dep.version).toBe(version);
-    });
-
-    test(`Found "react-is" dependency`, async () => {
-        const name = "react-is";
-        const version = "16.8.6";
-        const dep = await provider.getPackageJson(name, version);
-
-        expect(dep.name).toBe(name);
-        expect(dep.version).toBe(version);
-    });
-
-    test(`Found "react" dependency`, async () => {
-        const name = "react";
-        const version = "16.8.6";
-        const dep = await provider.getPackageJson(name, version);
-
-        expect(dep.name).toBe(name);
-        expect(dep.version).toBe(version);
-    });
-
-    test(`Found "scheduler" dependency`, async () => {
-        const name = "scheduler";
-        const version = "0.13.6";
-        const dep = await provider.getPackageJson(name, version);
-
-        expect(dep.name).toBe(name);
-        expect(dep.version).toBe(version);
-    });
-
-    test(`Throws on missing package in getPackageByVersion`, async () => {
-        expect.assertions(1);
-
-        try {
-            await provider.getPackageJson("doesntexist", "1.0.0");
-        } catch (e) {
-            expect(e).toBeInstanceOf(Error);
-        }
-    });
+    afterAll(() => {});
 });
