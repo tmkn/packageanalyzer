@@ -54,7 +54,7 @@ export class DependencyDumper {
             for (const [i, dependency] of [...distinct].sort().entries()) {
                 const data = await this._provider.getPackageMetadata(dependency);
                 const folder = this._getFolder(baseDir, dependency);
-                const fullPath = path.join(folder, `package.json`);
+                const fullPath = path.join(folder, `metadata.json`);
 
                 if (typeof data === "undefined") {
                     throw new Error(`Data for ${dependency} was undefined`);

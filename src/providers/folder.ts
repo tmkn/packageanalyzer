@@ -141,7 +141,7 @@ export class DumpPackageProvider extends AbstractPackageProvider {
             for (const entry of folderEntries) {
                 if (fs.statSync(entry).isDirectory()) {
                     pkgs.push(...this._findPackageJson(entry));
-                } else if (entry.endsWith(`package.json`)) {
+                } else if (entry.endsWith(`metadata.json`)) {
                     pkgs.push(entry);
                 }
             }

@@ -51,16 +51,14 @@ export class TestReport extends AbstractReport<ITestReportParams> {
     }
 
     async report({ stdoutFormatter }: IReportContext, pkg: Package): Promise<void> {
-        const destination = path.join("tests", "data", "multiple");
+        const destination = path.join("tests", "data", "dump");
         const provider = new DumpPackageProvider(destination);
 
-        const pkg1 = provider.getPackageJson(`typescript`, `4.8.2`);
         const pkg2 = provider.getPackageJson(`react`, `17.0.2`);
         const pkg3 = provider.getPackageJson(`react`);
 
-        const [data1, data2, data3] = await Promise.all([pkg1, pkg2, pkg3]);
+        const [data2, data3] = await Promise.all([pkg2, pkg3]);
 
-        console.log(data1.name, data1.version);
         console.log(data2.name, data2.version);
         console.log(data3.name, data3.version);
         // pkg.visit(pkg => {

@@ -10,24 +10,24 @@ describe(`Mock Registry Tests`, () => {
         jest.useFakeTimers("legacy");
         nock.disableNetConnect();
 
-        const destination = path.join("tests", "data", "multiple");
+        const destination = path.join("tests", "data", "dump");
         setupRegistryMocks(destination);
     });
 
     it(`correctly resolves to latest version`, async () => {
-        const data = await npmOnline.getPackageJson(`typescript`);
+        const data = await npmOnline.getPackageJson(`react`);
 
-        expect(data.version).toBe(`4.8.2`);
+        expect(data.version).toBe(`18.2.0`);
     });
 
     it(`correctly resolves to specific version`, async () => {
-        const data = await npmOnline.getPackageJson(`typescript`, `3.5.2`);
+        const data = await npmOnline.getPackageJson(`react`, `17.0.2`);
 
-        expect(data.version).toBe(`3.5.2`);
+        expect(data.version).toBe(`17.0.2`);
     });
 
     it(`correctly returns metadata`, async () => {
-        const data = await npmOnline.getPackageMetadata(`typescript`);
+        const data = await npmOnline.getPackageMetadata(`react`);
 
         expect(data?.time).toBeDefined();
     });

@@ -3,7 +3,7 @@ import * as path from "path";
 import { DumpPackageProvider } from "../../build/src/providers/folder";
 
 describe(`DumpProvider Tests`, () => {
-    const folder = path.join("tests", "data", "multiple");
+    const folder = path.join("tests", "data", "dump");
 
     let provider: DumpPackageProvider;
 
@@ -12,21 +12,21 @@ describe(`DumpProvider Tests`, () => {
     });
 
     it(`Correctly retrieves based on version`, async () => {
-        const pkgJson = await provider.getPackageJson(`typescript`, `4.5.2`);
+        const pkgJson = await provider.getPackageJson(`react`, `17.0.2`);
 
-        expect(pkgJson.name).toBe(`typescript`);
-        expect(pkgJson.version).toBe(`4.5.2`);
+        expect(pkgJson.name).toBe(`react`);
+        expect(pkgJson.version).toBe(`17.0.2`);
     });
 
     it(`Correctly retrieves latest version`, async () => {
-        const pkgJson = await provider.getPackageJson(`typescript`);
+        const pkgJson = await provider.getPackageJson(`react`);
 
-        expect(pkgJson.name).toBe(`typescript`);
-        expect(pkgJson.version).toBe(`4.8.2`);
+        expect(pkgJson.name).toBe(`react`);
+        expect(pkgJson.version).toBe(`18.2.0`);
     });
 
     it(`Correctly retrieves metadata`, async () => {
-        const data = await provider.getPackageMetadata(`typescript`);
+        const data = await provider.getPackageMetadata(`react`);
 
         expect(data).toBeDefined();
         expect(data?.time).toBeDefined();
