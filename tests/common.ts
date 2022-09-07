@@ -9,7 +9,7 @@ import { Package } from "../src/package/package";
 import { AbstractReport, IReportContext, SingleReportMethodSignature } from "../src/reports/Report";
 import { PackageVersion } from "../src/visitors/visitor";
 import { IPackageJson } from "../src/npm";
-import { FolderPackageProvider } from "../src/providers/folder";
+import { DumpPackageProvider } from "../src/providers/folder";
 
 class TestWritable extends Writable {
     private static _pattern = [
@@ -145,7 +145,7 @@ export function setupRegistryMocks(
     folder: string,
     registryUrl = `https://registry.npmjs.com`
 ): nock.Scope {
-    const provider = new FolderPackageProvider(folder);
+    const provider = new DumpPackageProvider(folder);
     const scope = nock(registryUrl)
         .persist()
         .get(new RegExp(`(.*?)`))

@@ -11,7 +11,7 @@ import { BasePackageParameter, DependencyTypes, TypeParameter } from "../reports
 import { AbstractReport, IReportContext } from "../reports/Report";
 import { getPackageVersionfromString, Package, PackageVersion } from "../index.web";
 import { TarDecorator } from "../extensions/decorators/TarDecorator";
-import { FileSystemPackageProvider, FolderPackageProvider } from "../providers/folder";
+import { FileSystemPackageProvider, DumpPackageProvider } from "../providers/folder";
 
 export class TestCommand extends CliCommand<TestReport> {
     public package = Option.String(`--package`, `typescript`);
@@ -52,7 +52,7 @@ export class TestReport extends AbstractReport<ITestReportParams> {
 
     async report({ stdoutFormatter }: IReportContext, pkg: Package): Promise<void> {
         const destination = path.join("tests", "data", "multiple");
-        const provider = new FolderPackageProvider(destination);
+        const provider = new DumpPackageProvider(destination);
 
         const pkg1 = provider.getPackageJson(`typescript`, `4.8.2`);
         const pkg2 = provider.getPackageJson(`react`, `17.0.2`);

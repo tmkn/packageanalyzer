@@ -123,7 +123,7 @@ export class FileSystemPackageProvider implements IPackageJsonProvider {
 
 // todo rename to DumpPackageProvider?
 // provides data provided by the dependencydump cli command
-export class FolderPackageProvider extends AbstractPackageProvider {
+export class DumpPackageProvider extends AbstractPackageProvider {
     constructor(private _folder: string) {
         super();
 

@@ -1,7 +1,7 @@
 import * as path from "path";
 
-import { FileSystemPackageProvider } from "../src/providers/folder";
-import { IPackageJson } from "../src/npm";
+import { FileSystemPackageProvider } from "../../src/providers/folder";
+import { IPackageJson } from "../../src/npm";
 
 describe(`NodeModulesProvider Tests`, () => {
     let provider: FileSystemPackageProvider;

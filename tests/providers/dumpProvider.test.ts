@@ -1,14 +1,14 @@
 import * as path from "path";
 
-import { FolderPackageProvider } from "../src/providers/folder";
+import { DumpPackageProvider } from "../../build/src/providers/folder";
 
-describe(`FolderProvider Tests`, () => {
+describe(`DumpProvider Tests`, () => {
     const folder = path.join("tests", "data", "multiple");
 
-    let provider: FolderPackageProvider;
+    let provider: DumpPackageProvider;
 
     beforeAll(() => {
-        provider = new FolderPackageProvider(folder);
+        provider = new DumpPackageProvider(folder);
     });
 
     it(`Correctly retrieves based on version`, async () => {
