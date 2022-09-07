@@ -1,6 +1,8 @@
 /* istanbul ignore file */
 // Used to quickly try out wip things in the context of the CLI
 
+import * as path from "path";
+
 import { Option } from "clipanion";
 import * as t from "io-ts";
 
@@ -9,6 +11,7 @@ import { BasePackageParameter, DependencyTypes, TypeParameter } from "../reports
 import { AbstractReport, IReportContext } from "../reports/Report";
 import { getPackageVersionfromString, Package, PackageVersion } from "../index.web";
 import { TarDecorator } from "../extensions/decorators/TarDecorator";
+import { FileSystemPackageProvider } from "../providers/folder";
 
 export class TestCommand extends CliCommand<TestReport> {
     public package = Option.String(`--package`, `typescript`);
@@ -20,6 +23,9 @@ export class TestCommand extends CliCommand<TestReport> {
     static override paths = [[`test`]];
 
     getReport(): TestReport {
+        const destination = path.join("tests", "data", "multiple");
+        const provider = new FileSystemPackageProvider(destination);
+
         return new TestReport({
             package: this.package,
             type: this.type
