@@ -11,7 +11,7 @@ import { BasePackageParameter, DependencyTypes, TypeParameter } from "../reports
 import { AbstractReport, IReportContext } from "../reports/Report";
 import { getPackageVersionfromString, Package, PackageVersion } from "../index.web";
 import { TarDecorator } from "../extensions/decorators/TarDecorator";
-import { FileSystemPackageProvider, DumpPackageProvider } from "../providers/folder";
+import { DumpPackageProvider } from "../providers/folder";
 
 export class TestCommand extends CliCommand<TestReport> {
     public package = Option.String(`--package`, `typescript`);

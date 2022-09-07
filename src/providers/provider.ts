@@ -3,10 +3,10 @@ import * as semver from "semver";
 import { IPackageMetadata, IPackageJson, IUnpublishedPackageMetadata, isUnpublished } from "../npm";
 import { PackageVersion } from "../visitors/visitor";
 
+export type PackageMetaData = IPackageMetadata | IUnpublishedPackageMetadata;
+
 export interface IPackageMetaDataProvider {
-    getPackageMetadata(
-        name: string
-    ): Promise<IPackageMetadata | IUnpublishedPackageMetadata | undefined>;
+    getPackageMetadata(name: string): Promise<PackageMetaData | undefined>;
 }
 
 //loads npm data from a folder
@@ -20,16 +20,13 @@ export abstract class AbstractPackageProvider
 {
     protected readonly _cache: Map<string, IPackageMetadata> = new Map();
 
-    abstract getPackageMetadata(
-        name: string
-    ): Promise<IPackageMetadata | IUnpublishedPackageMetadata | undefined>;
+    abstract getPackageMetadata(name: string): Promise<PackageMetaData | undefined>;
 
     async getPackageJson(
         name: string,
         version: string | undefined = undefined
     ): Promise<IPackageJson> {
-        let info: IPackageMetadata | IUnpublishedPackageMetadata | undefined =
-            this._cache.get(name);
+        let info: PackageMetaData | undefined = this._cache.get(name);
 
         if (!info) {
             info = await this.getPackageMetadata(name);
