@@ -65,9 +65,11 @@
             ],
             "program": "${workspaceFolder}/build/src/cli.js",
             "args": [
-                "test",
+                "dependencydump",
                 "--package",
-                "react"
+                "react",
+                "--folder",
+                "./tests/data/foo/bar"
             ],
             //"preLaunchTask": "tsc: build - tsconfig.json",
             "outFiles": [

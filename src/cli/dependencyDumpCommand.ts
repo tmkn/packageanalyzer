@@ -1,10 +1,10 @@
 import { Command, Option } from "clipanion";
 
-import { getPackageVersionfromString } from "../visitors/visitor";
-import { DependencyDumper } from "../utils/dumper";
 import { Url } from "../utils/requests";
+import { CliCommand } from "./common";
+import { DependencyDumpReport } from "../reports/DependencyDumpReport";
 
-export class DependencyDumperCommand extends Command {
+export class DependencyDumperCommand extends CliCommand<DependencyDumpReport> {
     public packages = Option.Array(`--package`, {
         required: true,
         description: `packages to collect (can contain version)`
@@ -34,16 +34,8 @@ export class DependencyDumperCommand extends Command {
     });
 
     static override paths = [[`dependencydump`]];
-    async execute() {
-        try {
-            const entries = this.packages.map(pkg => getPackageVersionfromString(pkg));
-            const dumper = new DependencyDumper();
 
-            await dumper.collect(entries, this.registry);
-            await dumper.save(this.folder);
-        } catch (e) {
-            this.context.stderr.write(`Something went wrong\n`);
-            this.context.stderr.write(`${e}\n`);
-        }
+    getReport(): DependencyDumpReport {
+        return new DependencyDumpReport({ entries: this.packages, folder: this.folder });
     }
 }

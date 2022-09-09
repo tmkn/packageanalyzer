@@ -9,9 +9,10 @@ import * as t from "io-ts";
 import { CliCommand, defaultDependencyType } from "./common";
 import { BasePackageParameter, DependencyTypes, TypeParameter } from "../reports/Validation";
 import { AbstractReport, IReportContext } from "../reports/Report";
-import { getPackageVersionfromString, Package, PackageVersion } from "../index.web";
+import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
 import { TarDecorator } from "../extensions/decorators/TarDecorator";
 import { DumpPackageProvider } from "../providers/folder";
+import { Package } from "../package/package";
 
 export class TestCommand extends CliCommand<TestReport> {
     public package = Option.String(`--package`, `typescript`);
