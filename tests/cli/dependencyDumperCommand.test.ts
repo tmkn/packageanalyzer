@@ -5,6 +5,7 @@ import { cli } from "../../src/cli/cli";
 import { createMockNpmServer, IMockServer } from "../server";
 import { DependencyDumperCommand } from "../../src/cli/dependencyDumpCommand";
 import { createMockContext } from "../common";
+import { OnlinePackageProvider } from "../../src";
 
 describe(`Dependency Dumper`, () => {
     let server: IMockServer;
@@ -23,9 +24,12 @@ describe(`Dependency Dumper`, () => {
             outputFolder,
             `--registry`,
             `http://localhost:${server.port}`
-        ]);
+        ]) as DependencyDumperCommand;
 
         expect(command).toBeInstanceOf(DependencyDumperCommand);
+
+        command.beforeProcess = report =>
+            (report.provider = new OnlinePackageProvider(`http://localhost:${server.port}`));
 
         await fs.rm(outputFolder, { recursive: true, force: true });
         await expect(fs.readdir(outputFolder)).rejects.toThrow();
@@ -48,9 +52,12 @@ describe(`Dependency Dumper`, () => {
             outputFolder,
             `--registry`,
             `http://unknown:${server.port}`
-        ]);
+        ]) as DependencyDumperCommand;
 
         expect(command).toBeInstanceOf(DependencyDumperCommand);
+
+        command.beforeProcess = report =>
+            (report.provider = new OnlinePackageProvider(`http://unknown:${server.port}`));
 
         await fs.rm(outputFolder, { recursive: true, force: true });
         await expect(fs.readdir(outputFolder)).rejects.toThrow();

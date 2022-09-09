@@ -36,6 +36,10 @@ export class DependencyDumperCommand extends CliCommand<DependencyDumpReport> {
     static override paths = [[`dependencydump`]];
 
     getReport(): DependencyDumpReport {
-        return new DependencyDumpReport({ entries: this.packages, folder: this.folder });
+        return new DependencyDumpReport({
+            entries: this.packages,
+            folder: this.folder,
+            registry: this.registry
+        });
     }
 }

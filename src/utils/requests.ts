@@ -1,7 +1,30 @@
 import * as http from "http";
 import * as https from "https";
 
+import * as t from "io-ts";
+
 export type Url = `http://${string}` | `https://${string}`;
+
+export const urlType = new t.Type<Url>(
+    "urlType",
+    (input: unknown): input is Url =>
+        typeof input === "string" && (input.startsWith(`http://`) || input.startsWith(`https://`)),
+    (input, context) => {
+        if (
+            typeof input === "string" &&
+            (input.startsWith(`http://`) || input.startsWith(`https://`))
+        ) {
+            return t.success(input as Url);
+        }
+
+        return t.failure(
+            input,
+            context,
+            `Expected "dependencies" or "devDependencies" but got "${input}"`
+        );
+    },
+    t.identity
+);
 
 function download(url: Url, timeoutLimit: number): Promise<string> {
     return new Promise<string>((resolve, reject) => {

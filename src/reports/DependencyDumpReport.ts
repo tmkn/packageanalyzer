@@ -5,13 +5,15 @@ import * as t from "io-ts";
 import { MetaFileDecorator } from "../extensions/decorators/MetaFileDecorator";
 
 import { Package } from "../package/package";
-import { npmOnline } from "../providers/online";
+import { OnlinePackageProvider } from "../providers/online";
 import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
 import { AbstractReport, IReportContext } from "./Report";
+import { Url, urlType } from "../utils/requests";
 
 const DependencyDumpParams = t.type({
     entries: t.array(t.string),
-    folder: t.string
+    folder: t.string,
+    registry: urlType
 });
 
 type IDependencyDumpParams = t.TypeOf<typeof DependencyDumpParams>;
@@ -20,12 +22,11 @@ export class DependencyDumpReport extends AbstractReport<IDependencyDumpParams> 
     name = `DependencyDump Report`;
     pkg: PackageVersion[] = [];
 
-    override decorators = [new MetaFileDecorator(npmOnline)];
-
     constructor(params: IDependencyDumpParams) {
         super(params);
 
         this.pkg = params.entries.map(entry => getPackageVersionfromString(entry));
+        this.decorators = [new MetaFileDecorator(new OnlinePackageProvider(this.params.registry))];
     }
 
     async report({ stdoutFormatter }: IReportContext, ...pkgs: Package[]): Promise<void> {
