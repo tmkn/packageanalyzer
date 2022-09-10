@@ -6,8 +6,6 @@ import { OnlinePackageProvider } from "../providers/online";
 import { Visitor } from "../visitors/visitor";
 import { OraLogger } from "../loggers/OraLogger";
 import { DependencyUtilities } from "../extensions/utilities/DependencyUtilities";
-import { IPackageMetadata, IPackageJson, isUnpublished, IUnpublishedPackageMetadata } from "../npm";
-import { IPackageJsonProvider } from "../providers/provider";
 import { Url } from "./requests";
 import { EntryTypes, isPackageVersionArray } from "../reports/Report";
 

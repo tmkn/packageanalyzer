@@ -101,7 +101,7 @@ describe(`Analyze Command`, () => {
 
         expect(stdout.lines).toMatchSnapshot(`stdout`);
         expect(stderr.lines).toMatchSnapshot(`stderr`);
-    });
+    }, 6000);
 
     test(`aborts on wrong --type`, async () => {
         const command = cli.process([
