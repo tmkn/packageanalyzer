@@ -5,7 +5,7 @@ import { OnlinePackageProvider } from "../../src/providers/online";
 import { createMockNpmServer, IMockServer } from "../server";
 import { createMockContext } from "../common";
 import { AnalyzeCommand } from "../../src/cli/analyzeCommand";
-import { DependencyDumperProvider } from "../../src/utils/dumper";
+import { DumpPackageProvider } from "../../src/providers/folder";
 
 describe(`Analyze Command`, () => {
     let server: IMockServer;
@@ -80,8 +80,8 @@ describe(`Analyze Command`, () => {
     });
 
     test(`display loops info`, async () => {
-        const rootPath = path.join("tests", "data", "loopsdata");
-        const provider = new DependencyDumperProvider(rootPath);
+        const rootPath = path.join("tests", "data", "loops_data");
+        const provider = new DumpPackageProvider(rootPath);
 
         const command = cli.process([
             `analyze`,
