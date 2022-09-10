@@ -16,6 +16,7 @@ describe(`Analyze Command`, () => {
         provider = new OnlinePackageProvider(`http://localhost:${server.port}`);
 
         jest.setSystemTime(new Date(`2021-10-26`).getTime());
+        jest.setTimeout(10000);
     });
 
     test(`--package --type --full`, async () => {
@@ -101,7 +102,7 @@ describe(`Analyze Command`, () => {
 
         expect(stdout.lines).toMatchSnapshot(`stdout`);
         expect(stderr.lines).toMatchSnapshot(`stderr`);
-    }, 6000);
+    });
 
     test(`aborts on wrong --type`, async () => {
         const command = cli.process([
