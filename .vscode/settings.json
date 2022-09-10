@@ -3,5 +3,6 @@
     "editor.bracketPairColorization.enabled": true,
     "typescript.referencesCodeLens.showOnAllFunctions": true,
     "typescript.referencesCodeLens.enabled": true,
-    "typescript.implementationsCodeLens.enabled": true
+    "typescript.implementationsCodeLens.enabled": true,
+    "task.allowAutomaticTasks": "on"
 }

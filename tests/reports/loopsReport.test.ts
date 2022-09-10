@@ -1,16 +1,16 @@
 import * as path from "path";
+import { DumpPackageProvider } from "../../src/providers/folder";
 
 import { LoopsReport } from "../../src/reports/LoopsReport";
 import { ReportService } from "../../src/reports/ReportService";
-import { DependencyDumperProvider } from "../../src/utils/dumper";
 import { createMockContext } from "../common";
 
 describe(`LoopsReport Test`, () => {
-    const rootPath = path.join("tests", "data", "loopsdata");
-    let provider: DependencyDumperProvider;
+    const rootPath = path.join("tests", "data", "loops_data");
+    let provider: DumpPackageProvider;
 
     beforeAll(() => {
-        provider = new DependencyDumperProvider(rootPath);
+        provider = new DumpPackageProvider(rootPath);
     });
 
     test(`works`, async () => {
