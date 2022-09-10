@@ -11,12 +11,13 @@ describe(`Analyze Command`, () => {
     let server: IMockServer;
     let provider: OnlinePackageProvider;
 
+    jest.setTimeout(10000);
+
     beforeAll(async () => {
         server = await createMockNpmServer();
         provider = new OnlinePackageProvider(`http://localhost:${server.port}`);
 
         jest.setSystemTime(new Date(`2021-10-26`).getTime());
-        jest.setTimeout(10000);
     });
 
     test(`--package --type --full`, async () => {
