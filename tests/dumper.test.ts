@@ -18,9 +18,19 @@ describe(`DependencyDumper Tests`, () => {
 
         await dumper.collect(["react", "16.8.1"], `http://localhost:${server.port}`);
 
-        expect(dumper.pkg).not.toBeUndefined();
-        expect(dumper.pkg?.name).toEqual(`react`);
-        expect(dumper.pkg?.version).toEqual(`16.8.1`);
+        expect(dumper.pkgs).not.toBeUndefined();
+        expect(dumper.pkgs[0].name).toEqual(`react`);
+        expect(dumper.pkgs[0].version).toEqual(`16.8.1`);
+    });
+
+    test(`Correctly collect package & dependencies via array from online registry`, async () => {
+        const dumper = new DependencyDumper();
+
+        await dumper.collect([["react", "16.8.1"]], `http://localhost:${server.port}`);
+
+        expect(dumper.pkgs).not.toBeUndefined();
+        expect(dumper.pkgs[0].name).toEqual(`react`);
+        expect(dumper.pkgs[0].version).toEqual(`16.8.1`);
     });
 
     test(`Save files`, async () => {
@@ -33,7 +43,7 @@ describe(`DependencyDumper Tests`, () => {
 
         const folder = await fs.readdir(outputFolder);
 
-        expect(new DependencyUtilities(dumper.pkg!).withSelf.distinctNames.size).toEqual(
+        expect(new DependencyUtilities(dumper.pkgs[0]).withSelf.distinctNames.size).toEqual(
             folder.length
         );
     });

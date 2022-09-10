@@ -103,6 +103,48 @@ describe(`Analyze Command`, () => {
         expect(stderr.lines).toMatchSnapshot(`stderr`);
     });
 
+    test(`aborts on wrong --type`, async () => {
+        const command = cli.process([
+            `analyze`,
+            `--folder`,
+            path.join("tests", "data", "testproject1"),
+            `--type`,
+            `abc`,
+            `--full`
+        ]) as AnalyzeCommand;
+
+        expect.assertions(2);
+        const { mockContext, stdout, stderr } = createMockContext();
+        command.context = mockContext;
+
+        await command.execute();
+
+        expect(stdout.lines).toMatchSnapshot(`stdout`);
+        expect(stderr.lines).toMatchSnapshot(`stderr`);
+    });
+
+    test(`aborts on missing --folder or --package`, async () => {
+        const command = cli.process([
+            `analyze`,
+            `--folder`,
+            path.join("tests", "data", "testproject1"),
+            `--type`,
+            `dependencies`,
+            `--full`
+        ]) as AnalyzeCommand;
+
+        expect.assertions(2);
+        const { mockContext, stdout, stderr } = createMockContext();
+        command.context = mockContext;
+
+        command.folder = undefined;
+
+        await command.execute();
+
+        expect(stdout.lines).toMatchSnapshot(`stdout`);
+        expect(stderr.lines).toMatchSnapshot(`stderr`);
+    });
+
     afterAll(() => {
         jest.useRealTimers();
 

@@ -3,29 +3,47 @@ import { promises as fs } from "fs";
 
 import { Package } from "../package/package";
 import { OnlinePackageProvider } from "../providers/online";
-import { PackageVersion, Visitor } from "../visitors/visitor";
+import { Visitor } from "../visitors/visitor";
 import { OraLogger } from "../loggers/OraLogger";
 import { DependencyUtilities } from "../extensions/utilities/DependencyUtilities";
 import { IPackageMetadata, IPackageJson, isUnpublished, IUnpublishedPackageMetadata } from "../npm";
 import { IPackageJsonProvider } from "../providers/provider";
 import { Url } from "./requests";
+import { EntryTypes, isPackageVersionArray } from "../reports/Report";
 
 export class DependencyDumper {
-    pkg?: Package;
+    pkgs: Package[] = [];
 
     private _provider?: OnlinePackageProvider;
 
-    async collect(pkg: PackageVersion, repoUrl: Url): Promise<void> {
+    async collect(pkg: EntryTypes, repoUrl: Url): Promise<void> {
         this._provider = new OnlinePackageProvider(repoUrl);
 
-        const visitor = new Visitor(pkg, this._provider, new OraLogger());
-        this.pkg = await visitor.visit();
+        if (isPackageVersionArray(pkg)) {
+            for (const entry of pkg) {
+                const visitor = new Visitor(entry, this._provider, new OraLogger());
+                const pkg = await visitor.visit();
+                this.pkgs.push(pkg);
+            }
+        } else {
+            const visitor = new Visitor(pkg, this._provider, new OraLogger());
+            const p = await visitor.visit();
+            this.pkgs.push(p);
+        }
     }
 
     async save(baseDir: string): Promise<void> {
-        if (!this.pkg || !this._provider) throw new Error(`pkg or provider is undefined`);
+        if (!this._provider) throw new Error(`pkg or provider is undefined`);
 
-        const distinct: Set<string> = new DependencyUtilities(this.pkg).withSelf.distinctNames;
+        const distinct: Set<string> = new Set();
+        for (const pkg of this.pkgs) {
+            const _distinct: Set<string> = new DependencyUtilities(pkg).withSelf.distinctNames;
+
+            for (const name of _distinct) {
+                distinct.add(name);
+            }
+        }
+
         const logger = new OraLogger();
 
         fs.mkdir(baseDir, { recursive: true });
@@ -36,7 +54,7 @@ export class DependencyDumper {
             for (const [i, dependency] of [...distinct].sort().entries()) {
                 const data = await this._provider.getPackageMetadata(dependency);
                 const folder = this._getFolder(baseDir, dependency);
-                const fullPath = path.join(folder, `package.json`);
+                const fullPath = path.join(folder, `metadata.json`);
 
                 if (typeof data === "undefined") {
                     throw new Error(`Data for ${dependency} was undefined`);
@@ -50,9 +68,8 @@ export class DependencyDumper {
                 logger.log(`[${prefix}/${distinct.size}]: ${fullPath}`);
             }
         } finally {
-            logger.log(
-                `Saved ${distinct.size} dependencies for ${this.pkg.fullName} at ${baseDir}`
-            );
+            const names: string = this.pkgs.map(pkg => pkg.fullName).join(`& `);
+            logger.log(`Saved ${distinct.size} dependencies for ${names} at ${baseDir}`);
             logger.stop();
         }
     }
