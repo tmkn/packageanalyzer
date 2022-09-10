@@ -67,9 +67,9 @@
             "args": [
                 "dependencydump",
                 "--package",
-                "react",
+                "@webassemblyjs/ast@1.9.0",
                 "--folder",
-                "./tests/data/foo/bar"
+                "./tests/data/loops_data"
             ],
             //"preLaunchTask": "tsc: build - tsconfig.json",
             "outFiles": [

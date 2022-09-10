@@ -1,9 +1,10 @@
 import * as path from "path";
 import { promises as fs } from "fs";
 
-import { DependencyDumper, DependencyDumperProvider } from "../src/utils/dumper";
+import { DependencyDumper } from "../src/utils/dumper";
 import { createMockNpmServer, IMockServer } from "./server";
 import { DependencyUtilities } from "../src/extensions/utilities/DependencyUtilities";
+import { DumpPackageProvider } from "../src/providers/folder";
 
 describe(`DependencyDumper Tests`, () => {
     let server: IMockServer;
@@ -78,48 +79,4 @@ describe(`DependencyDumper Tests`, () => {
     });
 
     afterAll(() => server.close());
-});
-
-describe(`DependencyDumper Provider`, () => {
-    const outputFolder = path.join(process.cwd(), `tests`, `data`, `loopsdata`);
-    const provider = new DependencyDumperProvider(outputFolder);
-
-    test(`Looks up packages`, async () => {
-        const expectedVersions: string[] = [`1.9.0`, `1.11.0`];
-        const actualVersions: string[] = [];
-
-        /*for await (const pkg of provider.getPackageJsons([
-            [`@webassemblyjs/ast`, `1.9.0`],
-            [`@webassemblyjs/ast`]
-        ])) {
-            actualVersions.push(pkg.version);
-        }*/
-
-        const dep1 = await provider.getPackageJson(`@webassemblyjs/ast`, `1.9.0`);
-        const dep2 = await provider.getPackageJson(`@webassemblyjs/ast`);
-
-        actualVersions.push(...[dep1.version, dep2.version]);
-
-        expect(expectedVersions).toEqual(actualVersions);
-    });
-
-    test(`Throws on non existing package`, async () => {
-        expect.assertions(1);
-
-        try {
-            await provider.getPackageJson(`doesntexist`);
-        } catch (e) {
-            expect(e).toBeInstanceOf(Error);
-        }
-    });
-
-    test(`Throws on non existing version`, async () => {
-        expect.assertions(1);
-
-        try {
-            await provider.getPackageJson(`@webassemblyjs/ast`, `x.x.x`);
-        } catch (e) {
-            expect(e).toBeInstanceOf(Error);
-        }
-    });
 });
