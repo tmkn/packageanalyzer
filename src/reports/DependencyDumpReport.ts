@@ -8,7 +8,7 @@ import { Package } from "../package/package";
 import { OnlinePackageProvider } from "../providers/online";
 import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
 import { AbstractReport, IReportContext } from "./Report";
-import { Url, urlType } from "../utils/requests";
+import { urlType } from "../utils/requests";
 
 const DependencyDumpParams = t.type({
     entries: t.array(t.string),
