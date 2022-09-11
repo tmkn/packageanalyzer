@@ -36,7 +36,7 @@ export class TarDecorator implements IDecorator<"tar", ITarData> {
                                     let buffer: Buffer = Buffer.from(``);
 
                                     entry.on("data", chunk => {
-                                        buffer += chunk;
+                                        buffer = Buffer.concat([buffer, chunk]);
                                     });
 
                                     entry.on("end", chunk => {
