@@ -1,4 +1,4 @@
-export interface IPackageJson {
+export interface IBasePackageJson {
     author: INpmUser;
     dependencies?: INpmKeyValue;
     deprecated?: string;
@@ -17,7 +17,9 @@ export interface IPackageJson {
     repository: INpmRepository;
     scripts: INpmKeyValue;
     version: string;
+}
 
+export interface IPackageJson extends IBasePackageJson {
     [key: string]: unknown;
 }
 
