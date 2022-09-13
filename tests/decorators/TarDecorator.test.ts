@@ -5,8 +5,7 @@ import * as nock from "nock";
 
 import { Package } from "../../src";
 import { ITarData, TarDecorator } from "../../src/extensions/decorators/TarDecorator";
-import { IPackageJson } from "../../src/npm";
-import { createMockPackage } from "../common";
+import { createMockPackage, IMockPackageJson } from "../mocks";
 
 describe(`TarDecorator Tests`, () => {
     const logStub = {
@@ -27,7 +26,7 @@ describe(`TarDecorator Tests`, () => {
             });
 
         const tarDecorator = new TarDecorator();
-        const pkgJson: Partial<IPackageJson> = {
+        const pkgJson: IMockPackageJson = {
             dist: {
                 tarball: `https://example.com`,
                 shasum: `1234`
@@ -44,7 +43,7 @@ describe(`TarDecorator Tests`, () => {
     it(`uses cache`, async () => {
         const cache: Map<string, ITarData> = new Map();
         const tarDecorator = new TarDecorator(cache);
-        const p: Package = createMockPackage();
+        const p: Package = createMockPackage({});
 
         //init cache
         cache.set(p.fullName, {
@@ -62,7 +61,7 @@ describe(`TarDecorator Tests`, () => {
 
     it(`throws on missing tarball url`, async () => {
         const tarDecorator = new TarDecorator();
-        const p: Package = createMockPackage();
+        const p: Package = createMockPackage({});
 
         await expect(tarDecorator.apply({ p, ...logStub })).rejects.toThrow();
     });
