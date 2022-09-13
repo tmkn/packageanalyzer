@@ -1,16 +1,16 @@
 import { DependencyUtilities } from "../src/extensions/utilities/DependencyUtilities";
-import { createMockDependencyTree } from "./mocks";
+import { createMockPackage } from "./mocks";
 
 describe(`Mock Tests`, () => {
     test(`Creates a package`, () => {
-        const p = createMockDependencyTree({ name: `mockpackage`, version: `1.2.3` });
+        const p = createMockPackage({ name: `mockpackage`, version: `1.2.3` });
 
         expect(p.name).toBe(`mockpackage`);
         expect(p.version).toBe(`1.2.3`);
     });
 
     test(`Creates a package with custom data`, () => {
-        const p = createMockDependencyTree({
+        const p = createMockPackage({
             name: `mockpackage`,
             version: `1.2.3`,
             foo: { bar: `hello` }
@@ -20,7 +20,7 @@ describe(`Mock Tests`, () => {
     });
 
     test(`Creates a package with dependencies`, () => {
-        const p = createMockDependencyTree({
+        const p = createMockPackage({
             name: `mockpackage`,
             version: `1.2.3`,
             dependencies: [
@@ -51,7 +51,7 @@ describe(`Mock Tests`, () => {
     });
 
     test(`Creates a package with devDependencies`, () => {
-        const p = createMockDependencyTree(
+        const p = createMockPackage(
             {
                 name: `mockpackage`,
                 version: `1.2.3`,
@@ -85,7 +85,7 @@ describe(`Mock Tests`, () => {
     });
 
     test(`Assigns default values for missing name or version`, () => {
-        const p = createMockDependencyTree({});
+        const p = createMockPackage({});
 
         expect(p.name).toBe(`mockPackage`);
         expect(p.version).toBe(`1.2.3`);
@@ -93,6 +93,6 @@ describe(`Mock Tests`, () => {
 
     test(`Throws on wrong "type"`, () => {
         //@ts-expect-error
-        expect(() => createMockDependencyTree({}, "wrong_type")).toThrow();
+        expect(() => createMockPackage({}, "wrong_type")).toThrow();
     });
 });

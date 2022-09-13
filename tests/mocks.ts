@@ -1,29 +1,34 @@
-// todo add methods for mocking packages
-
 import { Package } from "../src";
 import { IBasePackageJson, INpmKeyValue, IPackageJson } from "../src/npm";
 import { DependencyTypes } from "../src/reports/Validation";
-import { createMockPackage } from "./common";
 
 type MockBasePackageJson = Omit<Partial<IBasePackageJson>, "dependencies" | "devDependencies">;
 
-interface IMockPackageJson extends MockBasePackageJson {
+export interface IMockPackageJson extends MockBasePackageJson {
     dependencies?: IMockPackageJson[];
     devDependencies?: IMockPackageJson[];
     [key: string]: unknown;
 }
 
-export function createMockDependencyTree(
+export function createMockPackage(
     mockData: IMockPackageJson,
     type: DependencyTypes = "dependencies"
 ): Package {
     const data = convertToPackageJson(mockData, type);
-    const parent = createMockPackage(data);
+    // @ts-expect-error
+    const pkgJson: IPackageJson = {
+        ...{
+            name: `mockPackage`,
+            version: `1.2.3`
+        },
+        ...data
+    };
+    const parent = new Package(pkgJson);
 
     const dependencies = mockData[type] ?? [];
 
     for (const depMockData of dependencies) {
-        parent.addDependency(createMockDependencyTree(depMockData, type));
+        parent.addDependency(createMockPackage(depMockData, type));
     }
 
     return parent;
