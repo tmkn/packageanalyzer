@@ -72,6 +72,10 @@ export class DiffUtilities {
 
         return updatedPackages;
     }
+
+    get removedPackages(): Package[] {
+        throw new Error(`Not implemented`);
+    }
 }
 
 function isNpmUser(user: unknown): user is INpmUser {

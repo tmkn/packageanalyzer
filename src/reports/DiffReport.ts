@@ -57,7 +57,7 @@ export class DiffReport extends AbstractReport<
         else if (difference > 0) msg = `Dependency count ${chalk.green(`decreased`)}: ${info}`;
         else msg = `Dependency count ${chalk.redBright(`increased`)}: ${info}`;
 
-        stdoutFormatter.writeIdentation([`Dependency Diff`, msg], 4);
+        stdoutFormatter.writeIdentation([`Dependency Differ`, msg], 4);
         stdoutFormatter.writeIdentation(
             [
                 `New Maintainer(s)`,
@@ -69,7 +69,7 @@ export class DiffReport extends AbstractReport<
 
         stdoutFormatter.writeIdentation(
             [
-                `New Packages (${toPkg.fullName} -> ${fromPkg.fullName}):`,
+                `New Packages (${fromPkg.fullName} -> ${toPkg.fullName}):`,
                 ...newPackages.map(pkg => pkg.fullName)
             ],
             4
@@ -77,7 +77,7 @@ export class DiffReport extends AbstractReport<
 
         stdoutFormatter.writeIdentation(
             [
-                `Updated Packages (${toPkg.fullName} -> ${fromPkg.fullName}):`,
+                `Updated Packages (${fromPkg.fullName} -> ${toPkg.fullName}):`,
                 ...updatedPackages.map(([from, to]) => `${from.fullName} -> ${to.fullName}`)
             ],
             4
