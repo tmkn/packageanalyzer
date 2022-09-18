@@ -12,7 +12,7 @@
               "--inspect-brk",
               "${workspaceRoot}/node_modules/.bin/jest",
               "--runInBand",
-              "tardecorator"
+              "folderProvider"
             ],
             "console": "integratedTerminal",
             "internalConsoleOptions": "neverOpen"
@@ -65,9 +65,11 @@
             ],
             "program": "${workspaceFolder}/build/src/cli.js",
             "args": [
-                "test",
+                "dependencydump",
                 "--package",
-                "react"
+                "@webassemblyjs/ast@1.9.0",
+                "--folder",
+                "./tests/data/loops_data"
             ],
             //"preLaunchTask": "tsc: build - tsconfig.json",
             "outFiles": [

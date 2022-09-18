@@ -2,12 +2,14 @@
 
 import * as t from "io-ts";
 import { BaseContext } from "clipanion";
+import * as nock from "nock";
 
 import { Writable } from "stream";
 import { Package } from "../src/package/package";
 import { AbstractReport, IReportContext, SingleReportMethodSignature } from "../src/reports/Report";
 import { PackageVersion } from "../src/visitors/visitor";
 import { IPackageJson } from "../src/npm";
+import { DumpPackageProvider } from "../src/providers/folder";
 
 class TestWritable extends Writable {
     private static _pattern = [
@@ -126,15 +128,25 @@ export function createMockContext(): IMockContext {
     };
 }
 
-export function createMockPackage(data?: Partial<IPackageJson>): Package {
-    // @ts-expect-error
-    const pkgJson: IPackageJson = {
-        ...{
-            name: `mockPackage`,
-            version: `1.2.3`
-        },
-        ...data
-    };
+export function setupRegistryMocks(
+    folder: string,
+    registryUrl = `https://registry.npmjs.com`
+): nock.Scope {
+    const provider = new DumpPackageProvider(folder);
+    const scope = nock(registryUrl)
+        .persist()
+        .get(new RegExp(`(.*?)`))
+        .reply((uri, body, cb) => {
+            const [name, version] = uri.split(`/`).filter(part => part !== ``);
 
-    return new Package(pkgJson);
+            if (name && version) {
+                provider.getPackageJson(name, version).then(data => cb(null, [200, data]));
+            } else if (name && !version) {
+                provider.getPackageMetadata(name).then(data => cb(null, [200, data!]));
+            } else {
+                cb(null, [500, `NO DATA AVAILABLE [Name: ${name} | Version: ${version}]`]);
+            }
+        });
+
+    return scope;
 }

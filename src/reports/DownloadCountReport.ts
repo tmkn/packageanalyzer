@@ -3,31 +3,10 @@ import * as t from "io-ts";
 import { INpmDownloadStatistic } from "../npm";
 import { Package } from "../package/package";
 import { IFormatter } from "../utils/formatter";
-import { downloadJson, Url } from "../utils/requests";
+import { downloadJson, Url, urlType } from "../utils/requests";
 import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
 import { AbstractReport, IReportContext } from "./Report";
 import { BasePackageParameter } from "./Validation";
-
-const urlType = new t.Type<Url>(
-    "urlType",
-    (input: unknown): input is Url =>
-        typeof input === "string" && (input.startsWith(`http://`) || input.startsWith(`https://`)),
-    (input, context) => {
-        if (
-            typeof input === "string" &&
-            (input.startsWith(`http://`) || input.startsWith(`https://`))
-        ) {
-            return t.success(input as Url);
-        }
-
-        return t.failure(
-            input,
-            context,
-            `Expected "dependencies" or "devDependencies" but got "${input}"`
-        );
-    },
-    t.identity
-);
 
 const OptionalParams = t.partial({
     url: urlType

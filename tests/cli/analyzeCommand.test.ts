@@ -5,11 +5,13 @@ import { OnlinePackageProvider } from "../../src/providers/online";
 import { createMockNpmServer, IMockServer } from "../server";
 import { createMockContext } from "../common";
 import { AnalyzeCommand } from "../../src/cli/analyzeCommand";
-import { DependencyDumperProvider } from "../../src/utils/dumper";
+import { DumpPackageProvider } from "../../src/providers/folder";
 
 describe(`Analyze Command`, () => {
     let server: IMockServer;
     let provider: OnlinePackageProvider;
+
+    jest.setTimeout(10000);
 
     beforeAll(async () => {
         server = await createMockNpmServer();
@@ -80,8 +82,8 @@ describe(`Analyze Command`, () => {
     });
 
     test(`display loops info`, async () => {
-        const rootPath = path.join("tests", "data", "loopsdata");
-        const provider = new DependencyDumperProvider(rootPath);
+        const rootPath = path.join("tests", "data", "loops_data");
+        const provider = new DumpPackageProvider(rootPath);
 
         const command = cli.process([
             `analyze`,
@@ -96,6 +98,48 @@ describe(`Analyze Command`, () => {
         const { mockContext, stdout, stderr } = createMockContext();
         command.context = mockContext;
         command.beforeProcess = report => (report.provider = provider);
+
+        await command.execute();
+
+        expect(stdout.lines).toMatchSnapshot(`stdout`);
+        expect(stderr.lines).toMatchSnapshot(`stderr`);
+    });
+
+    test(`aborts on wrong --type`, async () => {
+        const command = cli.process([
+            `analyze`,
+            `--folder`,
+            path.join("tests", "data", "testproject1"),
+            `--type`,
+            `abc`,
+            `--full`
+        ]) as AnalyzeCommand;
+
+        expect.assertions(2);
+        const { mockContext, stdout, stderr } = createMockContext();
+        command.context = mockContext;
+
+        await command.execute();
+
+        expect(stdout.lines).toMatchSnapshot(`stdout`);
+        expect(stderr.lines).toMatchSnapshot(`stderr`);
+    });
+
+    test(`aborts on missing --folder or --package`, async () => {
+        const command = cli.process([
+            `analyze`,
+            `--folder`,
+            path.join("tests", "data", "testproject1"),
+            `--type`,
+            `dependencies`,
+            `--full`
+        ]) as AnalyzeCommand;
+
+        expect.assertions(2);
+        const { mockContext, stdout, stderr } = createMockContext();
+        command.context = mockContext;
+
+        command.folder = undefined;
 
         await command.execute();
 

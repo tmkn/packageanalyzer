@@ -2,8 +2,11 @@ import * as path from "path";
 import * as fs from "fs";
 import * as semver from "semver";
 
-import { IPackageJson } from "../npm";
-import { IPackageJsonProvider } from "./provider";
+import { IPackageJson, IPackageMetadata, IUnpublishedPackageMetadata } from "../npm";
+import { AbstractPackageProvider, IPackageJsonProvider } from "./provider";
+
+// todo replace in unit tests with FolderPackageProvider
+// aka make FolderPackageProvider the default for unit tests
 
 //gathers packages from a node_modules folder
 export class FileSystemPackageProvider implements IPackageJsonProvider {
@@ -115,5 +118,66 @@ export class FileSystemPackageProvider implements IPackageJsonProvider {
         }
 
         return pkg;
+    }
+}
+
+// provides data provided by the dependencydump cli command
+export class DumpPackageProvider extends AbstractPackageProvider {
+    constructor(private _folder: string) {
+        super();
+
+        this._loadData();
+    }
+
+    private _findPackageJson(folder: string): Set<string> {
+        try {
+            const pkgs: string[] = [];
+
+            const folderEntries = fs
+                .readdirSync(folder, "utf8")
+                .map(entry => path.join(folder, entry));
+
+            for (const entry of folderEntries) {
+                if (fs.statSync(entry).isDirectory()) {
+                    pkgs.push(...this._findPackageJson(entry));
+                } else if (entry.endsWith(`metadata.json`)) {
+                    pkgs.push(entry);
+                }
+            }
+
+            return new Set([...pkgs].sort());
+        } catch (e) {
+            console.log(e);
+
+            return new Set();
+        }
+    }
+
+    private _loadData(): void {
+        const paths = this._findPackageJson(this._folder);
+        const failedPaths: string[] = [];
+
+        for (const pkgPath of paths) {
+            try {
+                const content = fs.readFileSync(pkgPath, "utf8");
+                const pkg: IPackageMetadata = JSON.parse(content);
+
+                this._cache.set(pkg.name, pkg);
+            } catch (e) {
+                failedPaths.push(pkgPath);
+
+                continue;
+            }
+        }
+
+        if (failedPaths.length > 0) {
+            console.log(`Failed to load ${failedPaths.length} packages`);
+        }
+    }
+
+    async getPackageMetadata(
+        name: string
+    ): Promise<IPackageMetadata | IUnpublishedPackageMetadata | undefined> {
+        return this._cache.get(name);
     }
 }

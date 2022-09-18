@@ -45,6 +45,12 @@ export type SingleReportMethodSignature = ReportMethodSignature<PackageVersion>;
 
 export type EntryTypes = PackageVersion | PackageVersion[];
 
+export function isPackageVersionArray(x: EntryTypes): x is PackageVersion[] {
+    const [test] = x;
+
+    return Array.isArray(test);
+}
+
 export abstract class AbstractReport<P extends {}, T extends EntryTypes = EntryTypes>
     implements IReport<T, P>
 {
