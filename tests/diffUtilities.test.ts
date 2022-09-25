@@ -1,9 +1,9 @@
 import { Package } from "../src";
 import { DiffUtilities } from "../src/extensions/utilities/DiffUtilities";
-import { createMockPackage } from "./mocks";
+import { createMockPackage, IMockPackageJson } from "./mocks";
 
 describe(`Diff Utilities Tests`, () => {
-    const fromPkg: Package = createMockPackage({
+    const fromBaseData: IMockPackageJson = {
         name: `from`,
         version: `1.0.0`,
         dependencies: [
@@ -12,8 +12,9 @@ describe(`Diff Utilities Tests`, () => {
             { name: `updatedDep1`, version: `1.0.0` },
             { name: `updatedDep2`, version: `2.0.0` }
         ]
-    });
-    const toPkg: Package = createMockPackage({
+    };
+
+    const toBaseData: IMockPackageJson = {
         name: `to`,
         version: `1.0.0`,
         dependencies: [
@@ -22,7 +23,10 @@ describe(`Diff Utilities Tests`, () => {
             { name: `updatedDep1`, version: `2.0.0` },
             { name: `updatedDep2`, version: `3.0.0` }
         ]
-    });
+    };
+
+    const toPkg: Package = createMockPackage(toBaseData);
+    const fromPkg: Package = createMockPackage(fromBaseData);
 
     test(`Get new packages`, () => {
         const { newPackages } = new DiffUtilities(fromPkg, toPkg);
@@ -62,5 +66,43 @@ describe(`Diff Utilities Tests`, () => {
         expect(updatedPackages.length).toEqual(2);
         expect(updateDep1).toBeTruthy();
         expect(updateDep2).toBeTruthy();
+    });
+
+    test(`Get new maintainer(s)`, () => {
+        const fromPkg = createMockPackage({
+            ...fromBaseData,
+            ...{
+                maintainers: [
+                    { name: `maintainer1`, email: `maintainer1@test.mail` },
+                    { name: `maintainer2`, email: `maintainer2@test.mail` }
+                ]
+            }
+        });
+
+        const toPkg = createMockPackage({
+            ...toBaseData,
+            ...{
+                maintainers: [
+                    { name: `maintainer1`, email: `maintainer1@test.mail` },
+                    { name: `maintainer2`, email: `maintainer2@test.mail` },
+                    { name: `newmaintainer1`, email: `newmaintainer1@test.mail` },
+                    { name: `newmaintainer2`, email: `newmaintainer2@test.mail` }
+                ]
+            }
+        });
+
+        const { newMaintainers } = new DiffUtilities(fromPkg, toPkg);
+        const newMaintainer1 = newMaintainers?.find(user => user.name === `newmaintainer1`);
+        const newMaintainer2 = newMaintainers?.find(user => user.name === `newmaintainer2`);
+
+        expect(newMaintainers?.length).toBe(2);
+        expect(newMaintainer1).toBeTruthy();
+        expect(newMaintainer2).toBeTruthy();
+    });
+
+    test(`Returns undefined on missing maintainers`, () => {
+        const { newMaintainers } = new DiffUtilities(fromPkg, toPkg);
+
+        expect(newMaintainers).toBeUndefined();
     });
 });
