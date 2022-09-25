@@ -52,10 +52,12 @@ export class DiffReport extends AbstractReport<
             fromPkg,
             toPkg
         );
-        const { transitiveCount: fromTransitiveCount } = new DependencyUtilities(fromPkg);
-        const { transitiveCount: toTransitiveCount } = new DependencyUtilities(toPkg);
-        const difference = fromTransitiveCount - toTransitiveCount;
-        const info: string = `${fromTransitiveCount} (${fromPkg.fullName}) -> ${toTransitiveCount} (${toPkg.fullName})`;
+        // const { transitiveCount: fromTransitiveCount } = new DependencyUtilities(fromPkg);
+        // const { transitiveCount: toTransitiveCount } = new DependencyUtilities(toPkg);
+        // const difference = fromTransitiveCount - toTransitiveCount;
+        // const info: string = `${fromTransitiveCount} (${fromPkg.fullName}) -> ${toTransitiveCount} (${toPkg.fullName})`;
+        const info: string = `${fromPkg.directDependencies.length} (${fromPkg.fullName}) -> ${toPkg.directDependencies.length} (${toPkg.fullName})`;
+        const difference = fromPkg.directDependencies.length - toPkg.directDependencies.length;
         let msg: string = ``;
 
         if (difference === 0) msg = `Dependency count stayed the same: ${info}`;
