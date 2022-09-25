@@ -74,7 +74,15 @@ export class DiffUtilities {
     }
 
     get removedPackages(): Package[] {
-        throw new Error(`Not implemented`);
+        const removedPackages: Package[] = [];
+
+        for (const from of this._fromPkg.directDependencies) {
+            const stillExists = this._toPkg.directDependencies.find(to => to.name === from.name);
+
+            if (!stillExists) removedPackages.push(from);
+        }
+
+        return removedPackages;
     }
 }
 
