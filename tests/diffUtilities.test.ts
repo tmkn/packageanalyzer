@@ -91,18 +91,42 @@ describe(`Diff Utilities Tests`, () => {
             }
         });
 
-        const { newMaintainers } = new DiffUtilities(fromPkg, toPkg);
+        const { newMaintainers, isMaintainerTakeover } = new DiffUtilities(fromPkg, toPkg);
         const newMaintainer1 = newMaintainers?.find(user => user.name === `newmaintainer1`);
         const newMaintainer2 = newMaintainers?.find(user => user.name === `newmaintainer2`);
 
         expect(newMaintainers?.length).toBe(2);
         expect(newMaintainer1).toBeTruthy();
         expect(newMaintainer2).toBeTruthy();
+        expect(isMaintainerTakeover).toBe(false);
     });
 
     test(`Returns undefined on missing maintainers`, () => {
         const { newMaintainers } = new DiffUtilities(fromPkg, toPkg);
 
         expect(newMaintainers).toBeUndefined();
+    });
+
+    test(`Identifies maintainer takeover`, () => {
+        const fromPkg = createMockPackage({
+            ...fromBaseData,
+            ...{
+                maintainers: [
+                    { name: `maintainer1`, email: `maintainer1@test.mail` },
+                    { name: `maintainer2`, email: `maintainer2@test.mail` }
+                ]
+            }
+        });
+
+        const toPkg = createMockPackage({
+            ...toBaseData,
+            ...{
+                maintainers: [{ name: `takeoveruser`, email: `takeoveruser@test.mail` }]
+            }
+        });
+
+        const { isMaintainerTakeover } = new DiffUtilities(fromPkg, toPkg);
+
+        expect(isMaintainerTakeover).toBe(true);
     });
 });
