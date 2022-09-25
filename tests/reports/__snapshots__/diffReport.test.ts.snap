@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DiffReport Tests works: stderr 1`] = `Array []`;
+
+exports[`DiffReport Tests works: stdout 1`] = `
+Array [
+  "Dependency Differ",
+  "    Dependency count stayed the same: 2 (react@18.2.0) -> 2 (react@18.2.0)",
+  "New Maintainer(s)",
+  "New Packages (react@18.2.0 -> react@18.2.0):",
+  "Updated Packages (react@18.2.0 -> react@18.2.0):",
+  "",
+  "",
+]
+`;
