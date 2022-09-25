@@ -1,7 +1,7 @@
 import { INpmUser } from "../../npm";
 import { Package } from "../../package/package";
 
-type UpdateTuple = [from: Package, to: Package];
+export type UpdateTuple = [from: Package, to: Package];
 
 export class DiffUtilities {
     constructor(private _fromPkg: Package, private _toPkg: Package) {}
