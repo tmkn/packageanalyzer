@@ -23,6 +23,8 @@ const DiffParams = t.intersection([FromParamenter, ToParamenter, TypeParameter])
 
 export type IDiffReportParams = t.TypeOf<typeof DiffParams>;
 
+type Status = "unchanged" | "added" | "removed";
+
 export class DiffReport extends AbstractReport<
     IDiffReportParams,
     [PackageVersion, PackageVersion]
@@ -48,80 +50,119 @@ export class DiffReport extends AbstractReport<
         fromPkg: Package,
         toPkg: Package
     ): Promise<void> {
+        const fromDepUtils = new DependencyUtilities(fromPkg);
+        const toDepUtils = new DependencyUtilities(toPkg);
+
+        stdoutFormatter.writeIdentation(
+            [
+                chalk.underline(
+                    `Dependency Diff: ${fromPkg.fullName} (${fromPkg.directDependencies.length}/${fromDepUtils.transitiveCount}) -> ${toPkg.fullName} (${toPkg.directDependencies.length}/${toDepUtils.transitiveCount})`
+                ),
+                this._printChange(
+                    fromPkg.directDependencies.length,
+                    toPkg.directDependencies.length,
+                    `Direct dependency count`
+                ),
+                this._printChange(
+                    new DependencyUtilities(fromPkg).transitiveCount,
+                    new DependencyUtilities(toPkg).transitiveCount,
+                    `Transitive dependency count`
+                )
+            ],
+            4
+        );
+
+        this._printDependencyChanges(fromPkg, toPkg, stdoutFormatter);
+    }
+
+    private _printChange(from: number, to: number, prefix: string): string {
+        const difference = Math.abs(from - to);
+        let msg: string = ``;
+
+        if (from === to) msg = `${prefix} stayed the same`;
+        else if (from > to) msg = `${prefix} ${chalk.green(`decreased`)}: -${difference}`;
+        else msg = `${prefix} ${chalk.redBright(`increased`)}: +${difference}`;
+
+        return msg;
+    }
+
+    private _printDependencyChanges(
+        fromPkg: Package,
+        toPkg: Package,
+        stdoutFormatter: IFormatter
+    ): void {
         const { newMaintainers, newPackages, updatedPackages, removedPackages } = new DiffUtilities(
             fromPkg,
             toPkg
         );
-        // const { transitiveCount: fromTransitiveCount } = new DependencyUtilities(fromPkg);
-        // const { transitiveCount: toTransitiveCount } = new DependencyUtilities(toPkg);
-        // const difference = fromTransitiveCount - toTransitiveCount;
-        // const info: string = `${fromTransitiveCount} (${fromPkg.fullName}) -> ${toTransitiveCount} (${toPkg.fullName})`;
-        const info: string = `${fromPkg.directDependencies.length} (${fromPkg.fullName}) -> ${toPkg.directDependencies.length} (${toPkg.fullName})`;
-        const difference = fromPkg.directDependencies.length - toPkg.directDependencies.length;
-        let msg: string = ``;
 
-        if (difference === 0) msg = `Dependency count stayed the same: ${info}`;
-        else if (difference > 0) msg = `Dependency count ${chalk.green(`decreased`)}: ${info}`;
-        else msg = `Dependency count ${chalk.redBright(`increased`)}: ${info}`;
+        const lines: string[] = [];
+        const allDirectDep: string[] = [
+            ...new Set([
+                ...fromPkg.directDependencies.map(dep => dep.name),
+                ...toPkg.directDependencies.map(dep => dep.name)
+            ])
+        ].sort();
 
-        stdoutFormatter.writeIdentation([`Dependency Diff`, msg], 4);
+        for (const name of allDirectDep) {
+            let pkg = fromPkg.directDependencies.find(pkg => pkg.name === name);
 
-        this._printNewMaintainers(newMaintainers, stdoutFormatter);
-        this._printNewPackages(newPackages, stdoutFormatter);
-        this._printUpdatedPackages(fromPkg, toPkg, updatedPackages, stdoutFormatter);
-        this._printRemovedPackages(removedPackages, stdoutFormatter);
-    }
+            if (pkg) {
+                if (newPackages.find(pkg => pkg.name === name)) {
+                    lines.push(this._printStatus(pkg, `added`));
+                } else if (updatedPackages.find(([from]) => from.name === name)) {
+                    const updatedPackage = updatedPackages.find(([from]) => from.name === name);
 
-    private _printNewMaintainers(
-        newMaintainers: INpmUser[] | undefined,
-        stdoutFormatter: IFormatter
-    ): void {
-        stdoutFormatter.writeIdentation(
-            [
-                `New Maintainer(s):`,
-                ...(newMaintainers?.map(maintainer => `${maintainer.name} (${maintainer.email})`) ??
-                    [].map(() => `No new maintainers`))
-            ],
-            4
+                    if (updatedPackage) {
+                        lines.push(this._printStatus(updatedPackage[0], updatedPackage[1]));
+                    }
+                } else if (removedPackages.find(pkg => pkg.name === name)) {
+                    lines.push(this._printStatus(pkg, "removed"));
+                } else {
+                    lines.push(this._printStatus(pkg, `unchanged`));
+                }
+            } else {
+                pkg = toPkg.directDependencies.find(pkg => pkg.name === name);
+
+                if (pkg) {
+                    lines.push(this._printStatus(pkg, `added`));
+                } else lines.push(`ERROR`);
+            }
+        }
+
+        lines.push(
+            `\n${chalk.green(`ADDED`)} ${chalk.yellow(`UPDATED`)} ${chalk.redBright(
+                `REMOVED`
+            )} UNCHANGED`
         );
+
+        stdoutFormatter.writeIdentation([``, ...lines], 4);
     }
 
-    private _printNewPackages(newPackages: Package[], stdoutFormatter: IFormatter): void {
-        let lines: string[] = [`No new packages`];
+    private _printStatus(from: Package, status: Status): string;
+    private _printStatus(from: Package, to: Package): string;
+    private _printStatus(from: Package, toOrStatus: Package | Status): string {
+        let line: string = ``;
 
-        if (newPackages.length > 0) {
-            lines = newPackages.map(pkg => `${pkg.fullName} (${pkg.version})`);
+        if (typeof toOrStatus === "string") {
+            line = `${from.fullName} (${new DependencyUtilities(from).transitiveCount})`;
+        } else {
+            line = `${from.fullName} (${new DependencyUtilities(from).transitiveCount}) -> ${
+                toOrStatus.fullName
+            } (${new DependencyUtilities(toOrStatus).transitiveCount})`;
         }
 
-        stdoutFormatter.writeIdentation([`New Package(s):`, ...lines], 4);
-    }
-
-    private _printUpdatedPackages(
-        fromPkg: Package,
-        toPkg: Package,
-        updatedPackages: UpdateTuple[],
-        stdoutFormatter: IFormatter
-    ): void {
-        let lines: string[] = [`No updated packages`];
-
-        if (updatedPackages.length > 0) {
-            lines = updatedPackages.map(([from, to]) => `${from.fullName} -> ${to.fullName}`);
+        if (toOrStatus === "added") {
+            line = chalk.green(line);
+        } else if (toOrStatus === "removed") {
+            line = chalk.redBright(line);
+        } else if (toOrStatus === "unchanged") {
+            //noop
+        } else {
+            line = chalk.yellow(line);
         }
 
-        stdoutFormatter.writeIdentation(
-            [`Updated Packages (${fromPkg.fullName} -> ${toPkg.fullName}):`, ...lines],
-            4
-        );
-    }
-
-    private _printRemovedPackages(removedPackages: Package[], stdoutFormatter: IFormatter): void {
-        let lines: string[] = [`No removed packages`];
-
-        if (removedPackages.length > 0) {
-            lines = removedPackages.map(pkg => `${pkg.fullName}`);
-        }
-
-        stdoutFormatter.writeIdentation([`Removed Packages:`, ...lines], 4);
+        return line;
     }
 
     override validate(): t.Type<IDiffReportParams> {
