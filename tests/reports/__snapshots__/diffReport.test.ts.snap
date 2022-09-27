@@ -4,11 +4,15 @@ exports[`DiffReport Tests works: stderr 1`] = `Array []`;
 
 exports[`DiffReport Tests works: stdout 1`] = `
 Array [
-  "Dependency Differ",
-  "    Dependency count stayed the same: 2 (react@18.2.0) -> 2 (react@18.2.0)",
-  "New Maintainer(s)",
-  "New Packages (react@18.2.0 -> react@18.2.0):",
-  "Updated Packages (react@18.2.0 -> react@18.2.0):",
+  "Dependency Diff: react@16.12.0 (3/8) -> react@18.2.0 (1/2)",
+  "Direct Dependencies Δ: -2",
+  "All Dependencies Δ:    -6",
+  "",
+  "    loose-envify@1.4.0 (1)",
+  "    object-assign@4.1.1 (0)",
+  "    prop-types@15.8.1 (4)",
+  "    ",
+  "ADDED UPDATED REMOVED UNCHANGED",
   "",
   "",
 ]

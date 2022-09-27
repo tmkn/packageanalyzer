@@ -15,8 +15,8 @@ describe(`DiffReport Tests`, () => {
     });
     test(`works`, async () => {
         const report = new DiffReport({
-            from: `react`,
-            to: `react`,
+            from: `react@16.12.0`,
+            to: `react@18.2.0`,
             type: `dependencies`
         });
 

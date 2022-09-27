@@ -79,6 +79,29 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "Launch Dump Command",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/build/src/cli.js",
+            "args": [
+                "dependencydump",
+                "--package",
+                "react@18.2.0",
+                "--package",
+                "react@16.12.0",
+                "--folder",
+                "./tests/data/dump"
+            ],
+            //"preLaunchTask": "tsc: build - tsconfig.json",
+            "outFiles": [
+                "${workspaceFolder}/build/**/*.js"
+            ],
+            "console" : "integratedTerminal"
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "Custom Report",
             "skipFiles": [
                 "<node_internals>/**"
