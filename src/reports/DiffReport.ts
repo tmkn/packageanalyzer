@@ -7,8 +7,7 @@ import { Package } from "../package/package";
 import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
 import { AbstractReport, IReportContext } from "./Report";
 import { TypeParameter } from "./Validation";
-import { DiffUtilities, UpdateTuple } from "../extensions/utilities/DiffUtilities";
-import { INpmUser } from "../npm";
+import { DiffUtilities } from "../extensions/utilities/DiffUtilities";
 import { IFormatter } from "../utils/formatter";
 
 const FromParamenter = t.type({
@@ -50,40 +49,42 @@ export class DiffReport extends AbstractReport<
         fromPkg: Package,
         toPkg: Package
     ): Promise<void> {
-        const fromDepUtils = new DependencyUtilities(fromPkg);
-        const toDepUtils = new DependencyUtilities(toPkg);
-
-        stdoutFormatter.writeIdentation(
-            [
-                chalk.underline(
-                    `Dependency Diff: ${fromPkg.fullName} (${fromPkg.directDependencies.length}/${fromDepUtils.transitiveCount}) -> ${toPkg.fullName} (${toPkg.directDependencies.length}/${toDepUtils.transitiveCount})`
-                ),
-                this._printChange(
-                    fromPkg.directDependencies.length,
-                    toPkg.directDependencies.length,
-                    `Direct dependency count`
-                ),
-                this._printChange(
-                    new DependencyUtilities(fromPkg).transitiveCount,
-                    new DependencyUtilities(toPkg).transitiveCount,
-                    `Transitive dependency count`
-                )
-            ],
-            4
+        stdoutFormatter.writeLine(
+            `Dependency Diff: ${chalk.bold.underline(fromPkg.fullName)} (${this._printCount(
+                fromPkg
+            )}) -> ${chalk.bold.underline(toPkg.fullName)} (${this._printCount(toPkg)})`
         );
+
+        this._printStats(fromPkg, toPkg, stdoutFormatter);
 
         this._printDependencyChanges(fromPkg, toPkg, stdoutFormatter);
     }
 
-    private _printChange(from: number, to: number, prefix: string): string {
+    private _printStats(fromPkg: Package, toPkg: Package, stdoutFormatter: IFormatter): void {
+        const { transitiveCount: fromTransitiveCount } = new DependencyUtilities(fromPkg);
+        const { transitiveCount: toTransitiveCount } = new DependencyUtilities(toPkg);
+
+        stdoutFormatter.writeGroup([
+            [
+                `Direct Dependencies Δ`,
+                this._formatDiff(fromPkg.directDependencies.length, toPkg.directDependencies.length)
+            ],
+            [`All Dependencies Δ`, this._formatDiff(fromTransitiveCount, toTransitiveCount)]
+        ]);
+    }
+
+    private _formatDiff(from: number, to: number): string {
         const difference = Math.abs(from - to);
-        let msg: string = ``;
+        let msg: string = `${difference}`;
 
-        if (from === to) msg = `${prefix} stayed the same`;
-        else if (from > to) msg = `${prefix} ${chalk.green(`decreased`)}: -${difference}`;
-        else msg = `${prefix} ${chalk.redBright(`increased`)}: +${difference}`;
+        if (from > to) msg = `-${difference}`;
+        else if (from < to) msg = `+${difference}`;
 
-        return msg;
+        return chalk.bold(msg);
+    }
+
+    private _printCount(pkg: Package): string {
+        return `${pkg.directDependencies.length}/${new DependencyUtilities(pkg).transitiveCount}`;
     }
 
     private _printDependencyChanges(
