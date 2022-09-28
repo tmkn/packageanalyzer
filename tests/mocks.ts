@@ -1,4 +1,4 @@
-import { Package } from "../src";
+import { IPackageJsonProvider, Package } from "../src";
 import { IBasePackageJson, INpmKeyValue, IPackageJson } from "../src/npm";
 import { DependencyTypes } from "../src/reports/Validation";
 
@@ -66,4 +66,13 @@ function convertToPackageJson(
     }
 
     return packageJson;
+}
+
+export class MockProvider implements IPackageJsonProvider {
+    constructor(private readonly mockData: IMockPackageJson[]) {}
+
+    async getPackageJson(): Promise<IPackageJson> {
+        throw new Error(`getPackageByVersion not implemented`);
+        //eturn convertToPackageJson(this.mockData, "dependencies") as IPackageJson;
+    }
 }
