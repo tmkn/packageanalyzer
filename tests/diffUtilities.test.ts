@@ -129,4 +129,19 @@ describe(`Diff Utilities Tests`, () => {
 
         expect(isMaintainerTakeover).toBe(true);
     });
+
+    test(`isMaintainerTakeover returns false on malformed user`, () => {
+        // @ts-expect-error
+        const toPkg = createMockPackage({
+            ...toBaseData,
+            ...{
+                maintainers: [`malformed`]
+            }
+        });
+        const fromPk = createMockPackage(fromBaseData);
+
+        const { isMaintainerTakeover } = new DiffUtilities(fromPk, toPkg);
+
+        expect(isMaintainerTakeover).toBe(false);
+    });
 });

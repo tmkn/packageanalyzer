@@ -5,10 +5,6 @@ import { DependencyTypes } from "../reports/Validation";
 import { DiffReport, IDiffReportParams } from "../reports/DiffReport";
 
 export class DiffCommand extends CliCommand<DiffReport> {
-    public package = Option.String(`--package`, {
-        description: `the package to display the dependency tree e.g. typescript@3.5.1`
-    });
-
     public range = Option.Array(`--range`, {
         arity: 2,
         description: `the 2 packages to compare e.g. typescript@3.5.1 typescript@4.8.2`
@@ -18,31 +14,23 @@ export class DiffCommand extends CliCommand<DiffReport> {
         description: `the type of dependencies you want to analzye, "dependencies" or "devDependencies"`
     });
 
-    // static override usage = Command.Usage({
-    //     description: `show the dependency tree of a NPM package or a local project`,
-    //     details: `
-    //         This command will print the dependency tree of a NPM package or a local project.\n
-    //         Defaults to dependencies, use the \`--type\` argument to specify devDependencies
-    //     `,
-    //     examples: [
-    //         [
-    //             `Show the dependency tree for a NPM package for the latest version`,
-    //             `$0 tree --package typescript`
-    //         ],
-    //         [
-    //             `Show the dependency tree for a NPM package for a specific version`,
-    //             `$0 tree --package typescript@3.5.1`
-    //         ],
-    //         [
-    //             `Show the dependency tree for devDependencies`,
-    //             `$0 tree --package typescript@3.5.1 --type=devDependencies`
-    //         ],
-    //         [
-    //             `Show the dependency tree for a local folder`,
-    //             `$0 analyze --folder ./path/to/your/package.json`
-    //         ]
-    //     ]
-    // });
+    static override usage = Command.Usage({
+        description: `compare the dependencies of 2 packages`,
+        details: `
+            This command will print a summary of the dependency differences between 2 packages.\n
+            Useful to compare 2 versions of the same package.
+        `,
+        examples: [
+            [
+                `Show dependency differences between 2 versions of react`,
+                `$0 diff --range react@16.13.1 react@17.0.1`
+            ],
+            [
+                `Show dependency differences with the latest version of react`,
+                `$0 diff --range react@16.13.1 react`
+            ]
+        ]
+    });
 
     static override paths = [[`diff`]];
 
