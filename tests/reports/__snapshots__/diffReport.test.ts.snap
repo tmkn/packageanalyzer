@@ -1,5 +1,22 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`DiffReport Tests Correctly displays added dependencies: stderr 1`] = `Array []`;
+
+exports[`DiffReport Tests Correctly displays added dependencies: stdout 1`] = `
+Array [
+  "Dependency Diff: medallo@1.0.0 (0/0) -> medallo@2.0.0 (2/2)",
+  "Direct Dependencies Δ: +2",
+  "All Dependencies Δ:    +2",
+  "",
+  "    added1@1.2.3 (0)",
+  "    added2@1.2.3 (0)",
+  "    ",
+  "ADDED UPDATED REMOVED UNCHANGED",
+  "",
+  "",
+]
+`;
+
 exports[`DiffReport Tests Correctly displays removed dependencies: stderr 1`] = `Array []`;
 
 exports[`DiffReport Tests Correctly displays removed dependencies: stdout 1`] = `

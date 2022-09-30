@@ -41,7 +41,7 @@ export class DiffReport extends AbstractReport<
                 getPackageVersionfromString(params.from),
                 getPackageVersionfromString(params.to)
             ];
-        } else throw new Error();
+        } else throw new Error(`Malformed params`);
     }
 
     async report(

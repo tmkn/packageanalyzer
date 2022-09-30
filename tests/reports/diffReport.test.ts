@@ -178,4 +178,51 @@ describe(`DiffReport Tests`, () => {
         expect(stdout.lines).toMatchSnapshot(`stdout`);
         expect(stderr.lines).toMatchSnapshot(`stderr`);
     });
+
+    test(`Correctly displays added dependencies`, async () => {
+        const fromPkg: IMockPackageJson = {
+            ...fromBaseData,
+            ...{
+                dependencies: []
+            }
+        };
+
+        const toPkg: IMockPackageJson = {
+            ...toBaseData,
+            ...{
+                dependencies: [
+                    { name: `added1`, version: `1.2.3` },
+                    { name: `added2`, version: `1.2.3` }
+                ]
+            }
+        };
+
+        const provider = new MockProvider([fromPkg, toPkg]);
+        const report = new DiffReport({
+            from: `medallo@1.0.0`,
+            to: `medallo@2.0.0`,
+            type: `dependencies`
+        });
+
+        report.provider = provider;
+
+        const { stdout, stderr } = createMockContext();
+        const reportService = new ReportService(
+            {
+                reports: [report]
+            },
+            stdout,
+            stderr
+        );
+
+        await reportService.process();
+
+        expect(stdout.lines).toMatchSnapshot(`stdout`);
+        expect(stderr.lines).toMatchSnapshot(`stderr`);
+    });
+
+    test(`Correctly throws on malformed params`, () => {
+        //@ts-expect-error
+        expect(() => new DiffReport({})).toThrow();
+    })
 });
