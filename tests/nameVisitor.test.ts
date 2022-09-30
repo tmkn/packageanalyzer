@@ -136,8 +136,9 @@ describe(`visitFromFolder Tests`, () => {
         const license = p.getData("license");
         const scriptsTest = p.getData("scripts.test");
         const missing = p.getData("adf.sdf.esdf");
+        const packageJson = p.getData();
 
-        expect.assertions(6);
+        expect.assertions(7);
 
         if (dependencies) {
             expect(name).toBe("webpack");
@@ -146,6 +147,7 @@ describe(`visitFromFolder Tests`, () => {
             expect(license).toBe("MIT");
             expect(typeof scriptsTest).toBe("string");
             expect(missing).toBeUndefined();
+            expect(packageJson).toBeInstanceOf(Object);
         }
     });
 

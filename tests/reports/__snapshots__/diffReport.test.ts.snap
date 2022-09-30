@@ -1,5 +1,56 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`DiffReport Tests Correctly displays removed dependencies: stderr 1`] = `Array []`;
+
+exports[`DiffReport Tests Correctly displays removed dependencies: stdout 1`] = `
+Array [
+  "Dependency Diff: medallo@1.0.0 (2/2) -> medallo@2.0.0 (0/0)",
+  "Direct Dependencies Δ: -2",
+  "All Dependencies Δ:    -2",
+  "",
+  "    removed1@1.2.3 (0)",
+  "    removed2@1.2.3 (0)",
+  "    ",
+  "ADDED UPDATED REMOVED UNCHANGED",
+  "",
+  "",
+]
+`;
+
+exports[`DiffReport Tests Correctly displays unchanged dependencies: stderr 1`] = `Array []`;
+
+exports[`DiffReport Tests Correctly displays unchanged dependencies: stdout 1`] = `
+Array [
+  "Dependency Diff: medallo@1.0.0 (2/2) -> medallo@2.0.0 (2/2)",
+  "Direct Dependencies Δ: 0",
+  "All Dependencies Δ:    0",
+  "",
+  "    unchanged1@1.0.0 (0)",
+  "    unchanged2@1.0.0 (0)",
+  "    ",
+  "ADDED UPDATED REMOVED UNCHANGED",
+  "",
+  "",
+]
+`;
+
+exports[`DiffReport Tests Correctly displays upgraded dependencies: stderr 1`] = `Array []`;
+
+exports[`DiffReport Tests Correctly displays upgraded dependencies: stdout 1`] = `
+Array [
+  "Dependency Diff: medallo@1.0.0 (2/2) -> medallo@2.0.0 (2/2)",
+  "Direct Dependencies Δ: 0",
+  "All Dependencies Δ:    0",
+  "",
+  "    dep1@1.2.3 (0) -> dep1@4.5.6 (0)",
+  "    dep2@1.2.3 (0) -> dep2@4.5.6 (0)",
+  "    ",
+  "ADDED UPDATED REMOVED UNCHANGED",
+  "",
+  "",
+]
+`;
+
 exports[`DiffReport Tests works: stderr 1`] = `Array []`;
 
 exports[`DiffReport Tests works: stdout 1`] = `

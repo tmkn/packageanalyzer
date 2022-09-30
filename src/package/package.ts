@@ -119,8 +119,11 @@ export class Package implements IPackage<Package> {
         return matches[0] ?? null;
     }
 
-    getData(key: string): unknown {
-        return get(this._data, key);
+    getData(key: string): unknown;
+    getData(): Readonly<IPackageJson>;
+    getData(key?: string): unknown {
+        if (key) return get(this._data, key);
+        else return JSON.parse(JSON.stringify(this._data));
     }
 
     getDecoratorData<E extends IDecorator<any, unknown>>(key: DecoratorKey<E>): DecoratorData<E> {

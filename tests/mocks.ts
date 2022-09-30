@@ -69,10 +69,30 @@ function convertToPackageJson(
 }
 
 export class MockProvider implements IPackageJsonProvider {
-    constructor(private readonly mockData: IMockPackageJson[]) {}
+    private _cache: Map<string, IPackageJson> = new Map();
 
-    async getPackageJson(): Promise<IPackageJson> {
-        throw new Error(`getPackageByVersion not implemented`);
-        //eturn convertToPackageJson(this.mockData, "dependencies") as IPackageJson;
+    constructor(mockData: IMockPackageJson[], type: DependencyTypes = "dependencies") {
+        for (const data of mockData) {
+            const root = createMockPackage(data, type);
+
+            root.visit(entry => {
+                const packageJson = entry.getData();
+                let fullName = `mockPackage@1.2.4`;
+
+                if (packageJson.name && packageJson.version)
+                    fullName = `${packageJson.name}@${packageJson.version}`;
+
+                this._cache.set(fullName, packageJson);
+            }, true);
+        }
+    }
+
+    async getPackageJson(name: string, version?: string): Promise<IPackageJson> {
+        const key = `${name}@${version}`;
+        const data = this._cache.get(key);
+
+        if (!data) throw new Error(`Couldn't find mock package "${key}"`);
+
+        return data;
     }
 }
