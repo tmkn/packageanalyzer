@@ -1,5 +1,5 @@
 import { DependencyUtilities } from "../src/extensions/utilities/DependencyUtilities";
-import { createMockPackage } from "./mocks";
+import { createMockPackage, IMockPackageJson, MockProvider } from "./mocks";
 
 describe(`Mock Tests`, () => {
     test(`Creates a package`, () => {
@@ -94,5 +94,20 @@ describe(`Mock Tests`, () => {
     test(`Throws on wrong "type"`, () => {
         //@ts-expect-error
         expect(() => createMockPackage({}, "wrong_type")).toThrow();
+    });
+
+    test(`MockProvider returns data`, async () => {
+        const packageJson: IMockPackageJson = { name: `mockpackage`, version: `1.2.3` };
+        const provider: MockProvider = new MockProvider([packageJson]);
+
+        const p = await provider.getPackageJson(`mockpackage`, `1.2.3`);
+
+        expect(p.name).toEqual(`mockpackage`);
+    });
+
+    test(`MockProvider throws on missing data`, async () => {
+        const provider: MockProvider = new MockProvider([]);
+
+        await expect(provider.getPackageJson(`doesnt_exist`, `1.2.3`)).rejects.toThrowError();
     });
 });

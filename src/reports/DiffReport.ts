@@ -44,11 +44,8 @@ export class DiffReport extends AbstractReport<
         } else throw new Error(`Malformed params`);
     }
 
-    async report(
-        { stdoutFormatter }: IReportContext,
-        fromPkg: Package,
-        toPkg: Package
-    ): Promise<void> {
+    async report(ctx: IReportContext, fromPkg: Package, toPkg: Package): Promise<void> {
+        const { stdoutFormatter } = ctx;
         stdoutFormatter.writeLine(
             `Dependency Diff: ${chalk.bold.underline(fromPkg.fullName)} (${this._printCount(
                 fromPkg
@@ -57,7 +54,7 @@ export class DiffReport extends AbstractReport<
 
         this._printStats(fromPkg, toPkg, stdoutFormatter);
 
-        this._printDependencyChanges(fromPkg, toPkg, stdoutFormatter);
+        this._printDependencyChanges(fromPkg, toPkg, ctx);
     }
 
     private _printStats(fromPkg: Package, toPkg: Package, stdoutFormatter: IFormatter): void {
@@ -90,44 +87,42 @@ export class DiffReport extends AbstractReport<
     private _printDependencyChanges(
         fromPkg: Package,
         toPkg: Package,
-        stdoutFormatter: IFormatter
+        { stdoutFormatter, stderrFormatter }: IReportContext
     ): void {
-        const { newMaintainers, newPackages, updatedPackages, removedPackages } = new DiffUtilities(
-            fromPkg,
-            toPkg
-        );
-
-        const lines: string[] = [];
-        const allDirectDep: string[] = [
+        const distinctDirectDependencies: string[] = [
             ...new Set([
                 ...fromPkg.directDependencies.map(dep => dep.name),
                 ...toPkg.directDependencies.map(dep => dep.name)
             ])
         ].sort();
+        const lines: string[] = [];
 
-        for (const name of allDirectDep) {
-            let pkg = fromPkg.directDependencies.find(pkg => pkg.name === name);
+        for (const dependency of distinctDirectDependencies) {
+            try {
+                const pkg =
+                    fromPkg.directDependencies.find(({ name }) => name === dependency) ??
+                    toPkg.directDependencies.find(({ name }) => name === dependency);
 
-            if (pkg) {
-                if (newPackages.find(pkg => pkg.name === name)) {
+                if (typeof pkg === "undefined") throw new Error();
+
+                if (this._dependencyAdded(dependency, fromPkg, toPkg)) {
                     lines.push(this._printStatus(pkg, `added`));
-                } else if (updatedPackages.find(([from]) => from.name === name)) {
-                    const updatedPackage = updatedPackages.find(([from]) => from.name === name);
+                } else if (this._dependencyRemoved(dependency, fromPkg, toPkg)) {
+                    lines.push(this._printStatus(pkg, `removed`));
+                } else if (this._dependencyUpated(dependency, fromPkg, toPkg)) {
+                    const { updatedPackages } = new DiffUtilities(fromPkg, toPkg);
+                    const updatedPackage = updatedPackages.find(
+                        ([from]) => from.name === dependency
+                    );
 
-                    if (updatedPackage) {
-                        lines.push(this._printStatus(updatedPackage[0], updatedPackage[1]));
-                    }
-                } else if (removedPackages.find(pkg => pkg.name === name)) {
-                    lines.push(this._printStatus(pkg, "removed"));
+                    if (typeof updatedPackage === "undefined") throw new Error();
+
+                    lines.push(this._printStatus(updatedPackage[0], updatedPackage[1]));
                 } else {
                     lines.push(this._printStatus(pkg, `unchanged`));
                 }
-            } else {
-                pkg = toPkg.directDependencies.find(pkg => pkg.name === name);
-
-                if (pkg) {
-                    lines.push(this._printStatus(pkg, `added`));
-                } else lines.push(`ERROR`);
+            } catch {
+                stderrFormatter.writeLine(`Something went wrong while processing "${dependency}"`);
             }
         }
 
@@ -138,6 +133,23 @@ export class DiffReport extends AbstractReport<
         );
 
         stdoutFormatter.writeIdentation([``, ...lines], 4);
+    }
+
+    private _dependencyAdded(name: string, fromPkg: Package, toPkg: Package): boolean {
+        const { newPackages } = new DiffUtilities(fromPkg, toPkg);
+
+        return newPackages.some(pkg => pkg.name === name);
+    }
+    private _dependencyRemoved(name: string, fromPkg: Package, toPkg: Package): boolean {
+        const { removedPackages } = new DiffUtilities(fromPkg, toPkg);
+
+        return removedPackages.some(pkg => pkg.name === name);
+    }
+
+    private _dependencyUpated(name: string, fromPkg: Package, toPkg: Package): boolean {
+        const { updatedPackages } = new DiffUtilities(fromPkg, toPkg);
+
+        return updatedPackages.some(([pkg]) => pkg.name === name);
     }
 
     private _printStatus(from: Package, status: Status): string;

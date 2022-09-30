@@ -224,5 +224,5 @@ describe(`DiffReport Tests`, () => {
     test(`Correctly throws on malformed params`, () => {
         //@ts-expect-error
         expect(() => new DiffReport({})).toThrow();
-    })
+    });
 });
