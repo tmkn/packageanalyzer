@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Diff Command handles invalid params: stderr 1`] = `
+Array [
+  "Error: No range option was provided",
+  "",
+]
+`;
+
+exports[`Diff Command handles invalid params: stdout 1`] = `Array []`;
+
+exports[`Diff Command works correctly: stderr 1`] = `Array []`;
+
+exports[`Diff Command works correctly: stdout 1`] = `
+Array [
+  "Dependency Diff: medallo@1.0.0 (4/4) -> barranquilla@1.0.0 (4/4)",
+  "Direct Dependencies Δ: 0",
+  "All Dependencies Δ:    0",
+  "",
+  "    r bandejapaisa@1.0.0 (0)",
+  "    c comidarápida@3.0.0 (0) -> comidarápida@4.0.0 (0)",
+  "    a desgranado@1.0.0 (0)",
+  "    r karolg@1.0.0 (0)",
+  "    u rumbear@1.0.0 (0)",
+  "    a shakira@1.0.0 (0)",
+  "",
+  "(a)dded (c)hanged (r)emoved (u)nchanged",
+  "",
+  "",
+]
+`;
