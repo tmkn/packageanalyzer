@@ -1,20 +1,38 @@
-import * as path from "path";
-
 import { cli } from "../../src/cli/cli";
 import { DiffCommand } from "../../src/cli/diffCommand";
-import { DumpPackageProvider } from "../../src/providers/folder";
 import { createMockContext } from "../common";
+import { IMockPackageJson, MockProvider } from "../mocks";
 
 describe(`Diff Command`, () => {
-    const folder = path.join("tests", "data", "dump");
-    let provider: DumpPackageProvider = new DumpPackageProvider(folder);
+    const fromPkg: IMockPackageJson = {
+        name: `medallo`,
+        version: `1.0.0`,
+        dependencies: [
+            { name: `karolg`, version: `1.0.0` },
+            { name: `bandejapaisa`, version: `1.0.0` },
+            { name: `rumbear`, version: `1.0.0` },
+            { name: `comidarápida`, version: `3.0.0` }
+        ]
+    };
+
+    const toPkg: IMockPackageJson = {
+        name: `barranquilla`,
+        version: `1.0.0`,
+        dependencies: [
+            { name: `shakira`, version: `1.0.0` },
+            { name: `desgranado`, version: `1.0.0` },
+            { name: `rumbear`, version: `1.0.0` },
+            { name: `comidarápida`, version: `4.0.0` }
+        ]
+    };
 
     test(`works correctly`, async () => {
+        const provider = new MockProvider([fromPkg, toPkg]);
         const command = cli.process([
             `diff`,
             `--range`,
-            `react@16.12.0`,
-            `react@18.2.0`
+            `medallo@1.0.0`,
+            `barranquilla@1.0.0`
         ]) as DiffCommand;
         const { mockContext, stdout, stderr } = createMockContext();
 

@@ -1,15 +1,9 @@
-import * as path from "path";
-
-import { DumpPackageProvider } from "../../src/providers/folder";
 import { DiffReport } from "../../src/reports/DiffReport";
 import { ReportService } from "../../src/reports/ReportService";
 import { createMockContext } from "../common";
-import { createMockPackage, IMockPackageJson, MockProvider } from "../mocks";
+import { IMockPackageJson, MockProvider } from "../mocks";
 
 describe(`DiffReport Tests`, () => {
-    const folder = path.join("tests", "data", "dump");
-    let provider: DumpPackageProvider;
-
     const fromBaseData: IMockPackageJson = {
         name: `medallo`,
         version: `1.0.0`
@@ -19,33 +13,6 @@ describe(`DiffReport Tests`, () => {
         name: `medallo`,
         version: `2.0.0`
     };
-
-    beforeAll(() => {
-        provider = new DumpPackageProvider(folder);
-    });
-    test(`works`, async () => {
-        const report = new DiffReport({
-            from: `react@16.12.0`,
-            to: `react@18.2.0`,
-            type: `dependencies`
-        });
-
-        report.provider = provider;
-
-        const { stdout, stderr } = createMockContext();
-        const reportService = new ReportService(
-            {
-                reports: [report]
-            },
-            stdout,
-            stderr
-        );
-
-        await reportService.process();
-
-        expect(stdout.lines).toMatchSnapshot(`stdout`);
-        expect(stderr.lines).toMatchSnapshot(`stderr`);
-    });
 
     test(`Correctly displays unchanged dependencies`, async () => {
         const fromPkg: IMockPackageJson = {
