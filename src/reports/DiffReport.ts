@@ -59,9 +59,9 @@ export class DiffReport extends AbstractReport<
 
     private _printLegend(stdoutFormatter: IFormatter): void {
         const legend: string = [
-            `${chalk.green(`(a)dded`)}`,
-            `${chalk.yellow(`(c)hanged`)}`,
-            `${chalk.redBright(`(r)emoved`)}`,
+            chalk.green(`(a)dded`),
+            chalk.yellow(`(c)hanged`),
+            chalk.redBright(`(r)emoved`),
             `(u)nchanged`
         ].join(` `);
 
