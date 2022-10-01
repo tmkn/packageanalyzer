@@ -53,8 +53,19 @@ export class DiffReport extends AbstractReport<
         );
 
         this._printStats(fromPkg, toPkg, stdoutFormatter);
-
         this._printDependencyChanges(fromPkg, toPkg, ctx);
+        this._printLegend(stdoutFormatter);
+    }
+
+    private _printLegend(stdoutFormatter: IFormatter): void {
+        const legend: string = [
+            `${chalk.green(`(a)dded`)}`,
+            `${chalk.yellow(`(c)hanged`)}`,
+            `${chalk.redBright(`(r)emoved`)}`,
+            `(u)nchanged`
+        ].join(` `);
+
+        stdoutFormatter.writeLine(`\n${legend}`);
     }
 
     private _printStats(fromPkg: Package, toPkg: Package, stdoutFormatter: IFormatter): void {
@@ -126,12 +137,6 @@ export class DiffReport extends AbstractReport<
             }
         }
 
-        lines.push(
-            `\n${chalk.green(`ADDED`)} ${chalk.yellow(`UPDATED`)} ${chalk.redBright(
-                `REMOVED`
-            )} UNCHANGED`
-        );
-
         stdoutFormatter.writeIdentation([``, ...lines], 4);
     }
 
@@ -155,7 +160,7 @@ export class DiffReport extends AbstractReport<
     private _printStatus(from: Package, status: Status): string;
     private _printStatus(from: Package, to: Package): string;
     private _printStatus(from: Package, toOrStatus: Package | Status): string {
-        let line: string = ``;
+        let line: string;
 
         if (typeof toOrStatus === "string") {
             line = `${from.fullName} (${new DependencyUtilities(from).transitiveCount})`;
@@ -166,13 +171,13 @@ export class DiffReport extends AbstractReport<
         }
 
         if (toOrStatus === "added") {
-            line = chalk.green(line);
+            line = chalk.green(`a ${line}`);
         } else if (toOrStatus === "removed") {
-            line = chalk.redBright(line);
+            line = chalk.redBright(`r ${line}`);
         } else if (toOrStatus === "unchanged") {
-            //noop
+            line = `u ${line}`;
         } else {
-            line = chalk.yellow(line);
+            line = chalk.yellow(`c ${line}`);
         }
 
         return line;
