@@ -21,8 +21,6 @@ export const dependencyType = new t.Type<_DependencyType>(
     t.identity
 );
 
-export type DependencyTypes = t.TypeOf<typeof dependencyType>;
-
 export const TypeParameter = t.type({
     type: dependencyType
 });
@@ -43,6 +41,10 @@ export const ZBaseFolderParameter = z.object({
     folder: z.string()
 });
 
+const dependencyTypes = z.union([z.literal(`dependencies`), z.literal(`devDependencies`)])
+
+export type DependencyTypes = z.infer<typeof dependencyTypes>;
+
 export const ZTypeParameter = z.object({
-    type: z.union([z.literal(`dependencies`), z.literal(`devDependencies`)])
+    type: dependencyTypes
 });
