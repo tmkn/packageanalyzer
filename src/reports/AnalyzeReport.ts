@@ -1,5 +1,5 @@
 import * as chalk from "chalk";
-import * as t from "io-ts";
+import { z } from "zod";
 
 import { daysAgo } from "../cli/common";
 import { ReleaseDecorator } from "../extensions/decorators/ReleaseDecorator";
@@ -19,27 +19,19 @@ import { IFormatter } from "../utils/formatter";
 import { getPackageVersionFromPath } from "../visitors/util.node";
 import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
 import { AbstractReport, IReportContext } from "./Report";
-import { BaseFolderParameter, BasePackageParameter, TypeParameter } from "./Validation";
+import { ZBaseFolderParameter, ZBasePackageParameter, ZTypeParameter } from "./Validation";
 
-const PackageParams = t.intersection([
-    BasePackageParameter,
-    TypeParameter,
-    t.type({
-        full: t.boolean
-    })
-]);
+const ZFullParameter = z.object({
+    full: z.boolean()
+});
 
-const FolderParams = t.intersection([
-    BaseFolderParameter,
-    TypeParameter,
-    t.type({
-        full: t.boolean
-    })
-]);
+const ZPackageParams = ZBasePackageParameter.merge(ZTypeParameter).merge(ZFullParameter);
 
-const AnalyzeParams = t.union([PackageParams, FolderParams]);
+const ZFoldereParams = ZBaseFolderParameter.merge(ZTypeParameter).merge(ZFullParameter);
 
-export type IAnalyzeParams = t.TypeOf<typeof AnalyzeParams>;
+const ZAnalyzeParams = z.union([ZPackageParams, ZFoldereParams]);
+
+export type IAnalyzeParams = z.infer<typeof ZAnalyzeParams>;
 
 export class AnalyzeReport extends AbstractReport<IAnalyzeParams> {
     name = `Analyze Report`;
@@ -48,7 +40,7 @@ export class AnalyzeReport extends AbstractReport<IAnalyzeParams> {
     constructor(params: IAnalyzeParams) {
         super(params);
 
-        if (PackageParams.is(this.params)) {
+        if (this._isPackageParams(this.params)) {
             this.pkg = getPackageVersionfromString(this.params.package);
             this.decorators = [new ReleaseDecorator(npmOnline)];
         } else {
@@ -61,8 +53,12 @@ export class AnalyzeReport extends AbstractReport<IAnalyzeParams> {
         await printStatistics(pkg, this.params.full, stdoutFormatter);
     }
 
-    override validate(): t.Type<IAnalyzeParams> {
-        return AnalyzeParams;
+    private _isPackageParams(data: unknown): data is z.infer<typeof ZPackageParams> {
+        return ZPackageParams.safeParse(data).success
+    }
+
+    override validateZod(): z.ZodTypeAny {
+        return ZAnalyzeParams;
     }
 }
 

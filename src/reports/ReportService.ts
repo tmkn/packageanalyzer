@@ -1,5 +1,6 @@
 import { Writable } from "stream";
 import * as chalk from "chalk";
+import { z } from "zod";
 
 import { Package } from "../package/package";
 import { npmOnline } from "../providers/online";
@@ -9,7 +10,7 @@ import { PackageVersion, Visitor } from "../visitors/visitor";
 import { EntryTypes, IReport, isPackageVersionArray } from "./Report";
 
 export interface IReports {
-    reports: IReport<EntryTypes, any>[];
+    reports: IReport<EntryTypes, any, z.ZodTypeAny>[];
 }
 
 export class ReportService {
@@ -50,7 +51,7 @@ export class ReportService {
 
     private async _getPackage(
         entry: PackageVersion,
-        report: IReport<EntryTypes, any>
+        report: IReport<EntryTypes, any, z.ZodTypeAny>
     ): Promise<Package> {
         const visitor = new Visitor(
             entry,
@@ -64,7 +65,7 @@ export class ReportService {
     }
 
     /* istanbul ignore next */
-    private _usesNetworkInTests({ name, provider }: IReport<EntryTypes, any>): void {
+    private _usesNetworkInTests({ name, provider }: IReport<EntryTypes, any, z.ZodTypeAny>): void {
         if (process.env.NODE_ENV === "test") {
             if (typeof provider === "undefined")
                 throw new Error(`${name}: Unit Test will default to online package provider`);

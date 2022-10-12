@@ -1,6 +1,7 @@
 import { isLeft, isRight } from "fp-ts/lib/Either";
 import * as t from "io-ts";
 import reporter from "io-ts-reporters";
+import { z } from "zod";
 
 import { IDecorator } from "../extensions/decorators/Decorator";
 import { Package } from "../package/package";
@@ -26,7 +27,7 @@ export type Args<T> = T extends [PackageVersion]
     ? [Package]
     : Array<Package | undefined>;
 
-export interface IReport<T, P extends {}> {
+export interface IReport<T, P extends {}, Z extends z.ZodTypeAny> {
     readonly name: string;
     readonly params: P;
     readonly pkg: T;
@@ -38,9 +39,10 @@ export interface IReport<T, P extends {}> {
 
     report(context: IReportContext, ...pkg: Args<T>): Promise<void>;
     validate?(): t.Type<P>;
+    validateZod?(): Z;
 }
 
-export type ReportMethodSignature<T> = IReport<T, {}>["report"];
+export type ReportMethodSignature<T> = IReport<T, {}, z.ZodTypeAny>["report"];
 export type SingleReportMethodSignature = ReportMethodSignature<PackageVersion>;
 
 export type EntryTypes = PackageVersion | PackageVersion[];
@@ -51,8 +53,11 @@ export function isPackageVersionArray(x: EntryTypes): x is PackageVersion[] {
     return Array.isArray(test);
 }
 
-export abstract class AbstractReport<P extends {}, T extends EntryTypes = EntryTypes>
-    implements IReport<T, P>
+export abstract class AbstractReport<
+    P extends {},
+    T extends EntryTypes = EntryTypes,
+    Z extends z.ZodTypeAny = z.ZodTypeAny
+> implements IReport<T, P, Z>
 {
     abstract name: string;
     readonly params: P;
@@ -83,10 +88,13 @@ export abstract class AbstractReport<P extends {}, T extends EntryTypes = EntryT
                 throw new Error(`Validation error`);
             }
         } else {
+            this.validateZod?.().parse(params);
+
             this.params = params;
         }
     }
 
     abstract report(context: IReportContext, ...pkg: Args<T>): Promise<void>;
     validate?(): t.Type<P, P, unknown>;
+    validateZod?(): Z;
 }

@@ -87,7 +87,8 @@
     "postinstall-postinstall": "^2.1.0",
     "semver": "^7.3.2",
     "spdx-satisfies": "^5.0.0",
-    "tar": "^6.1.11"
+    "tar": "^6.1.11",
+    "zod": "^3.19.1"
   },
   "engines": {
     "node": ">=14.16.1"

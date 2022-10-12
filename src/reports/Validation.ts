@@ -1,4 +1,5 @@
 import * as t from "io-ts";
+import { z } from "zod";
 
 type _DependencyType = "dependencies" | "devDependencies";
 
@@ -32,4 +33,16 @@ export const BasePackageParameter = t.type({
 
 export const BaseFolderParameter = t.type({
     folder: t.string
+});
+
+export const ZBasePackageParameter = z.object({
+    package: z.string()
+});
+
+export const ZBaseFolderParameter = z.object({
+    folder: z.string()
+});
+
+export const ZTypeParameter = z.object({
+    type: z.union([z.literal(`dependencies`), z.literal(`devDependencies`)])
 });
