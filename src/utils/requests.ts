@@ -1,30 +1,23 @@
 import * as http from "http";
 import * as https from "https";
 
-import * as t from "io-ts";
+import { z } from "zod";
 
-export type Url = `http://${string}` | `https://${string}`;
+const httpString = z.custom<`http://${string}`>(value => {
+    if (typeof value === "string") return value.startsWith(`http://`);
 
-export const urlType = new t.Type<Url>(
-    "urlType",
-    (input: unknown): input is Url =>
-        typeof input === "string" && (input.startsWith(`http://`) || input.startsWith(`https://`)),
-    (input, context) => {
-        if (
-            typeof input === "string" &&
-            (input.startsWith(`http://`) || input.startsWith(`https://`))
-        ) {
-            return t.success(input as Url);
-        }
+    return false;
+});
 
-        return t.failure(
-            input,
-            context,
-            `Expected "dependencies" or "devDependencies" but got "${input}"`
-        );
-    },
-    t.identity
-);
+const httpsString = z.custom<`https://${string}`>(value => {
+    if (typeof value === "string") return value.startsWith(`https://`);
+
+    return false;
+});
+
+export const urlType = z.union([httpString, httpsString]);
+
+export type Url = z.infer<typeof urlType>;
 
 function download(url: Url, timeoutLimit: number): Promise<string> {
     return new Promise<string>((resolve, reject) => {

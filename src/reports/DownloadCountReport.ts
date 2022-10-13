@@ -1,4 +1,4 @@
-import * as t from "io-ts";
+import { z } from "zod";
 
 import { INpmDownloadStatistic } from "../npm";
 import { Package } from "../package/package";
@@ -8,13 +8,13 @@ import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor
 import { AbstractReport, IReportContext } from "./Report";
 import { BasePackageParameter } from "./Validation";
 
-const OptionalParams = t.partial({
-    url: urlType
+const OptionalParams = z.object({
+    url: z.optional(urlType)
 });
 
-const DownloadParams = t.intersection([BasePackageParameter, OptionalParams]);
+const DownloadParams = BasePackageParameter.merge(OptionalParams);
 
-export type IDownloadParams = t.TypeOf<typeof DownloadParams>;
+export type IDownloadParams = z.infer<typeof DownloadParams>;
 
 export class DownloadReport extends AbstractReport<IDownloadParams> {
     name = `Download Report`;
@@ -32,7 +32,7 @@ export class DownloadReport extends AbstractReport<IDownloadParams> {
         await cliDownloads(pkg.name, this.params.url ?? null, stdoutFormatter);
     }
 
-    override validate(): t.Type<IDownloadParams> {
+    override validate(): z.ZodTypeAny {
         return DownloadParams;
     }
 }

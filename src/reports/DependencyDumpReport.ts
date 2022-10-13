@@ -1,7 +1,7 @@
 import * as path from "path";
 import * as fs from "fs";
 
-import * as t from "io-ts";
+import { z } from "zod";
 import { MetaFileDecorator } from "../extensions/decorators/MetaFileDecorator";
 
 import { Package } from "../package/package";
@@ -10,13 +10,13 @@ import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor
 import { AbstractReport, IReportContext } from "./Report";
 import { urlType } from "../utils/requests";
 
-const DependencyDumpParams = t.type({
-    entries: t.array(t.string),
-    folder: t.string,
+const DependencyDumpParams = z.object({
+    entries: z.array(z.string()),
+    folder: z.string(),
     registry: urlType
 });
 
-type IDependencyDumpParams = t.TypeOf<typeof DependencyDumpParams>;
+type IDependencyDumpParams = z.infer<typeof DependencyDumpParams>;
 
 export class DependencyDumpReport extends AbstractReport<IDependencyDumpParams> {
     name = `DependencyDump Report`;
@@ -50,7 +50,7 @@ export class DependencyDumpReport extends AbstractReport<IDependencyDumpParams> 
         stdoutFormatter.writeLine(`Done!`);
     }
 
-    override validate(): t.Type<IDependencyDumpParams> {
+    override validate(): z.ZodTypeAny {
         return DependencyDumpParams;
     }
 }

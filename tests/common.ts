@@ -1,6 +1,6 @@
 /* istanbul ignore file */
 
-import * as t from "io-ts";
+import { z } from "zod";
 import { BaseContext } from "clipanion";
 import * as nock from "nock";
 
@@ -43,30 +43,16 @@ class TestWritable extends Writable {
     }
 }
 
-const pkgType = new t.Type<PackageVersion>(
-    "pkgType",
-    (input: unknown): input is PackageVersion => Array.isArray(input),
-    (input, context) => {
-        return t.success(input as PackageVersion);
-    },
-    t.identity
-);
+const pkgType = z.custom<PackageVersion>(input => Array.isArray(input));
 
-const reportSignature = new t.Type<SingleReportMethodSignature>(
-    "reportType",
-    (input: unknown): input is SingleReportMethodSignature => true,
-    (input, context) => {
-        return t.success(input as SingleReportMethodSignature);
-    },
-    t.identity
-);
+const reportSignature = z.custom<SingleReportMethodSignature>(input => true);
 
-const TestReportParams = t.type({
+const TestReportParams = z.object({
     pkg: pkgType,
     report: reportSignature
 });
 
-type ITestReportParams = t.TypeOf<typeof TestReportParams>;
+type ITestReportParams = z.infer<typeof TestReportParams>;
 
 export class TestReport extends AbstractReport<ITestReportParams, PackageVersion> {
     name = `Test Report`;
@@ -82,7 +68,7 @@ export class TestReport extends AbstractReport<ITestReportParams, PackageVersion
         return this.params.report(context, pkg);
     }
 
-    override validate(): t.Type<ITestReportParams> {
+    override validate(): z.ZodTypeAny {
         return TestReportParams;
     }
 }

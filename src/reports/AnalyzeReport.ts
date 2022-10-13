@@ -19,19 +19,19 @@ import { IFormatter } from "../utils/formatter";
 import { getPackageVersionFromPath } from "../visitors/util.node";
 import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
 import { AbstractReport, IReportContext } from "./Report";
-import { ZBaseFolderParameter, ZBasePackageParameter, ZTypeParameter } from "./Validation";
+import { BaseFolderParameter, BasePackageParameter, TypeParameter } from "./Validation";
 
-const ZFullParameter = z.object({
+const FullParameter = z.object({
     full: z.boolean()
 });
 
-const ZPackageParams = ZBasePackageParameter.merge(ZTypeParameter).merge(ZFullParameter);
+const PackageParams = BasePackageParameter.merge(TypeParameter).merge(FullParameter);
 
-const ZFoldereParams = ZBaseFolderParameter.merge(ZTypeParameter).merge(ZFullParameter);
+const FoldereParams = BaseFolderParameter.merge(TypeParameter).merge(FullParameter);
 
-const ZAnalyzeParams = z.union([ZPackageParams, ZFoldereParams]);
+const AnalyzeParams = z.union([PackageParams, FoldereParams]);
 
-export type IAnalyzeParams = z.infer<typeof ZAnalyzeParams>;
+export type IAnalyzeParams = z.infer<typeof AnalyzeParams>;
 
 export class AnalyzeReport extends AbstractReport<IAnalyzeParams> {
     name = `Analyze Report`;
@@ -53,12 +53,12 @@ export class AnalyzeReport extends AbstractReport<IAnalyzeParams> {
         await printStatistics(pkg, this.params.full, stdoutFormatter);
     }
 
-    private _isPackageParams(data: unknown): data is z.infer<typeof ZPackageParams> {
-        return ZPackageParams.safeParse(data).success
+    private _isPackageParams(data: unknown): data is z.infer<typeof PackageParams> {
+        return PackageParams.safeParse(data).success;
     }
 
-    override validateZod(): z.ZodTypeAny {
-        return ZAnalyzeParams;
+    override validate(): z.ZodTypeAny {
+        return AnalyzeParams;
     }
 }
 

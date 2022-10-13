@@ -1,5 +1,6 @@
-import * as t from "io-ts";
+import { z } from "zod";
 
+import { ZodTypeAny } from "zod";
 import { defaultDependencyType } from "../cli/common";
 import { printDependencyTree } from "../extensions/utilities/LoopUtilities";
 import { Package } from "../package/package";
@@ -9,12 +10,12 @@ import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor
 import { AbstractReport, IReportContext } from "./Report";
 import { BaseFolderParameter, BasePackageParameter, TypeParameter } from "./Validation";
 
-const PackageParams = t.intersection([BasePackageParameter, TypeParameter]);
-const FolderParams = t.intersection([BaseFolderParameter, TypeParameter]);
+const PackageParams = BasePackageParameter.merge(TypeParameter);
+const FolderParams = BaseFolderParameter.merge(TypeParameter);
 
-const TreeReportParams = t.union([PackageParams, FolderParams]);
+const TreeReportParams = z.union([PackageParams, FolderParams]);
 
-export type ITreeReportParams = t.TypeOf<typeof TreeReportParams>;
+export type ITreeReportParams = z.infer<typeof TreeReportParams>;
 
 export class TreeReport extends AbstractReport<ITreeReportParams> {
     name = `Tree Report`;
@@ -25,7 +26,7 @@ export class TreeReport extends AbstractReport<ITreeReportParams> {
 
         this.type = params.type ?? defaultDependencyType;
 
-        if (PackageParams.is(params)) {
+        if (this._isPackageParams(params)) {
             this.pkg = getPackageVersionfromString(params.package);
         } else {
             this.pkg = getPackageVersionFromPath(params.folder);
@@ -37,7 +38,11 @@ export class TreeReport extends AbstractReport<ITreeReportParams> {
         printDependencyTree(pkg, stdoutFormatter);
     }
 
-    override validate(): t.Type<ITreeReportParams> {
+    private _isPackageParams(data: unknown): data is z.infer<typeof PackageParams> {
+        return PackageParams.safeParse(data).success;
+    }
+
+    override validate(): ZodTypeAny {
         return TreeReportParams;
     }
 }

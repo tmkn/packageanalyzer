@@ -1,4 +1,4 @@
-import * as t from "io-ts";
+import { z } from "zod";
 import * as chalk from "chalk";
 
 import { defaultDependencyType } from "../cli/common";
@@ -14,20 +14,20 @@ import {
 import { getPackageVersionFromPath } from "../visitors/util.node";
 import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
 import { AbstractReport, IReportContext } from "./Report";
-import { BaseFolderParameter, BasePackageParameter, dependencyType } from "./Validation";
+import { dependencyTypes, BaseFolderParameter, BasePackageParameter } from "./Validation";
 
-const OptionalParams = t.partial({
-    type: dependencyType,
-    allowList: t.array(t.string),
-    grouped: t.boolean
+const OptionalParams = z.object({
+    type: z.optional(dependencyTypes),
+    allowList: z.optional(z.array(z.string())),
+    grouped: z.optional(z.boolean())
 });
 
-const PackageParams = t.intersection([BasePackageParameter, OptionalParams]);
-const FolderParams = t.intersection([BaseFolderParameter, OptionalParams]);
+const PackageParams = BasePackageParameter.merge(OptionalParams);
+const FolderParams = BaseFolderParameter.merge(OptionalParams);
 
-const LicenseParams = t.union([PackageParams, FolderParams]);
+const LicenseParams = z.union([PackageParams, FolderParams]);
 
-export type ILicenseParams = t.TypeOf<typeof LicenseParams>;
+export type ILicenseParams = z.infer<typeof LicenseParams>;
 
 export class LicenseReport extends AbstractReport<ILicenseParams> {
     name = `License Report`;
@@ -39,7 +39,7 @@ export class LicenseReport extends AbstractReport<ILicenseParams> {
     constructor(params: ILicenseParams) {
         super(params);
 
-        if (PackageParams.is(params)) {
+        if (this._isPackageParams(params)) {
             this.pkg = getPackageVersionfromString(params.package);
         } else {
             this.pkg = getPackageVersionFromPath(params.folder);
@@ -57,7 +57,11 @@ export class LicenseReport extends AbstractReport<ILicenseParams> {
         printLicenseCheck(licenseReport, this.grouped, stdoutFormatter);
     }
 
-    override validate(): t.Type<ILicenseParams> {
+    private _isPackageParams(data: unknown): data is z.infer<typeof PackageParams> {
+        return PackageParams.safeParse(data).success;
+    }
+
+    override validate(): z.ZodTypeAny {
         return LicenseParams;
     }
 }

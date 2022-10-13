@@ -1,6 +1,3 @@
-import { isLeft, isRight } from "fp-ts/lib/Either";
-import * as t from "io-ts";
-import reporter from "io-ts-reporters";
 import { z } from "zod";
 
 import { IDecorator } from "../extensions/decorators/Decorator";
@@ -38,8 +35,7 @@ export interface IReport<T, P extends {}, Z extends z.ZodTypeAny> {
     readonly depth?: number;
 
     report(context: IReportContext, ...pkg: Args<T>): Promise<void>;
-    validate?(): t.Type<P>;
-    validateZod?(): Z;
+    validate?(): Z;
 }
 
 export type ReportMethodSignature<T> = IReport<T, {}, z.ZodTypeAny>["report"];
@@ -69,32 +65,18 @@ export abstract class AbstractReport<
     depth: number | undefined;
 
     constructor(params: P) {
-        const result = this.validate?.().decode(params);
+        const result = this.validate?.().safeParse(params);
 
-        if (result) {
-            if (isRight(result)) {
-                this.params = result.right;
-            } else {
-                if (isLeft(result)) {
-                    const errors: string[] = [];
-
-                    for (const error of reporter.report(result)) {
-                        errors.push(...[...new Set<string>(error.split(`\n`))]);
-                    }
-
-                    throw new Error(errors.join(`\n`));
-                }
-
-                throw new Error(`Validation error`);
-            }
+        if (result?.success) {
+            this.params = result.data;
         } else {
-            this.validateZod?.().parse(params);
+            if (result?.error) throw new Error(result.error.toString());
 
             this.params = params;
         }
     }
 
     abstract report(context: IReportContext, ...pkg: Args<T>): Promise<void>;
-    validate?(): t.Type<P, P, unknown>;
-    validateZod?(): Z;
+
+    validate?(): Z;
 }
