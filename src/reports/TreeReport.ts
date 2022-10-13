@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-import { ZodTypeAny } from "zod";
 import { defaultDependencyType } from "../cli/common";
 import { printDependencyTree } from "../extensions/utilities/LoopUtilities";
 import { Package } from "../package/package";
@@ -42,7 +41,7 @@ export class TreeReport extends AbstractReport<ITreeReportParams> {
         return PackageParams.safeParse(data).success;
     }
 
-    override validate(): ZodTypeAny {
+    override validate(): z.ZodTypeAny {
         return TreeReportParams;
     }
 }

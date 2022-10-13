@@ -9,7 +9,6 @@ import { AbstractReport, IReportContext } from "./Report";
 import { TypeParameter } from "./Validation";
 import { DiffUtilities } from "../extensions/utilities/DiffUtilities";
 import { IFormatter } from "../utils/formatter";
-import { ZodTypeAny } from "zod";
 
 const FromParameter = z.object({
     from: z.string()
@@ -182,7 +181,7 @@ export class DiffReport extends AbstractReport<
         return line;
     }
 
-    override validate(): ZodTypeAny {
+    override validate(): z.ZodTypeAny {
         return DiffParams;
     }
 }
