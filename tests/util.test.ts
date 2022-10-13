@@ -1,3 +1,4 @@
+import { urlType } from "../src/reports/Validation";
 import { numPadding } from "../src/visitors/visitor";
 
 describe(`Num Padding Tests`, () => {
@@ -11,5 +12,25 @@ describe(`Num Padding Tests`, () => {
         const msg = numPadding(33, 1457);
 
         expect(msg).toMatch(`  34/1457`);
+    });
+});
+
+describe(`urlType Tests`, () => {
+    test(`Correctly parses http url`, () => {
+        const { success } = urlType.safeParse(`http://foo.com`);
+
+        expect(success).toBeTruthy();
+    });
+
+    test(`Correctly parses https url`, () => {
+        const { success } = urlType.safeParse(`https://foo.com`);
+
+        expect(success).toBeTruthy();
+    });
+
+    test(`Fails to parse`, () => {
+        const { success } = urlType.safeParse({});
+
+        expect(success).toBeFalsy();
     });
 });
