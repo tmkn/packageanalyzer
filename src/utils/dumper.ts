@@ -6,8 +6,8 @@ import { OnlinePackageProvider } from "../providers/online";
 import { Visitor } from "../visitors/visitor";
 import { OraLogger } from "../loggers/OraLogger";
 import { DependencyUtilities } from "../extensions/utilities/DependencyUtilities";
-import { Url } from "./requests";
 import { EntryTypes, isPackageVersionArray } from "../reports/Report";
+import type { Url } from "../reports/Validation";
 
 export class DependencyDumper {
     pkgs: Package[] = [];

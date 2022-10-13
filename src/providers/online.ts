@@ -1,5 +1,6 @@
 import { IPackageMetadata, IUnpublishedPackageMetadata } from "../npm";
-import { downloadJson, Url } from "../utils/requests";
+import type { Url } from "../reports/Validation";
+import { downloadJson } from "../utils/requests";
 import { AbstractPackageProvider } from "./provider";
 
 //loads npm data from the web

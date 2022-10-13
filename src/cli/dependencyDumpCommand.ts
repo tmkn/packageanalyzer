@@ -1,8 +1,8 @@
 import { Command, Option } from "clipanion";
 
-import { Url } from "../utils/requests";
 import { CliCommand } from "./common";
 import { DependencyDumpReport } from "../reports/DependencyDumpReport";
+import type { Url } from "../reports/Validation";
 
 export class DependencyDumperCommand extends CliCommand<DependencyDumpReport> {
     public packages = Option.Array(`--package`, {

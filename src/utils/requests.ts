@@ -1,23 +1,7 @@
 import * as http from "http";
 import * as https from "https";
 
-import { z } from "zod";
-
-const httpString = z.custom<`http://${string}`>(value => {
-    if (typeof value === "string") return value.startsWith(`http://`);
-
-    return false;
-});
-
-const httpsString = z.custom<`https://${string}`>(value => {
-    if (typeof value === "string") return value.startsWith(`https://`);
-
-    return false;
-});
-
-export const urlType = z.union([httpString, httpsString]);
-
-export type Url = z.infer<typeof urlType>;
+import type { Url } from "../reports/Validation";
 
 function download(url: Url, timeoutLimit: number): Promise<string> {
     return new Promise<string>((resolve, reject) => {

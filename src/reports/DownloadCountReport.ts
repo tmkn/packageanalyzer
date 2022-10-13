@@ -3,10 +3,10 @@ import { z } from "zod";
 import { INpmDownloadStatistic } from "../npm";
 import { Package } from "../package/package";
 import { IFormatter } from "../utils/formatter";
-import { downloadJson, Url, urlType } from "../utils/requests";
+import { downloadJson } from "../utils/requests";
 import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
 import { AbstractReport, IReportContext } from "./Report";
-import { BasePackageParameter } from "./Validation";
+import { BasePackageParameter, Url, urlType } from "./Validation";
 
 const OptionalParams = z.object({
     url: z.optional(urlType)

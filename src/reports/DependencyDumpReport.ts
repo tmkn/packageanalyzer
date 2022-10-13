@@ -8,7 +8,7 @@ import { Package } from "../package/package";
 import { OnlinePackageProvider } from "../providers/online";
 import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
 import { AbstractReport, IReportContext } from "./Report";
-import { urlType } from "../utils/requests";
+import { urlType } from "./../reports/Validation";
 
 const DependencyDumpParams = z.object({
     entries: z.array(z.string()),
