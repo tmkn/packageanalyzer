@@ -1,5 +1,6 @@
-import { CliCommand, isValidDependencyType } from "../../src/cli/common";
+import { CliCommand } from "../../src/cli/common";
 import { AbstractReport } from "../../src/reports/Report";
+import { isValidDependencyType } from "../../src/reports/Validation";
 import { createMockContext } from "../common";
 
 describe(`CLI Utility`, () => {

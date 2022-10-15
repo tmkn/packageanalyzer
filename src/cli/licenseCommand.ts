@@ -1,7 +1,8 @@
 import { Command, Option } from "clipanion";
 
 import { ILicenseParams, LicenseReport } from "../reports/LicenseReport";
-import { CliCommand, defaultDependencyType, isValidDependencyType } from "./common";
+import { isValidDependencyType } from "../reports/Validation";
+import { CliCommand, defaultDependencyType } from "./common";
 
 export class LicenseCheckCommand extends CliCommand<LicenseReport> {
     public package = Option.String(`--package`, {

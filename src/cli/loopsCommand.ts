@@ -1,7 +1,8 @@
 import { Command, Option } from "clipanion";
 
-import { CliCommand, defaultDependencyType, isValidDependencyType } from "./common";
+import { CliCommand, defaultDependencyType } from "./common";
 import { ILoopParams, LoopsReport } from "../reports/LoopsReport";
+import { isValidDependencyType } from "../reports/Validation";
 
 export class LoopsCommand extends CliCommand<LoopsReport> {
     public package?: string = Option.String(`--package`, {

@@ -11,13 +11,6 @@ import { DependencyTypes } from "../reports/Validation";
 
 export const defaultDependencyType: DependencyTypes = "dependencies";
 
-export function isValidDependencyType(type: unknown): type is DependencyTypes {
-    if (typeof type === "string" && (type === "dependencies" || type === "devDependencies"))
-        return true;
-
-    return false;
-}
-
 export function getVersion(): string {
     try {
         const file = path.join(__dirname, "./../../../package.json");

@@ -33,3 +33,7 @@ const httpsString = z.custom<`https://${string}`>(value => {
 export const urlType = z.union([httpString, httpsString]);
 
 export type Url = z.infer<typeof urlType>;
+
+export function isValidDependencyType(type: unknown): type is DependencyTypes {
+    return dependencyTypes.safeParse(type).success;
+}
