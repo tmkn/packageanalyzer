@@ -1,35 +1,39 @@
-import * as t from "io-ts";
+import { z } from "zod";
 
-type _DependencyType = "dependencies" | "devDependencies";
-
-export const dependencyType = new t.Type<_DependencyType>(
-    "dependencyType",
-    (input: unknown): input is _DependencyType =>
-        input === "dependencies" || input === "devDependencies",
-    (input, context) => {
-        if (input === "dependencies" || input === "devDependencies") {
-            return t.success(input);
-        }
-
-        return t.failure(
-            input,
-            context,
-            `Expected "dependencies" or "devDependencies" but got "${input}"`
-        );
-    },
-    t.identity
-);
-
-export type DependencyTypes = t.TypeOf<typeof dependencyType>;
-
-export const TypeParameter = t.type({
-    type: dependencyType
+export const BasePackageParameter = z.object({
+    package: z.string()
 });
 
-export const BasePackageParameter = t.type({
-    package: t.string
+export const BaseFolderParameter = z.object({
+    folder: z.string()
 });
 
-export const BaseFolderParameter = t.type({
-    folder: t.string
+export const dependencyTypes = z.union([z.literal(`dependencies`), z.literal(`devDependencies`)], {
+    invalid_type_error: `type must be "dependencies" or "devDependencies"`
 });
+
+export type DependencyTypes = z.infer<typeof dependencyTypes>;
+
+export const TypeParameter = z.object({
+    type: dependencyTypes
+});
+
+const httpString = z.custom<`http://${string}`>(value => {
+    if (typeof value === "string") return value.startsWith(`http://`);
+
+    return false;
+});
+
+const httpsString = z.custom<`https://${string}`>(value => {
+    if (typeof value === "string") return value.startsWith(`https://`);
+
+    return false;
+});
+
+export const urlType = z.union([httpString, httpsString]);
+
+export type Url = z.infer<typeof urlType>;
+
+export function isValidDependencyType(type: unknown): type is DependencyTypes {
+    return dependencyTypes.safeParse(type).success;
+}

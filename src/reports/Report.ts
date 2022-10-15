@@ -1,6 +1,4 @@
-import { isLeft, isRight } from "fp-ts/lib/Either";
-import * as t from "io-ts";
-import reporter from "io-ts-reporters";
+import { z } from "zod";
 
 import { IDecorator } from "../extensions/decorators/Decorator";
 import { Package } from "../package/package";
@@ -26,7 +24,7 @@ export type Args<T> = T extends [PackageVersion]
     ? [Package]
     : Array<Package | undefined>;
 
-export interface IReport<T, P extends {}> {
+export interface IReport<T, P extends {}, Z extends z.ZodTypeAny> {
     readonly name: string;
     readonly params: P;
     readonly pkg: T;
@@ -37,10 +35,10 @@ export interface IReport<T, P extends {}> {
     readonly depth?: number;
 
     report(context: IReportContext, ...pkg: Args<T>): Promise<void>;
-    validate?(): t.Type<P>;
+    validate?(): Z;
 }
 
-export type ReportMethodSignature<T> = IReport<T, {}>["report"];
+export type ReportMethodSignature<T> = IReport<T, {}, z.ZodTypeAny>["report"];
 export type SingleReportMethodSignature = ReportMethodSignature<PackageVersion>;
 
 export type EntryTypes = PackageVersion | PackageVersion[];
@@ -51,8 +49,11 @@ export function isPackageVersionArray(x: EntryTypes): x is PackageVersion[] {
     return Array.isArray(test);
 }
 
-export abstract class AbstractReport<P extends {}, T extends EntryTypes = EntryTypes>
-    implements IReport<T, P>
+export abstract class AbstractReport<
+    P extends {},
+    T extends EntryTypes = EntryTypes,
+    Z extends z.ZodTypeAny = z.ZodTypeAny
+> implements IReport<T, P, Z>
 {
     abstract name: string;
     readonly params: P;
@@ -64,29 +65,18 @@ export abstract class AbstractReport<P extends {}, T extends EntryTypes = EntryT
     depth: number | undefined;
 
     constructor(params: P) {
-        const result = this.validate?.().decode(params);
+        const result = this.validate?.().safeParse(params);
 
-        if (result) {
-            if (isRight(result)) {
-                this.params = result.right;
-            } else {
-                if (isLeft(result)) {
-                    const errors: string[] = [];
-
-                    for (const error of reporter.report(result)) {
-                        errors.push(...[...new Set<string>(error.split(`\n`))]);
-                    }
-
-                    throw new Error(errors.join(`\n`));
-                }
-
-                throw new Error(`Validation error`);
-            }
+        if (result?.success) {
+            this.params = result.data;
         } else {
+            if (result?.error) throw new Error(result.error.toString());
+
             this.params = params;
         }
     }
 
     abstract report(context: IReportContext, ...pkg: Args<T>): Promise<void>;
-    validate?(): t.Type<P, P, unknown>;
+
+    validate?(): Z;
 }

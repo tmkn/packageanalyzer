@@ -1,5 +1,5 @@
-import * as t from "io-ts";
 import * as chalk from "chalk";
+import { z, ZodTypeAny } from "zod";
 
 import { LoopUtilities } from "../extensions/utilities/LoopUtilities";
 import { Package } from "../package/package";
@@ -7,9 +7,9 @@ import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor
 import { AbstractReport, IReportContext } from "./Report";
 import { BasePackageParameter, TypeParameter } from "./Validation";
 
-const LoopParams = t.intersection([BasePackageParameter, TypeParameter]);
+const LoopParams = BasePackageParameter.merge(TypeParameter);
 
-export type ILoopParams = t.TypeOf<typeof LoopParams>;
+export type ILoopParams = z.infer<typeof LoopParams>;
 
 export class LoopsReport extends AbstractReport<ILoopParams> {
     name = `Loop Report`;
@@ -56,7 +56,7 @@ export class LoopsReport extends AbstractReport<ILoopParams> {
         }
     }
 
-    override validate(): t.Type<ILoopParams> {
+    override validate(): ZodTypeAny {
         return LoopParams;
     }
 }

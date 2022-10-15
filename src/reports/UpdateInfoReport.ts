@@ -1,5 +1,5 @@
 import * as chalk from "chalk";
-import * as t from "io-ts";
+import { z } from "zod";
 
 import { daysAgo } from "../cli/common";
 import { Package } from "../package/package";
@@ -9,29 +9,16 @@ import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor
 import { AbstractReport, IReportContext } from "./Report";
 import { BasePackageParameter } from "./Validation";
 
-export const onlinePackageProviderType = new t.Type<OnlinePackageProvider>(
-    "onlinePackageProviderType",
-    (input: unknown): input is OnlinePackageProvider =>
+export const onlinePackageProviderType = z.custom<OnlinePackageProvider>(input => {
+    return (
         typeof input === "object" &&
         input !== null &&
         "getPackageMetadata" in input &&
-        "getPackageJson" in input,
-    (input, context) => {
-        if (
-            typeof input === "object" &&
-            input !== null &&
-            "getPackageMetadata" in input &&
-            "getPackageJson" in input
-        ) {
-            return t.success(input as OnlinePackageProvider);
-        }
+        "getPackageJson" in input
+    );
+});
 
-        return t.failure(input, context, `Failed to verify OnlinePackageProvider`);
-    },
-    t.identity
-);
-
-export type IUpdateInfoParams = t.TypeOf<typeof BasePackageParameter>;
+export type IUpdateInfoParams = z.infer<typeof BasePackageParameter>;
 
 export class UpdateInfoReport extends AbstractReport<IUpdateInfoParams> {
     name = `Update Info Report`;
@@ -55,7 +42,7 @@ export class UpdateInfoReport extends AbstractReport<IUpdateInfoParams> {
                 throw new Error(`Version info is missing (${name})`);
             }
 
-            if (!onlinePackageProviderType.is(this.provider)) {
+            if (!this._isOnlinePackageProvider(this.provider)) {
                 throw new Error(`Wrong provider instance`);
             }
 
@@ -88,7 +75,13 @@ export class UpdateInfoReport extends AbstractReport<IUpdateInfoParams> {
         }
     }
 
-    override validate(): t.Type<IUpdateInfoParams> {
+    private _isOnlinePackageProvider(
+        data: unknown
+    ): data is z.infer<typeof onlinePackageProviderType> {
+        return onlinePackageProviderType.safeParse(data).success;
+    }
+
+    override validate(): z.ZodTypeAny {
         return BasePackageParameter;
     }
 }

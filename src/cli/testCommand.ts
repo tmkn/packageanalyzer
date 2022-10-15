@@ -4,15 +4,15 @@
 import * as path from "path";
 
 import { Option } from "clipanion";
-import * as t from "io-ts";
 
 import { CliCommand, defaultDependencyType } from "./common";
-import { BasePackageParameter, DependencyTypes, TypeParameter } from "../reports/Validation";
+import { DependencyTypes, BasePackageParameter, TypeParameter } from "../reports/Validation";
 import { AbstractReport, IReportContext } from "../reports/Report";
 import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
 import { TarDecorator } from "../extensions/decorators/TarDecorator";
 import { DumpPackageProvider } from "../providers/folder";
 import { Package } from "../package/package";
+import { z, ZodTypeAny } from "zod";
 
 export class TestCommand extends CliCommand<TestReport> {
     public package = Option.String(`--package`, `typescript`);
@@ -31,9 +31,9 @@ export class TestCommand extends CliCommand<TestReport> {
     }
 }
 
-const PackageParams = t.intersection([BasePackageParameter, TypeParameter]);
+const PackageParams = BasePackageParameter.merge(TypeParameter);
 
-export type ITestReportParams = t.TypeOf<typeof PackageParams>;
+export type ITestReportParams = z.infer<typeof PackageParams>;
 
 export class TestReport extends AbstractReport<ITestReportParams> {
     name = `Test Report`;
@@ -44,7 +44,7 @@ export class TestReport extends AbstractReport<ITestReportParams> {
     constructor(params: ITestReportParams) {
         super(params);
 
-        if (PackageParams.is(params)) {
+        if (this._isPackageParams(params)) {
             this.pkg = getPackageVersionfromString(params.package);
         } else {
             throw new Error(`Error`);
@@ -70,7 +70,11 @@ export class TestReport extends AbstractReport<ITestReportParams> {
         // }, true);
     }
 
-    override validate(): t.Type<ITestReportParams> {
+    private _isPackageParams(data: unknown): data is z.infer<typeof PackageParams> {
+        return PackageParams.safeParse(data).success;
+    }
+
+    override validate(): ZodTypeAny {
         return PackageParams;
     }
 }

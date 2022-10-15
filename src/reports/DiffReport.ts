@@ -1,4 +1,4 @@
-import * as t from "io-ts";
+import { z } from "zod";
 import * as chalk from "chalk";
 
 import { defaultDependencyType } from "../cli/common";
@@ -10,17 +10,17 @@ import { TypeParameter } from "./Validation";
 import { DiffUtilities } from "../extensions/utilities/DiffUtilities";
 import { IFormatter } from "../utils/formatter";
 
-const FromParamenter = t.type({
-    from: t.string
+const FromParameter = z.object({
+    from: z.string()
 });
 
-const ToParamenter = t.type({
-    to: t.string
+const ToParameter = z.object({
+    to: z.string()
 });
 
-const DiffParams = t.intersection([FromParamenter, ToParamenter, TypeParameter]);
+const DiffParams = FromParameter.merge(ToParameter).merge(TypeParameter);
 
-export type IDiffReportParams = t.TypeOf<typeof DiffParams>;
+export type IDiffReportParams = z.infer<typeof DiffParams>;
 
 type Status = "unchanged" | "added" | "removed";
 
@@ -36,12 +36,10 @@ export class DiffReport extends AbstractReport<
 
         this.type = params.type ?? defaultDependencyType;
 
-        if (DiffParams.is(params)) {
-            this.pkg = [
-                getPackageVersionfromString(params.from),
-                getPackageVersionfromString(params.to)
-            ];
-        } else throw new Error(`Malformed params`);
+        this.pkg = [
+            getPackageVersionfromString(params.from),
+            getPackageVersionfromString(params.to)
+        ];
     }
 
     async report(ctx: IReportContext, fromPkg: Package, toPkg: Package): Promise<void> {
@@ -183,7 +181,7 @@ export class DiffReport extends AbstractReport<
         return line;
     }
 
-    override validate(): t.Type<IDiffReportParams> {
+    override validate(): z.ZodTypeAny {
         return DiffParams;
     }
 }

@@ -1,7 +1,8 @@
 import { Command, Option } from "clipanion";
 
-import { CliCommand, defaultDependencyType, isValidDependencyType } from "./common";
+import { CliCommand, defaultDependencyType } from "./common";
 import { AnalyzeReport, IAnalyzeParams } from "../reports/AnalyzeReport";
+import { isValidDependencyType } from "../reports/Validation";
 
 export class AnalyzeCommand extends CliCommand<AnalyzeReport> {
     public package = Option.String(`--package`, {

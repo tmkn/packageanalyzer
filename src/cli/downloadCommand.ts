@@ -1,7 +1,7 @@
 import { Command, Option } from "clipanion";
 
 import { DownloadReport, IDownloadParams } from "../reports/DownloadCountReport";
-import { Url } from "../utils/requests";
+import type { Url } from "../reports/Validation";
 import { CliCommand } from "./common";
 
 export class DownloadCommand extends CliCommand<DownloadReport> {
