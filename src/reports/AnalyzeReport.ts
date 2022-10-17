@@ -8,6 +8,7 @@ import {
     IMostReferred,
     VersionSummary
 } from "../extensions/utilities/DependencyUtilities";
+import { InstallScriptsUtilities } from "../extensions/utilities/InstallScriptsUtilities";
 import { GroupedLicenseSummary, LicenseUtilities } from "../extensions/utilities/LicenseUtilities";
 import { LoopUtilities } from "../extensions/utilities/LoopUtilities";
 import { PathUtilities } from "../extensions/utilities/PathUtilities";
@@ -51,6 +52,19 @@ export class AnalyzeReport extends AbstractReport<IAnalyzeParams> {
 
     async report({ stdoutFormatter }: IReportContext, pkg: Package): Promise<void> {
         await printStatistics(pkg, this.params.full, stdoutFormatter);
+
+        const preInstallScripts = new InstallScriptsUtilities(pkg).preInstallScripts;
+        const postInstallScripts = new InstallScriptsUtilities(pkg).postInstallScripts;
+
+        stdoutFormatter.writeGroup([
+            `preInstallScripts:`,
+            ...preInstallScripts.map(([pkg, entry]) => `${pkg.fullName} - "${entry}"`)
+        ]);
+
+        stdoutFormatter.writeGroup([
+            `postInstallScripts:`,
+            ...postInstallScripts.map(([pkg, entry]) => `${pkg.fullName} - "${entry}"`)
+        ]);
     }
 
     private _isPackageParams(data: unknown): data is z.infer<typeof PackageParams> {
