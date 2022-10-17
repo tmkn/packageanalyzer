@@ -1,7 +1,7 @@
-import { Package } from "../../src";
 import { ReleaseDecorator } from "../../src/extensions/decorators/ReleaseDecorator";
-import { IPackageMetadata, IPackageJson, IUnpublishedPackageMetadata } from "../../src/npm";
+import { IPackageMetadata, IUnpublishedPackageMetadata } from "../../src/npm";
 import { IPackageMetaDataProvider } from "../../src/providers/provider";
+import { createMockPackage, IMockPackageJson } from "../mocks";
 
 describe(`ReleaseDecorator Tests`, () => {
     const logStub = {
@@ -25,11 +25,10 @@ describe(`ReleaseDecorator Tests`, () => {
             }
         })();
         const extension = new ReleaseDecorator(provider);
-        const data: Partial<IPackageJson> = {
-            name: "foo",
+        const data: IMockPackageJson = {
             version: version
         };
-        const p = new Package(data as IPackageJson);
+        const p = createMockPackage(data);
 
         const extensionData = await extension.apply({ p, ...logStub });
 
@@ -45,11 +44,7 @@ describe(`ReleaseDecorator Tests`, () => {
             }
         })();
         const extension = new ReleaseDecorator(provider);
-        const data: Partial<IPackageJson> = {
-            name: "foo",
-            version: "1.0.0"
-        };
-        const p = new Package(data as IPackageJson);
+        const p = createMockPackage({});
 
         await expect(extension.apply({ p, ...logStub })).rejects.toThrowError();
     });
@@ -67,11 +62,7 @@ describe(`ReleaseDecorator Tests`, () => {
             }
         })();
         const extension = new ReleaseDecorator(provider);
-        const data: Partial<IPackageJson> = {
-            name: "foo",
-            version: "1.0.0"
-        };
-        const p = new Package(data as IPackageJson);
+        const p = createMockPackage({});
 
         await expect(extension.apply({ p, ...logStub })).rejects.toThrowError();
     });

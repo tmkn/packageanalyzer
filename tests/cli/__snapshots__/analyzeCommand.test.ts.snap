@@ -1,8 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Analyze Command --folder --type --full 1`] = `
+exports[`Analyze Command --folder --type --full: stderr 1`] = `Array []`;
+
+exports[`Analyze Command --folder --type --full: stdout 1`] = `
 Array [
   "Statistics for testproject1@1.0.0",
+  "",
   "Direct dependencies:     1",
   "Transitive dependencies: 13",
   "Distinct dependencies:",
@@ -17,17 +20,21 @@ Array [
   "    MIT - [js-tokens, loose-envify, object-assign, prop-types, +3 more]",
   "    ISC - [testproject1]",
   "",
+  "",
 ]
 `;
 
-exports[`Analyze Command --package --type --full 1`] = `
+exports[`Analyze Command --package --type --full: stderr 1`] = `Array []`;
+
+exports[`Analyze Command --package --type --full: stdout 1`] = `
 Array [
   "Statistics for react@16.8.1",
+  "",
   "Published: Wed, 06 Feb 2019 18:15:25 GMT (992 days ago)",
   "Oldest package:      object-assign@4.1.1 - Mon, 16 Jan 2017 15:35:15 GMT (1743 days ago)",
   "Oldest package path: react@16.8.1 → object-assign@4.1.1",
-  "Newest package:      react-is@16.13.1 - Thu, 19 Mar 2020 19:53:28 GMT (585 days ago)",
-  "Newest package path: react@16.8.1 → prop-types@15.7.2 → react-is@16.13.1",
+  "Newest package:      scheduler@0.13.6 - Thu, 28 Mar 2019 06:26:26 GMT (942 days ago)",
+  "Newest package path: react@16.8.1 → scheduler@0.13.6",
   "Direct dependencies:     4",
   "Transitive dependencies: 12",
   "Distinct dependencies:",
@@ -41,12 +48,16 @@ Array [
   "Licenses:",
   "    MIT - [js-tokens, loose-envify, object-assign, prop-types, +3 more]",
   "",
+  "",
 ]
 `;
 
-exports[`Analyze Command --package --type 1`] = `
+exports[`Analyze Command --package --type: stderr 1`] = `Array []`;
+
+exports[`Analyze Command --package --type: stdout 1`] = `
 Array [
   "Statistics for react@16.8.1",
+  "",
   "Direct dependencies:     4",
   "Transitive dependencies: 12",
   "Distinct dependencies: 6",
@@ -56,6 +67,61 @@ Array [
   "    (none)",
   "Licenses:",
   "    7x MIT",
+  "",
+  "",
+]
+`;
+
+exports[`Analyze Command aborts on missing --folder or --package: stderr 1`] = `
+Array [
+  "Error: No package nor folder option was provided",
+  "",
+]
+`;
+
+exports[`Analyze Command aborts on missing --folder or --package: stdout 1`] = `Array []`;
+
+exports[`Analyze Command aborts on wrong --type: stderr 1`] = `
+Array [
+  "Error: Please only specify \\"dependencies\\" or \\"devDependencies\\" for the --type argument",
+  "Received abc",
+  "",
+  "",
+]
+`;
+
+exports[`Analyze Command aborts on wrong --type: stdout 1`] = `Array []`;
+
+exports[`Analyze Command display loops info: stderr 1`] = `Array []`;
+
+exports[`Analyze Command display loops info: stdout 1`] = `
+Array [
+  "Statistics for @webassemblyjs/ast@1.9.0",
+  "",
+  "Published: Sat, 01 Feb 2020 23:20:10 GMT (632 days ago)",
+  "Oldest package:      @xtuc/long@4.2.2 - Mon, 18 Feb 2019 08:20:26 GMT (980 days ago)",
+  "Oldest package path: @webassemblyjs/ast@1.9.0 → @webassemblyjs/wast-parser@1.9.0 → @webassemblyjs/helper-code-frame@1.9.0 → @webassemblyjs/wast-printer@1.9.0 → @xtuc/long@4.2.2",
+  "Newest package:      @webassemblyjs/helper-module-context@1.9.0 - Sat, 01 Feb 2020 23:20:25 GMT (632 days ago)",
+  "Newest package path: @webassemblyjs/ast@1.9.0 → @webassemblyjs/helper-module-context@1.9.0",
+  "Direct dependencies:     3",
+  "Transitive dependencies: 14",
+  "Distinct dependencies:",
+  "    10: distinct name",
+  "    10: distinct name and version",
+  "Most referred package: \\"[@webassemblyjs/ast]\\": 3",
+  "Most direct dependencies: \\"[@webassemblyjs/wast-parser]\\": 6",
+  "Package(s) with multiple versions:",
+  "    (none)",
+  "Loops: 4 (4 distinct)",
+  "",
+  "    affected Packages: [@webassemblyjs/ast, @webassemblyjs/wast-parser]",
+  "    e.g. @webassemblyjs/ast@1.9.0 → @webassemblyjs/helper-module-context@1.9.0 → @webassemblyjs/ast@1.9.0",
+  "    3 additional loops",
+  "Licenses:",
+  "    MIT - [@webassemblyjs/ast, @webassemblyjs/floating-point-hex-parser, @webassemblyjs/helper-api-error, @webassemblyjs/helper-code-frame, +4 more]",
+  "    Apache-2.0 - [@xtuc/long]",
+  "    ISC - [@webassemblyjs/helper-fsm]",
+  "",
   "",
 ]
 `;

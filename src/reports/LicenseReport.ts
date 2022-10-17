@@ -1,31 +1,33 @@
+import { z } from "zod";
 import * as chalk from "chalk";
 
 import { defaultDependencyType } from "../cli/common";
 import { LicenseUtilities } from "../extensions/utilities/LicenseUtilities";
 import { Package } from "../package/package";
 import { FileSystemPackageProvider } from "../providers/folder";
-import { npmOnline } from "../providers/online";
 import { IFormatter } from "../utils/formatter";
 import {
     createWhitelistLicenseCheckReport,
     ILicenseCheckResult,
     LicenseCheckReport
 } from "../utils/licenseCheckService";
-import {
-    DependencyTypes,
-    getPackageVersionFromPackageJson,
-    getPackageVersionfromString,
-    PackageVersion
-} from "../visitors/visitor";
-import { AbstractReport } from "./Report";
+import { getPackageVersionFromPath } from "../visitors/util.node";
+import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
+import { AbstractReport, IReportContext } from "./Report";
+import { dependencyTypes, BaseFolderParameter, BasePackageParameter } from "./Validation";
 
-export interface ILicenseParams {
-    package?: string;
-    folder?: string;
-    type?: DependencyTypes;
-    allowList?: string[];
-    grouped?: boolean;
-}
+const OptionalParams = z.object({
+    type: z.optional(dependencyTypes),
+    allowList: z.optional(z.array(z.string())),
+    grouped: z.optional(z.boolean())
+});
+
+const PackageParams = BasePackageParameter.merge(OptionalParams);
+const FolderParams = BaseFolderParameter.merge(OptionalParams);
+
+const LicenseParams = z.union([PackageParams, FolderParams]);
+
+export type ILicenseParams = z.infer<typeof LicenseParams>;
 
 export class LicenseReport extends AbstractReport<ILicenseParams> {
     name = `License Report`;
@@ -34,26 +36,33 @@ export class LicenseReport extends AbstractReport<ILicenseParams> {
     allowList: string[];
     grouped: boolean;
 
-    constructor(readonly params: ILicenseParams) {
-        super();
+    constructor(params: ILicenseParams) {
+        super(params);
 
-        if (params.package) {
+        if (this._isPackageParams(params)) {
             this.pkg = getPackageVersionfromString(params.package);
-            this.provider = npmOnline;
-        } else if (params.folder) {
-            this.pkg = getPackageVersionFromPackageJson(params.folder);
+        } else {
+            this.pkg = getPackageVersionFromPath(params.folder);
             this.provider = new FileSystemPackageProvider(params.folder);
-        } else throw new Error(`Must provide package or folder option`);
+        }
 
         this.type = params.type ?? defaultDependencyType;
         this.allowList = params.allowList ?? [];
         this.grouped = params.grouped ?? false;
     }
 
-    async report(pkg: Package, formatter: IFormatter): Promise<void> {
-        const licenseReport = createWhitelistLicenseCheckReport(pkg, this.allowList ?? [], false);
+    async report({ stdoutFormatter }: IReportContext, pkg: Package): Promise<void> {
+        const licenseReport = createWhitelistLicenseCheckReport(pkg, this.allowList, false);
 
-        printLicenseCheck(licenseReport, this.grouped, formatter);
+        printLicenseCheck(licenseReport, this.grouped, stdoutFormatter);
+    }
+
+    private _isPackageParams(data: unknown): data is z.infer<typeof PackageParams> {
+        return PackageParams.safeParse(data).success;
+    }
+
+    override validate(): z.ZodTypeAny {
+        return LicenseParams;
     }
 }
 

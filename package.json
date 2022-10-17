@@ -1,9 +1,19 @@
 {
   "name": "@tmkn/packageanalyzer",
-  "version": "0.9.9",
+  "version": "0.9.12",
   "description": "A tool to analyze a Node.js project/package",
   "main": "./build/src/index.js",
   "types": "./build/src/index.d.ts",
+  "exports": {
+    "./web": "./build/src/index.web.js"
+  },
+  "typesVersions": {
+    "*": {
+      "web": [
+        "./build/src/index.web.d.ts"
+      ]
+    }
+  },
   "files": [
     "build/src"
   ],
@@ -18,13 +28,15 @@
     "test:coverage": "jest --coverage",
     "test:update": "jest --updateSnapshot",
     "test:clean": "node build/tests/clean.js",
-    "prettier": "prettier --write \"{src,tests,utility}/**/{*.ts,*.js}\"",
+    "prettier": "prettier --write \"{src,tests,utility}/**/{*.ts,*.js}\" webpack.web.config.js",
     "pa": "node build/src/cli.js",
     "preview": "npm pack && tar -xvzf *.tgz && rm -rf package *.tgz",
     "lint": "eslint \"src/**\" \"tests/**\"",
     "lint:fix": "eslint \"src/**\" \"tests/**\" --fix",
+    "lint:web": "node ./webpack.web.config.js",
     "prepublishOnly": "npm run build",
-    "publish:test": "npm publish --dry-run"
+    "publish:test": "npm publish --dry-run",
+    "postinstall": "patch-package"
   },
   "author": "tmkn",
   "license": "MIT",
@@ -45,26 +57,35 @@
     "@types/express": "^4.17.2",
     "@types/jest": "^27.0.1",
     "@types/lodash": "^4.14.168",
-    "@types/node": "^16.7.1",
+    "@types/node": "^18.0.0",
     "@types/semver": "^7.3.4",
     "@types/spdx-satisfies": "^0.1.0",
-    "@typescript-eslint/eslint-plugin": "^5.2.0",
-    "@typescript-eslint/parser": "^5.2.0",
-    "eslint": "^8.1.0",
+    "@types/tar": "^6.1.1",
+    "@typescript-eslint/eslint-plugin": "^5.40.0",
+    "@typescript-eslint/parser": "^5.40.0",
+    "eslint": "^8.25.0",
     "express": "^4.17.1",
     "jest": "^27.0.6",
+    "memory-fs": "^0.5.0",
+    "nock": "^13.2.9",
     "prettier": "^2.2.1",
     "ts-jest": "^27.0.4",
-    "typescript": "^4.3.2"
+    "ts-loader": "^9.2.6",
+    "typescript": "^4.7.2",
+    "webpack": "^5.65.0"
   },
   "dependencies": {
     "chalk": "^4.1.0",
-    "clipanion": "^3.0.0-rc.12",
+    "clipanion": "^3.2.0-rc.4",
     "dayjs": "^1.9.6",
     "lodash": "^4.17.20",
     "ora": "^5.1.0",
+    "patch-package": "^6.4.7",
+    "postinstall-postinstall": "^2.1.0",
     "semver": "^7.3.2",
-    "spdx-satisfies": "^5.0.0"
+    "spdx-satisfies": "^5.0.0",
+    "tar": "^6.1.11",
+    "zod": "^3.19.1"
   },
   "engines": {
     "node": ">=14.16.1"

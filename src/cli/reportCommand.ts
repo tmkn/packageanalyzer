@@ -24,7 +24,7 @@ export class ReportCommand extends Command {
             ? this.config
             : path.join(process.cwd(), this.config);
         const config = require(importPath);
-        const reportService = new ReportService(config, this.context.stdout);
+        const reportService = new ReportService(config, this.context.stdout, this.context.stderr);
 
         await reportService.process();
     }

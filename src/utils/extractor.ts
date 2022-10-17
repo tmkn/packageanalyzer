@@ -2,7 +2,7 @@ import * as path from "path";
 import * as fs from "fs";
 
 import { FlatFileProvider } from "../providers/flatFile";
-import { OraLogger } from "./logger";
+import { OraLogger } from "../loggers/OraLogger";
 import { Package } from "../package/package";
 import { getPackageVersionfromString, PackageVersion, Visitor } from "../visitors/visitor";
 

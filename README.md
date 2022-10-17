@@ -3,8 +3,8 @@
 [![codecov](https://codecov.io/gh/tmkn/packageanalyzer/branch/master/graph/badge.svg)](https://codecov.io/gh/tmkn/packageanalyzer)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=tmkn_packageanalyzer&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=tmkn_packageanalyzer)
 [![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=tmkn_packageanalyzer&metric=sqale_index)](https://sonarcloud.io/dashboard?id=tmkn_packageanalyzer)
-![npm (scoped)](https://img.shields.io/npm/v/@tmkn/packageanalyzer)
-![npm](https://img.shields.io/npm/dw/@tmkn/packageanalyzer)
+[![npm (scoped)](https://img.shields.io/npm/v/@tmkn/packageanalyzer)](https://www.npmjs.com/package/@tmkn/packageanalyzer)
+[![npm](https://img.shields.io/npm/dw/@tmkn/packageanalyzer)](https://www.npmjs.com/package/@tmkn/packageanalyzer)
 
 > A sample output of the `analyze` command
 ![App Banner](./banner.png)

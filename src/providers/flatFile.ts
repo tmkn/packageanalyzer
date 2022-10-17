@@ -4,10 +4,9 @@ import * as os from "os";
 import * as path from "path";
 import * as semver from "semver";
 
-import { OraLogger } from "../utils/logger";
+import { OraLogger } from "../loggers/OraLogger";
 
 import { IPackageJson, IPackageMetadata, INpmDumpRow, IUnpublishedPackageMetadata } from "../npm";
-import { PackageVersion } from "../visitors/visitor";
 import { IPackageJsonProvider } from "./provider";
 
 //parses npm data from https://replicate.npmjs.com/_all_docs?limit=4&include_docs=true
@@ -73,12 +72,6 @@ export class FlatFileProvider implements IPackageJsonProvider {
                 throw new Error(`Couldn't find version: ${resolvedVersion} for package ${name}`);
 
             return specificPackageJson;
-        }
-    }
-
-    async *getPackageJsons(modules: PackageVersion[]): AsyncIterableIterator<IPackageJson> {
-        for (const [name, version] of modules) {
-            yield this.getPackageJson(name, version);
         }
     }
 

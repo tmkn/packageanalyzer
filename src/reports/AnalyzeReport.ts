@@ -1,6 +1,7 @@
 import * as chalk from "chalk";
+import { z } from "zod";
 
-import { daysAgo, defaultDependencyType } from "../cli/common";
+import { daysAgo } from "../cli/common";
 import { ReleaseDecorator } from "../extensions/decorators/ReleaseDecorator";
 import {
     DependencyUtilities,
@@ -15,44 +16,49 @@ import { Package } from "../package/package";
 import { FileSystemPackageProvider } from "../providers/folder";
 import { npmOnline } from "../providers/online";
 import { IFormatter } from "../utils/formatter";
-import {
-    DependencyTypes,
-    getPackageVersionFromPackageJson,
-    getPackageVersionfromString,
-    PackageVersion
-} from "../visitors/visitor";
-import { AbstractReport } from "./Report";
+import { getPackageVersionFromPath } from "../visitors/util.node";
+import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
+import { AbstractReport, IReportContext } from "./Report";
+import { BaseFolderParameter, BasePackageParameter, TypeParameter } from "./Validation";
 
-export interface IAnalyzeParams {
-    package?: string;
-    folder?: string;
-    type?: DependencyTypes;
-    full: boolean;
-}
+const FullParameter = z.object({
+    full: z.boolean()
+});
+
+const PackageParams = BasePackageParameter.merge(TypeParameter).merge(FullParameter);
+
+const FoldereParams = BaseFolderParameter.merge(TypeParameter).merge(FullParameter);
+
+const AnalyzeParams = z.union([PackageParams, FoldereParams]);
+
+export type IAnalyzeParams = z.infer<typeof AnalyzeParams>;
 
 export class AnalyzeReport extends AbstractReport<IAnalyzeParams> {
     name = `Analyze Report`;
     pkg: PackageVersion;
 
-    constructor(readonly params: IAnalyzeParams) {
-        super();
+    constructor(params: IAnalyzeParams) {
+        super(params);
 
-        if (params.package) {
-            this.pkg = getPackageVersionfromString(params.package);
-            this.provider = npmOnline;
+        if (this._isPackageParams(this.params)) {
+            this.pkg = getPackageVersionfromString(this.params.package);
             this.decorators = [new ReleaseDecorator(npmOnline)];
-        } else if (params.folder) {
-            this.pkg = getPackageVersionFromPackageJson(params.folder);
-            this.provider = new FileSystemPackageProvider(params.folder);
         } else {
-            throw new Error(`No package or folder option provided`);
+            this.pkg = getPackageVersionFromPath(this.params.folder);
+            this.provider = new FileSystemPackageProvider(this.params.folder);
         }
-
-        this.type = params.type ?? defaultDependencyType;
     }
 
-    async report(pkg: Package, formatter: IFormatter): Promise<void> {
-        await printStatistics(pkg, this.params.full, formatter);
+    async report({ stdoutFormatter }: IReportContext, pkg: Package): Promise<void> {
+        await printStatistics(pkg, this.params.full, stdoutFormatter);
+    }
+
+    private _isPackageParams(data: unknown): data is z.infer<typeof PackageParams> {
+        return PackageParams.safeParse(data).success;
+    }
+
+    override validate(): z.ZodTypeAny {
+        return AnalyzeParams;
     }
 }
 

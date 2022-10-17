@@ -1,12 +1,17 @@
-import { Writable } from "stream";
-import { IDecorator } from "../src/extensions/decorators/Decorator";
-import { Package } from "../src/package/package";
-import { IPackageJsonProvider } from "../src/providers/provider";
-import { AbstractReport } from "../src/reports/Report";
-import { IFormatter } from "../src/utils/formatter";
-import { DependencyTypes, PackageVersion } from "../src/visitors/visitor";
+/* istanbul ignore file */
 
-export class TestWritable extends Writable {
+import { z } from "zod";
+import { BaseContext } from "clipanion";
+import * as nock from "nock";
+
+import { Writable } from "stream";
+import { Package } from "../src/package/package";
+import { AbstractReport, IReportContext, SingleReportMethodSignature } from "../src/reports/Report";
+import { PackageVersion } from "../src/visitors/visitor";
+import { IPackageJson } from "../src/npm";
+import { DumpPackageProvider } from "../src/providers/folder";
+
+class TestWritable extends Writable {
     private static _pattern = [
         "[\\u001B\\u009B][[\\]()#;?]*(?:(?:(?:(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]+)*|[a-zA-Z\\d]+(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]*)*)?\\u0007)",
         "(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PR-TZcf-ntqry=><~]))"
@@ -14,10 +19,15 @@ export class TestWritable extends Writable {
 
     private static _regex = new RegExp(this._pattern, "g");
 
-    private _lines: string[] = [];
+    private _output: string = "";
 
     public get lines(): string[] {
-        return this._lines.map(l => l.replace(TestWritable._regex, ""));
+        if (this._output === "") return [];
+
+        //remove ansi escape codes, azure doesn't like them
+        let cleaned: string = this._output.replace(TestWritable._regex, "");
+
+        return cleaned.split("\n");
     }
 
     override _write(
@@ -27,38 +37,102 @@ export class TestWritable extends Writable {
     ): void {
         const data: string = chunk.toString();
 
-        this._lines.push(data.trimEnd());
+        this._output += data.toString();
 
         callback();
     }
 }
 
-interface ITestReport {
-    pkg: PackageVersion;
-    report: (pkg: Package, formatter: IFormatter) => Promise<void>;
+const pkgType = z.custom<PackageVersion>(input => Array.isArray(input));
 
-    decorators?: IDecorator<any, any>[];
-    provider?: IPackageJsonProvider;
-    type?: DependencyTypes;
-    depth?: number;
-}
+const reportSignature = z.custom<SingleReportMethodSignature>(input => true);
 
-export class TestReport extends AbstractReport<ITestReport> {
+const TestReportParams = z.object({
+    pkg: pkgType,
+    report: reportSignature
+});
+
+type ITestReportParams = z.infer<typeof TestReportParams>;
+
+export class TestReport extends AbstractReport<ITestReportParams, PackageVersion> {
     name = `Test Report`;
     pkg: PackageVersion;
 
-    constructor(public params: ITestReport) {
-        super();
+    constructor(params: ITestReportParams) {
+        super(params);
 
         this.pkg = params.pkg;
-
-        this.decorators = params.decorators;
-        this.provider = params.provider;
-        this.type = params.type;
-        this.depth = params.depth;
     }
 
-    async report(pkg: Package, formatter: IFormatter): Promise<void> {
-        return this.params.report(pkg, formatter);
+    async report(context: IReportContext, pkg: Package): Promise<void> {
+        return this.params.report(context, pkg);
     }
+
+    override validate(): z.ZodTypeAny {
+        return TestReportParams;
+    }
+}
+
+export interface ITestReportNoValidationParams {
+    foo: string;
+}
+
+export class TestReportNoValidation extends AbstractReport<ITestReportNoValidationParams> {
+    name = `Test Report No Validation`;
+    pkg: PackageVersion;
+
+    constructor(params: ITestReportNoValidationParams) {
+        super(params);
+
+        this.pkg = [params.foo];
+    }
+
+    async report(context: IReportContext, pkg: Package): Promise<void> {}
+}
+
+interface IMockContext {
+    mockContext: BaseContext;
+    stdout: TestWritable;
+    stderr: TestWritable;
+}
+
+export function createMockContext(): IMockContext {
+    const stdout = new TestWritable();
+    const stderr = new TestWritable();
+    const mockContext: BaseContext = {
+        stdin: process.stdin,
+        stdout,
+        stderr,
+        colorDepth: 8,
+        env: {}
+    };
+
+    return {
+        mockContext,
+        stdout,
+        stderr
+    };
+}
+
+export function setupRegistryMocks(
+    folder: string,
+    registryUrl = `https://registry.npmjs.com`
+): nock.Scope {
+    const provider = new DumpPackageProvider(folder);
+    const scope = nock(registryUrl)
+        .persist()
+        .get(new RegExp(`(.*?)`))
+        .reply((uri, body, cb) => {
+            const [name, version] = uri.split(`/`).filter(part => part !== ``);
+
+            if (name && version) {
+                provider.getPackageJson(name, version).then(data => cb(null, [200, data]));
+            } else if (name && !version) {
+                provider.getPackageMetadata(name).then(data => cb(null, [200, data!]));
+            } else {
+                cb(null, [500, `NO DATA AVAILABLE [Name: ${name} | Version: ${version}]`]);
+            }
+        });
+
+    return scope;
 }

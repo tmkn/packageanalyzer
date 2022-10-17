@@ -1,6 +1,7 @@
+import { Package } from "../../src/package/package";
 import { DownloadReport } from "../../src/reports/DownloadCountReport";
 import { Formatter } from "../../src/utils/formatter";
-import { TestWritable } from "./../common";
+import { createMockContext } from "./../common";
 import { createMockDownloadServer, IMockServer } from "./../server";
 
 describe(`DownloadCountReport Tests`, () => {
@@ -14,20 +15,21 @@ describe(`DownloadCountReport Tests`, () => {
 
     test(`works`, async () => {
         const downloadReport = new DownloadReport({
-            pkg: `_downloads`,
+            package: `_downloads`,
             url: `http://localhost:${server.port}/`
         });
-        const fakePgk = {
-            name: `_downloads`
-        };
-        const writer = new TestWritable();
-        const formatter = new Formatter(writer);
 
         //@ts-expect-error
-        await downloadReport.report(fakePgk, formatter);
+        const fakePgk: Package = {
+            name: `_downloads`
+        };
+        const { stdout, stderr } = createMockContext();
+        const stdoutFormatter = new Formatter(stdout);
+        const stderrFormatter = new Formatter(stderr);
 
-        const match = writer.lines.find(line => line.includes(`8609192`));
+        await downloadReport.report({ stdoutFormatter, stderrFormatter }, fakePgk);
 
-        expect(match).not.toBeUndefined();
+        expect(stdout.lines).toMatchSnapshot(`stdout`);
+        expect(stderr.lines).toMatchSnapshot(`stderr`);
     });
 });

@@ -1,0 +1,35 @@
+diff --git a/node_modules/clipanion/lib/advanced/options/Array.d.ts b/node_modules/clipanion/lib/advanced/options/Array.d.ts
+index 1acd643..e59edaa 100644
+--- a/node_modules/clipanion/lib/advanced/options/Array.d.ts
++++ b/node_modules/clipanion/lib/advanced/options/Array.d.ts
+@@ -12,8 +12,8 @@ export declare type ArrayFlags<T, Arity extends number = 1> = GeneralOptionFlags
+  * --foo hello --foo bar
+  *     ► {"foo": ["hello", "world"]}
+  */
+-export declare function Array<T = string, Arity extends number = 1>(descriptor: string, opts: ArrayFlags<T, Arity> & {
++export declare function Array<T extends {} = string, Arity extends number = 1>(descriptor: string, opts: ArrayFlags<T, Arity> & {
+     required: true;
+ }): CommandOptionReturn<Array<WithArity<T, Arity>>>;
+-export declare function Array<T = string, Arity extends number = 1>(descriptor: string, opts?: ArrayFlags<T, Arity>): CommandOptionReturn<Array<WithArity<T, Arity>> | undefined>;
+-export declare function Array<T = string, Arity extends number = 1>(descriptor: string, initialValue: Array<WithArity<string, Arity>>, opts?: Omit<ArrayFlags<T, Arity>, 'required'>): CommandOptionReturn<Array<WithArity<T, Arity>>>;
++export declare function Array<T extends {} = string, Arity extends number = 1>(descriptor: string, opts?: ArrayFlags<T, Arity>): CommandOptionReturn<Array<WithArity<T, Arity>> | undefined>;
++export declare function Array<T extends {} = string, Arity extends number = 1>(descriptor: string, initialValue: Array<WithArity<string, Arity>>, opts?: Omit<ArrayFlags<T, Arity>, 'required'>): CommandOptionReturn<Array<WithArity<T, Arity>>>;
+diff --git a/node_modules/clipanion/lib/advanced/options/String.d.ts b/node_modules/clipanion/lib/advanced/options/String.d.ts
+index 89a80f8..b08ee5b 100644
+--- a/node_modules/clipanion/lib/advanced/options/String.d.ts
++++ b/node_modules/clipanion/lib/advanced/options/String.d.ts
+@@ -39,11 +39,11 @@ export declare function String<T = string>(opts: StringPositionalFlags<T>): Comm
+  * --foo=hello --bar world
+  *     ► {"foo": "hello", "bar": "world"}
+  */
+-export declare function String<T = string, Arity extends number = 1>(descriptor: string, opts: StringOptionNoBoolean<T, Arity> & {
++export declare function String<T extends {} = string, Arity extends number = 1>(descriptor: string, opts: StringOptionNoBoolean<T, Arity> & {
+     required: true;
+ }): CommandOptionReturn<WithArity<T, Arity>>;
+-export declare function String<T = string, Arity extends number = 1>(descriptor: string, opts?: StringOptionNoBoolean<T, Arity>): CommandOptionReturn<WithArity<T, Arity> | undefined>;
+-export declare function String<T = string, Arity extends number = 1>(descriptor: string, initialValue: WithArity<string, Arity>, opts?: Omit<StringOptionNoBoolean<T, Arity>, 'required'>): CommandOptionReturn<WithArity<T, Arity>>;
++export declare function String<T extends {} = string, Arity extends number = 1>(descriptor: string, opts?: StringOptionNoBoolean<T, Arity>): CommandOptionReturn<WithArity<T, Arity> | undefined>;
++export declare function String<T extends {} = string, Arity extends number = 1>(descriptor: string, initialValue: WithArity<string, Arity>, opts?: Omit<StringOptionNoBoolean<T, Arity>, 'required'>): CommandOptionReturn<WithArity<T, Arity>>;
+ export declare function String<T = string>(descriptor: string, opts: StringOptionTolerateBoolean<T> & {
+     required: true;
+ }): CommandOptionReturn<T | boolean>;

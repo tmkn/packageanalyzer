@@ -1,44 +1,47 @@
+import { z } from "zod";
+
 import { defaultDependencyType } from "../cli/common";
 import { printDependencyTree } from "../extensions/utilities/LoopUtilities";
 import { Package } from "../package/package";
 import { FileSystemPackageProvider } from "../providers/folder";
-import { npmOnline } from "../providers/online";
-import { IFormatter } from "../utils/formatter";
-import {
-    DependencyTypes,
-    getPackageVersionFromPackageJson,
-    getPackageVersionfromString,
-    PackageVersion
-} from "../visitors/visitor";
-import { AbstractReport } from "./Report";
+import { getPackageVersionFromPath } from "../visitors/util.node";
+import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
+import { AbstractReport, IReportContext } from "./Report";
+import { BaseFolderParameter, BasePackageParameter, TypeParameter } from "./Validation";
 
-export interface ITreeReportParams {
-    package?: string;
-    folder?: string;
-    type?: DependencyTypes;
-}
+const PackageParams = BasePackageParameter.merge(TypeParameter);
+const FolderParams = BaseFolderParameter.merge(TypeParameter);
+
+const TreeReportParams = z.union([PackageParams, FolderParams]);
+
+export type ITreeReportParams = z.infer<typeof TreeReportParams>;
 
 export class TreeReport extends AbstractReport<ITreeReportParams> {
     name = `Tree Report`;
     pkg: PackageVersion;
 
-    constructor(readonly params: ITreeReportParams) {
-        super();
+    constructor(params: ITreeReportParams) {
+        super(params);
 
         this.type = params.type ?? defaultDependencyType;
 
-        if (params.package) {
+        if (this._isPackageParams(params)) {
             this.pkg = getPackageVersionfromString(params.package);
-            this.provider = npmOnline;
-        } else if (params.folder) {
-            this.pkg = getPackageVersionFromPackageJson(params.folder);
-            this.provider = new FileSystemPackageProvider(params.folder);
         } else {
-            throw new Error(`Needs at least "package" or "folder" option`);
+            this.pkg = getPackageVersionFromPath(params.folder);
+            this.provider = new FileSystemPackageProvider(params.folder);
         }
     }
 
-    async report(pkg: Package, formatter: IFormatter): Promise<void> {
-        printDependencyTree(pkg, formatter);
+    async report({ stdoutFormatter }: IReportContext, pkg: Package): Promise<void> {
+        printDependencyTree(pkg, stdoutFormatter);
+    }
+
+    private _isPackageParams(data: unknown): data is z.infer<typeof PackageParams> {
+        return PackageParams.safeParse(data).success;
+    }
+
+    override validate(): z.ZodTypeAny {
+        return TreeReportParams;
     }
 }

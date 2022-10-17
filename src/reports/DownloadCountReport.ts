@@ -1,28 +1,39 @@
-import { getDownloadsLastWeek } from "../npm";
+import { z } from "zod";
+
+import { INpmDownloadStatistic } from "../npm";
 import { Package } from "../package/package";
 import { IFormatter } from "../utils/formatter";
-import { Url } from "../utils/requests";
+import { downloadJson } from "../utils/requests";
 import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
-import { AbstractReport } from "./Report";
+import { AbstractReport, IReportContext } from "./Report";
+import { BasePackageParameter, Url, urlType } from "./Validation";
 
-export interface IDownloadParams {
-    pkg: string;
-    url?: Url;
-}
+const OptionalParams = z.object({
+    url: z.optional(urlType)
+});
+
+const DownloadParams = BasePackageParameter.merge(OptionalParams);
+
+export type IDownloadParams = z.infer<typeof DownloadParams>;
 
 export class DownloadReport extends AbstractReport<IDownloadParams> {
     name = `Download Report`;
     pkg: PackageVersion;
 
-    constructor(readonly params: IDownloadParams) {
-        super();
+    constructor(params: IDownloadParams) {
+        super(params);
 
         this.depth = 0;
-        this.pkg = getPackageVersionfromString(params.pkg);
+
+        this.pkg = getPackageVersionfromString(params.package);
     }
 
-    async report(pkg: Package, formatter: IFormatter): Promise<void> {
-        await cliDownloads(pkg.name, this.params.url ?? null, formatter);
+    async report({ stdoutFormatter }: IReportContext, pkg: Package): Promise<void> {
+        await cliDownloads(pkg.name, this.params.url ?? null, stdoutFormatter);
+    }
+
+    override validate(): z.ZodTypeAny {
+        return DownloadParams;
     }
 }
 
@@ -36,4 +47,15 @@ async function cliDownloads(pkg: string, url: Url | null, formatter: IFormatter)
         console.log(e);
         formatter.writeLine(`Couldn't get downloads for ${pkg}`);
     }
+}
+
+export async function getDownloadsLastWeek(
+    name: string,
+    url: Url = `https://api.npmjs.org/downloads/point/last-week/`
+): Promise<INpmDownloadStatistic> {
+    const json = await downloadJson<INpmDownloadStatistic>(`${url}${encodeURIComponent(name)}`);
+
+    if (json !== null) return json;
+
+    throw new Error(`Couldn't get download numbers for ${name}`);
 }

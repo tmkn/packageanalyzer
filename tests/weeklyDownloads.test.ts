@@ -1,4 +1,4 @@
-import { getDownloadsLastWeek } from "../src/npm";
+import { getDownloadsLastWeek } from "../src/reports/DownloadCountReport";
 import { createMockDownloadServer, IMockServer } from "./server";
 
 describe(`Download Tests`, () => {

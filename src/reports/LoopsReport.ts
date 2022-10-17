@@ -1,51 +1,46 @@
 import * as chalk from "chalk";
+import { z, ZodTypeAny } from "zod";
 
-import { isValidDependencyType } from "../cli/common";
 import { LoopUtilities } from "../extensions/utilities/LoopUtilities";
 import { Package } from "../package/package";
-import { IFormatter } from "../utils/formatter";
-import { DependencyTypes, getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
-import { AbstractReport } from "./Report";
+import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
+import { AbstractReport, IReportContext } from "./Report";
+import { BasePackageParameter, TypeParameter } from "./Validation";
 
-export interface ILoopParams {
-    package: string;
-    type: DependencyTypes;
-}
+const LoopParams = BasePackageParameter.merge(TypeParameter);
+
+export type ILoopParams = z.infer<typeof LoopParams>;
 
 export class LoopsReport extends AbstractReport<ILoopParams> {
     name = `Loop Report`;
     pkg: PackageVersion;
 
-    constructor(readonly params: ILoopParams) {
-        super();
+    constructor(params: ILoopParams) {
+        super(params);
 
         this.pkg = getPackageVersionfromString(params.package);
         this.type = params.type;
     }
 
-    async report(pkg: Package, formatter: IFormatter): Promise<void> {
-        if (!isValidDependencyType(this.type)) {
-            throw new Error(
-                `Please only specify "dependencies" or "devDependencies" for the --type argument`
-            );
-        }
-
+    async report({ stdoutFormatter }: IReportContext, pkg: Package): Promise<void> {
         const loopPathMap = new LoopUtilities(pkg).loopPathMap;
         const distinctCount: number = [...loopPathMap].reduce((i, [, loops]) => i + loops.size, 0);
         const loopPadding = ("" + distinctCount).length;
         let total = 0;
 
-        formatter.writeLine(chalk.bold(`${distinctCount} Loop(s) found for ${pkg.fullName}\n`));
+        stdoutFormatter.writeLine(
+            chalk.bold(`${distinctCount} Loop(s) found for ${pkg.fullName}\n`)
+        );
         if (distinctCount > 0) {
-            formatter.writeLine(`Affected Packages:`);
+            stdoutFormatter.writeLine(`Affected Packages:`);
             for (const [pkgName, loopsForPkg] of loopPathMap) {
                 const loopCountStr = `${loopsForPkg.size}x`.padStart(5);
 
-                formatter.writeLine(`- ${loopCountStr} ${pkgName}`);
+                stdoutFormatter.writeLine(`- ${loopCountStr} ${pkgName}`);
             }
 
             for (const [pkgName, loopsForPkg] of loopPathMap) {
-                formatter.writeLine(
+                stdoutFormatter.writeLine(
                     chalk.bgGray(`\n${loopsForPkg.size} Loop(s) found for ${pkgName}`)
                 );
 
@@ -53,11 +48,15 @@ export class LoopsReport extends AbstractReport<ILoopParams> {
                 for (const loop of loopsForPkg) {
                     const iStr = `${total + i++ + 1}`.padStart(loopPadding);
 
-                    formatter.writeLine(`[${iStr}/${distinctCount}] ${loop}`);
+                    stdoutFormatter.writeLine(`[${iStr}/${distinctCount}] ${loop}`);
                 }
 
                 total += loopsForPkg.size;
             }
         }
+    }
+
+    override validate(): ZodTypeAny {
+        return LoopParams;
     }
 }

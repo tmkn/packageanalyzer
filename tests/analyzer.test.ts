@@ -2,15 +2,12 @@ import * as path from "path";
 
 import { Package } from "../src/package/package";
 import { FileSystemPackageProvider } from "../src/providers/folder";
-import {
-    getPackageVersionfromString,
-    getPackageVersionFromPackageJson,
-    Visitor
-} from "../src/visitors/visitor";
-import { OraLogger } from "../src/utils/logger";
+import { getPackageVersionfromString, Visitor } from "../src/visitors/visitor";
+import { OraLogger } from "../src/loggers/OraLogger";
 import { LoopUtilities } from "../src/extensions/utilities/LoopUtilities";
 import { LicenseUtilities } from "../src/extensions/utilities/LicenseUtilities";
 import { PathUtilities } from "../src/extensions/utilities/PathUtilities";
+import { getPackageVersionFromPath } from "../src/visitors/util.node";
 
 describe(`Package Tests`, () => {
     let p: Package;
@@ -18,11 +15,7 @@ describe(`Package Tests`, () => {
     beforeAll(async () => {
         const rootPath = path.join("tests", "data", "testproject1");
         const provider = new FileSystemPackageProvider(rootPath);
-        const visitor = new Visitor(
-            getPackageVersionFromPackageJson(rootPath),
-            provider,
-            new OraLogger()
-        );
+        const visitor = new Visitor(getPackageVersionFromPath(rootPath), provider, new OraLogger());
 
         p = await visitor.visit();
     });
@@ -119,11 +112,7 @@ describe(`Deprecated Package Tests`, () => {
     test(`Deprecation flag`, async () => {
         const rootPath = path.join("tests", "data", "deprecated");
         const provider = new FileSystemPackageProvider(rootPath);
-        const visitor = new Visitor(
-            getPackageVersionFromPackageJson(rootPath),
-            provider,
-            new OraLogger()
-        );
+        const visitor = new Visitor(getPackageVersionFromPath(rootPath), provider, new OraLogger());
         const p = await visitor.visit();
         const extnode = p.getPackageByName("extnode");
 

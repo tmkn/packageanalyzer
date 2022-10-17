@@ -1,10 +1,10 @@
 import { Command, Option } from "clipanion";
 
-import { defaultDependencyType, isValidDependencyType } from "./common";
+import { CliCommand, defaultDependencyType } from "./common";
 import { ILoopParams, LoopsReport } from "../reports/LoopsReport";
-import { ReportService } from "../reports/ReportService";
+import { isValidDependencyType } from "../reports/Validation";
 
-export class LoopsCommand extends Command {
+export class LoopsCommand extends CliCommand<LoopsReport> {
     public package?: string = Option.String(`--package`, {
         description: `the package to retrieve the loop info e.g. typescript@3.5.1`
     });
@@ -35,8 +35,7 @@ export class LoopsCommand extends Command {
         ]
     });
 
-    static override paths = [[`loops`]];
-    async execute() {
+    getReport(): LoopsReport {
         if (!isValidDependencyType(this.type)) {
             throw new Error(
                 `Please only specify "dependencies" or "devDependencies" for the --type argument`
@@ -48,16 +47,12 @@ export class LoopsCommand extends Command {
                 type: this.type,
                 package: this.package
             };
-            const loopsReport = new LoopsReport(params);
 
-            const reportService = new ReportService(
-                {
-                    reports: [loopsReport]
-                },
-                this.context.stdout
-            );
-
-            await reportService.process();
+            return new LoopsReport(params);
         }
+
+        throw new Error(`--package was undefined`);
     }
+
+    static override paths = [[`loops`]];
 }

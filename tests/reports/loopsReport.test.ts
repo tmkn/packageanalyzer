@@ -1,16 +1,16 @@
 import * as path from "path";
+import { DumpPackageProvider } from "../../src/providers/folder";
 
 import { LoopsReport } from "../../src/reports/LoopsReport";
 import { ReportService } from "../../src/reports/ReportService";
-import { DependencyDumperProvider } from "../../src/utils/dumper";
-import { TestWritable } from "../common";
+import { createMockContext } from "../common";
 
 describe(`LoopsReport Test`, () => {
-    const rootPath = path.join("tests", "data", "loopsdata");
-    let provider: DependencyDumperProvider;
+    const rootPath = path.join("tests", "data", "loops_data");
+    let provider: DumpPackageProvider;
 
     beforeAll(() => {
-        provider = new DependencyDumperProvider(rootPath);
+        provider = new DumpPackageProvider(rootPath);
     });
 
     test(`works`, async () => {
@@ -21,17 +21,19 @@ describe(`LoopsReport Test`, () => {
 
         report.provider = provider;
 
-        const writer = new TestWritable();
+        const { stdout, stderr } = createMockContext();
         const reportService = new ReportService(
             {
                 reports: [report]
             },
-            writer
+            stdout,
+            stderr
         );
 
         await reportService.process();
 
-        expect(writer.lines.length).toBeGreaterThan(0);
+        expect(stdout.lines).toMatchSnapshot(`stdout`);
+        expect(stderr.lines).toMatchSnapshot(`stderr`);
     });
 
     test(`Throws on illegal dependency type`, async () => {
@@ -45,7 +47,7 @@ describe(`LoopsReport Test`, () => {
             });
 
             //@ts-expect-error
-            await report.report();
+            await report.report(null, {});
         } catch (e) {
             expect(e).toBeInstanceOf(Error);
         }

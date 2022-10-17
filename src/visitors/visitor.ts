@@ -1,19 +1,15 @@
-import * as path from "path";
-import * as fs from "fs";
-
 import { Package } from "../package/package";
 import { INpmKeyValue, IPackageJson } from "../npm";
-import { ILogger, numPadding } from "../utils/logger";
 import { IDecorator } from "../extensions/decorators/Decorator";
 import { IPackageJsonProvider } from "../providers/provider";
+import { ILogger } from "../loggers/ILogger";
+import { DependencyTypes } from "../reports/Validation";
 
 export type PackageVersion = [name: string, version?: string];
 
 interface IPackageVisitor {
     visit: (depType?: DependencyTypes) => Promise<Package>;
 }
-
-export type DependencyTypes = "dependencies" | "devDependencies";
 
 export class Visitor implements IPackageVisitor {
     private _depthStack: string[] = [];
@@ -62,14 +58,14 @@ export class Visitor implements IPackageVisitor {
         dependencies: INpmKeyValue | undefined
     ): Promise<void> {
         try {
-            const dependencyField = typeof dependencies !== "undefined" ? dependencies : {};
-            const dependencyArray = Object.entries(dependencyField);
+            if (typeof dependencies === "undefined") return;
+
             const packages: IPackageJson[] = [];
 
-            for await (const resolvedDependencies of this._provider.getPackageJsons(
-                dependencyArray
-            )) {
-                packages.push(resolvedDependencies);
+            for (const [name, version] of Object.entries(dependencies)) {
+                const resolved = await this._provider.getPackageJson(name, version);
+
+                packages.push(resolved);
             }
 
             for (const p of packages) {
@@ -134,15 +130,9 @@ export function getPackageVersionfromString(name: string): PackageVersion {
     throw new Error(`Couldn't parse fullName token`);
 }
 
-export function getPackageVersionFromPackageJson(folder: string): PackageVersion {
-    const packageJsonPath = path.join(folder, `package.json`);
+export function numPadding(i: number, total: number): string {
+    const digits = total.toString().length;
+    const iPadding = `${i + 1}`.padStart(digits);
 
-    try {
-        const content = fs.readFileSync(packageJsonPath, "utf8");
-        const pkg: IPackageJson = JSON.parse(content);
-
-        return [pkg.name, pkg.version];
-    } catch (e) {
-        throw new Error(`Couldn't find package.json in ${folder}`);
-    }
+    return `${iPadding}/${total}`;
 }

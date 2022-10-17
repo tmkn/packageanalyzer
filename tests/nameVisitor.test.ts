@@ -3,7 +3,7 @@ import * as path from "path";
 import { FileSystemPackageProvider } from "../src/providers/folder";
 import { Package } from "../src/package/package";
 import { Visitor } from "../src/visitors/visitor";
-import { OraLogger } from "../src/utils/logger";
+import { OraLogger } from "../src/loggers/OraLogger";
 import { LicenseUtilities } from "../src/extensions/utilities/LicenseUtilities";
 import { DependencyUtilities } from "../src/extensions/utilities/DependencyUtilities";
 
@@ -136,8 +136,9 @@ describe(`visitFromFolder Tests`, () => {
         const license = p.getData("license");
         const scriptsTest = p.getData("scripts.test");
         const missing = p.getData("adf.sdf.esdf");
+        const packageJson = p.getData();
 
-        expect.assertions(6);
+        expect.assertions(7);
 
         if (dependencies) {
             expect(name).toBe("webpack");
@@ -146,6 +147,7 @@ describe(`visitFromFolder Tests`, () => {
             expect(license).toBe("MIT");
             expect(typeof scriptsTest).toBe("string");
             expect(missing).toBeUndefined();
+            expect(packageJson).toBeInstanceOf(Object);
         }
     });
 
