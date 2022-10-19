@@ -143,3 +143,8 @@ export class Package implements IPackage<Package> {
         this._decoratorData.set(key, data);
     }
 }
+
+interface ICollectorNode<T> {
+    data: T;
+    children: ICollectorNode<T>[];
+}
