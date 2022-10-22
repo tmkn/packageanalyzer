@@ -145,6 +145,35 @@ export class Package implements IPackage<Package> {
 }
 
 interface ICollectorNode<T> {
+    parent: ICollectorNode<T> | null;
     data: T;
     children: ICollectorNode<T>[];
 }
+
+type KeyFn<Data, UniqueKey> = (node: ICollectorNode<Data>) => UniqueKey;
+
+interface ICollector<T> extends ICollectorNode<T> {
+    flatten<F extends KeyFn<T, any> | undefined>(
+        keyFn?: F
+    ): F extends KeyFn<T, infer Key>
+        ? Map<Key, ICollectorNode<T>>
+        : Map<Package, ICollectorNode<T>>;
+}
+
+class Collector<T> implements ICollector<T> {
+    flatten<F extends KeyFn<T, any> | undefined = undefined>(
+        keyFn?: F | undefined
+    ): F extends KeyFn<T, infer Key>
+        ? Map<Key, ICollectorNode<T>>
+        : Map<Package, ICollectorNode<T>> {
+        throw new Error("Method not implemented.");
+    }
+
+    parent!: ICollectorNode<T>;
+    data!: T;
+    children!: ICollectorNode<T>[];
+}
+
+let test2 = new Collector<{ test: boolean }>();
+
+let abc2 = test2.flatten();
