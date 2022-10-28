@@ -2,6 +2,7 @@ import { get } from "lodash";
 import { DecoratorData, DecoratorKey, IDecorator } from "../extensions/decorators/Decorator";
 
 import { IPackageJson } from "../npm";
+import { Collector, ICollector } from "./collector";
 
 interface IDeprecatedInfo {
     deprecated: boolean;
@@ -142,38 +143,23 @@ export class Package implements IPackage<Package> {
     ): void {
         this._decoratorData.set(key, data);
     }
-}
 
-interface ICollectorNode<T> {
-    parent: ICollectorNode<T> | null;
-    data: T;
-    children: ICollectorNode<T>[];
-}
+    collect<T>(dataFn: (pkg: Package) => T): ICollector<T> {
+        const rootCollectorNode: ICollector<T> = new Collector(dataFn(this), this);
 
-type KeyFn<Data, UniqueKey> = (node: ICollectorNode<Data>) => UniqueKey;
+        const visit = (parentCollector: ICollector<T>, parentPkg: Package): void => {
+            for (const pkg of parentPkg.directDependencies) {
+                const data = dataFn(pkg);
+                const collectorNode = new Collector(data, pkg);
 
-interface ICollector<T> extends ICollectorNode<T> {
-    flatten<F extends KeyFn<T, any> | undefined>(
-        keyFn?: F
-    ): F extends KeyFn<T, infer Key>
-        ? Map<Key, ICollectorNode<T>>
-        : Map<Package, ICollectorNode<T>>;
-}
+                collectorNode.parent = parentCollector;
 
-class Collector<T> implements ICollector<T> {
-    flatten<F extends KeyFn<T, any> | undefined = undefined>(
-        keyFn?: F | undefined
-    ): F extends KeyFn<T, infer Key>
-        ? Map<Key, ICollectorNode<T>>
-        : Map<Package, ICollectorNode<T>> {
-        throw new Error("Method not implemented.");
+                visit(collectorNode, pkg);
+            }
+        };
+
+        visit(rootCollectorNode, this);
+
+        return rootCollectorNode;
     }
-
-    parent!: ICollectorNode<T>;
-    data!: T;
-    children!: ICollectorNode<T>[];
 }
-
-let test2 = new Collector<{ test: boolean }>();
-
-let abc2 = test2.flatten();
