@@ -154,6 +154,8 @@ export class Package implements IPackage<Package> {
 
                 collectorNode.parent = parentCollector;
 
+                parentCollector.children.push(collectorNode);
+
                 visit(collectorNode, pkg);
             }
         };
