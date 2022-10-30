@@ -5,23 +5,15 @@ type PackageGroup = [Package, ...Package[]];
 export type CollectorTuple<T> = [Package, T];
 export type CollectorTupleGrouped<T> = [PackageGroup, T];
 
-// export type FlattenCollectorArray<T> = [CollectorTuple<T>, ...CollectorTuple<T>[]];
-// export type FlattenCollectorGroupArray<T> = [
-//     CollectorTupleGrouped<T>,
-//     ...CollectorTupleGrouped<T>[]
-// ];
+export type MinLength1Array<T> = [T, ...T[]];
 
-type MinLength1Array<T> = [T, ...T[]];
-
-interface ICollectorTreeNode<T> {
+export interface ICollectorNode<T> {
     pkg: Package;
     data: T;
 
-    parent: ICollectorTreeNode<T> | null;
-    children: ICollectorTreeNode<T>[];
-}
+    parent: ICollectorNode<T> | null;
+    children: ICollectorNode<T>[];
 
-export interface ICollector<T> extends ICollectorTreeNode<T> {
     flatten(): MinLength1Array<CollectorTuple<T>>;
     flatten(grouped: true): MinLength1Array<CollectorTupleGrouped<T>>;
     flatten(grouped: false): MinLength1Array<CollectorTuple<T>>;
@@ -30,9 +22,9 @@ export interface ICollector<T> extends ICollectorTreeNode<T> {
     ): MinLength1Array<CollectorTuple<T>> | MinLength1Array<CollectorTupleGrouped<T>>;
 }
 
-export class Collector<T> implements ICollector<T> {
-    parent: ICollectorTreeNode<T> | null = null;
-    children: ICollectorTreeNode<T>[] = [];
+export class CollectorNode<T> implements ICollectorNode<T> {
+    parent: ICollectorNode<T> | null = null;
+    children: ICollectorNode<T>[] = [];
 
     constructor(public data: T, public pkg: Package) {}
     flatten(): MinLength1Array<CollectorTuple<T>>;
@@ -41,16 +33,12 @@ export class Collector<T> implements ICollector<T> {
     flatten(
         grouped: boolean = false
     ): MinLength1Array<CollectorTuple<T>> | MinLength1Array<CollectorTupleGrouped<T>> {
-        if (grouped) {
-            return this._flattenGrouped();
-        } else {
-            return this._flatten();
-        }
+        return grouped ? this._flattenGrouped() : this._flatten();
     }
 
     private _flattenGrouped(): MinLength1Array<CollectorTupleGrouped<T>> {
         const entries: MinLength1Array<CollectorTupleGrouped<T>> = [[[this.pkg], this.data]];
-        const queue: ICollectorTreeNode<T>[] = [...this.children];
+        const queue: ICollectorNode<T>[] = [...this.children];
 
         while (queue.length > 0) {
             const node = queue.shift()!;
@@ -75,7 +63,7 @@ export class Collector<T> implements ICollector<T> {
 
     private _flatten(): MinLength1Array<CollectorTuple<T>> {
         const entries: MinLength1Array<CollectorTuple<T>> = [[this.pkg, this.data]];
-        const queue: ICollectorTreeNode<T>[] = [...this.children];
+        const queue: ICollectorNode<T>[] = [...this.children];
 
         while (queue.length > 0) {
             const node = queue.shift()!;
