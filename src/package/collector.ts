@@ -2,16 +2,6 @@ import { Package } from "./package";
 
 type PackageGroup = [Package, ...Package[]];
 
-// interface ICollectorNode<T> {
-//     pkg: Package;
-//     data: T;
-// }
-
-// interface ICollectorNodeGrouped<T> {
-//     pkg: PackageGroup;
-//     data: T;
-// }
-
 export type CollectorTuple<T> = [Package, T];
 export type CollectorTupleGrouped<T> = [PackageGroup, T];
 
@@ -40,40 +30,48 @@ export class Collector<T> implements ICollector<T> {
     flatten(grouped: false): CollectorTuple<T>[];
     flatten(grouped: boolean = false): CollectorTuple<T>[] | CollectorTupleGrouped<T>[] {
         if (grouped) {
-            const queue: ICollectorTreeNode<T>[] = [this];
-            const entries: CollectorTupleGrouped<T>[] = [];
-
-            while (queue.length > 0) {
-                const node = queue.shift()!;
-                // not the best runtime performance but it will do for now
-                const existingGroup = entries.find(
-                    ([[existingPkg]]) => existingPkg.fullName === node.pkg.fullName
-                );
-
-                if (existingGroup) {
-                    existingGroup[0].push(node.pkg);
-                } else {
-                    entries.push([[node.pkg], node.data]);
-                }
-
-                if (node.children.length > 0) {
-                    queue.push(...node.children);
-                }
-            }
-
-            return entries;
+            return this._flattenGrouped();
         } else {
-            const queue: ICollectorTreeNode<T>[] = [this];
-            const entries: CollectorTuple<T>[] = [];
+            return this._flatten();
+        }
+    }
 
-            while (queue.length > 0) {
-                const node = queue.shift()!;
-                entries.push([node.pkg, node.data]);
+    private _flattenGrouped(): CollectorTupleGrouped<T>[] {
+        const queue: ICollectorTreeNode<T>[] = [this];
+        const entries: CollectorTupleGrouped<T>[] = [];
 
-                if (node.children.length > 0) queue.push(...node.children);
+        while (queue.length > 0) {
+            const node = queue.shift()!;
+            // not the best runtime performance but it will do for now
+            const existingGroup = entries.find(
+                ([[existingPkg]]) => existingPkg.fullName === node.pkg.fullName
+            );
+
+            if (existingGroup) {
+                existingGroup[0].push(node.pkg);
+            } else {
+                entries.push([[node.pkg], node.data]);
             }
 
-            return entries;
+            if (node.children.length > 0) {
+                queue.push(...node.children);
+            }
         }
+
+        return entries;
+    }
+
+    private _flatten(): CollectorTuple<T>[] {
+        const queue: ICollectorTreeNode<T>[] = [this];
+        const entries: CollectorTuple<T>[] = [];
+
+        while (queue.length > 0) {
+            const node = queue.shift()!;
+            entries.push([node.pkg, node.data]);
+
+            if (node.children.length > 0) queue.push(...node.children);
+        }
+
+        return entries;
     }
 }
