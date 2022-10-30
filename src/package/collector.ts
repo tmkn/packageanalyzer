@@ -1,49 +1,79 @@
 import { Package } from "./package";
 
-interface ICollectorNode<T> {
-    parent: ICollectorNode<T> | null;
+type PackageGroup = [Package, ...Package[]];
+
+// interface ICollectorNode<T> {
+//     pkg: Package;
+//     data: T;
+// }
+
+// interface ICollectorNodeGrouped<T> {
+//     pkg: PackageGroup;
+//     data: T;
+// }
+
+export type CollectorTuple<T> = [Package, T];
+export type CollectorTupleGrouped<T> = [PackageGroup, T];
+
+interface ICollectorTreeNode<T> {
     pkg: Package;
     data: T;
-    children: ICollectorNode<T>[];
+
+    parent: ICollectorTreeNode<T> | null;
+    children: ICollectorTreeNode<T>[];
 }
 
-export interface ICollector<T> extends ICollectorNode<T> {
-    flatten(): Map<Package, T>;
-    flatten<Key>(keyFn: (node: ICollectorNode<T>) => Key): Map<Key, T>;
+export interface ICollector<T> extends ICollectorTreeNode<T> {
+    flatten(): CollectorTuple<T>[];
+    flatten(grouped: true): CollectorTupleGrouped<T>[];
+    flatten(grouped: false): CollectorTuple<T>[];
+    flatten(grouped?: boolean): CollectorTuple<T>[] | CollectorTupleGrouped<T>[];
 }
 
 export class Collector<T> implements ICollector<T> {
-    flatten(): Map<Package, T>;
-    flatten<Key>(customKeyFn: (node: ICollectorNode<T>) => Key): Map<Key, T>;
-    flatten<Key>(customKeyFn?: (node: ICollectorNode<T>) => Key): Map<Package, T> | Map<Key, T> {
-        if (customKeyFn) {
-            const visit = (parent: ICollectorNode<T>): void => {
-                for (const node of parent.children) {
-                    entries.set(customKeyFn(node), node.data);
-                }
-            };
-            const entries: Map<Key, T> = new Map();
+    parent: ICollectorTreeNode<T> | null = null;
+    children: ICollectorTreeNode<T>[] = [];
 
-            entries.set(customKeyFn(this), this.data);
-            visit(this);
+    constructor(public data: T, public pkg: Package) {}
+    flatten(): CollectorTuple<T>[];
+    flatten(grouped: true): CollectorTupleGrouped<T>[];
+    flatten(grouped: false): CollectorTuple<T>[];
+    flatten(grouped: boolean = false): CollectorTuple<T>[] | CollectorTupleGrouped<T>[] {
+        if (grouped) {
+            const queue: ICollectorTreeNode<T>[] = [this];
+            const entries: CollectorTupleGrouped<T>[] = [];
+
+            while (queue.length > 0) {
+                const node = queue.shift()!;
+                // not the best runtime performance but it will do for now
+                const existingGroup = entries.find(
+                    ([[existingPkg]]) => existingPkg.fullName === node.pkg.fullName
+                );
+
+                if (existingGroup) {
+                    existingGroup[0].push(node.pkg);
+                } else {
+                    entries.push([[node.pkg], node.data]);
+                }
+
+                if (node.children.length > 0) {
+                    queue.push(...node.children);
+                }
+            }
 
             return entries;
         } else {
-            const visit = (parent: ICollectorNode<T>): void => {
-                for (const node of parent.children) {
-                    entries.set(node.pkg, node.data);
-                }
-            };
-            const entries: Map<Package, T> = new Map();
+            const queue: ICollectorTreeNode<T>[] = [this];
+            const entries: CollectorTuple<T>[] = [];
 
-            entries.set(this.pkg, this.data);
-            visit(this);
+            while (queue.length > 0) {
+                const node = queue.shift()!;
+                entries.push([node.pkg, node.data]);
+
+                if (node.children.length > 0) queue.push(...node.children);
+            }
 
             return entries;
         }
     }
-    parent: ICollectorNode<T> | null = null;
-    children: ICollectorNode<T>[] = [];
-
-    constructor(public data: T, public pkg: Package) {}
 }

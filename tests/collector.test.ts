@@ -3,17 +3,27 @@ import { createMockPackage, IMockPackageJson } from "./mocks";
 
 describe(`Collector Tests`, () => {
     const mockData: IMockPackageJson = {
-        name: `from`,
+        name: `dep1`,
         version: `1.0.0`,
         dependencies: [
-            { name: `oldDep1`, version: `1.0.0` },
             {
-                name: `oldDep2`,
+                name: `dep2`,
                 version: `1.0.0`,
-                dependencies: [{ name: `oldDep3`, version: `1.0.0` }]
+                dependencies: [{ name: `duplicate`, version: `2.0.0` }]
             },
-            { name: `updatedDep1`, version: `1.0.0` },
-            { name: `updatedDep2`, version: `2.0.0` }
+            {
+                name: `dep3`,
+                version: `1.0.0`,
+                dependencies: [
+                    {
+                        name: `dep4`,
+                        version: `1.0.0`,
+                        dependencies: [{ name: `duplicate`, version: `2.0.0` }]
+                    }
+                ]
+            },
+            { name: `dep5`, version: `1.0.0` },
+            { name: `dep6`, version: `2.0.0` }
         ]
     };
 
@@ -22,20 +32,20 @@ describe(`Collector Tests`, () => {
     test(`correctly collects data`, () => {
         const c = testPkg.collect(pkg => ({ attr: pkg.fullName }));
 
-        expect(c.data).toEqual({ attr: "from@1.0.0" });
+        expect(c.data).toEqual({ attr: "dep1@1.0.0" });
         expect(c.children.length).toEqual(4);
-        expect(c.children[0].data).toEqual({ attr: "oldDep1@1.0.0" });
-        expect(c.children[3].data).toEqual({ attr: "updatedDep2@2.0.0" });
+        expect(c.children[0].data).toEqual({ attr: "dep2@1.0.0" });
+        expect(c.children[3].data).toEqual({ attr: "dep6@2.0.0" });
 
         expect(c.pkg).toEqual(testPkg);
         expect(c.parent).toBeNull();
         expect(c.children[0].parent).toEqual(c);
     });
 
-    test(`flattens correctly with no key arg`, () => {
+    test(`flattens correctly with no group arg`, () => {
         const list = testPkg.collect(pkg => ({ attr: "hello" })).flatten();
 
-        expect(list.size).toEqual(5);
+        expect(list.length).toEqual(8);
 
         for (const [pkg, data] of list) {
             expect(data).toEqual({ attr: "hello" });
@@ -43,14 +53,14 @@ describe(`Collector Tests`, () => {
         }
     });
 
-    test(`flattens correctly with key arg`, () => {
-        const list = testPkg.collect(pkg => ({ attr: "hello" })).flatten(node => node.pkg.fullName);
+    test(`flattens correctly with group arg`, () => {
+        const list = testPkg.collect(pkg => ({ attr: "hello" })).flatten(true);
+        const duplicate = list.find(([[pkg]]) => pkg.fullName === "duplicate@2.0.0");
 
-        expect(list.size).toEqual(5);
+        expect(list.length).toEqual(7);
 
-        for (const [key, data] of list) {
-            expect(data).toEqual({ attr: "hello" });
-            expect(typeof key === "string").toBeTruthy();
-        }
+        expect(duplicate).toBeDefined();
+        expect(duplicate![0].length).toEqual(2);
+        expect(duplicate![1]).toEqual({ attr: "hello" });
     });
 });
