@@ -2,6 +2,7 @@ import { get } from "lodash";
 import { DecoratorData, DecoratorKey, IDecorator } from "../extensions/decorators/Decorator";
 
 import { IPackageJson } from "../npm";
+import { CollectorNode, ICollectorNode } from "./collector";
 
 interface IDeprecatedInfo {
     deprecated: boolean;
@@ -141,5 +142,26 @@ export class Package implements IPackage<Package> {
         data: DecoratorData<E>
     ): void {
         this._decoratorData.set(key, data);
+    }
+
+    collect<T>(dataFn: (pkg: Package) => T): ICollectorNode<T> {
+        const rootCollectorNode: ICollectorNode<T> = new CollectorNode(dataFn(this), this);
+
+        const visit = (parentCollector: ICollectorNode<T>, parentPkg: Package): void => {
+            for (const pkg of parentPkg.directDependencies) {
+                const data = dataFn(pkg);
+                const collectorNode = new CollectorNode(data, pkg);
+
+                collectorNode.parent = parentCollector;
+
+                parentCollector.children.push(collectorNode);
+
+                visit(collectorNode, pkg);
+            }
+        };
+
+        visit(rootCollectorNode, this);
+
+        return rootCollectorNode;
     }
 }
