@@ -1,67 +1,38 @@
 import { Package } from "../../package/package";
 
-type ScriptTuple = [Package, string];
-
-interface IScriptEntries {
-    "scripts.preinstall": string;
-    "scripts.postinstall": string;
+interface InstallScripts {
+    postinstall?: string;
+    preinstall?: string;
 }
 
-type ScriptEntries = Partial<IScriptEntries>;
-
-type ScriptKeys = keyof IScriptEntries;
-
 // actually with a little rework this should work with any key in the package.json... but no use case yet
-export class InstallScriptsUtilities {
-    private _installScripts: Map<ScriptKeys, Map<Package, ScriptEntries>> = new Map();
+export class InstallScriptUtilities {
+    postinstallScripts: Map<string, string>;
+    preinstallScripts: Map<string, string>;
 
-    constructor(
-        private readonly _entry: Package,
-        private readonly _scriptKeys: ScriptKeys[] = ["scripts.postinstall", "scripts.preinstall"]
-    ) {
-        this._entry.visit(pkg => {
-            for (const scriptKey of this._scriptKeys) {
-                const value = pkg.getData(scriptKey);
+    constructor(private readonly _entry: Package) {
+        const tuples = this._entry
+            .collect<InstallScripts>(pkg => {
+                const postinstall = pkg.getData("scripts.postinstall");
+                const preinstall = pkg.getData("scripts.preinstall");
 
-                if (typeof value !== "undefined") {
-                    const entry =
-                        this._installScripts.get(scriptKey) ?? new Map<Package, ScriptEntries>();
-                    let scriptEntries = entry.get(pkg) ?? {};
+                return {
+                    postinstall: postinstall ? postinstall + "" : undefined,
+                    preinstall: preinstall ? preinstall + "" : undefined
+                };
+            })
+            .flatten(true);
 
-                    scriptEntries = {
-                        ...scriptEntries,
-                        [scriptKey]: value + ""
-                    };
-                    entry.set(pkg, scriptEntries);
+        const postInstallTuples: [string, string][] = tuples
+            .filter(([_, scripts]) => scripts.postinstall)
+            .map(([[pkg], scripts]) => [pkg.fullName, scripts.postinstall!]);
 
-                    this._installScripts.set(scriptKey, entry);
-                }
-            }
-        }, true);
-    }
+        this.postinstallScripts = new Map(postInstallTuples);
 
-    private _getByScriptKey(scriptKey: ScriptKeys): Map<Package, ScriptEntries> {
-        return this._installScripts.get(scriptKey) ?? new Map();
-    }
+        const preInstallTuples: [string, string][] = tuples
+            .filter(([_, scripts]) => scripts.preinstall)
+            .map(([[pkg], scripts]) => [pkg.fullName, scripts.preinstall!]);
 
-    private _getAsTuple(scriptKey: ScriptKeys): ScriptTuple[] {
-        const scriptMap = this._getByScriptKey(scriptKey);
-        const scriptTuples: ScriptTuple[] = [];
-
-        for (const [pkg, scriptEntries] of scriptMap) {
-            const entry = scriptEntries[scriptKey];
-
-            if (entry) scriptTuples.push([pkg, entry]);
-        }
-
-        return scriptTuples;
-    }
-
-    get preInstallScripts(): ScriptTuple[] {
-        return this._getAsTuple("scripts.preinstall");
-    }
-
-    get postInstallScripts(): ScriptTuple[] {
-        return this._getAsTuple("scripts.postinstall");
+        this.preinstallScripts = new Map(preInstallTuples);
     }
 }

@@ -8,7 +8,7 @@ import {
     IMostReferred,
     VersionSummary
 } from "../extensions/utilities/DependencyUtilities";
-import { InstallScriptsUtilities } from "../extensions/utilities/InstallScriptsUtilities";
+import { InstallScriptUtilities } from "../extensions/utilities/InstallScriptsUtilities";
 import { GroupedLicenseSummary, LicenseUtilities } from "../extensions/utilities/LicenseUtilities";
 import { LoopUtilities } from "../extensions/utilities/LoopUtilities";
 import { PathUtilities } from "../extensions/utilities/PathUtilities";
@@ -52,19 +52,6 @@ export class AnalyzeReport extends AbstractReport<IAnalyzeParams> {
 
     async report({ stdoutFormatter }: IReportContext, pkg: Package): Promise<void> {
         await printStatistics(pkg, this.params.full, stdoutFormatter);
-
-        const preInstallScripts = new InstallScriptsUtilities(pkg).preInstallScripts;
-        const postInstallScripts = new InstallScriptsUtilities(pkg).postInstallScripts;
-
-        stdoutFormatter.writeGroup([
-            `preInstallScripts:`,
-            ...preInstallScripts.map(([pkg, entry]) => `${pkg.fullName} - "${entry}"`)
-        ]);
-
-        stdoutFormatter.writeGroup([
-            `postInstallScripts:`,
-            ...postInstallScripts.map(([pkg, entry]) => `${pkg.fullName} - "${entry}"`)
-        ]);
     }
 
     private _isPackageParams(data: unknown): data is z.infer<typeof PackageParams> {
@@ -76,11 +63,7 @@ export class AnalyzeReport extends AbstractReport<IAnalyzeParams> {
     }
 }
 
-export async function printStatistics(
-    p: Package,
-    all: boolean,
-    formatter: IFormatter
-): Promise<void> {
+async function printStatistics(p: Package, all: boolean, formatter: IFormatter): Promise<void> {
     formatter.writeLine(`Statistics for ${chalk.bold(p.fullName)}\n`);
 
     all ? printAllStatistics(p, formatter) : printBasicStatistics(p, formatter);
@@ -104,6 +87,7 @@ async function printAllStatistics(p: Package, formatter: IFormatter): Promise<vo
     printMostVersion(new DependencyUtilities(p).mostVersions, PaddingLeft, formatter);
     printLoops(p, PaddingLeft, formatter);
     printLicenseInfo(new LicenseUtilities(p).licensesByGroup, PaddingLeft, formatter);
+    printScripts(p, formatter);
 }
 
 function printBasicStatistics(p: Package, formatter: IFormatter): void {
@@ -278,4 +262,27 @@ function printSimpleLicenseInfo(
     }
 
     formatter.writeIdentation(identBlock, paddingLeft);
+}
+
+function printScripts(p: Package, formatter: IFormatter): void {
+    const { preinstallScripts, postinstallScripts } = new InstallScriptUtilities(p);
+
+    formatter.writeLine(`Scripts:`);
+    printScriptEntry(`preinstall:`, preinstallScripts, formatter);
+    printScriptEntry(`postinstall:`, postinstallScripts, formatter);
+}
+
+function printScriptEntry(
+    header: string,
+    entries: Map<string, string>,
+    formatter: IFormatter
+): void {
+    if (entries.size > 0) {
+        formatter.writeIdentation(
+            [header, ...[...entries].map(([pkgName, entry]) => `${pkgName} - "${entry}"`)],
+            PaddingLeft
+        );
+    } else {
+        formatter.writeIdentation([`${header}`, `(none)`], PaddingLeft * 2);
+    }
 }
