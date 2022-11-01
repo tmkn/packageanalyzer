@@ -21,7 +21,7 @@ export class InstallScriptUtilities {
                     preinstall: preinstall ? preinstall + "" : undefined
                 };
             })
-            .flatten(true);
+            .flatten();
 
         const postInstallTuples: [string, string][] = tuples
             .filter(([_, scripts]) => scripts.postinstall)

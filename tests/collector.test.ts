@@ -42,19 +42,8 @@ describe(`Collector Tests`, () => {
         expect(c.children[0].parent).toEqual(c);
     });
 
-    test(`flattens correctly with no group arg`, () => {
+    test(`flattens correctly`, () => {
         const list = testPkg.collect(pkg => ({ attr: "hello" })).flatten();
-
-        expect(list.length).toEqual(8);
-
-        for (const [pkg, data] of list) {
-            expect(data).toEqual({ attr: "hello" });
-            expect(Object.keys(pkg)).toEqual(Object.keys(testPkg));
-        }
-    });
-
-    test(`flattens correctly with group arg`, () => {
-        const list = testPkg.collect(pkg => ({ attr: "hello" })).flatten(true);
         const duplicate = list.find(([[pkg]]) => pkg.fullName === "duplicate@2.0.0");
 
         expect(list.length).toEqual(7);
