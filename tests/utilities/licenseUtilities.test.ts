@@ -1,8 +1,8 @@
 import * as path from "path";
 
-import { FileSystemPackageProvider } from "../src/providers/folder";
-import { Package } from "../src/package/package";
-import { LicenseUtilities } from "../src/extensions/utilities/LicenseUtilities";
+import { FileSystemPackageProvider } from "../../src/providers/folder";
+import { Package } from "../../src/package/package";
+import { LicenseUtilities } from "../../src/extensions/utilities/LicenseUtilities";
 
 describe(`License Tests`, () => {
     let provider: FileSystemPackageProvider;
