@@ -59,16 +59,18 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch Diff Command",
+            "name": "Launch Lint Command",
             "skipFiles": [
                 "<node_internals>/**"
             ],
             "program": "${workspaceFolder}/build/src/cli.js",
             "args": [
-                "diff",
-                "--range",
+                "lint",
+                "--package",
+                // "webpack@4.44.2",
                 "react@16.12.0",
-                "react@18.2.0"
+                // "react@18.2.0",
+                "./build/tests/sampleLintFile.js"
             ],
             //"preLaunchTask": "tsc: build - tsconfig.json",
             "outFiles": [
