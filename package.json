@@ -35,8 +35,7 @@
     "lint:fix": "eslint \"src/**\" \"tests/**\" --fix",
     "lint:web": "node ./webpack.web.config.js",
     "prepublishOnly": "npm run build",
-    "publish:test": "npm publish --dry-run",
-    "postinstall": "patch-package"
+    "publish:test": "npm publish --dry-run"
   },
   "author": "tmkn",
   "license": "MIT",
@@ -80,7 +79,6 @@
     "dayjs": "^1.9.6",
     "lodash": "^4.17.20",
     "ora": "^5.1.0",
-    "patch-package": "^6.4.7",
     "postinstall-postinstall": "^2.1.0",
     "semver": "^7.3.2",
     "spdx-satisfies": "^5.0.0",
