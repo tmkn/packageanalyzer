@@ -1,9 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Report Command works: stderr 1`] = `Array []`;
+exports[`Report Command works: stderr 1`] = `[]`;
 
 exports[`Report Command works: stdout 1`] = `
-Array [
+[
   "Report: Tree Report",
   "@webassemblyjs/ast@1.9.0 (14 dependencies)",
   "├── @webassemblyjs/helper-module-context@1.9.0 (1 dependencies)",

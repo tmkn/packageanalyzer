@@ -1,9 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`License Check Command --folder: stderr 1`] = `Array []`;
+exports[`License Check Command --folder: stderr 1`] = `[]`;
 
 exports[`License Check Command --folder: stdout 1`] = `
-Array [
+[
   "js-tokens@4.0.0     MIT",
   "loose-envify@1.4.0  MIT",
   "object-assign@4.1.1 MIT",
@@ -25,10 +25,10 @@ Array [
 ]
 `;
 
-exports[`License Check Command --package --allow: stderr 1`] = `Array []`;
+exports[`License Check Command --package --allow: stderr 1`] = `[]`;
 
 exports[`License Check Command --package --allow: stdout 1`] = `
-Array [
+[
   "js-tokens@4.0.0     MIT",
   "loose-envify@1.4.0  MIT",
   "object-assign@4.1.1 MIT",
@@ -48,10 +48,10 @@ Array [
 ]
 `;
 
-exports[`License Check Command --package --grouped: stderr 1`] = `Array []`;
+exports[`License Check Command --package --grouped: stderr 1`] = `[]`;
 
 exports[`License Check Command --package --grouped: stdout 1`] = `
-Array [
+[
   "js-tokens@4.0.0     MIT",
   "loose-envify@1.4.0  MIT",
   "object-assign@4.1.1 MIT",
@@ -71,10 +71,10 @@ Array [
 ]
 `;
 
-exports[`License Check Command --package --type: stderr 1`] = `Array []`;
+exports[`License Check Command --package --type: stderr 1`] = `[]`;
 
 exports[`License Check Command --package --type: stdout 1`] = `
-Array [
+[
   "",
   "All packages passed the license check",
   "",
@@ -82,10 +82,10 @@ Array [
 ]
 `;
 
-exports[`License Check Command --package: stderr 1`] = `Array []`;
+exports[`License Check Command --package: stderr 1`] = `[]`;
 
 exports[`License Check Command --package: stdout 1`] = `
-Array [
+[
   "js-tokens@4.0.0     MIT",
   "loose-envify@1.4.0  MIT",
   "object-assign@4.1.1 MIT",

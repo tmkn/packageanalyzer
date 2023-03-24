@@ -67,7 +67,7 @@ describe(`Dependency Dumper`, () => {
         await command.execute();
 
         expect(stderr.lines.length).toBeGreaterThan(0);
-    }, 10000);
+    }, 11000);
 
     afterAll(() => server.close());
 });

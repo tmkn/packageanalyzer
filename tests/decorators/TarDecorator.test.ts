@@ -13,7 +13,9 @@ describe(`TarDecorator Tests`, () => {
     };
 
     beforeAll(() => {
-        jest.useFakeTimers("legacy");
+        jest.useFakeTimers({
+            legacyFakeTimers: true
+        });
         nock.disableNetConnect();
     });
 
@@ -69,6 +71,8 @@ describe(`TarDecorator Tests`, () => {
     afterAll(() => {
         nock.cleanAll();
         nock.enableNetConnect();
-        jest.useFakeTimers("modern");
+        jest.useFakeTimers({
+            legacyFakeTimers: false
+        });
     });
 });
