@@ -7,5 +7,7 @@ module.exports = {
     },
     testEnvironment: "node",
     coveragePathIgnorePatterns: ["/node_modules/", "<rootDir>/build/"],
-    timers: "modern"
+    fakeTimers:  {
+      enableGlobally: true
+    }
   }

@@ -7,7 +7,9 @@ import { setupRegistryMocks } from "./common";
 
 describe(`Mock Registry Tests`, () => {
     beforeAll(() => {
-        jest.useFakeTimers("legacy");
+        jest.useFakeTimers({
+            legacyFakeTimers: true
+        });
         nock.disableNetConnect();
 
         const destination = path.join("tests", "data", "dump");
@@ -34,6 +36,8 @@ describe(`Mock Registry Tests`, () => {
 
     afterAll(() => {
         nock.enableNetConnect();
-        jest.useFakeTimers("modern");
+        jest.useFakeTimers({
+            legacyFakeTimers: false
+        });
     });
 });

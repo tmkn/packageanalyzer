@@ -1,9 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Update Info Command --package: stderr 1`] = `Array []`;
+exports[`Update Info Command --package: stderr 1`] = `[]`;
 
 exports[`Update Info Command --package: stdout 1`] = `
-Array [
+[
   "Update Info for react@16.8.1",
   "",
   "Semantic match: 16.8.1  (992 days ago)",
