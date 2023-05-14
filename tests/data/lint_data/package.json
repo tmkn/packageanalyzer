@@ -1,0 +1,8 @@
+{
+    "name": "lint-test",
+    "version": "1.0.0",
+    "dependencies": {
+        "dependency1": "1.0.0",
+        "dependency2": "2.0.0"
+    }
+}

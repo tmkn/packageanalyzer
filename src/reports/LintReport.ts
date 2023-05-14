@@ -1,5 +1,4 @@
 import * as path from "path";
-import * as chalk from "chalk";
 import { z } from "zod";
 
 import { Package } from "../package/package";
@@ -60,9 +59,11 @@ export class LintReport extends AbstractReport<ILintParams> {
         let lintFileData: unknown;
 
         try {
-            const lintFilePath = path.join(process.cwd(), lintFile);
+            const importPath: string = path.isAbsolute(lintFile)
+                ? lintFile
+                : path.join(process.cwd(), lintFile);
 
-            const data = require(lintFilePath);
+            const data = require(importPath);
             lintFileData = data;
         } catch (e) {
             throw new Error(`Couldn't find lint file: ${lintFile}`);
@@ -87,19 +88,12 @@ export class LintReport extends AbstractReport<ILintParams> {
 
         pkg.visit(dep => {
             for (const [type, rule, params] of this.rules.rules) {
-                const checkResult = rule.check(dep, params);
+                const checkResult = rule.check(dep, params) as unknown;
 
-                if (typeof checkResult === `string` || Array.isArray(checkResult)) {
+                if (this._isvalidResult(checkResult)) {
                     if (type === `error`) {
-                        process.exitCode = 1;
+                        this.exitCode = 1;
                     }
-
-                    //beautify path
-                    const path: string[] = new PathUtilities(dep).path
-                        .map(([name, version]) => `${name}@${version}`)
-                        .map(name => chalk.cyan(name));
-
-                    const pathString: string = path.join(chalk.white(` → `));
 
                     const messages = Array.isArray(checkResult) ? checkResult : [checkResult];
 
@@ -108,16 +102,33 @@ export class LintReport extends AbstractReport<ILintParams> {
                             type,
                             name: rule.name,
                             message,
-                            path: pathString,
-                            pkg: dep,
-                            rootPkg: pkg.fullName
+                            path: new PathUtilities(dep).path,
+                            pkg: dep
                         });
                     }
+                } else if (checkResult !== undefined) {
+                    this.exitCode = 1;
+
+                    lintResults.push({
+                        // @ts-ignore
+                        type: `internal-error`,
+                        name: rule.name,
+                        message: `Invalid check implementation! check() must return "string" or "string[]". Returned "${typeof checkResult}"`,
+                        path: new PathUtilities(dep).path,
+                        pkg: dep
+                    });
                 }
             }
         }, true);
 
         resultFormatter.format(lintResults);
+    }
+
+    private _isvalidResult(result: unknown): result is string | string[] {
+        return (
+            typeof result === `string` ||
+            (Array.isArray(result) && result.every(r => typeof r === `string`))
+        );
     }
 
     override validate(): z.ZodTypeAny {

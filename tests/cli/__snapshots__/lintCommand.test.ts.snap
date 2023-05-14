@@ -1,0 +1,163 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Lint Command --depth --depth: 0  | correctly reports only root package in the tree: stderr 1`] = `[]`;
+
+exports[`Lint Command --depth --depth: 0  | correctly reports only root package in the tree: stdout 1`] = `
+[
+  "PackageLint: medallo@1.0.0",
+  "",
+  "medallo@1.0.0",
+  "  [warning][medallo@1.0.0][sample-check]: This is a sample check for medallo",
+  "",
+  "Found 1 warning(s) and 0 error(s)",
+  "",
+  "",
+]
+`;
+
+exports[`Lint Command --depth --depth: invalid  | correctly falls back to "Infinity" when depth is not valid: stderr 1`] = `[]`;
+
+exports[`Lint Command --depth --depth: invalid  | correctly falls back to "Infinity" when depth is not valid: stdout 1`] = `
+[
+  "PackageLint: medallo@1.0.0",
+  "",
+  "medallo@1.0.0",
+  "  [warning][medallo@1.0.0][sample-check]: This is a sample check for medallo",
+  "",
+  "medallo@1.0.0 → foo@1.0.0",
+  "  [warning][foo@1.0.0][sample-check]: This is a sample check for foo",
+  "",
+  "medallo@1.0.0 → bar@1.0.0",
+  "  [warning][bar@1.0.0][sample-check]: This is a sample check for bar",
+  "",
+  "Found 3 warning(s) and 0 error(s)",
+  "",
+  "",
+]
+`;
+
+exports[`Lint Command --folder correctly reports all packages as errors: stderr 1`] = `[]`;
+
+exports[`Lint Command --folder correctly reports all packages as errors: stdout 1`] = `
+[
+  "PackageLint: lint-test@1.0.0",
+  "",
+  "lint-test@1.0.0",
+  "  [error][lint-test@1.0.0][sample-check]: This is a sample check for lint-test",
+  "",
+  "lint-test@1.0.0 → dependency1@1.0.0",
+  "  [error][dependency1@1.0.0][sample-check]: This is a sample check for dependency1",
+  "",
+  "lint-test@1.0.0 → dependency2@2.0.0",
+  "  [error][dependency2@2.0.0][sample-check]: This is a sample check for dependency2",
+  "",
+  "Found 0 warning(s) and 3 error(s)",
+  "",
+  "",
+]
+`;
+
+exports[`Lint Command --folder correctly reports all packages as warnings: stderr 1`] = `[]`;
+
+exports[`Lint Command --folder correctly reports all packages as warnings: stdout 1`] = `
+[
+  "PackageLint: lint-test@1.0.0",
+  "",
+  "lint-test@1.0.0",
+  "  [warning][lint-test@1.0.0][sample-check]: This is a sample check for lint-test",
+  "",
+  "lint-test@1.0.0 → dependency1@1.0.0",
+  "  [warning][dependency1@1.0.0][sample-check]: This is a sample check for dependency1",
+  "",
+  "lint-test@1.0.0 → dependency2@2.0.0",
+  "  [warning][dependency2@2.0.0][sample-check]: This is a sample check for dependency2",
+  "",
+  "Found 3 warning(s) and 0 error(s)",
+  "",
+  "",
+]
+`;
+
+exports[`Lint Command --folder correctly shows success message: stderr 1`] = `[]`;
+
+exports[`Lint Command --folder correctly shows success message: stdout 1`] = `
+[
+  "PackageLint: lint-test@1.0.0",
+  "",
+  "Found no issues (0 warnings, 0 errors)",
+  "",
+  "",
+]
+`;
+
+exports[`Lint Command --package correctly reports all packages in the tree: stderr 1`] = `[]`;
+
+exports[`Lint Command --package correctly reports all packages in the tree: stdout 1`] = `
+[
+  "PackageLint: medallo@1.0.0",
+  "",
+  "medallo@1.0.0",
+  "  [warning][medallo@1.0.0][sample-check]: This is a sample check for medallo",
+  "",
+  "medallo@1.0.0 → foo@1.0.0",
+  "  [warning][foo@1.0.0][sample-check]: This is a sample check for foo",
+  "",
+  "medallo@1.0.0 → bar@1.0.0",
+  "  [warning][bar@1.0.0][sample-check]: This is a sample check for bar",
+  "",
+  "Found 3 warning(s) and 0 error(s)",
+  "",
+  "",
+]
+`;
+
+exports[`Lint Command --package correctly shows success message: stderr 1`] = `[]`;
+
+exports[`Lint Command --package correctly shows success message: stdout 1`] = `
+[
+  "PackageLint: medallo@1.0.0",
+  "",
+  "Found no issues (0 warnings, 0 errors)",
+  "",
+  "",
+]
+`;
+
+exports[`Lint Command Error Handling fails on missing --package and --folder: stderr 1`] = `
+[
+  "Error: No package nor folder option was provided",
+  "",
+]
+`;
+
+exports[`Lint Command Error Handling fails on missing --package and --folder: stdout 1`] = `[]`;
+
+exports[`Lint Command Error Handling fails on missing lint file: stderr 1`] = `
+[
+  "Error: Couldn't find lint file: ./tests/mocks/lint/missing.js",
+  "",
+]
+`;
+
+exports[`Lint Command Error Handling fails on missing lint file: stdout 1`] = `[]`;
+
+exports[`Lint Command Error Handling shows error message for invalid check return value: stderr 1`] = `[]`;
+
+exports[`Lint Command Error Handling shows error message for invalid check return value: stdout 1`] = `
+[
+  "PackageLint: lint-test@1.0.0",
+  "",
+  "lint-test@1.0.0",
+  "  [internal-error][lint-test@1.0.0][sample-check]: Invalid check implementation! check() must return "string" or "string[]". Returned "number"",
+  "",
+  "lint-test@1.0.0 → dependency1@1.0.0",
+  "  [internal-error][dependency1@1.0.0][sample-check]: Invalid check implementation! check() must return "string" or "string[]". Returned "number"",
+  "",
+  "lint-test@1.0.0 → dependency2@2.0.0",
+  "  [internal-error][dependency2@2.0.0][sample-check]: Invalid check implementation! check() must return "string" or "string[]". Returned "number"",
+  "",
+  "Found 0 warning(s) and 0 error(s)",
+  "",
+  "",
+]
+`;

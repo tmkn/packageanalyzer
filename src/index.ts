@@ -13,3 +13,6 @@ export { DownloadReport } from "./reports/DownloadCountReport";
 export { LicenseReport } from "./reports/LicenseReport";
 export { LoopsReport } from "./reports/LoopsReport";
 export { UpdateInfoReport } from "./reports/UpdateInfoReport";
+
+export type { ILintTypes, ILintCheck } from "./reports/lint/LintRule";
+export { createRule } from "./reports/lint/LintRule";

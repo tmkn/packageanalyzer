@@ -9,8 +9,7 @@ export interface ILintResult {
     name: string;
     message: string;
     pkg: Package;
-    rootPkg: string;
-    path: string;
+    path: Array<[string, string]>;
 }
 
 export interface ILintResultFormatter {
@@ -26,13 +25,18 @@ export class LintResultFormatter implements ILintResultFormatter {
         let warningCount: number = 0;
         let currentPackagePath: string | undefined = undefined;
 
-        for (const { type, name, message, pkg, rootPkg, path } of results) {
+        for (const { type, name, message, pkg, path } of results) {
             const severity = type === `error` ? chalk.red(type) : chalk.yellow(type);
+            //beautify path
+            const packagePath: string = path
+                .map(([name, version]) => `${name}@${version}`)
+                .map(name => chalk.cyan(name))
+                .join(chalk.white(` → `));
 
             // Print the package path only once
-            if (currentPackagePath !== path) {
-                currentPackagePath = path;
-                this.formatter.writeLine(`\n${chalk.cyan(path)}`);
+            if (currentPackagePath !== packagePath) {
+                currentPackagePath = packagePath;
+                this.formatter.writeLine(`\n${chalk.cyan(currentPackagePath)}`);
             }
 
             this.formatter.writeLine(
@@ -47,13 +51,14 @@ export class LintResultFormatter implements ILintResultFormatter {
         }
 
         if (results.length > 0) {
-            this.formatter.writeLine(
-                `\nFound ${chalk.yellow(`${warningCount} warning(s)`)} and ${chalk.red(
-                    `${errorCount} error(s)`
-                )}`
-            );
+            const warningMsg = chalk.yellow(`${warningCount} warning(s)`);
+            const errorMsg = chalk.red(`${errorCount} error(s)`);
+
+            this.formatter.writeLine(`\nFound ${warningMsg} and ${errorMsg}`);
         } else {
-            this.formatter.writeLine(`\n${chalk.green(`Found no issues`)} (0 warnings, 0 errors)`);
+            const noIssuesMsg = chalk.green(`Found no issues`);
+
+            this.formatter.writeLine(`\n${noIssuesMsg} (0 warnings, 0 errors)`);
         }
     }
 }

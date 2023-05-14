@@ -9,7 +9,7 @@ export type IAnalyzeParams = z.infer<typeof LintReportParams>;
 export class LintCommand extends CliCommand<LintReport> {
     public lintFile = Option.String();
 
-    public depth = Option.Counter(`--depth`, Infinity, {
+    public depth = Option.String(`--depth`, "no_valid_number", {
         description: `how deep to analyze the dependency tree`
     });
 
@@ -40,10 +40,16 @@ export class LintCommand extends CliCommand<LintReport> {
     static override paths = [[`lint`]];
 
     getReport(): LintReport {
+        let depth = parseInt(this.depth, 10);
+
+        if (isNaN(depth)) {
+            depth = Infinity;
+        }
+
         if (this.folder) {
             const params: IAnalyzeParams = {
                 folder: this.folder,
-                depth: this.depth,
+                depth: depth,
                 lintFile: this.lintFile
             };
 
@@ -51,7 +57,7 @@ export class LintCommand extends CliCommand<LintReport> {
         } else if (this.package) {
             const params: IAnalyzeParams = {
                 package: this.package,
-                depth: this.depth,
+                depth: depth,
                 lintFile: this.lintFile
             };
 
