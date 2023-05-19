@@ -82,7 +82,7 @@ export class LicenseUtilities {
         for (const [license, names] of sorted) {
             grouped.push({
                 license: license,
-                names: [...new Set([...names.values()].sort())]
+                names: [...new Set([...names.values()].sort((a, b) => a.localeCompare(b)))]
             });
         }
 

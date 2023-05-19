@@ -20,6 +20,6 @@ export class MultiReport<T extends PackageVersion[]> extends AbstractReport<
     }
 
     async report(ctx: IReportContext, ...pkgs: Args<T>): Promise<void> {
-        this.params.callback(ctx, ...pkgs);
+        await this.params.callback(ctx, ...pkgs);
     }
 }

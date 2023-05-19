@@ -21,7 +21,7 @@ export class OnlinePackageProvider extends AbstractPackageProvider {
                 `${this._url}/${encodeURIComponent(name)}`
             );
 
-            return data === null ? undefined : data;
+            return data ?? undefined;
         }
     }
 }

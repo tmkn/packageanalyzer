@@ -69,7 +69,7 @@ export async function printStatistics(
 ): Promise<void> {
     formatter.writeLine(`Statistics for ${chalk.bold(p.fullName)}\n`);
 
-    all ? printAllStatistics(p, formatter) : printBasicStatistics(p, formatter);
+    all ? await printAllStatistics(p, formatter) : printBasicStatistics(p, formatter);
 }
 
 const PaddingLeft = 4;
@@ -142,7 +142,7 @@ async function printOldest(p: Package, formatter: IFormatter): Promise<void> {
     }
 }
 
-async function printPublished(p: Package, formatter: IFormatter): Promise<void> {
+function printPublished(p: Package, formatter: IFormatter): void {
     const { published } = new ReleaseUtilities(p);
 
     if (!published) return;
@@ -176,7 +176,9 @@ function printLoops(p: Package, paddingLeft: number, formatter: IFormatter): voi
     formatter.writeGroup([[`Loops`, `${loops.length} (${distinctLoopCount} distinct)`]]);
 
     if (distinctLoopCount > 0) {
-        const [first] = loops.map(l => new PathUtilities(l).pathString).sort();
+        const [first] = loops
+            .map(l => new PathUtilities(l).pathString)
+            .sort((a, b) => a.localeCompare(b));
         const identBlock: [string, ...string[]] = [``];
 
         identBlock.push(`affected Packages: [${[...loopPathMap.keys()].join(", ")}]`);
