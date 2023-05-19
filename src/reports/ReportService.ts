@@ -16,7 +16,7 @@ export interface IReports {
 export class ReportService {
     constructor(private _config: IReports, private _stdout: Writable, private _stderr: Writable) {}
 
-    async process(): Promise<void> {
+    async process(): Promise<number | void> {
         const { reports } = this._config;
 
         try {
@@ -47,6 +47,8 @@ export class ReportService {
             stderrFormatter.writeLine(e?.toString());
             console.error(e?.toString());
         }
+
+        return Math.max(...reports.map(report => report.exitCode));
     }
 
     private async _getPackage(

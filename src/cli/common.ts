@@ -28,6 +28,8 @@ export function daysAgo(date: string | number | Date): string {
 export abstract class CliCommand<T extends AbstractReport<any>> extends Command {
     abstract getReport(): T;
 
+    exitCode = 0;
+
     beforeProcess: ((report: T) => void) | undefined = undefined;
 
     async execute(): Promise<number | void> {
@@ -42,11 +44,13 @@ export abstract class CliCommand<T extends AbstractReport<any>> extends Command 
             );
 
             this.beforeProcess?.(report);
-            await reportService.process();
+            this.exitCode = (await reportService.process()) ?? 0;
         } catch (e: any) {
             const stderrFormatter: IFormatter = new Formatter(this.context.stderr);
 
             stderrFormatter.writeLine(e);
         }
+
+        return this.exitCode;
     }
 }

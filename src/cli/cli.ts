@@ -13,6 +13,7 @@ import { ReportCommand } from "./reportCommand";
 import { DependencyDumperCommand } from "./dependencyDumpCommand";
 import { TestCommand } from "./testCommand";
 import { DiffCommand } from "./diffCommand";
+import { LintCommand } from "./lintCommand";
 
 export const cli = new Cli({
     binaryLabel: `packageanalyzer`,
@@ -29,6 +30,7 @@ cli.register(LoopsCommand);
 cli.register(TreeCommand);
 cli.register(LicenseCheckCommand);
 cli.register(DiffCommand);
+cli.register(LintCommand);
 
 //development niche commands
 cli.register(NpmDumpCommand);

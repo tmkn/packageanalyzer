@@ -34,7 +34,9 @@ export interface IReport<T, P extends {}, Z extends z.ZodTypeAny> {
     readonly type?: DependencyTypes;
     readonly depth?: number;
 
-    report(context: IReportContext, ...pkg: Args<T>): Promise<void>;
+    exitCode: number;
+
+    report(context: IReportContext, ...pkg: Args<T>): Promise<number | void>;
     validate?(): Z;
 }
 
@@ -64,6 +66,8 @@ export abstract class AbstractReport<
     type: DependencyTypes | undefined;
     depth: number | undefined;
 
+    exitCode: number = 0;
+
     constructor(params: P) {
         const result = this.validate?.().safeParse(params);
 
@@ -76,7 +80,7 @@ export abstract class AbstractReport<
         }
     }
 
-    abstract report(context: IReportContext, ...pkg: Args<T>): Promise<void>;
+    abstract report(context: IReportContext, ...pkg: Args<T>): Promise<number | void>;
 
     validate?(): Z;
 }

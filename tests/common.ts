@@ -64,7 +64,7 @@ export class TestReport extends AbstractReport<ITestReportParams, PackageVersion
         this.pkg = params.pkg;
     }
 
-    async report(context: IReportContext, pkg: Package): Promise<void> {
+    async report(context: IReportContext, pkg: Package): Promise<number | void> {
         return this.params.report(context, pkg);
     }
 
