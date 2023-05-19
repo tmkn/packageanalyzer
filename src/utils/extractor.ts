@@ -27,7 +27,7 @@ export class Extractor {
         await extractor.extract();
         if (!fs.existsSync(targetDir)) fs.mkdirSync(targetDir, { recursive: true });
 
-        extractor.save(formatter, async (data, p, i, max) => {
+        await extractor.save(formatter, async (data, p, i, max) => {
             const padding = `${i + 1}`.padStart(max.toString().length);
             const partialDir = Extractor.PackageNameToDir(p.fullName);
             const packageDir = path.join(targetDir, partialDir);

@@ -49,7 +49,9 @@ export class DependencyDumper {
         logger.start();
 
         try {
-            for (const [i, dependency] of [...distinct].sort().entries()) {
+            for (const [i, dependency] of [...distinct]
+                .sort((a, b) => a.localeCompare(b))
+                .entries()) {
                 const data = await this._provider.getPackageMetadata(dependency);
                 const folder = this._getFolder(baseDir, dependency);
                 const fullPath = path.join(folder, `metadata.json`);

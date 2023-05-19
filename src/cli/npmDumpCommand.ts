@@ -33,7 +33,12 @@ export class NpmDumpCommand extends Command {
     static override paths = [[`npmdump`]];
     async execute() {
         if (typeof this.npmFile !== "undefined" && typeof this.package !== "undefined") {
-            cliResolveFile(this.package, this.npmFile, this.context.stdout, this.context.stderr);
+            await cliResolveFile(
+                this.package,
+                this.npmFile,
+                this.context.stdout,
+                this.context.stderr
+            );
         }
     }
 }

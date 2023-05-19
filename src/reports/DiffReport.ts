@@ -103,7 +103,7 @@ export class DiffReport extends AbstractReport<
                 ...fromPkg.directDependencies.map(dep => dep.name),
                 ...toPkg.directDependencies.map(dep => dep.name)
             ])
-        ].sort();
+        ].sort((a, b) => a.localeCompare(b));
         const lines: string[] = [];
 
         for (const dependency of distinctDirectDependencies) {

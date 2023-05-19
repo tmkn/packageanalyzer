@@ -16,7 +16,7 @@ export class FileSystemPackageProvider implements IPackageJsonProvider {
     constructor(_folder: string) {
         const matches = this._findPackageJson(_folder);
 
-        this._paths = new Set([...matches].sort());
+        this._paths = new Set([...matches].sort((a, b) => a.localeCompare(b)));
         this._load();
     }
 
@@ -145,7 +145,7 @@ export class DumpPackageProvider extends AbstractPackageProvider {
                 }
             }
 
-            return new Set([...pkgs].sort());
+            return new Set([...pkgs].sort((a, b) => a.localeCompare(b)));
         } catch (e) {
             console.log(e);
 
