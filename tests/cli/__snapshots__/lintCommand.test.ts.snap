@@ -157,6 +157,7 @@ exports[`Lint Command Error Handling shows error message for invalid check retur
   "  [internal-error][dependency2@2.0.0][sample-check]: Invalid check implementation! check() must return "string" or "string[]". Returned "number"",
   "",
   "Found 0 warning(s) and 0 error(s)",
+  "Terminated with 3 internal error(s), please check lint output",
   "",
   "",
 ]

@@ -16,3 +16,4 @@ export { UpdateInfoReport } from "./reports/UpdateInfoReport";
 
 export type { ILintTypes, ILintCheck } from "./reports/lint/LintRule";
 export { createRule } from "./reports/lint/LintRule";
+export { ValidateKey } from "./reports/lint/checks/ValidateKey";
