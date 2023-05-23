@@ -4,7 +4,7 @@ import { z } from "zod";
 import { Package } from "../package/package";
 import { AbstractReport, IReportContext } from "./Report";
 import { PathUtilities } from "../extensions/utilities/PathUtilities";
-import { ZodLintRule } from "./lint/LintRule";
+import { ILintCheck, ZodLintRule } from "./lint/LintRule";
 import { ILintResult, LintResultFormatter } from "./lint/LintResultFormatter";
 import { PackageVersion, getPackageVersionfromString } from "../visitors/visitor";
 import { getPackageVersionFromPath } from "../visitors/util.node";
@@ -14,7 +14,7 @@ const LintFile = z.object({
     rules: z.array(ZodLintRule)
 });
 
-type ILintFile = z.infer<typeof LintFile>;
+export type ILintFile = z.infer<typeof LintFile>;
 
 const BaseLintParams = z.object({
     lintFile: z.string(),
@@ -63,6 +63,7 @@ export class LintReport extends AbstractReport<ILintParams> {
                 ? lintFile
                 : path.join(process.cwd(), lintFile);
 
+            // todo better way to load lint file, if an exception is thrown here it will always show up as couldn't find lint file
             const data = require(importPath);
             lintFileData = data;
         } catch (e) {
@@ -88,35 +89,34 @@ export class LintReport extends AbstractReport<ILintParams> {
 
         pkg.visit(dep => {
             for (const [type, rule, params] of this.rules.rules) {
-                const checkResult = rule.check(dep, params) as unknown;
+                let checkResult;
 
-                if (this._isvalidResult(checkResult)) {
-                    if (type === `error`) {
-                        this.exitCode = 1;
+                try {
+                    checkResult = rule.check(dep, params) as unknown;
+
+                    if (this._isvalidResultFormat(checkResult)) {
+                        if (type === `error`) {
+                            this.exitCode = 1;
+                        }
+
+                        const messages = Array.isArray(checkResult) ? checkResult : [checkResult];
+
+                        for (const message of messages) {
+                            lintResults.push({
+                                type,
+                                name: rule.name,
+                                message,
+                                path: new PathUtilities(dep).path,
+                                pkg: dep
+                            });
+                        }
+                    } else if (checkResult !== undefined) {
+                        throw new Error(
+                            `Invalid check implementation! check() must return "string" or "string[]". Returned "${typeof checkResult}"`
+                        );
                     }
-
-                    const messages = Array.isArray(checkResult) ? checkResult : [checkResult];
-
-                    for (const message of messages) {
-                        lintResults.push({
-                            type,
-                            name: rule.name,
-                            message,
-                            path: new PathUtilities(dep).path,
-                            pkg: dep
-                        });
-                    }
-                } else if (checkResult !== undefined) {
-                    this.exitCode = 1;
-
-                    lintResults.push({
-                        // @ts-ignore
-                        type: `internal-error`,
-                        name: rule.name,
-                        message: `Invalid check implementation! check() must return "string" or "string[]". Returned "${typeof checkResult}"`,
-                        path: new PathUtilities(dep).path,
-                        pkg: dep
-                    });
+                } catch (e) {
+                    this._reportError(e, lintResults, rule, dep);
                 }
             }
         }, true);
@@ -124,7 +124,25 @@ export class LintReport extends AbstractReport<ILintParams> {
         resultFormatter.format(lintResults);
     }
 
-    private _isvalidResult(result: unknown): result is string | string[] {
+    private _reportError(
+        e: unknown,
+        lintResults: ILintResult[],
+        rule: ILintCheck,
+        dep: Package
+    ): void {
+        this.exitCode = 1;
+
+        if (e instanceof Error)
+            lintResults.push({
+                type: `internal-error`,
+                name: rule.name,
+                message: e.message,
+                path: new PathUtilities(dep).path,
+                pkg: dep
+            });
+    }
+
+    private _isvalidResultFormat(result: unknown): result is string | string[] {
         return (
             typeof result === `string` ||
             (Array.isArray(result) && result.every(r => typeof r === `string`))

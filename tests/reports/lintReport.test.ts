@@ -1,5 +1,5 @@
 import { ZodLintRule, createRule } from "../../src/reports/lint/LintRule";
-import { LintReport } from "../../src/reports/LintReport";
+import { ILintFile, LintReport } from "../../src/reports/LintReport";
 import { ReportService } from "../../src/reports/ReportService";
 import { createMockContext } from "../common";
 import { IMockPackageJson, MockProvider } from "../mocks";
@@ -192,6 +192,91 @@ describe(`LintReport Test`, () => {
         const exitCode = await reportService.process();
 
         expect(exitCode).toBe(0);
+    });
+});
+
+describe(`"internal-error" Lint Test`, () => {
+    const medalloPkg: IMockPackageJson = {
+        name: `medallo`,
+        version: `1.0.0`,
+        dependencies: [
+            { name: `foo`, version: `1.0.0` },
+            { name: `bar`, version: `1.0.0` }
+        ]
+    };
+    const provider = new MockProvider([medalloPkg]);
+
+    const lintFile: ILintFile = {
+        rules: [
+            createRule(`warning`, { name: `report-all`, check: () => `` }, {}),
+            createRule(
+                `warning`,
+                {
+                    name: `will-throw`,
+                    check: () => {
+                        throw new Error(`whoops`);
+                    }
+                },
+                {}
+            )
+        ]
+    };
+
+    beforeEach(() => {
+        jest.resetModules();
+    });
+
+    test(`sets exitCode to 1 if there are internal errors`, async () => {
+        jest.doMock(`/getsMockedAnyway.js`, () => lintFile, {
+            virtual: true
+        });
+
+        const lintReport = new LintReport({
+            lintFile: `/getsMockedAnyway.js`,
+            package: `medallo@1.0.0`,
+            depth: Infinity
+        });
+        lintReport.provider = provider;
+
+        const { stdout, stderr } = createMockContext();
+        const reportService = new ReportService(
+            {
+                reports: [lintReport]
+            },
+            stdout,
+            stderr
+        );
+
+        const exitCode = await reportService.process();
+
+        expect(exitCode).toBe(1);
+    });
+
+    test(`prints out internal errors & exit message`, async () => {
+        jest.doMock(`/getsMockedAnyway.js`, () => lintFile, {
+            virtual: true
+        });
+
+        const lintReport = new LintReport({
+            lintFile: `/getsMockedAnyway.js`,
+            package: `medallo@1.0.0`,
+            depth: Infinity
+        });
+        lintReport.provider = provider;
+
+        const { stdout, stderr } = createMockContext();
+        const reportService = new ReportService(
+            {
+                reports: [lintReport]
+            },
+            stdout,
+            stderr
+        );
+
+        await reportService.process();
+
+        expect(stdout.lines).toMatchSnapshot();
+        expect(stderr.lines).toMatchSnapshot();
     });
 });
 

@@ -5,7 +5,7 @@ import { IFormatter } from "../../utils/formatter";
 import { ILintTypes } from "./LintRule";
 
 export interface ILintResult {
-    type: ILintTypes;
+    type: ILintTypes | "internal-error";
     name: string;
     message: string;
     pkg: Package;
@@ -23,10 +23,11 @@ export class LintResultFormatter implements ILintResultFormatter {
     format(results: ILintResult[]): void {
         let errorCount: number = 0;
         let warningCount: number = 0;
+        let internalErrorCount: number = 0;
         let currentPackagePath: string | undefined = undefined;
 
         for (const { type, name, message, pkg, path } of results) {
-            const severity = type === `error` ? chalk.red(type) : chalk.yellow(type);
+            const severity = this.#severityColor(type);
             //beautify path
             const packagePath: string = path
                 .map(([name, version]) => `${name}@${version}`)
@@ -47,6 +48,8 @@ export class LintResultFormatter implements ILintResultFormatter {
                 errorCount++;
             } else if (type === `warning`) {
                 warningCount++;
+            } else if (type === `internal-error`) {
+                internalErrorCount++;
             }
         }
 
@@ -59,6 +62,25 @@ export class LintResultFormatter implements ILintResultFormatter {
             const noIssuesMsg = chalk.green(`Found no issues`);
 
             this.formatter.writeLine(`\n${noIssuesMsg} (0 warnings, 0 errors)`);
+        }
+
+        if (internalErrorCount > 0) {
+            this.formatter.writeLine(
+                chalk.bgRed(
+                    `Terminated with ${internalErrorCount} internal error(s), please check lint output`
+                )
+            );
+        }
+    }
+
+    #severityColor(type: ILintResult["type"]): string {
+        switch (type) {
+            case `error`:
+                return chalk.red(type);
+            case `warning`:
+                return chalk.yellow(type);
+            case `internal-error`:
+                return chalk.bgRed(type);
         }
     }
 }
