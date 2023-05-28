@@ -1,10 +1,11 @@
 {
   "name": "@tmkn/packageanalyzer",
-  "version": "0.9.13",
+  "version": "0.9.14",
   "description": "A tool to analyze a Node.js project/package",
   "main": "./build/src/index.js",
   "types": "./build/src/index.d.ts",
   "exports": {
+    ".": "./build/src/index.js",
     "./web": "./build/src/index.web.js"
   },
   "typesVersions": {
@@ -28,6 +29,7 @@
     "test:coverage": "jest --coverage",
     "test:update": "jest --updateSnapshot",
     "test:clean": "node build/tests/clean.js",
+    "test:exports": "node ./build/src/cli.js lint --package react ./tests/exportTest.js",
     "prettier": "prettier --write \"{src,tests,utility}/**/{*.ts,*.js}\" webpack.web.config.js",
     "pa": "node build/src/cli.js",
     "preview": "npm pack && tar -xvzf *.tgz && rm -rf package *.tgz",
@@ -47,7 +49,8 @@
     "package",
     "analyzer",
     "dependency",
-    "tree"
+    "tree",
+    "lint"
   ],
   "bugs": {
     "url": "https://github.com/tmkn/packageanalyzer/issues"

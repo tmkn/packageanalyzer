@@ -49,6 +49,7 @@ export abstract class CliCommand<T extends AbstractReport<any>> extends Command 
             const stderrFormatter: IFormatter = new Formatter(this.context.stderr);
 
             stderrFormatter.writeLine(e);
+            this.exitCode = 1;
         }
 
         return this.exitCode;

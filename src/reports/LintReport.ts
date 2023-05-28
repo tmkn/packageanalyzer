@@ -58,17 +58,12 @@ export class LintReport extends AbstractReport<ILintParams> {
     private _loadLintFile(lintFile: string): unknown {
         let lintFileData: unknown;
 
-        try {
-            const importPath: string = path.isAbsolute(lintFile)
-                ? lintFile
-                : path.join(process.cwd(), lintFile);
+        const importPath: string = path.isAbsolute(lintFile)
+            ? lintFile
+            : path.join(process.cwd(), lintFile);
 
-            // todo better way to load lint file, if an exception is thrown here it will always show up as couldn't find lint file
-            const data = require(importPath);
-            lintFileData = data;
-        } catch (e) {
-            throw new Error(`Couldn't find lint file: ${lintFile}`);
-        }
+        const data = require(importPath);
+        lintFileData = data;
 
         return lintFileData;
     }

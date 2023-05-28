@@ -26,14 +26,15 @@ describe(`Lint Command`, () => {
                 `./tests/mocks/lint/missing.js`
             ]) as LintCommand;
 
-            expect.assertions(2);
+            expect.assertions(3);
             const { mockContext, stdout, stderr } = createMockContext();
             command.context = mockContext;
 
             await command.execute();
 
-            expect(stdout.lines).toMatchSnapshot(`stdout`);
-            expect(stderr.lines).toMatchSnapshot(`stderr`);
+            expect(stdout.lines.length).toBe(0);
+            expect(stderr.lines.length).toBe(2);
+            expect(stderr.lines[0]).toContain(`Error:`);
         });
 
         test(`fails on invalid lint file format`, async () => {
@@ -44,7 +45,7 @@ describe(`Lint Command`, () => {
                 path.join(process.cwd(), `tests`, `sampleReport.js`)
             ]) as LintCommand;
 
-            expect.assertions(2);
+            expect.assertions(3);
             const { mockContext, stdout, stderr } = createMockContext();
             command.context = mockContext;
 
@@ -52,6 +53,7 @@ describe(`Lint Command`, () => {
 
             expect(stdout.lines.length).toBe(0);
             expect(stderr.lines.length).toBe(2);
+            expect(stderr.lines[0]).toContain(`Error:`);
         });
 
         test(`fails on missing --package and --folder`, async () => {

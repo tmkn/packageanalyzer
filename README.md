@@ -15,57 +15,16 @@ Stats are fun!
 
 Please see the [Documentation](http://packageanalyzer-docs.vercel.app/) for a more in depth introduction.
 
-## Prints various statistics:
-* Number of transitive dependencies
-* Number of distinct dependencies
-* Most referred package
-* Package with most direct dependencies
-* Package with most versions
-* Licenses
-
 ## Install
 ```
 yarn add @tmkn/packageanalyzer
 ```
 
 ## Usage
-The package analyzer is both a CLI and a framework.
+Please see the [CLI documentation](https://packageanalyzer-docs.vercel.app/docs/cli/) on usage.
 
-As such it provides the following CLI options (non exhaustive!):
-### Analyze latest version of a package
-`pkga analyze --package typescript`
-### Analyze specific version of a package
-`pkga analyze --package typescript@3.5.1`
-### Analyze local folder
-`pkga analyze --folder path/to/folder/with/package.json`
-### Print dependency tree
-`pkga tree --package typescript`
-### Print licenses
-`pkga license --package typescript`
-### Run custom report
-`pkga report --config path/to/custom/report.js`
-
-Please see [Using custom reports](https://packageanalyzer-docs.vercel.app/docs/guides/custom_reports) on how to use the package analyzer programatically.
-
-## Setting up the dev environment
-```
-git clone https://github.com/tmkn/packageanalyzer.git
-yarn install
-yarn build
-```
-See [Core Concepts](https://packageanalyzer-docs.vercel.app/docs/core_concepts/provider) for a quick tour around the code
-
-### Watch mode
-`yarn dev`
-### Build
-`yarn build`
-## Tests
-### Run tests
-`yarn test`
-### Code Coverage
-`yarn test:coverage`
-### Watch tests
-`yarn test:watch`
+## Develop
+Please see [here](./DEVELOP.md) how to setup the dev environment
 
 ## Roadmap
 * Stabilize API
