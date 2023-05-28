@@ -36,6 +36,9 @@ steps:
 - script: yarn lint:web
   displayName: 'Check web version for NodeJS code'
 
+- script: yarn test:exports
+  displayName: 'Test exports'
+
 - script: |
     yarn test
   displayName: 'Run tests'

@@ -132,15 +132,6 @@ exports[`Lint Command Error Handling fails on missing --package and --folder: st
 
 exports[`Lint Command Error Handling fails on missing --package and --folder: stdout 1`] = `[]`;
 
-exports[`Lint Command Error Handling fails on missing lint file: stderr 1`] = `
-[
-  "Error: Couldn't find lint file: ./tests/mocks/lint/missing.js",
-  "",
-]
-`;
-
-exports[`Lint Command Error Handling fails on missing lint file: stdout 1`] = `[]`;
-
 exports[`Lint Command Error Handling shows error message for invalid check return value: stderr 1`] = `[]`;
 
 exports[`Lint Command Error Handling shows error message for invalid check return value: stdout 1`] = `
