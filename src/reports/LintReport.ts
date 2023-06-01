@@ -4,11 +4,12 @@ import { z } from "zod";
 import { IPackage } from "../package/package";
 import { AbstractReport, IReportContext } from "./Report";
 import { PathUtilities } from "../extensions/utilities/PathUtilities";
-import { ILintCheck, ZodLintRule } from "./lint/LintRule";
+import { ILintCheck, ZodLintRule, createDecorator } from "./lint/LintRule";
 import { ILintResult, LintResultFormatter } from "./lint/LintResultFormatter";
 import { PackageVersion, getPackageVersionfromString } from "../visitors/visitor";
 import { getPackageVersionFromPath } from "../visitors/util.node";
 import { FileSystemPackageProvider } from "../providers/folder";
+import { IDecorator } from "../index.web";
 
 const LintFile = z.object({
     rules: z.array(ZodLintRule)
@@ -35,6 +36,8 @@ export class LintReport extends AbstractReport<ILintParams> {
 
     rules: ILintFile;
 
+    override decorators: IDecorator<any, any>[] = [];
+
     constructor(params: ILintParams) {
         super(params);
         this.depth = params.depth;
@@ -50,6 +53,12 @@ export class LintReport extends AbstractReport<ILintParams> {
 
         if (this._isLintFile(lintFile)) {
             this.rules = lintFile;
+
+            for (const [i, [type, rule, params]] of this.rules.rules.entries()) {
+                const decoratorsForRule = createDecorator(rule.decorators ?? {}, i);
+
+                this.decorators.push(decoratorsForRule);
+            }
         } else {
             throw new Error(`Invalid lint file format: ${params.lintFile}`);
         }
@@ -83,11 +92,28 @@ export class LintReport extends AbstractReport<ILintParams> {
         context.stdoutFormatter.writeLine(`PackageLint: ${pkg.fullName}`);
 
         pkg.visit(dep => {
-            for (const [type, rule, params] of this.rules.rules) {
+            for (const [i, [type, rule, params]] of this.rules.rules.entries()) {
                 let checkResult;
 
                 try {
-                    checkResult = rule.check(dep, params) as unknown;
+                    // patch getDecoratorData to return data for the current rule
+                    const _pkg = Object.assign({}, dep, {
+                        version: dep.version,
+                        getDecoratorData: (key: string): any => {
+                            try {
+                                const data = dep.getDecoratorData(i.toString()) as Record<
+                                    string,
+                                    any
+                                >;
+
+                                return data[key] ?? {};
+                            } catch (_e) {
+                                throw new Error(`Decorators failed!`);
+                            }
+                        }
+                    });
+
+                    checkResult = rule.check(_pkg, params) as unknown;
 
                     if (this._isvalidResultFormat(checkResult)) {
                         if (type === `error`) {
