@@ -26,7 +26,10 @@ export class DependencyDumpReport extends AbstractReport<IDependencyDumpParams> 
         super(params);
 
         this.pkg = params.entries.map(entry => getPackageVersionfromString(entry));
-        this.decorators = [new MetaFileDecorator(new OnlinePackageProvider(this.params.registry))];
+
+        const provider = new OnlinePackageProvider(this.params.registry);
+        this.decorators = [new MetaFileDecorator(provider)];
+        this.provider = provider;
     }
 
     async report({ stdoutFormatter }: IReportContext, ...pkgs: Package[]): Promise<void> {
