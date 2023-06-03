@@ -6,12 +6,11 @@ import { createMockNpmServer, IMockServer } from "../server";
 import { createMockContext } from "../common";
 import { AnalyzeCommand } from "../../src/cli/analyzeCommand";
 import { DumpPackageProvider } from "../../src/providers/folder";
+import { ReleaseDecorator } from "../../src/extensions/decorators/ReleaseDecorator";
 
 describe(`Analyze Command`, () => {
     let server: IMockServer;
     let provider: OnlinePackageProvider;
-
-    jest.setTimeout(10000);
 
     beforeAll(async () => {
         server = await createMockNpmServer();
@@ -33,7 +32,10 @@ describe(`Analyze Command`, () => {
         expect.assertions(2);
         const { mockContext, stdout, stderr } = createMockContext();
         command.context = mockContext;
-        command.beforeProcess = report => (report.provider = provider);
+        command.beforeProcess = report => {
+            report.decorators = [new ReleaseDecorator(provider)];
+            report.provider = provider;
+        };
 
         await command.execute();
 
@@ -53,7 +55,10 @@ describe(`Analyze Command`, () => {
         expect.assertions(2);
         const { mockContext, stdout, stderr } = createMockContext();
         command.context = mockContext;
-        command.beforeProcess = report => (report.provider = provider);
+        command.beforeProcess = report => {
+            report.decorators = [new ReleaseDecorator(provider)];
+            report.provider = provider;
+        };
 
         await command.execute();
 
@@ -97,7 +102,10 @@ describe(`Analyze Command`, () => {
         expect.assertions(2);
         const { mockContext, stdout, stderr } = createMockContext();
         command.context = mockContext;
-        command.beforeProcess = report => (report.provider = provider);
+        command.beforeProcess = report => {
+            report.decorators = [new ReleaseDecorator(provider)];
+            report.provider = provider;
+        };
 
         await command.execute();
 

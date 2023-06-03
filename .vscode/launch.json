@@ -10,9 +10,9 @@
             "request": "launch",
             "runtimeArgs": [
               "--inspect-brk",
-              "${workspaceRoot}/node_modules/.bin/jest",
+              "${workspaceRoot}/node_modules/jest/bin/jest.js",
               "--runInBand",
-              "lintCommand"
+              "analyzeCommand"
             ],
             "console": "integratedTerminal",
             "internalConsoleOptions": "neverOpen"
