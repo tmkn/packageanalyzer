@@ -3,7 +3,7 @@ import * as path from "path";
 
 import * as nock from "nock";
 
-import { Package } from "../../src";
+import { IPackage } from "../../src/package/package";
 import { ITarData, TarDecorator } from "../../src/extensions/decorators/TarDecorator";
 import { createMockPackage, IMockPackageJson } from "../mocks";
 
@@ -34,7 +34,7 @@ describe(`TarDecorator Tests`, () => {
                 shasum: `1234`
             }
         };
-        const p: Package = createMockPackage(pkgJson);
+        const p: IPackage = createMockPackage(pkgJson);
 
         const data = await tarDecorator.apply({ p, ...logStub });
 
@@ -45,7 +45,7 @@ describe(`TarDecorator Tests`, () => {
     it(`uses cache`, async () => {
         const cache: Map<string, ITarData> = new Map();
         const tarDecorator = new TarDecorator(cache);
-        const p: Package = createMockPackage({});
+        const p: IPackage = createMockPackage({});
 
         //init cache
         cache.set(p.fullName, {
@@ -63,7 +63,7 @@ describe(`TarDecorator Tests`, () => {
 
     it(`throws on missing tarball url`, async () => {
         const tarDecorator = new TarDecorator();
-        const p: Package = createMockPackage({});
+        const p: IPackage = createMockPackage({});
 
         await expect(tarDecorator.apply({ p, ...logStub })).rejects.toThrow();
     });

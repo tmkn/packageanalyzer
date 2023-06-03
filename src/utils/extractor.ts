@@ -3,17 +3,17 @@ import * as fs from "fs";
 
 import { FlatFileProvider } from "../providers/flatFile";
 import { OraLogger } from "../loggers/OraLogger";
-import { Package } from "../package/package";
+import { IPackage } from "../package/package";
 import { getPackageVersionfromString, PackageVersion, Visitor } from "../visitors/visitor";
 
-type Formatter = (p: Package) => object;
-type ExtractCallback = (data: string, p: Package, i: number, max: number) => Promise<void>;
+type Formatter = (p: IPackage) => object;
+type ExtractCallback = (data: string, p: IPackage, i: number, max: number) => Promise<void>;
 
 //extract packages from dump file
 export class Extractor {
     private _provider: FlatFileProvider;
     private _versions: PackageVersion[] = [];
-    private _resolvedPackages: Map<string, Package> = new Map();
+    private _resolvedPackages: Map<string, IPackage> = new Map();
 
     /* istanbul ignore next */
     static async Extract(
@@ -82,7 +82,7 @@ export class Extractor {
         }
     }
 
-    async extract(): Promise<ReadonlyMap<string, Package>> {
+    async extract(): Promise<ReadonlyMap<string, IPackage>> {
         this._resolvedPackages = new Map();
 
         for (const [name, version] of this._versions) {
@@ -90,7 +90,7 @@ export class Extractor {
             process.stdout.write(`Fetching ${name}@${versionStr}\n`);
 
             const visitor = new Visitor([name, version], this._provider, new OraLogger());
-            const p: Package = await visitor.visit();
+            const p: IPackage = await visitor.visit();
 
             if (!this._resolvedPackages.has(p.fullName)) {
                 this._resolvedPackages.set(p.fullName, p);

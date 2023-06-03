@@ -11,7 +11,7 @@ import { AbstractReport, IReportContext } from "../reports/Report";
 import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
 import { TarDecorator } from "../extensions/decorators/TarDecorator";
 import { DumpPackageProvider } from "../providers/folder";
-import { Package } from "../package/package";
+import { IPackage } from "../package/package";
 import { z, ZodTypeAny } from "zod";
 
 export class TestCommand extends CliCommand<TestReport> {
@@ -51,7 +51,7 @@ export class TestReport extends AbstractReport<ITestReportParams> {
         }
     }
 
-    async report({ stdoutFormatter }: IReportContext, pkg: Package): Promise<void> {
+    async report({ stdoutFormatter }: IReportContext, pkg: IPackage): Promise<void> {
         const destination = path.join("tests", "data", "dump");
         const provider = new DumpPackageProvider(destination);
 

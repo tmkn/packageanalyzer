@@ -3,7 +3,7 @@ import * as chalk from "chalk";
 
 import { defaultDependencyType } from "../cli/common";
 import { DependencyUtilities } from "../extensions/utilities/DependencyUtilities";
-import { Package } from "../package/package";
+import { IPackage } from "../package/package";
 import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
 import { AbstractReport, IReportContext } from "./Report";
 import { TypeParameter } from "./Validation";
@@ -42,7 +42,7 @@ export class DiffReport extends AbstractReport<
         ];
     }
 
-    async report(ctx: IReportContext, fromPkg: Package, toPkg: Package): Promise<void> {
+    async report(ctx: IReportContext, fromPkg: IPackage, toPkg: IPackage): Promise<void> {
         const { stdoutFormatter } = ctx;
         stdoutFormatter.writeLine(
             `Dependency Diff: ${chalk.bold.underline(fromPkg.fullName)} (${this._printCount(
@@ -66,7 +66,7 @@ export class DiffReport extends AbstractReport<
         stdoutFormatter.writeLine(`\n${legend}`);
     }
 
-    private _printStats(fromPkg: Package, toPkg: Package, stdoutFormatter: IFormatter): void {
+    private _printStats(fromPkg: IPackage, toPkg: IPackage, stdoutFormatter: IFormatter): void {
         const { transitiveCount: fromTransitiveCount } = new DependencyUtilities(fromPkg);
         const { transitiveCount: toTransitiveCount } = new DependencyUtilities(toPkg);
 
@@ -89,13 +89,13 @@ export class DiffReport extends AbstractReport<
         return chalk.bold(msg);
     }
 
-    private _printCount(pkg: Package): string {
+    private _printCount(pkg: IPackage): string {
         return `${pkg.directDependencies.length}/${new DependencyUtilities(pkg).transitiveCount}`;
     }
 
     private _printDependencyChanges(
-        fromPkg: Package,
-        toPkg: Package,
+        fromPkg: IPackage,
+        toPkg: IPackage,
         { stdoutFormatter, stderrFormatter }: IReportContext
     ): void {
         const distinctDirectDependencies: string[] = [
@@ -138,26 +138,26 @@ export class DiffReport extends AbstractReport<
         stdoutFormatter.writeIdentation([``, ...lines], 4);
     }
 
-    private _dependencyAdded(name: string, fromPkg: Package, toPkg: Package): boolean {
+    private _dependencyAdded(name: string, fromPkg: IPackage, toPkg: IPackage): boolean {
         const { newPackages } = new DiffUtilities(fromPkg, toPkg);
 
         return newPackages.some(pkg => pkg.name === name);
     }
-    private _dependencyRemoved(name: string, fromPkg: Package, toPkg: Package): boolean {
+    private _dependencyRemoved(name: string, fromPkg: IPackage, toPkg: IPackage): boolean {
         const { removedPackages } = new DiffUtilities(fromPkg, toPkg);
 
         return removedPackages.some(pkg => pkg.name === name);
     }
 
-    private _dependencyUpated(name: string, fromPkg: Package, toPkg: Package): boolean {
+    private _dependencyUpated(name: string, fromPkg: IPackage, toPkg: IPackage): boolean {
         const { updatedPackages } = new DiffUtilities(fromPkg, toPkg);
 
         return updatedPackages.some(([pkg]) => pkg.name === name);
     }
 
-    private _printStatus(from: Package, status: Status): string;
-    private _printStatus(from: Package, to: Package): string;
-    private _printStatus(from: Package, toOrStatus: Package | Status): string {
+    private _printStatus(from: IPackage, status: Status): string;
+    private _printStatus(from: IPackage, to: IPackage): string;
+    private _printStatus(from: IPackage, toOrStatus: IPackage | Status): string {
         let line: string;
 
         if (typeof toOrStatus === "string") {

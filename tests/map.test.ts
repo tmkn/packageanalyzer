@@ -1,6 +1,6 @@
 import * as path from "path";
 
-import { Package } from "../src/package/package";
+import { IPackage } from "../src/package/package";
 import { FileSystemPackageProvider } from "../src/providers/folder";
 import { Visitor } from "../src/visitors/visitor";
 import { OraLogger } from "../src/loggers/OraLogger";
@@ -8,7 +8,7 @@ import { map, MappedDependency } from "../src/utils/map";
 import { getPackageVersionFromPath } from "../src/visitors/util.node";
 
 describe(`Map tests`, () => {
-    let p: Package;
+    let p: IPackage;
     let mapped: MappedDependency<{ foo: string }>;
 
     beforeAll(async () => {

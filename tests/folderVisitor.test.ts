@@ -1,6 +1,6 @@
 import * as path from "path";
 
-import { Package } from "../src/package/package";
+import { IPackage } from "../src/package/package";
 import { FileSystemPackageProvider } from "../src/providers/folder";
 import { IPackageJson } from "../src/npm";
 import { Visitor } from "../src/visitors/visitor";
@@ -11,7 +11,7 @@ import { IPackageJsonProvider } from "../src/providers/provider";
 import { getPackageVersionFromPath } from "../src/visitors/util.node";
 
 describe(`visitFromFolder Tests`, () => {
-    let p: Package;
+    let p: IPackage;
 
     beforeAll(async () => {
         const rootPath = path.join("tests", "data", "testproject2");

@@ -1,14 +1,14 @@
 import * as path from "path";
 
 import { FileSystemPackageProvider } from "../src/providers/folder";
-import { Package } from "../src/package/package";
+import { IPackage } from "../src/package/package";
 import { Visitor } from "../src/visitors/visitor";
 import { OraLogger } from "../src/loggers/OraLogger";
 import { LicenseUtilities } from "../src/extensions/utilities/LicenseUtilities";
 import { DependencyUtilities } from "../src/extensions/utilities/DependencyUtilities";
 
 describe(`visitFromFolder Tests`, () => {
-    let p: Package;
+    let p: IPackage;
 
     beforeAll(async () => {
         const destination = path.join("tests", "data", "testproject2", "node_modules");
@@ -163,7 +163,7 @@ describe(`visitFromFolder Tests`, () => {
 });
 
 describe(`Visitor Max Depth Tests`, () => {
-    function getPackage(depth: number): Promise<Package> {
+    function getPackage(depth: number): Promise<IPackage> {
         const destination = path.join("tests", "data", "testproject2", "node_modules");
         const provider: FileSystemPackageProvider = new FileSystemPackageProvider(destination);
 

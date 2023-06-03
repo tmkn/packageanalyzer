@@ -1,6 +1,6 @@
 import * as chalk from "chalk";
 
-import { Package } from "../../package/package";
+import { IPackage } from "../../package/package";
 import { IFormatter } from "../../utils/formatter";
 import { ILintTypes } from "./LintRule";
 
@@ -8,7 +8,7 @@ export interface ILintResult {
     type: ILintTypes | "internal-error";
     name: string;
     message: string;
-    pkg: Package;
+    pkg: IPackage;
     path: Array<[string, string]>;
 }
 

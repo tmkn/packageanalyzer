@@ -4,7 +4,7 @@ import { FileSystemPackageProvider } from "../src/providers/folder";
 import { Visitor } from "../src/visitors/visitor";
 import { OraLogger } from "../src/loggers/OraLogger";
 import { ITreeFormatter, print } from "../src/utils/tree";
-import { Package } from "../src/package/package";
+import { IPackage } from "../src/package/package";
 import { Formatter } from "../src/utils/formatter";
 import { createMockContext } from "./common";
 import { DependencyUtilities } from "../src/extensions/utilities/DependencyUtilities";
@@ -18,7 +18,7 @@ describe(`Tree Tests`, () => {
         const visitor = new Visitor(getPackageVersionFromPath(rootPath), provider, new OraLogger());
         const p = await visitor.visit();
 
-        const converter: ITreeFormatter<Package> = {
+        const converter: ITreeFormatter<IPackage> = {
             getLabel: data => data.fullName,
             getChildren: data => data.directDependencies
         };
@@ -26,7 +26,7 @@ describe(`Tree Tests`, () => {
         const { stdout } = createMockContext();
         const formatter = new Formatter(stdout);
 
-        print<Package>(p, converter, formatter);
+        print(p, converter, formatter);
 
         expect(stdout.lines).toMatchSnapshot();
     });
@@ -37,7 +37,7 @@ describe(`Tree Tests`, () => {
         const visitor = new Visitor(getPackageVersionFromPath(rootPath), provider, new OraLogger());
         const p = await visitor.visit();
 
-        const converter: ITreeFormatter<Package> = {
+        const converter: ITreeFormatter<IPackage> = {
             getLabel: data => [
                 `${data.fullName} (${new DependencyUtilities(data).transitiveCount} dependencies)`,
                 `License: ${new LicenseUtilities(data).license}`
@@ -48,7 +48,7 @@ describe(`Tree Tests`, () => {
         const { stdout } = createMockContext();
         const formatter = new Formatter(stdout);
 
-        print<Package>(p, converter, formatter);
+        print(p, converter, formatter);
 
         expect(stdout.lines).toMatchSnapshot();
     });

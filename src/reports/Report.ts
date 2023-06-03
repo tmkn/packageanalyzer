@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import { IDecorator } from "../extensions/decorators/Decorator";
-import { Package } from "../package/package";
+import { IPackage } from "../package/package";
 import { IPackageJsonProvider } from "../providers/provider";
 import { IFormatter } from "../utils/formatter";
 import { PackageVersion } from "../visitors/visitor";
@@ -15,14 +15,14 @@ export interface IReportContext {
 //type Args<T> = T extends Array<any> ? Array<Package> : [Package];
 //better inferring for 1, 2 and 3 entries
 export type Args<T> = T extends [PackageVersion]
-    ? [Package, ...undefined[]]
+    ? [IPackage, ...undefined[]]
     : T extends [PackageVersion, PackageVersion]
-    ? [Package, Package, ...undefined[]]
+    ? [IPackage, IPackage, ...undefined[]]
     : T extends [PackageVersion, PackageVersion, PackageVersion]
-    ? [Package, Package, Package, ...undefined[]]
+    ? [IPackage, IPackage, IPackage, ...undefined[]]
     : T extends PackageVersion
-    ? [Package]
-    : Array<Package | undefined>;
+    ? [IPackage]
+    : Array<IPackage | undefined>;
 
 export interface IReport<T, P extends {}, Z extends z.ZodTypeAny> {
     readonly name: string;

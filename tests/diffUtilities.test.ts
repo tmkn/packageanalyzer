@@ -1,4 +1,4 @@
-import { Package } from "../src";
+import { IPackage } from "../src/package/package";
 import { DiffUtilities } from "../src/extensions/utilities/DiffUtilities";
 import { createMockPackage, IMockPackageJson } from "./mocks";
 
@@ -25,8 +25,8 @@ describe(`Diff Utilities Tests`, () => {
         ]
     };
 
-    const toPkg: Package = createMockPackage(toBaseData);
-    const fromPkg: Package = createMockPackage(fromBaseData);
+    const toPkg: IPackage = createMockPackage(toBaseData);
+    const fromPkg: IPackage = createMockPackage(fromBaseData);
 
     test(`Get new packages`, () => {
         const { newPackages } = new DiffUtilities(fromPkg, toPkg);

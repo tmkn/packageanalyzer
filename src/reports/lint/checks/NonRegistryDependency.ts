@@ -1,9 +1,9 @@
-import { Package } from "../../../package/package";
+import { IPackage } from "../../../package/package";
 import { ILintCheck } from "../LintRule";
 
 export const NonRegistryDependency: ILintCheck = {
     name: "non-registry-dependency",
-    check: (pkg: Package) => {
+    check: (pkg: IPackage) => {
         const dependencyTypes = [
             "dependencies",
             "devDependencies",

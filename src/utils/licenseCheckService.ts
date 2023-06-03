@@ -2,7 +2,7 @@
 const satisfies = require("spdx-satisfies");
 
 import { LicenseUtilities } from "../extensions/utilities/LicenseUtilities";
-import { Package } from "../package/package";
+import { IPackage } from "../package/package";
 
 export interface ILicenseCheckResult {
     ok: boolean;
@@ -11,16 +11,16 @@ export interface ILicenseCheckResult {
 
 interface ILicenseCheckReport {
     ok: boolean;
-    allChecks: Map<Package, ILicenseCheckResult>;
-    failedChecks: Map<Package, ILicenseCheckResult>;
-    passedChecks: Map<Package, ILicenseCheckResult>;
+    allChecks: Map<IPackage, ILicenseCheckResult>;
+    failedChecks: Map<IPackage, ILicenseCheckResult>;
+    passedChecks: Map<IPackage, ILicenseCheckResult>;
 }
 
 export type LicenseCheckReport = Readonly<ILicenseCheckReport>;
 
 class WhitelistLicenseCheckService {
     constructor(
-        private _p: Package,
+        private _p: IPackage,
         private _whitelist: string[],
         private _includeSelf: Readonly<boolean>
     ) {}
@@ -35,9 +35,9 @@ class WhitelistLicenseCheckService {
 
     check(): ILicenseCheckReport {
         const visitedPackages: string[] = [];
-        const all: Map<Package, ILicenseCheckResult> = new Map();
-        const failedChecks: Map<Package, ILicenseCheckResult> = new Map();
-        const passedChecks: Map<Package, ILicenseCheckResult> = new Map();
+        const all: Map<IPackage, ILicenseCheckResult> = new Map();
+        const failedChecks: Map<IPackage, ILicenseCheckResult> = new Map();
+        const passedChecks: Map<IPackage, ILicenseCheckResult> = new Map();
 
         this._p.visit(pkg => {
             if (visitedPackages.includes(pkg.fullName)) return;
@@ -82,7 +82,7 @@ class WhitelistLicenseCheckService {
 }
 
 export function createWhitelistLicenseCheckReport(
-    pkg: Package,
+    pkg: IPackage,
     whitelist: string[],
     includeSelf: boolean
 ): LicenseCheckReport {

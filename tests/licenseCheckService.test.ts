@@ -1,6 +1,6 @@
 import * as path from "path";
 
-import { Package } from "../src/package/package";
+import { IPackage } from "../src/package/package";
 import { OraLogger } from "../src/loggers/OraLogger";
 import { FileSystemPackageProvider } from "../src/providers/folder";
 import { createWhitelistLicenseCheckReport } from "../src/utils/licenseCheckService";
@@ -8,7 +8,7 @@ import { Visitor } from "../src/visitors/visitor";
 import { getPackageVersionFromPath } from "../src/visitors/util.node";
 
 describe(`License Check Service Tests`, () => {
-    let p: Package;
+    let p: IPackage;
 
     beforeAll(async () => {
         const rootPath = path.join("tests", "data", "testproject1");

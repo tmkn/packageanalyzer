@@ -4,7 +4,7 @@ import * as fs from "fs";
 import { z } from "zod";
 import { MetaFileDecorator } from "../extensions/decorators/MetaFileDecorator";
 
-import { Package } from "../package/package";
+import { IPackage } from "../package/package";
 import { OnlinePackageProvider } from "../providers/online";
 import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
 import { AbstractReport, IReportContext } from "./Report";
@@ -32,7 +32,7 @@ export class DependencyDumpReport extends AbstractReport<IDependencyDumpParams> 
         this.provider = provider;
     }
 
-    async report({ stdoutFormatter }: IReportContext, ...pkgs: Package[]): Promise<void> {
+    async report({ stdoutFormatter }: IReportContext, ...pkgs: IPackage[]): Promise<void> {
         for (const pkg of pkgs) {
             stdoutFormatter.writeLine(`Writing meta files for ${pkg.fullName}`);
 

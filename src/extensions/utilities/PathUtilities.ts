@@ -1,11 +1,11 @@
-import { Package } from "../../package/package";
+import { IPackage } from "../../package/package";
 
 export class PathUtilities {
-    constructor(private _p: Package) {}
+    constructor(private _p: IPackage) {}
 
     get path(): Array<[string, string]> {
         const path: Array<[string, string]> = [];
-        let current: Package | null = this._p;
+        let current: IPackage | null = this._p;
 
         while (current.parent !== null) {
             path.push([current.name, current.version]);

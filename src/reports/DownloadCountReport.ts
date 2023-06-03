@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import { INpmDownloadStatistic } from "../npm";
-import { Package } from "../package/package";
+import { IPackage } from "../package/package";
 import { IFormatter } from "../utils/formatter";
 import { downloadJson } from "../utils/requests";
 import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
@@ -28,7 +28,7 @@ export class DownloadReport extends AbstractReport<IDownloadParams> {
         this.pkg = getPackageVersionfromString(params.package);
     }
 
-    async report({ stdoutFormatter }: IReportContext, pkg: Package): Promise<void> {
+    async report({ stdoutFormatter }: IReportContext, pkg: IPackage): Promise<void> {
         await cliDownloads(pkg.name, this.params.url ?? null, stdoutFormatter);
     }
 

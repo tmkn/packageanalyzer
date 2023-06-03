@@ -1,16 +1,16 @@
-import { Package } from "../package/package";
+import { IPackage } from "../package/package";
 
 interface IMappedDependency<T> {
     parent: T | null;
     dependencies: IMappedDependency<T>[];
 }
 
-export type MapFn<T> = (p: Package) => T;
+export type MapFn<T> = (p: IPackage) => T;
 export type MappedDependency<T> = T & IMappedDependency<T>;
 
 //useful maybe later? ¯\_(ツ)_/¯
 //maps Package to another format
-export function map<T>(p: Package, mapFn: MapFn<T>): MappedDependency<T> {
+export function map<T>(p: IPackage, mapFn: MapFn<T>): MappedDependency<T> {
     const mappedDependency: MappedDependency<T> = {
         ...mapFn(p),
         parent: null,

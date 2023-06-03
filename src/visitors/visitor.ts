@@ -1,4 +1,4 @@
-import { Package } from "../package/package";
+import { Package, IPackage } from "../package/package";
 import { INpmKeyValue, IPackageJson } from "../npm";
 import { IDecorator } from "../extensions/decorators/Decorator";
 import { IPackageJsonProvider } from "../providers/provider";
@@ -7,11 +7,11 @@ import { DependencyTypes } from "../reports/Validation";
 
 export type PackageVersion = [name: string, version?: string];
 
-interface IPackageVisitor {
-    visit: (depType?: DependencyTypes) => Promise<Package>;
+interface IPackageVisitor<T extends IPackage> {
+    visit: (depType?: DependencyTypes) => Promise<T>;
 }
 
-export class Visitor implements IPackageVisitor {
+export class Visitor implements IPackageVisitor<Package> {
     private _depthStack: string[] = [];
     private _depType: DependencyTypes = "dependencies";
 

@@ -1,10 +1,10 @@
 import { INpmUser } from "../../npm";
-import { Package } from "../../package/package";
+import { IPackage } from "../../package/package";
 
-export type UpdateTuple = [from: Package, to: Package];
+export type UpdateTuple = [from: IPackage, to: IPackage];
 
 export class DiffUtilities {
-    constructor(private _fromPkg: Package, private _toPkg: Package) {}
+    constructor(private _fromPkg: IPackage, private _toPkg: IPackage) {}
 
     get newMaintainers(): INpmUser[] | undefined {
         try {
@@ -43,8 +43,8 @@ export class DiffUtilities {
         return false;
     }
 
-    get newPackages(): Package[] {
-        const newPackages: Package[] = [];
+    get newPackages(): IPackage[] {
+        const newPackages: IPackage[] = [];
 
         for (const dep of this._toPkg.directDependencies) {
             const exists = this._fromPkg.directDependencies.find(
@@ -73,8 +73,8 @@ export class DiffUtilities {
         return updatedPackages;
     }
 
-    get removedPackages(): Package[] {
-        const removedPackages: Package[] = [];
+    get removedPackages(): IPackage[] {
+        const removedPackages: IPackage[] = [];
 
         for (const from of this._fromPkg.directDependencies) {
             const stillExists = this._toPkg.directDependencies.find(to => to.name === from.name);

@@ -9,22 +9,23 @@ interface IDeprecatedInfo {
     message: string;
 }
 
-interface IPackage<T> {
-    parent: T | null;
+export interface IPackage {
+    parent: IPackage | null;
     isLoop: boolean;
     name: string;
     version: string;
     fullName: string;
-    directDependencies: T[];
+    directDependencies: IPackage[];
     deprecatedInfo: IDeprecatedInfo;
 
-    addDependency: (dependency: T) => void;
+    addDependency: (dependency: IPackage) => void;
 
-    visit: (callback: (dependency: T) => void, includeSelf: boolean) => void;
-    getPackagesBy: (filter: (pkg: T) => boolean) => T[];
-    getPackagesByName: (name: string, version?: string) => T[];
-    getPackageByName: (name: string, version?: string) => T | null;
+    visit: (callback: (dependency: IPackage) => void, includeSelf?: boolean) => void;
+    getPackagesBy: (filter: (pkg: IPackage) => boolean) => IPackage[];
+    getPackagesByName: (name: string, version?: string) => IPackage[];
+    getPackageByName: (name: string, version?: string) => IPackage | null;
 
+    getData(): Readonly<IPackageJson>;
     getData(key: string): unknown;
 
     getDecoratorData<D extends IDecorator<any, unknown>>(key: DecoratorKey<D>): DecoratorData<D>;
@@ -34,12 +35,12 @@ interface IPackage<T> {
     ): void;
 }
 
-export class Package implements IPackage<Package> {
-    parent: Package | null = null;
+export class Package implements IPackage {
+    parent: IPackage | null = null;
     isLoop = false;
 
     private _decoratorData: Map<IDecorator<any, any>, any> = new Map();
-    private readonly _dependencies: Package[] = [];
+    private readonly _dependencies: IPackage[] = [];
 
     constructor(private readonly _data: Readonly<IPackageJson>) {}
 
@@ -55,7 +56,7 @@ export class Package implements IPackage<Package> {
         return `${this.name}@${this.version}`;
     }
 
-    get directDependencies(): Package[] {
+    get directDependencies(): IPackage[] {
         return this._dependencies;
     }
 
@@ -75,13 +76,13 @@ export class Package implements IPackage<Package> {
         };
     }
 
-    addDependency(dependency: Package): void {
+    addDependency(dependency: IPackage): void {
         dependency.parent = this;
 
         this._dependencies.push(dependency);
     }
 
-    visit(callback: (dependency: Package) => void, includeSelf = false): void {
+    visit(callback: (dependency: IPackage) => void, includeSelf = false): void {
         if (includeSelf) callback(this);
 
         for (const child of this._dependencies) {
@@ -90,8 +91,8 @@ export class Package implements IPackage<Package> {
         }
     }
 
-    getPackagesBy(filter: (pkg: Package) => boolean): Package[] {
-        const matches: Package[] = [];
+    getPackagesBy(filter: (pkg: IPackage) => boolean): IPackage[] {
+        const matches: IPackage[] = [];
 
         this.visit(d => {
             if (filter(d)) matches.push(d);
@@ -100,8 +101,8 @@ export class Package implements IPackage<Package> {
         return matches;
     }
 
-    getPackagesByName(name: string, version?: string): Package[] {
-        const matches: Package[] = [];
+    getPackagesByName(name: string, version?: string): IPackage[] {
+        const matches: IPackage[] = [];
 
         this.visit(d => {
             if (typeof version === "undefined") {
@@ -114,8 +115,8 @@ export class Package implements IPackage<Package> {
         return matches;
     }
 
-    getPackageByName(name: string, version?: string): Package | null {
-        const matches: Package[] = this.getPackagesByName(name, version);
+    getPackageByName(name: string, version?: string): IPackage | null {
+        const matches: IPackage[] = this.getPackagesByName(name, version);
 
         return matches[0] ?? null;
     }

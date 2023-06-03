@@ -1,4 +1,4 @@
-import { Package } from "../../../package/package";
+import { IPackage } from "../../../package/package";
 import { ILintCheck } from "../LintRule";
 
 interface IValidateKeyConfig {
@@ -11,7 +11,7 @@ type ValidateKeyParams = string | IValidateKeyConfig;
 
 export class ValidateKey implements ILintCheck<ValidateKeyParams> {
     name = "validate-key";
-    check(pkg: Package, params: ValidateKeyParams) {
+    check(pkg: IPackage, params: ValidateKeyParams) {
         if (this.#isKeyParam(params)) {
             const key = params;
             const data = pkg.getData(key);

@@ -1,9 +1,9 @@
-import { Package } from "../../package/package";
+import { IPackage } from "../../package/package";
 
 //add custom data to each Package during lookup
 
 export interface IApplyArgs {
-    p: Package;
+    p: IPackage;
     logger: (msg: string) => void;
 }
 
