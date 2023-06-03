@@ -68,7 +68,9 @@ export async function createMockServer(server: AbstractMockServer): Promise<void
             await server.start(getPort());
 
             return;
-        } catch (e) {}
+        } catch (e) {
+            server.close();
+        }
     }
 
     throw new Error(`Couldn't start server`);
