@@ -18,7 +18,7 @@ import { npmOnline } from "../providers/online";
 import { IFormatter } from "../utils/formatter";
 import { getPackageVersionFromPath } from "../visitors/util.node";
 import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
-import { AbstractReport, IReportContext } from "./Report";
+import { AbstractReport, EntryTypes, IReportContext } from "./Report";
 import { BaseFolderParameter, BasePackageParameter, TypeParameter } from "./Validation";
 
 const FullParameter = z.object({
@@ -33,7 +33,12 @@ const AnalyzeParams = z.union([PackageParams, FoldereParams]);
 
 export type IAnalyzeParams = z.infer<typeof AnalyzeParams>;
 
-export class AnalyzeReport extends AbstractReport<IAnalyzeParams> {
+export class AnalyzeReport extends AbstractReport<
+    IAnalyzeParams,
+    EntryTypes,
+    z.ZodTypeAny,
+    [ReleaseDecorator]
+> {
     name = `Analyze Report`;
     pkg: PackageVersion;
 
@@ -49,7 +54,10 @@ export class AnalyzeReport extends AbstractReport<IAnalyzeParams> {
         }
     }
 
-    async report({ stdoutFormatter }: IReportContext, pkg: IPackage): Promise<void> {
+    async report(
+        { stdoutFormatter }: IReportContext,
+        pkg: IPackage<[ReleaseDecorator]>
+    ): Promise<void> {
         await printStatistics(pkg, this.params.full, stdoutFormatter);
     }
 
@@ -63,7 +71,7 @@ export class AnalyzeReport extends AbstractReport<IAnalyzeParams> {
 }
 
 export async function printStatistics(
-    p: IPackage,
+    p: IPackage<[ReleaseDecorator]>,
     all: boolean,
     formatter: IFormatter
 ): Promise<void> {
@@ -74,7 +82,10 @@ export async function printStatistics(
 
 const PaddingLeft = 4;
 
-async function printAllStatistics(p: IPackage, formatter: IFormatter): Promise<void> {
+async function printAllStatistics(
+    p: IPackage<[ReleaseDecorator]>,
+    formatter: IFormatter
+): Promise<void> {
     printPublished(p, formatter);
     await printOldest(p, formatter);
     await printNewest(p, formatter);
@@ -108,7 +119,7 @@ function printDependencyCount(p: IPackage, formatter: IFormatter): void {
     ]);
 }
 
-async function printNewest(p: IPackage, formatter: IFormatter): Promise<void> {
+async function printNewest(p: IPackage<[ReleaseDecorator]>, formatter: IFormatter): Promise<void> {
     const { newest } = new ReleaseUtilities(p);
 
     if (newest) {
@@ -125,7 +136,7 @@ async function printNewest(p: IPackage, formatter: IFormatter): Promise<void> {
     }
 }
 
-async function printOldest(p: IPackage, formatter: IFormatter): Promise<void> {
+async function printOldest(p: IPackage<[ReleaseDecorator]>, formatter: IFormatter): Promise<void> {
     const { oldest } = new ReleaseUtilities(p);
 
     if (oldest) {
@@ -142,7 +153,7 @@ async function printOldest(p: IPackage, formatter: IFormatter): Promise<void> {
     }
 }
 
-function printPublished(p: IPackage, formatter: IFormatter): void {
+function printPublished(p: IPackage<[ReleaseDecorator]>, formatter: IFormatter): void {
     const { published } = new ReleaseUtilities(p);
 
     if (!published) return;

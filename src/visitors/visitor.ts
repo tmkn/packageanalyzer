@@ -1,17 +1,17 @@
 import { Package, IPackage } from "../package/package";
 import { INpmKeyValue, IPackageJson } from "../npm";
-import { IDecorator } from "../extensions/decorators/Decorator";
+import { Decorators, IDecorator } from "../extensions/decorators/Decorator";
 import { IPackageJsonProvider } from "../providers/provider";
 import { ILogger } from "../loggers/ILogger";
 import { DependencyTypes } from "../reports/Validation";
 
 export type PackageVersion = [name: string, version?: string];
 
-interface IPackageVisitor<T extends IPackage> {
-    visit: (depType?: DependencyTypes) => Promise<T>;
+interface IPackageVisitor<D extends Decorators> {
+    visit: (depType?: DependencyTypes) => Promise<IPackage<D>>;
 }
 
-export class Visitor implements IPackageVisitor<Package> {
+export class Visitor<T extends Decorators> implements IPackageVisitor<T> {
     private _depthStack: string[] = [];
     private _depType: DependencyTypes = "dependencies";
 
@@ -19,15 +19,15 @@ export class Visitor implements IPackageVisitor<Package> {
         private readonly _entry: PackageVersion,
         private readonly _provider: IPackageJsonProvider,
         private readonly _logger: ILogger,
-        private readonly _decorators: IDecorator<any, any>[] = [],
+        private readonly _decorators: T = Array<IDecorator<string, unknown>>() as T,
         private readonly _maxDepth: number = Infinity
     ) {}
 
-    async visit(depType = this._depType): Promise<Package> {
+    async visit(depType = this._depType): Promise<Package<T>> {
         try {
             const [name, version] = this._entry;
             const rootPkg = await this._provider.getPackageJson(name, version);
-            const root: Package = new Package(rootPkg);
+            const root = new Package<T>(rootPkg);
 
             this._logger.start();
             this._logger.log("Fetching");
@@ -54,7 +54,7 @@ export class Visitor implements IPackageVisitor<Package> {
     }
 
     private async visitDependencies(
-        parent: Package,
+        parent: Package<T>,
         dependencies: INpmKeyValue | undefined
     ): Promise<void> {
         try {
@@ -69,7 +69,7 @@ export class Visitor implements IPackageVisitor<Package> {
             }
 
             for (const p of packages) {
-                const dependency = new Package(p);
+                const dependency = new Package<T>(p);
 
                 await this._addDecorator(dependency);
 
@@ -90,7 +90,7 @@ export class Visitor implements IPackageVisitor<Package> {
         }
     }
 
-    private async _addDecorator(p: Package): Promise<void> {
+    private async _addDecorator(p: Package<T>): Promise<void> {
         const totalDecorators = this._decorators.length;
 
         for (const [i, decorator] of this._decorators.entries()) {
@@ -106,6 +106,7 @@ export class Visitor implements IPackageVisitor<Package> {
                     logger: (msg: string) => this._logger.log(`${decoratorMsg} - ${msg}`)
                 });
 
+                // @ts-ignore :'( todo fix later
                 p.setDecoratorData(decorator.key, data);
             } catch {
                 this._logger.log(`Failed to apply decorator: ${decorator.name}`);

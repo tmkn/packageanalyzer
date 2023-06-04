@@ -32,12 +32,15 @@ export class DependencyDumpReport extends AbstractReport<IDependencyDumpParams> 
         this.provider = provider;
     }
 
-    async report({ stdoutFormatter }: IReportContext, ...pkgs: IPackage[]): Promise<void> {
+    async report(
+        { stdoutFormatter }: IReportContext,
+        ...pkgs: IPackage<[MetaFileDecorator]>[]
+    ): Promise<void> {
         for (const pkg of pkgs) {
             stdoutFormatter.writeLine(`Writing meta files for ${pkg.fullName}`);
 
             pkg.visit(dep => {
-                const { metaFile } = dep.getDecoratorData<MetaFileDecorator>(`metafile`);
+                const { metaFile } = dep.getDecoratorData(`metafile`);
                 const folder = path.join(this.params.folder, dep.name);
                 const fullPath = path.join(folder, `metadata.json`);
 

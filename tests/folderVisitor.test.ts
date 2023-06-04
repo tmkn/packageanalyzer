@@ -46,7 +46,8 @@ describe(`visitFromFolder Tests`, () => {
             const visitor = new Visitor(
                 getPackageVersionFromPath(rootPath),
                 provider,
-                new OraLogger()
+                new OraLogger(),
+                []
             );
 
             await visitor.visit();
