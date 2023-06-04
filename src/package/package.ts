@@ -144,13 +144,17 @@ export class Package implements IPackage<Package> {
         this._decoratorData.set(key, data);
     }
 
-    collect<T>(dataFn: (pkg: Package) => T): ICollectorNode<T> {
-        const rootCollectorNode: ICollectorNode<T> = new CollectorNode(dataFn(this), this);
+    collect<T>(dataFn: (pkg: Package) => T): ICollectorNode<T, Package> {
+        const identityFn = (i: Package) => i.fullName;
+        const rootCollectorNode: ICollectorNode<T, Package> = new CollectorNode(
+            dataFn(this),
+            this,
+            identityFn
+        );
 
-        const visit = (parentCollector: ICollectorNode<T>, parentPkg: Package): void => {
+        const visit = (parentCollector: ICollectorNode<T, Package>, parentPkg: Package): void => {
             for (const pkg of parentPkg.directDependencies) {
-                const data = dataFn(pkg);
-                const collectorNode = new CollectorNode(data, pkg);
+                const collectorNode = new CollectorNode(dataFn(pkg), pkg, identityFn);
 
                 collectorNode.parent = parentCollector;
 

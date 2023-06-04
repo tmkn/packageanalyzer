@@ -1,4 +1,3 @@
-import { Package } from "../src/package/package";
 import { createMockPackage, IMockPackageJson } from "./mocks";
 
 describe(`Collector Tests`, () => {
@@ -27,7 +26,7 @@ describe(`Collector Tests`, () => {
         ]
     };
 
-    const testPkg: Package = createMockPackage(mockData);
+    const testPkg = createMockPackage(mockData);
 
     test(`correctly collects data`, () => {
         const c = testPkg.collect(pkg => ({ attr: pkg.fullName }));
@@ -37,7 +36,7 @@ describe(`Collector Tests`, () => {
         expect(c.children[0].data).toEqual({ attr: "dep2@1.0.0" });
         expect(c.children[3].data).toEqual({ attr: "dep6@2.0.0" });
 
-        expect(c.pkg).toEqual(testPkg);
+        expect(c.item).toEqual(testPkg);
         expect(c.parent).toBeNull();
         expect(c.children[0].parent).toEqual(c);
     });
