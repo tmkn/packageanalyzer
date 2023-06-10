@@ -1,9 +1,9 @@
-import { Package } from "../../../package/package";
+import { IPackage } from "../../../package/package";
 import { ILintCheck } from "../LintRule";
 
 export const NoScripts: ILintCheck = {
     name: "no-scripts",
-    check: (pkg: Package) => {
+    check: (pkg: IPackage) => {
         const hasPostInstall = pkg.getData("scripts.postinstall");
         const hasPreInstall = pkg.getData("scripts.preinstall");
 

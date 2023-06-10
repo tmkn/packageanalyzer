@@ -1,4 +1,4 @@
-import { Package } from "../../package/package";
+import { IPackage } from "../../package/package";
 import { IMalformedLicenseField } from "../../npm";
 
 type Name = string;
@@ -9,7 +9,7 @@ export type LicenseSummary = Map<Name, Map<Version, License>>;
 export type GroupedLicenseSummary = Array<{ license: string; names: string[] }>;
 
 export class LicenseUtilities {
-    constructor(private _p: Package) {}
+    constructor(private _p: IPackage) {}
 
     get license(): string {
         try {

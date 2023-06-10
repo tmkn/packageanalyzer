@@ -3,7 +3,7 @@ import * as chalk from "chalk";
 
 import { defaultDependencyType } from "../cli/common";
 import { LicenseUtilities } from "../extensions/utilities/LicenseUtilities";
-import { Package } from "../package/package";
+import { IPackage } from "../package/package";
 import { FileSystemPackageProvider } from "../providers/folder";
 import { IFormatter } from "../utils/formatter";
 import {
@@ -51,7 +51,7 @@ export class LicenseReport extends AbstractReport<ILicenseParams> {
         this.grouped = params.grouped ?? false;
     }
 
-    async report({ stdoutFormatter }: IReportContext, pkg: Package): Promise<void> {
+    async report({ stdoutFormatter }: IReportContext, pkg: IPackage): Promise<void> {
         const licenseReport = createWhitelistLicenseCheckReport(pkg, this.allowList, false);
 
         printLicenseCheck(licenseReport, this.grouped, stdoutFormatter);
@@ -80,8 +80,8 @@ function printLicenseCheck(
 class LicenseCheckPrinter {
     constructor(private _licenseCheckResult: LicenseCheckReport, private _formatter: IFormatter) {}
 
-    public groupedByLicense(): Map<Package, ILicenseCheckResult>[] {
-        const groups: Map<string, Map<Package, ILicenseCheckResult>> = new Map();
+    public groupedByLicense(): Map<IPackage, ILicenseCheckResult>[] {
+        const groups: Map<string, Map<IPackage, ILicenseCheckResult>> = new Map();
 
         for (const [p, result] of this._licenseCheckResult.allChecks) {
             const existingGroup = groups.get(new LicenseUtilities(p).license);
@@ -110,7 +110,7 @@ class LicenseCheckPrinter {
         this._printSummary();
     }
 
-    private _print(data: Map<Package, ILicenseCheckResult>): void {
+    private _print(data: Map<IPackage, ILicenseCheckResult>): void {
         let padding = [...data.keys()].reduce(
             (previous, current) =>
                 current.fullName.length > previous ? current.fullName.length : previous,
@@ -132,8 +132,8 @@ class LicenseCheckPrinter {
 
     private _printSummary(): void {
         const { ok, allChecks, failedChecks } = this._licenseCheckResult;
-        const failedToParseChecks: Map<Package, ILicenseCheckResult> = new Map();
-        const failedToSatisfyLicense: Map<Package, ILicenseCheckResult> = new Map();
+        const failedToParseChecks: Map<IPackage, ILicenseCheckResult> = new Map();
+        const failedToSatisfyLicense: Map<IPackage, ILicenseCheckResult> = new Map();
 
         if (ok) {
             this._formatter.writeLine(`\nAll packages passed the license check`);

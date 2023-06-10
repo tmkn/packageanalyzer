@@ -1,5 +1,5 @@
 import { get } from "lodash";
-import { DecoratorData, DecoratorKey, IDecorator } from "../extensions/decorators/Decorator";
+import { DecoratorData, Decorators } from "../extensions/decorators/Decorator";
 
 import { IPackageJson } from "../npm";
 import { CollectorNode, ICollectorNode } from "./collector";
@@ -9,37 +9,37 @@ interface IDeprecatedInfo {
     message: string;
 }
 
-interface IPackage<T> {
-    parent: T | null;
+export interface IPackage<T extends Decorators = [], DD = DecoratorData<T>> {
+    parent: IPackage<T> | null;
     isLoop: boolean;
     name: string;
     version: string;
     fullName: string;
-    directDependencies: T[];
+    directDependencies: IPackage<T>[];
     deprecatedInfo: IDeprecatedInfo;
 
-    addDependency: (dependency: T) => void;
+    addDependency: (dependency: IPackage<T>) => void;
 
-    visit: (callback: (dependency: T) => void, includeSelf: boolean) => void;
-    getPackagesBy: (filter: (pkg: T) => boolean) => T[];
-    getPackagesByName: (name: string, version?: string) => T[];
-    getPackageByName: (name: string, version?: string) => T | null;
+    visit: (callback: (dependency: IPackage<T>) => void, includeSelf?: boolean) => void;
+    getPackagesBy: (filter: (pkg: IPackage<T>) => boolean) => IPackage<T>[];
+    getPackagesByName: (name: string, version?: string) => IPackage<T>[];
+    getPackageByName: (name: string, version?: string) => IPackage<T> | null;
 
+    getData(): Readonly<IPackageJson>;
     getData(key: string): unknown;
 
-    getDecoratorData<D extends IDecorator<any, unknown>>(key: DecoratorKey<D>): DecoratorData<D>;
-    setDecoratorData<D extends IDecorator<any, unknown>>(
-        key: DecoratorKey<D>,
-        data: DecoratorData<D>
-    ): void;
+    // Partial<...> because decorators could have failed during lookup
+    getDecoratorData(): Partial<DD>;
+    getDecoratorData<K extends keyof DD>(key: K): DD[K];
+    setDecoratorData<K extends keyof DD>(key: K, data: DD[K]): void;
 }
 
-export class Package implements IPackage<Package> {
-    parent: Package | null = null;
+export class Package<T extends Decorators = []> implements IPackage<T> {
+    parent: IPackage<T> | null = null;
     isLoop = false;
 
-    private _decoratorData: Map<IDecorator<any, any>, any> = new Map();
-    private readonly _dependencies: Package[] = [];
+    private _decoratorData: Map<keyof DecoratorData<T>, any> = new Map();
+    private readonly _dependencies: IPackage<T>[] = [];
 
     constructor(private readonly _data: Readonly<IPackageJson>) {}
 
@@ -55,7 +55,7 @@ export class Package implements IPackage<Package> {
         return `${this.name}@${this.version}`;
     }
 
-    get directDependencies(): Package[] {
+    get directDependencies(): IPackage<T>[] {
         return this._dependencies;
     }
 
@@ -75,13 +75,13 @@ export class Package implements IPackage<Package> {
         };
     }
 
-    addDependency(dependency: Package): void {
+    addDependency(dependency: IPackage<T>): void {
         dependency.parent = this;
 
         this._dependencies.push(dependency);
     }
 
-    visit(callback: (dependency: Package) => void, includeSelf = false): void {
+    visit(callback: (dependency: IPackage<T>) => void, includeSelf = false): void {
         if (includeSelf) callback(this);
 
         for (const child of this._dependencies) {
@@ -90,8 +90,8 @@ export class Package implements IPackage<Package> {
         }
     }
 
-    getPackagesBy(filter: (pkg: Package) => boolean): Package[] {
-        const matches: Package[] = [];
+    getPackagesBy(filter: (pkg: IPackage<T>) => boolean): IPackage<T>[] {
+        const matches: IPackage<T>[] = [];
 
         this.visit(d => {
             if (filter(d)) matches.push(d);
@@ -100,8 +100,8 @@ export class Package implements IPackage<Package> {
         return matches;
     }
 
-    getPackagesByName(name: string, version?: string): Package[] {
-        const matches: Package[] = [];
+    getPackagesByName(name: string, version?: string): IPackage<T>[] {
+        const matches: IPackage<T>[] = [];
 
         this.visit(d => {
             if (typeof version === "undefined") {
@@ -114,8 +114,8 @@ export class Package implements IPackage<Package> {
         return matches;
     }
 
-    getPackageByName(name: string, version?: string): Package | null {
-        const matches: Package[] = this.getPackagesByName(name, version);
+    getPackageByName(name: string, version?: string): IPackage<T> | null {
+        const matches: IPackage<T>[] = this.getPackagesByName(name, version);
 
         return matches[0] ?? null;
     }
@@ -127,32 +127,46 @@ export class Package implements IPackage<Package> {
         else return JSON.parse(JSON.stringify(this._data));
     }
 
-    getDecoratorData<E extends IDecorator<any, unknown>>(key: DecoratorKey<E>): DecoratorData<E> {
-        const data = this._decoratorData.get(key);
+    getDecoratorData(): Partial<DecoratorData<T>>;
+    getDecoratorData<K extends keyof DecoratorData<T>>(key: K): DecoratorData<T>[K];
+    getDecoratorData<K extends keyof DecoratorData<T>>(
+        key?: K
+    ): DecoratorData<T>[K] | Partial<DecoratorData<T>> {
+        if (key) {
+            const data = this._decoratorData.get(key);
 
-        if (typeof data === "undefined") {
-            throw new Error(`No decorator data found for "${key.toString()}"`);
+            if (typeof data === "undefined") {
+                throw new Error(`No decorator data found for "${key.toString()}"`);
+            }
+
+            return data;
+        } else {
+            const data: Partial<DecoratorData<T>> = {};
+
+            for (const [key, value] of this._decoratorData) {
+                data[key] = value;
+            }
+
+            return data;
         }
-
-        return data;
     }
 
-    setDecoratorData<E extends IDecorator<any, unknown>>(
-        key: DecoratorKey<E>,
-        data: DecoratorData<E>
-    ): void {
+    setDecoratorData<K extends keyof DecoratorData<T>>(key: K, data: DecoratorData<T>[K]): void {
         this._decoratorData.set(key, data);
     }
 
-    collect<T>(dataFn: (pkg: Package) => T): ICollectorNode<T, Package> {
-        const identityFn = (i: Package) => i.fullName;
-        const rootCollectorNode: ICollectorNode<T, Package> = new CollectorNode(
+    collect<D>(dataFn: (pkg: IPackage<T>) => D): ICollectorNode<D, IPackage<T>> {
+        const identityFn = (i: IPackage<T>) => i.fullName;
+        const rootCollectorNode: ICollectorNode<D, IPackage<T>> = new CollectorNode(
             dataFn(this),
             this,
             identityFn
         );
 
-        const visit = (parentCollector: ICollectorNode<T, Package>, parentPkg: Package): void => {
+        const visit = (
+            parentCollector: ICollectorNode<D, IPackage<T>>,
+            parentPkg: IPackage<T>
+        ): void => {
             for (const pkg of parentPkg.directDependencies) {
                 const collectorNode = new CollectorNode(dataFn(pkg), pkg, identityFn);
 

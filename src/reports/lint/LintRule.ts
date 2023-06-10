@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import type { Package } from "../../package/package";
+import type { IPackage } from "../../package/package";
 
 const LintTypes = z.union([z.literal("error"), z.literal("warning")]);
 
@@ -8,7 +8,7 @@ export type ILintTypes = z.infer<typeof LintTypes>;
 
 export interface ILintCheck<T = undefined> {
     name: string;
-    check: (pkg: Package, params: T) => string | string[] | void;
+    check: (pkg: IPackage, params: T) => string | string[] | void;
 }
 
 export type LintRule<T> = T extends ILintCheck<infer Params>

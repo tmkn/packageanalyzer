@@ -1,6 +1,7 @@
-import { IPackageJsonProvider, Package } from "../src";
+import { Package } from "../src/package/package";
 import { IBasePackageJson, INpmKeyValue, IPackageJson } from "../src/npm";
 import { DependencyTypes } from "../src/reports/Validation";
+import { IPackageJsonProvider } from "../src/providers/provider";
 
 type MockBasePackageJson = Omit<Partial<IBasePackageJson>, "dependencies" | "devDependencies">;
 

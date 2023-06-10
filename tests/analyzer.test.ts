@@ -1,6 +1,6 @@
 import * as path from "path";
 
-import { Package } from "../src/package/package";
+import { IPackage } from "../src/package/package";
 import { FileSystemPackageProvider } from "../src/providers/folder";
 import { getPackageVersionfromString, Visitor } from "../src/visitors/visitor";
 import { OraLogger } from "../src/loggers/OraLogger";
@@ -8,9 +8,10 @@ import { LoopUtilities } from "../src/extensions/utilities/LoopUtilities";
 import { LicenseUtilities } from "../src/extensions/utilities/LicenseUtilities";
 import { PathUtilities } from "../src/extensions/utilities/PathUtilities";
 import { getPackageVersionFromPath } from "../src/visitors/util.node";
+import { IDecorator } from "../src";
 
 describe(`Package Tests`, () => {
-    let p: Package;
+    let p: IPackage;
 
     beforeAll(async () => {
         const rootPath = path.join("tests", "data", "testproject1");
@@ -105,6 +106,116 @@ describe(`Package Tests`, () => {
 
         expect(deprecated).toBe(false);
         expect(typeof message).toBe("string");
+    });
+});
+
+describe(`Decorator Tests`, () => {
+    let rootPath: string;
+    let provider: FileSystemPackageProvider;
+
+    beforeAll(() => {
+        rootPath = path.join("tests", "data", "testproject1");
+        provider = new FileSystemPackageProvider(rootPath);
+    });
+
+    test(`correctly gets decorator data by key`, async () => {
+        const testDecorator: IDecorator<"key", boolean> = {
+            key: "key",
+            name: "test decorator",
+            apply: async () => true
+        };
+
+        const visitor = new Visitor(
+            getPackageVersionFromPath(rootPath),
+            provider,
+            new OraLogger(),
+            [testDecorator]
+        );
+
+        const p = await visitor.visit();
+
+        const decoratorData = p.getDecoratorData("key");
+
+        expect(decoratorData).toBe(true);
+    });
+
+    test(`correctly throws on missing decorator key lookup`, async () => {
+        const visitor = new Visitor(getPackageVersionFromPath(rootPath), provider, new OraLogger());
+
+        const p = await visitor.visit();
+
+        expect(() => p.getDecoratorData("invalidKey")).toThrow();
+    });
+
+    test(`correctly returns whole decorator data`, async () => {
+        const testDecorator: IDecorator<"key", boolean> = {
+            key: "key",
+            name: "test decorator",
+            apply: async () => true
+        };
+
+        const testDecorator2: IDecorator<"hello", "world"> = {
+            key: "hello",
+            name: "test decorator 2",
+            apply: async () => "world"
+        };
+
+        const visitor = new Visitor(
+            getPackageVersionFromPath(rootPath),
+            provider,
+            new OraLogger(),
+            [testDecorator, testDecorator2]
+        );
+
+        const p = await visitor.visit();
+
+        const decoratorData = p.getDecoratorData();
+
+        expect(decoratorData).toEqual({
+            key: true,
+            hello: "world"
+        });
+    });
+
+    test(`correctly returns partial decorator data`, async () => {
+        const testDecorator: IDecorator<"key", boolean> = {
+            key: "key",
+            name: "test decorator",
+            apply: async () => true
+        };
+
+        const testDecorator2: IDecorator<"hello", "world"> = {
+            key: "hello",
+            name: "test decorator 2",
+            apply: async () => {
+                throw new Error(`Whoops!`);
+            }
+        };
+
+        const visitor = new Visitor(
+            getPackageVersionFromPath(rootPath),
+            provider,
+            new OraLogger(),
+            [testDecorator, testDecorator2]
+        );
+
+        const p = await visitor.visit();
+
+        const decoratorData = p.getDecoratorData();
+
+        expect(decoratorData).toEqual({
+            key: true
+        });
+    });
+
+    test(`correctly returns empty object when no decorators have been used`, async () => {
+        const visitor = new Visitor(getPackageVersionFromPath(rootPath), provider, new OraLogger());
+
+        const p = await visitor.visit();
+
+        const decoratorData = p.getDecoratorData();
+
+        expect(decoratorData).toEqual({});
     });
 });
 

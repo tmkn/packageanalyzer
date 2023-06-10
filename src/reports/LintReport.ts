@@ -1,7 +1,7 @@
 import * as path from "path";
 import { z } from "zod";
 
-import { Package } from "../package/package";
+import { IPackage } from "../package/package";
 import { AbstractReport, IReportContext } from "./Report";
 import { PathUtilities } from "../extensions/utilities/PathUtilities";
 import { ILintCheck, ZodLintRule } from "./lint/LintRule";
@@ -76,7 +76,7 @@ export class LintReport extends AbstractReport<ILintParams> {
         return LintFile.safeParse(data).success;
     }
 
-    async report(context: IReportContext, pkg: Package): Promise<void> {
+    async report(context: IReportContext, pkg: IPackage): Promise<void> {
         const resultFormatter = new LintResultFormatter(context.stdoutFormatter);
         const lintResults: ILintResult[] = [];
 
@@ -123,7 +123,7 @@ export class LintReport extends AbstractReport<ILintParams> {
         e: unknown,
         lintResults: ILintResult[],
         rule: ILintCheck,
-        dep: Package
+        dep: IPackage
     ): void {
         this.exitCode = 1;
 

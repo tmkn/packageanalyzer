@@ -1,7 +1,7 @@
 import { z } from "zod";
 
-import { IDecorator } from "../extensions/decorators/Decorator";
-import { Package } from "../package/package";
+import { Decorators } from "../extensions/decorators/Decorator";
+import { IPackage } from "../package/package";
 import { IPackageJsonProvider } from "../providers/provider";
 import { IFormatter } from "../utils/formatter";
 import { PackageVersion } from "../visitors/visitor";
@@ -14,30 +14,35 @@ export interface IReportContext {
 
 //type Args<T> = T extends Array<any> ? Array<Package> : [Package];
 //better inferring for 1, 2 and 3 entries
-export type Args<T> = T extends [PackageVersion]
-    ? [Package, ...undefined[]]
+export type Args<T, D extends Decorators> = T extends [PackageVersion]
+    ? [IPackage<D>, ...undefined[]]
     : T extends [PackageVersion, PackageVersion]
-    ? [Package, Package, ...undefined[]]
+    ? [IPackage<D>, IPackage<D>, ...undefined[]]
     : T extends [PackageVersion, PackageVersion, PackageVersion]
-    ? [Package, Package, Package, ...undefined[]]
+    ? [IPackage<D>, IPackage<D>, IPackage<D>, ...undefined[]]
     : T extends PackageVersion
-    ? [Package]
-    : Array<Package | undefined>;
+    ? [IPackage<D>]
+    : Array<IPackage<D> | undefined>;
 
-export interface IReport<T, P extends {}, Z extends z.ZodTypeAny> {
+export interface IReport<
+    PackageEntry,
+    Params extends {},
+    ZodValidateObject extends z.ZodTypeAny,
+    Deco extends Decorators = Decorators
+> {
     readonly name: string;
-    readonly params: P;
-    readonly pkg: T;
+    readonly params: Params;
+    readonly pkg: PackageEntry;
 
-    readonly decorators?: IDecorator<any, any>[];
+    readonly decorators?: Deco;
     readonly provider?: IPackageJsonProvider;
     readonly type?: DependencyTypes;
     readonly depth?: number;
 
     exitCode: number;
 
-    report(context: IReportContext, ...pkg: Args<T>): Promise<number | void>;
-    validate?(): Z;
+    report(context: IReportContext, ...pkg: Args<PackageEntry, Deco>): Promise<number | void>;
+    validate?(): ZodValidateObject;
 }
 
 export type ReportMethodSignature<T> = IReport<T, {}, z.ZodTypeAny>["report"];
@@ -52,23 +57,24 @@ export function isPackageVersionArray(x: EntryTypes): x is PackageVersion[] {
 }
 
 export abstract class AbstractReport<
-    P extends {},
-    T extends EntryTypes = EntryTypes,
-    Z extends z.ZodTypeAny = z.ZodTypeAny
-> implements IReport<T, P, Z>
+    Params extends {},
+    PackageEntry extends EntryTypes = EntryTypes,
+    ZodValidateObject extends z.ZodTypeAny = z.ZodTypeAny,
+    Deco extends Decorators = Decorators
+> implements IReport<PackageEntry, Params, ZodValidateObject>
 {
     abstract name: string;
-    readonly params: P;
-    abstract pkg: T;
+    readonly params: Params;
+    abstract pkg: PackageEntry;
 
-    decorators: IDecorator<any, any>[] | undefined;
+    decorators: Deco | undefined;
     provider: IPackageJsonProvider | undefined;
     type: DependencyTypes | undefined;
     depth: number | undefined;
 
     exitCode: number = 0;
 
-    constructor(params: P) {
+    constructor(params: Params) {
         const result = this.validate?.().safeParse(params);
 
         if (result?.success) {
@@ -80,7 +86,10 @@ export abstract class AbstractReport<
         }
     }
 
-    abstract report(context: IReportContext, ...pkg: Args<T>): Promise<number | void>;
+    abstract report(
+        context: IReportContext,
+        ...pkg: Args<PackageEntry, Deco>
+    ): Promise<number | void>;
 
-    validate?(): Z;
+    validate?(): ZodValidateObject;
 }

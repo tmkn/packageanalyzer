@@ -1,6 +1,6 @@
 import * as path from "path";
 
-import { Package } from "../src/package/package";
+import { IPackage } from "../src/package/package";
 import { FileSystemPackageProvider } from "../src/providers/folder";
 import { Visitor } from "../src/visitors/visitor";
 import { OraLogger } from "../src/loggers/OraLogger";
@@ -8,7 +8,7 @@ import { DependencyUtilities } from "../src/extensions/utilities/DependencyUtili
 import { getPackageVersionFromPath } from "../src/visitors/util.node";
 
 describe(`Dependency Utilities Tests`, () => {
-    let p: Package;
+    let p: IPackage;
 
     beforeAll(async () => {
         const rootPath = path.join("tests", "data", "testproject1");
@@ -37,7 +37,7 @@ describe(`Dependency Utilities Tests`, () => {
         const rootPath = path.join("tests", "data", "testproject2");
         const provider = new FileSystemPackageProvider(rootPath);
         const visitor = new Visitor(getPackageVersionFromPath(rootPath), provider, new OraLogger());
-        const p: Package = await visitor.visit();
+        const p: IPackage = await visitor.visit();
 
         for (const [name, versions] of new DependencyUtilities(p).mostVersions) {
             expect(name).toBe("kind-of");

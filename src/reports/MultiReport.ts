@@ -1,3 +1,4 @@
+import { Decorators } from "../extensions/decorators/Decorator";
 import { PackageVersion } from "../visitors/visitor";
 import { AbstractReport, Args, IReportContext, ReportMethodSignature } from "./Report";
 
@@ -19,7 +20,7 @@ export class MultiReport<T extends PackageVersion[]> extends AbstractReport<
         this.pkg = params.entries;
     }
 
-    async report(ctx: IReportContext, ...pkgs: Args<T>): Promise<void> {
+    async report(ctx: IReportContext, ...pkgs: Args<T, Decorators>): Promise<void> {
         await this.params.callback(ctx, ...pkgs);
     }
 }

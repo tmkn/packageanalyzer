@@ -1,4 +1,4 @@
-import { Package } from "../../src/package/package";
+import { IPackage } from "../../src/package/package";
 import { DownloadReport } from "../../src/reports/DownloadCountReport";
 import { Formatter } from "../../src/utils/formatter";
 import { createMockContext } from "./../common";
@@ -20,7 +20,7 @@ describe(`DownloadCountReport Tests`, () => {
         });
 
         //@ts-expect-error
-        const fakePgk: Package = {
+        const fakePgk: IPackage = {
             name: `_downloads`
         };
         const { stdout, stderr } = createMockContext();

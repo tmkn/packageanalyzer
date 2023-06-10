@@ -5,10 +5,9 @@ import { BaseContext } from "clipanion";
 import * as nock from "nock";
 
 import { Writable } from "stream";
-import { Package } from "../src/package/package";
+import { IPackage } from "../src/package/package";
 import { AbstractReport, IReportContext, SingleReportMethodSignature } from "../src/reports/Report";
 import { PackageVersion } from "../src/visitors/visitor";
-import { IPackageJson } from "../src/npm";
 import { DumpPackageProvider } from "../src/providers/folder";
 
 class TestWritable extends Writable {
@@ -64,7 +63,7 @@ export class TestReport extends AbstractReport<ITestReportParams, PackageVersion
         this.pkg = params.pkg;
     }
 
-    async report(context: IReportContext, pkg: Package): Promise<number | void> {
+    async report(context: IReportContext, pkg: IPackage): Promise<number | void> {
         return this.params.report(context, pkg);
     }
 
@@ -87,7 +86,7 @@ export class TestReportNoValidation extends AbstractReport<ITestReportNoValidati
         this.pkg = [params.foo];
     }
 
-    async report(context: IReportContext, pkg: Package): Promise<void> {}
+    async report(context: IReportContext, pkg: IPackage): Promise<void> {}
 }
 
 interface IMockContext {

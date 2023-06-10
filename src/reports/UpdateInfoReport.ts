@@ -2,7 +2,7 @@ import * as chalk from "chalk";
 import { z } from "zod";
 
 import { daysAgo } from "../cli/common";
-import { Package } from "../package/package";
+import { IPackage } from "../package/package";
 import { OnlinePackageProvider } from "../providers/online";
 import { updateInfo } from "../utils/update";
 import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
@@ -33,7 +33,7 @@ export class UpdateInfoReport extends AbstractReport<IUpdateInfoParams> {
 
     async report(
         { stdoutFormatter, stderrFormatter }: IReportContext,
-        pkg: Package
+        pkg: IPackage
     ): Promise<void> {
         const [name, version] = this.pkg;
 

@@ -1,4 +1,4 @@
-import { Package } from "../../package/package";
+import { IPackage } from "../../package/package";
 
 type Name = string;
 type Version = string;
@@ -12,7 +12,7 @@ export interface IMostReferred {
 
 //utility functions for the dependency tree
 class BaseDependencyUtilities {
-    constructor(private _p: Package, private _includeSelf: boolean) {}
+    constructor(private _p: IPackage, private _includeSelf: boolean) {}
 
     get transitiveCount(): number {
         let count = 0;
@@ -68,8 +68,8 @@ class BaseDependencyUtilities {
         };
     }
 
-    get mostDirectDependencies(): Package[] {
-        let most: [first: Package, ...rest: Package[]] = [this._p];
+    get mostDirectDependencies(): IPackage[] {
+        let most: [first: IPackage, ...rest: IPackage[]] = [this._p];
 
         this._p.visit(d => {
             if (d.directDependencies.length > most[0].directDependencies.length) {
@@ -98,16 +98,16 @@ class BaseDependencyUtilities {
         return map;
     }
 
-    get all(): Package[] {
-        const all: Package[] = [];
+    get all(): IPackage[] {
+        const all: IPackage[] = [];
 
         this._p.visit(d => all.push(d), this._includeSelf);
 
         return all;
     }
 
-    get group(): Map<Name, Map<Version, Package>> {
-        const sorted: Map<string, Map<string, Package>> = new Map();
+    get group(): Map<Name, Map<Version, IPackage>> {
+        const sorted: Map<string, Map<string, IPackage>> = new Map();
 
         this._p.visit(d => {
             const packageName = sorted.get(d.name);
@@ -126,7 +126,7 @@ class BaseDependencyUtilities {
 export class DependencyUtilities extends BaseDependencyUtilities {
     withSelf: BaseDependencyUtilities;
 
-    constructor(_p: Package, _includeSelf: boolean = false) {
+    constructor(_p: IPackage, _includeSelf: boolean = false) {
         super(_p, _includeSelf);
 
         this.withSelf = new BaseDependencyUtilities(_p, true);

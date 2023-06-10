@@ -1,9 +1,9 @@
-import { Package } from "../../../package/package";
+import { IPackage } from "../../../package/package";
 import { ILintCheck } from "../LintRule";
 
 export class OSILicenseCheck implements ILintCheck {
     name = "has-osi-license";
-    check(pkg: Package) {
+    check(pkg: IPackage) {
         const license = pkg.getData("license");
         if (license) {
             if (typeof license === "string") {

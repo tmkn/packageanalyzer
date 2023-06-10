@@ -1,4 +1,4 @@
-import type { Package } from "../../../package/package";
+import type { IPackage } from "../../../package/package";
 import { ILintCheck } from "../LintRule";
 
 interface IConfigValidator {
@@ -13,7 +13,7 @@ export interface IMissingFieldConfig {
 export class MissingFields implements ILintCheck<IMissingFieldConfig> {
     name: string = "missing-field";
 
-    check(pkg: Package, { fields }: IMissingFieldConfig) {
+    check(pkg: IPackage, { fields }: IMissingFieldConfig) {
         const messages: string[] = [];
 
         for (const field of fields) {

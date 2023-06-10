@@ -1,7 +1,7 @@
 import * as path from "path";
 import { promises as fs } from "fs";
 
-import { Package } from "../package/package";
+import { IPackage } from "../package/package";
 import { OnlinePackageProvider } from "../providers/online";
 import { Visitor } from "../visitors/visitor";
 import { OraLogger } from "../loggers/OraLogger";
@@ -10,7 +10,7 @@ import { EntryTypes, isPackageVersionArray } from "../reports/Report";
 import type { Url } from "../reports/Validation";
 
 export class DependencyDumper {
-    pkgs: Package[] = [];
+    pkgs: IPackage[] = [];
 
     private _provider?: OnlinePackageProvider;
 

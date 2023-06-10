@@ -2,7 +2,7 @@ import { Writable } from "stream";
 import * as chalk from "chalk";
 import { z } from "zod";
 
-import { Package } from "../package/package";
+import { IPackage } from "../package/package";
 import { npmOnline } from "../providers/online";
 import { Formatter, IFormatter } from "../utils/formatter";
 import { OraLogger } from "../loggers/OraLogger";
@@ -26,7 +26,7 @@ export class ReportService {
                 const entries: Array<PackageVersion> = isPackageVersionArray(report.pkg)
                     ? report.pkg
                     : [report.pkg];
-                const packageArgs: Package[] = [];
+                const packageArgs: IPackage[] = [];
 
                 for (const entry of entries) {
                     packageArgs.push(await this._getPackage(entry, report));
@@ -54,12 +54,12 @@ export class ReportService {
     private async _getPackage(
         entry: PackageVersion,
         report: IReport<EntryTypes, any, z.ZodTypeAny>
-    ): Promise<Package> {
+    ): Promise<IPackage> {
         const visitor = new Visitor(
             entry,
             report.provider ?? npmOnline,
             new OraLogger(),
-            report.decorators,
+            report.decorators ?? [],
             report.depth
         );
 

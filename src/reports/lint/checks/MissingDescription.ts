@@ -1,9 +1,9 @@
-import { Package } from "../../../package/package";
+import { IPackage } from "../../../package/package";
 import { ILintCheck } from "../LintRule";
 
 export const MissingDescription: ILintCheck = {
     name: "missing-description",
-    check: (pkg: Package) => {
+    check: (pkg: IPackage) => {
         const hasDescription = pkg.getData("description");
 
         if (!hasDescription) {
