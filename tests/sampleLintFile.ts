@@ -33,7 +33,7 @@ module.exports = {
             "error",
             {
                 name: "no-old-package",
-                check(pkg: Package, maxYear: string) {
+                check(pkg, maxYear: string) {
                     const tarBall = pkg.getDecoratorData("tarBall") as any;
                     const manifest = pkg.getDecoratorData("manifest") as any;
                     // @ts-ignore

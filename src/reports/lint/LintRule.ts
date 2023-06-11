@@ -1,15 +1,15 @@
 import { z } from "zod";
 
 import type { IPackage } from "../../package/package";
-import { IDecorator } from "../../extensions/decorators/Decorator";
+import { Decorators, IDecorator } from "../../extensions/decorators/Decorator";
 
 const LintTypes = z.union([z.literal("error"), z.literal("warning")]);
 
 export type ILintTypes = z.infer<typeof LintTypes>;
 
-export interface ILintCheck<T = undefined> {
+export interface ILintCheck<T = undefined, D extends Decorators = Decorators> {
     name: string;
-    check: (pkg: IPackage, params: T) => string | string[] | void;
+    check: (pkg: IPackage<D>, params: T) => string | string[] | void;
     decorators?: Record<string, IDecorator<string, unknown>>;
 }
 
@@ -35,7 +35,9 @@ export const ZodLintRule = z.custom<LintRule<ILintCheck<any>>>(data => {
     return false;
 });
 
-export function createRule<T>(...args: LintRule<ILintCheck<T>>): LintRule<ILintCheck<T>> {
+export function createRule<T, D extends Decorators>(
+    ...args: LintRule<ILintCheck<T, D>>
+): LintRule<ILintCheck<T, D>> {
     return [...args];
 }
 

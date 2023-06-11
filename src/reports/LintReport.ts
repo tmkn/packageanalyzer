@@ -10,6 +10,7 @@ import { PackageVersion, getPackageVersionfromString } from "../visitors/visitor
 import { getPackageVersionFromPath } from "../visitors/util.node";
 import { FileSystemPackageProvider } from "../providers/folder";
 import { IDecorator } from "../index.web";
+import { Decorators } from "../extensions/decorators/Decorator";
 
 const LintFile = z.object({
     rules: z.array(ZodLintRule)
@@ -85,7 +86,7 @@ export class LintReport extends AbstractReport<ILintParams> {
         return LintFile.safeParse(data).success;
     }
 
-    async report(context: IReportContext, pkg: IPackage): Promise<void> {
+    async report(context: IReportContext, pkg: IPackage<Decorators>): Promise<void> {
         const resultFormatter = new LintResultFormatter(context.stdoutFormatter);
         const lintResults: ILintResult[] = [];
 
