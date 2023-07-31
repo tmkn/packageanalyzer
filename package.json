@@ -81,7 +81,7 @@
     "clipanion": "^3.2.0-rc.4",
     "dayjs": "^1.9.6",
     "lodash": "^4.17.20",
-    "ora": "^5.1.0",
+    "ora": "^7.0.0",
     "postinstall-postinstall": "^2.1.0",
     "semver": "^7.3.2",
     "spdx-satisfies": "^5.0.0",
