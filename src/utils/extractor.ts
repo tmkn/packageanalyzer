@@ -64,7 +64,10 @@ export class Extractor {
         return "";
     }
 
-    constructor(private readonly _inputFile: string, private readonly _npmFile: string) {
+    constructor(
+        private readonly _inputFile: string,
+        private readonly _npmFile: string
+    ) {
         this._provider = new FlatFileProvider(this._npmFile);
 
         this._parseInputFile();

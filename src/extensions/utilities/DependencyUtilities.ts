@@ -12,7 +12,10 @@ export interface IMostReferred {
 
 //utility functions for the dependency tree
 class BaseDependencyUtilities {
-    constructor(private _p: IPackage, private _includeSelf: boolean) {}
+    constructor(
+        private _p: IPackage,
+        private _includeSelf: boolean
+    ) {}
 
     get transitiveCount(): number {
         let count = 0;
