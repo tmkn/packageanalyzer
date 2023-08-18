@@ -14,7 +14,11 @@ export interface IReports {
 }
 
 export class ReportService {
-    constructor(private _config: IReports, private _stdout: Writable, private _stderr: Writable) {}
+    constructor(
+        private _config: IReports,
+        private _stdout: Writable,
+        private _stderr: Writable
+    ) {}
 
     async process(): Promise<number | void> {
         const { reports } = this._config;

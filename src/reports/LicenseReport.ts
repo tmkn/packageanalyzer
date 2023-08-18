@@ -78,7 +78,10 @@ function printLicenseCheck(
 }
 
 class LicenseCheckPrinter {
-    constructor(private _licenseCheckResult: LicenseCheckReport, private _formatter: IFormatter) {}
+    constructor(
+        private _licenseCheckResult: LicenseCheckReport,
+        private _formatter: IFormatter
+    ) {}
 
     public groupedByLicense(): Map<IPackage, ILicenseCheckResult>[] {
         const groups: Map<string, Map<IPackage, ILicenseCheckResult>> = new Map();

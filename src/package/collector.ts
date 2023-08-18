@@ -18,7 +18,11 @@ export class CollectorNode<D, I> implements ICollectorNode<D, I> {
     parent: ICollectorNode<D, I> | null = null;
     children: ICollectorNode<D, I>[] = [];
 
-    constructor(public data: D, public item: I, private _identity: (item: I) => string) {}
+    constructor(
+        public data: D,
+        public item: I,
+        private _identity: (item: I) => string
+    ) {}
 
     flatten(): MinLength1Array<CollectorTuple<D, I>> {
         const entries: MinLength1Array<CollectorTuple<D, I>> = [[[this.item], this.data]];

@@ -156,7 +156,10 @@ function verifySingleLookup(
 }
 
 export class LookupFileWriter {
-    constructor(private _targetFile: string, private _lookups: ReadonlyArray<ILookupEntry>) {}
+    constructor(
+        private _targetFile: string,
+        private _lookups: ReadonlyArray<ILookupEntry>
+    ) {}
 
     static getLine({ name, offset, length }: ILookupEntry): string {
         return `${name} ${offset} ${length}${newLine}`;
