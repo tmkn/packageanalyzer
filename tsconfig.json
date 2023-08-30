@@ -5,16 +5,22 @@
         "noImplicitOverride": true,
         "outDir": "build",
         "sourceMap": true,
-        "lib": ["ESNext"],
+        "lib": [
+            "ESNext"
+        ],
         "target": "es2020",
         "module": "commonjs",
         "declaration": true,
         "declarationMap": true,
-        "isolatedModules": true
+        "isolatedModules": true,
     },
     "include": [],
     "references": [
-        { "path": "./src" },
-        { "path": "./tests" }
+        {
+            "path": "./src"
+        },
+        {
+            "path": "./tests"
+        }
     ]
 }
