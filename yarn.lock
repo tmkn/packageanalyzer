@@ -1129,9 +1129,9 @@
     "@types/node" "*"
 
 "@types/spdx-satisfies@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@types/spdx-satisfies/-/spdx-satisfies-0.1.0.tgz#75aea2d09533465aa3b4e8232d3106b7efe6ab55"
-  integrity sha512-Y3Faje1Gi/l+tSjAo52Lpm3fLnpQtQLfYcmpInikSoHBxckOFKl1uGWVfRyI3LnX2+brcRUDox7T08eJ60UQlQ==
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@types/spdx-satisfies/-/spdx-satisfies-0.1.2.tgz#1c28c3ef21b350c188685a13e011ae94933db8f5"
+  integrity sha512-v8OtFJhx4gHvOktcvP1cdeAXYhUq1O5XP+NTxyZoxDSaKYGf3BFWb0P4Ik/JfRxsscKn8fDe4w9Obv92bNQ26Q==
 
 "@types/stack-utils@^2.0.0":
   version "2.0.1"
