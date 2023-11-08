@@ -1139,9 +1139,9 @@
   integrity sha512-Hl219/BT5fLAaz6NDkSuhzasy49dwQS/DSdu4MdggFB8zcXv7vflBI3xp7FEmkmdDkBUI2bPUNeMttp2knYdxw==
 
 "@types/tar@^6.1.1":
-  version "6.1.6"
-  resolved "https://registry.yarnpkg.com/@types/tar/-/tar-6.1.6.tgz#640223490df0696b9e8193fd2af5c65dcf0f9c3f"
-  integrity sha512-HQ06kiiDXz9uqtmE9ksQUn1ovcPr1gGV9EgaCWo6FGYKD0onNBCetBzL0kfcS8Kbj1EFxJWY9jL2W4ZvvtGI8Q==
+  version "6.1.8"
+  resolved "https://registry.yarnpkg.com/@types/tar/-/tar-6.1.8.tgz#1432a625a86705788989a9d09cb6893b51e0f33f"
+  integrity sha512-p8Rc0vas9n+7cv0JiSdUMHiL42gOflrj3v0RMSbe8x5lauEygCEFpS0B/Rw9ZI62qrxlsvZqTggIEIas2gBQrA==
   dependencies:
     "@types/node" "*"
     minipass "^4.0.0"
