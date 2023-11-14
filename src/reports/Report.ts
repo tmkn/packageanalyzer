@@ -17,12 +17,12 @@ export interface IReportContext {
 export type Args<T, D extends Decorators> = T extends [PackageVersion]
     ? [IPackage<D>, ...undefined[]]
     : T extends [PackageVersion, PackageVersion]
-    ? [IPackage<D>, IPackage<D>, ...undefined[]]
-    : T extends [PackageVersion, PackageVersion, PackageVersion]
-    ? [IPackage<D>, IPackage<D>, IPackage<D>, ...undefined[]]
-    : T extends PackageVersion
-    ? [IPackage<D>]
-    : Array<IPackage<D> | undefined>;
+      ? [IPackage<D>, IPackage<D>, ...undefined[]]
+      : T extends [PackageVersion, PackageVersion, PackageVersion]
+        ? [IPackage<D>, IPackage<D>, IPackage<D>, ...undefined[]]
+        : T extends PackageVersion
+          ? [IPackage<D>]
+          : Array<IPackage<D> | undefined>;
 
 export interface IReport<
     PackageEntry,
