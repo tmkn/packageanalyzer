@@ -4,10 +4,10 @@ import * as path from "path";
 import * as nock from "nock";
 
 import { IPackage } from "../../src/package/package";
-import { ITarData, TarDecorator } from "../../src/extensions/decorators/TarDecorator";
+import { ITarData, TarAttachment } from "../../src/attachments/TarAttachment";
 import { createMockPackage, IMockPackageJson } from "../mocks";
 
-describe(`TarDecorator Tests`, () => {
+describe(`TarAttachment Tests`, () => {
     const logStub = {
         logger: function () {}
     };
@@ -27,7 +27,7 @@ describe(`TarDecorator Tests`, () => {
                 return fs.createReadStream(tgzPath);
             });
 
-        const tarDecorator = new TarDecorator();
+        const tarAttachment = new TarAttachment();
         const pkgJson: IMockPackageJson = {
             dist: {
                 tarball: `https://example.com`,
@@ -36,7 +36,7 @@ describe(`TarDecorator Tests`, () => {
         };
         const p: IPackage = createMockPackage(pkgJson);
 
-        const data = await tarDecorator.apply({ p, ...logStub });
+        const data = await tarAttachment.apply({ p, ...logStub });
 
         expect.assertions(1);
         expect(data.files.size).toBe(5);
@@ -44,7 +44,7 @@ describe(`TarDecorator Tests`, () => {
 
     it(`uses cache`, async () => {
         const cache: Map<string, ITarData> = new Map();
-        const tarDecorator = new TarDecorator(cache);
+        const tarAttachment = new TarAttachment(cache);
         const p: IPackage = createMockPackage({});
 
         //init cache
@@ -55,17 +55,17 @@ describe(`TarDecorator Tests`, () => {
             ])
         });
 
-        const data = await tarDecorator.apply({ p, ...logStub });
+        const data = await tarAttachment.apply({ p, ...logStub });
 
         expect.assertions(1);
         expect(data.files.size).toBe(2);
     });
 
     it(`throws on missing tarball url`, async () => {
-        const tarDecorator = new TarDecorator();
+        const tarAttachment = new TarAttachment();
         const p: IPackage = createMockPackage({});
 
-        await expect(tarDecorator.apply({ p, ...logStub })).rejects.toThrow();
+        await expect(tarAttachment.apply({ p, ...logStub })).rejects.toThrow();
     });
 
     afterAll(() => {

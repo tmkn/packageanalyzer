@@ -1,5 +1,4 @@
 import { get } from "lodash";
-import { DecoratorData, Decorators } from "../extensions/decorators/Decorator";
 
 import { IPackageJson } from "../npm";
 import { CollectorNode, ICollectorNode } from "./collector";
@@ -9,7 +8,7 @@ interface IDeprecatedInfo {
     message: string;
 }
 
-export interface IPackage<T extends Decorators = [], DD = DecoratorData<T>> {
+export interface IPackage<T extends Record<string, any> = Record<string, any>> {
     parent: IPackage<T> | null;
     isLoop: boolean;
     name: string;
@@ -28,17 +27,17 @@ export interface IPackage<T extends Decorators = [], DD = DecoratorData<T>> {
     getData(): Readonly<IPackageJson>;
     getData(key: string): unknown;
 
-    // Partial<...> because decorators could have failed during lookup
-    getDecoratorData(): Partial<DD>;
-    getDecoratorData<K extends keyof DD>(key: K): DD[K];
-    setDecoratorData<K extends keyof DD>(key: K, data: DD[K]): void;
+    // Partial<...> because attachments could have failed during lookup
+    getAttachmentData(): Partial<T>;
+    getAttachmentData<K extends keyof T>(key: K): T[K];
+    setAttachmentData<K extends keyof T>(key: K, data: T[K]): void;
 }
 
-export class Package<T extends Decorators = []> implements IPackage<T> {
+export class Package<T extends Record<string, any>> implements IPackage<T> {
     parent: IPackage<T> | null = null;
     isLoop = false;
 
-    private _decoratorData: Map<keyof DecoratorData<T>, any> = new Map();
+    private _attachmentData: Partial<T> = {};
     private readonly _dependencies: IPackage<T>[] = [];
 
     constructor(private readonly _data: Readonly<IPackageJson>) {}
@@ -127,32 +126,24 @@ export class Package<T extends Decorators = []> implements IPackage<T> {
         else return JSON.parse(JSON.stringify(this._data));
     }
 
-    getDecoratorData(): Partial<DecoratorData<T>>;
-    getDecoratorData<K extends keyof DecoratorData<T>>(key: K): DecoratorData<T>[K];
-    getDecoratorData<K extends keyof DecoratorData<T>>(
-        key?: K
-    ): DecoratorData<T>[K] | Partial<DecoratorData<T>> {
+    getAttachmentData(): Partial<T>;
+    getAttachmentData<K extends keyof T>(key: K): T[K];
+    getAttachmentData<K extends keyof T>(key?: K): T[K] | Partial<T> {
         if (key) {
-            const data = this._decoratorData.get(key);
+            const data = this._attachmentData[key];
 
             if (typeof data === "undefined") {
-                throw new Error(`No decorator data found for "${key.toString()}"`);
+                throw new Error(`No attachment data found for "${key.toString()}"`);
             }
 
             return data;
         } else {
-            const data: Partial<DecoratorData<T>> = {};
-
-            for (const [key, value] of this._decoratorData) {
-                data[key] = value;
-            }
-
-            return data;
+            return structuredClone(this._attachmentData);
         }
     }
 
-    setDecoratorData<K extends keyof DecoratorData<T>>(key: K, data: DecoratorData<T>[K]): void {
-        this._decoratorData.set(key, data);
+    setAttachmentData<K extends keyof T>(key: K, data: T[K]): void {
+        this._attachmentData[key] = data;
     }
 
     collect<D>(dataFn: (pkg: IPackage<T>) => D): ICollectorNode<D, IPackage<T>> {

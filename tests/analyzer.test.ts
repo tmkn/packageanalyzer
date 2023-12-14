@@ -8,7 +8,7 @@ import { LoopUtilities } from "../src/extensions/utilities/LoopUtilities";
 import { LicenseUtilities } from "../src/extensions/utilities/LicenseUtilities";
 import { PathUtilities } from "../src/extensions/utilities/PathUtilities";
 import { getPackageVersionFromPath } from "../src/visitors/util.node";
-import { IDecorator } from "../src";
+import { IAttachment } from "../src/attachments/Attachments";
 
 describe(`Package Tests`, () => {
     let p: IPackage;
@@ -109,7 +109,7 @@ describe(`Package Tests`, () => {
     });
 });
 
-describe(`Decorator Tests`, () => {
+describe(`Attachment Tests`, () => {
     let rootPath: string;
     let provider: FileSystemPackageProvider;
 
@@ -118,10 +118,10 @@ describe(`Decorator Tests`, () => {
         provider = new FileSystemPackageProvider(rootPath);
     });
 
-    test(`correctly gets decorator data by key`, async () => {
-        const testDecorator: IDecorator<"key", boolean> = {
+    test(`correctly gets attachment data by key`, async () => {
+        const testAttachment: IAttachment<"key", boolean> = {
             key: "key",
-            name: "test decorator",
+            name: "test attachment",
             apply: async () => true
         };
 
@@ -129,34 +129,34 @@ describe(`Decorator Tests`, () => {
             getPackageVersionFromPath(rootPath),
             provider,
             new OraLogger(),
-            [testDecorator]
+            [testAttachment]
         );
 
         const p = await visitor.visit();
 
-        const decoratorData = p.getDecoratorData("key");
+        const attachmentData = p.getAttachmentData("key");
 
-        expect(decoratorData).toBe(true);
+        expect(attachmentData).toBe(true);
     });
 
-    test(`correctly throws on missing decorator key lookup`, async () => {
+    test(`correctly throws on missing attachment key lookup`, async () => {
         const visitor = new Visitor(getPackageVersionFromPath(rootPath), provider, new OraLogger());
 
         const p = await visitor.visit();
 
-        expect(() => p.getDecoratorData("invalidKey")).toThrow();
+        expect(() => p.getAttachmentData("invalidKey")).toThrow();
     });
 
-    test(`correctly returns whole decorator data`, async () => {
-        const testDecorator: IDecorator<"key", boolean> = {
+    test(`correctly returns whole attachment data`, async () => {
+        const testAttachment: IAttachment<"key", boolean> = {
             key: "key",
-            name: "test decorator",
+            name: "test attachment",
             apply: async () => true
         };
 
-        const testDecorator2: IDecorator<"hello", "world"> = {
+        const testAttachment2: IAttachment<"hello", "world"> = {
             key: "hello",
-            name: "test decorator 2",
+            name: "test attachment 2",
             apply: async () => "world"
         };
 
@@ -164,29 +164,29 @@ describe(`Decorator Tests`, () => {
             getPackageVersionFromPath(rootPath),
             provider,
             new OraLogger(),
-            [testDecorator, testDecorator2]
+            [testAttachment, testAttachment2]
         );
 
         const p = await visitor.visit();
 
-        const decoratorData = p.getDecoratorData();
+        const attachmentData = p.getAttachmentData();
 
-        expect(decoratorData).toEqual({
+        expect(attachmentData).toEqual({
             key: true,
             hello: "world"
         });
     });
 
-    test(`correctly returns partial decorator data`, async () => {
-        const testDecorator: IDecorator<"key", boolean> = {
+    test(`correctly returns partial attachment data`, async () => {
+        const testAttachment: IAttachment<"key", boolean> = {
             key: "key",
-            name: "test decorator",
+            name: "test attachment",
             apply: async () => true
         };
 
-        const testDecorator2: IDecorator<"hello", "world"> = {
+        const testAttachment2: IAttachment<"hello", "world"> = {
             key: "hello",
-            name: "test decorator 2",
+            name: "test attachment 2",
             apply: async () => {
                 throw new Error(`Whoops!`);
             }
@@ -196,26 +196,26 @@ describe(`Decorator Tests`, () => {
             getPackageVersionFromPath(rootPath),
             provider,
             new OraLogger(),
-            [testDecorator, testDecorator2]
+            [testAttachment, testAttachment2]
         );
 
         const p = await visitor.visit();
 
-        const decoratorData = p.getDecoratorData();
+        const attachmentData = p.getAttachmentData();
 
-        expect(decoratorData).toEqual({
+        expect(attachmentData).toEqual({
             key: true
         });
     });
 
-    test(`correctly returns empty object when no decorators have been used`, async () => {
+    test(`correctly returns empty object when no attachments have been used`, async () => {
         const visitor = new Visitor(getPackageVersionFromPath(rootPath), provider, new OraLogger());
 
         const p = await visitor.visit();
 
-        const decoratorData = p.getDecoratorData();
+        const attachmentData = p.getAttachmentData();
 
-        expect(decoratorData).toEqual({});
+        expect(attachmentData).toEqual({});
     });
 });
 

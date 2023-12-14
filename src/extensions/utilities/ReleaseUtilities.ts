@@ -1,24 +1,25 @@
+import { AttachmentData } from "../../attachments/Attachments";
 import { IPackage } from "../../package/package";
-import { ReleaseDecorator } from "../decorators/ReleaseDecorator";
+import { ReleaseAttachment } from "../../attachments/ReleaseAttachment";
 
 export class ReleaseUtilities {
-    constructor(private _p: IPackage<[ReleaseDecorator]>) {}
+    constructor(private _p: IPackage<AttachmentData<ReleaseAttachment>>) {}
 
     get published(): Date | undefined {
         return this._getPublished(this._p);
     }
 
-    get newest(): IPackage<[ReleaseDecorator]> | undefined {
+    get newest(): IPackage<AttachmentData<ReleaseAttachment>> | undefined {
         return this._getNewest(this._p);
     }
 
-    get oldest(): IPackage<[ReleaseDecorator]> | undefined {
+    get oldest(): IPackage<AttachmentData<ReleaseAttachment>> | undefined {
         return this._getOldest(this._p);
     }
 
-    private _getPublished(p: IPackage<[ReleaseDecorator]>): Date | undefined {
+    private _getPublished(p: IPackage<AttachmentData<ReleaseAttachment>>): Date | undefined {
         try {
-            const data = p.getDecoratorData("releaseinfo");
+            const data = p.getAttachmentData("releaseinfo");
 
             if (typeof data === "undefined") throw new Error();
 
@@ -28,8 +29,10 @@ export class ReleaseUtilities {
         }
     }
 
-    private _getNewest(p: IPackage<[ReleaseDecorator]>): IPackage<[ReleaseDecorator]> | undefined {
-        let newest: IPackage<[ReleaseDecorator]> | undefined = undefined;
+    private _getNewest(
+        p: IPackage<AttachmentData<ReleaseAttachment>>
+    ): IPackage<AttachmentData<ReleaseAttachment>> | undefined {
+        let newest: IPackage<AttachmentData<ReleaseAttachment>> | undefined = undefined;
         const published = this._getPublished(p);
 
         if (published) newest = p;
@@ -51,8 +54,10 @@ export class ReleaseUtilities {
         return newest;
     }
 
-    private _getOldest(p: IPackage<[ReleaseDecorator]>): IPackage<[ReleaseDecorator]> | undefined {
-        let oldest: IPackage<[ReleaseDecorator]> | undefined = undefined;
+    private _getOldest(
+        p: IPackage<AttachmentData<ReleaseAttachment>>
+    ): IPackage<AttachmentData<ReleaseAttachment>> | undefined {
+        let oldest: IPackage<AttachmentData<ReleaseAttachment>> | undefined = undefined;
         const published = this._getPublished(p);
 
         if (published) oldest = p;

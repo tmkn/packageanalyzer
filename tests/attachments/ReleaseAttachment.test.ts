@@ -1,9 +1,9 @@
-import { ReleaseDecorator } from "../../src/extensions/decorators/ReleaseDecorator";
+import { ReleaseAttachment } from "../../src/attachments/ReleaseAttachment";
 import { IPackageMetadata, IUnpublishedPackageMetadata } from "../../src/npm";
 import { IPackageMetaDataProvider } from "../../src/providers/provider";
 import { createMockPackage, IMockPackageJson } from "../mocks";
 
-describe(`ReleaseDecorator Tests`, () => {
+describe(`ReleaseAttachment Tests`, () => {
     const logStub = {
         logger: function () {}
     };
@@ -24,7 +24,7 @@ describe(`ReleaseDecorator Tests`, () => {
                 return data as IPackageMetadata;
             }
         })();
-        const extension = new ReleaseDecorator(provider);
+        const extension = new ReleaseAttachment(provider);
         const data: IMockPackageJson = {
             version: version
         };
@@ -43,7 +43,7 @@ describe(`ReleaseDecorator Tests`, () => {
                 return undefined;
             }
         })();
-        const extension = new ReleaseDecorator(provider);
+        const extension = new ReleaseAttachment(provider);
         const p = createMockPackage({});
 
         await expect(extension.apply({ p, ...logStub })).rejects.toThrowError();
@@ -61,7 +61,7 @@ describe(`ReleaseDecorator Tests`, () => {
                 return data as IPackageMetadata;
             }
         })();
-        const extension = new ReleaseDecorator(provider);
+        const extension = new ReleaseAttachment(provider);
         const p = createMockPackage({});
 
         await expect(extension.apply({ p, ...logStub })).rejects.toThrowError();

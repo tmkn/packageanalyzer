@@ -1,14 +1,14 @@
-import { IPackageMetaDataProvider } from "../../providers/provider";
-import { IApplyArgs, IDecorator } from "./Decorator";
+import { IPackageMetaDataProvider, PackageMetaData } from "../providers/provider";
+import { IApplyArgs, IAttachment } from "./Attachments";
 
 interface IReleaseData {
     published: Date;
 }
 
-export class ReleaseDecorator implements IDecorator<"releaseinfo", IReleaseData> {
+export class ReleaseAttachment implements IAttachment<"releaseinfo", IReleaseData> {
     constructor(private _provider: IPackageMetaDataProvider) {}
 
-    readonly name: string = `ReleaseDecorator`;
+    readonly name: string = `ReleaseAttachment`;
     readonly key = "releaseinfo";
 
     async apply({ p }: IApplyArgs): Promise<IReleaseData> {
