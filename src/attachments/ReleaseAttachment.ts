@@ -1,4 +1,4 @@
-import { IPackageMetaDataProvider, PackageMetaData } from "../providers/provider";
+import { IPackageMetaDataProvider } from "../providers/provider";
 import { IApplyArgs, IAttachment } from "./Attachments";
 
 interface IReleaseData {
