@@ -9,7 +9,7 @@ import { CliCommand, defaultDependencyType } from "./common";
 import { DependencyTypes, BasePackageParameter, TypeParameter } from "../reports/Validation";
 import { AbstractReport, IReportContext } from "../reports/Report";
 import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
-import { TarDecorator } from "../extensions/decorators/TarDecorator";
+import { TarAttachment } from "../attachments/TarAttachment";
 import { DumpPackageProvider } from "../providers/folder";
 import { IPackage } from "../package/package";
 import { z, ZodTypeAny } from "zod";
@@ -39,7 +39,7 @@ export class TestReport extends AbstractReport<ITestReportParams> {
     name = `Test Report`;
     pkg: PackageVersion;
 
-    override decorators = [new TarDecorator()];
+    override attachments = [new TarAttachment()];
 
     constructor(params: ITestReportParams) {
         super(params);
@@ -63,7 +63,7 @@ export class TestReport extends AbstractReport<ITestReportParams> {
         console.log(data2.name, data2.version);
         console.log(data3.name, data3.version);
         // pkg.visit(pkg => {
-        //     const { files } = pkg.getDecoratorData<TarDecorator>(`tar`);
+        //     const { files } = pkg.getAttachmentData<TarAttachment>(`tar`);
 
         //     stdoutFormatter.writeLine(`Package: "${pkg.fullName}" | Files: ${files.size}`);
         //     stdoutFormatter.writeLine(JSON.stringify([...files.keys()], null, 4));

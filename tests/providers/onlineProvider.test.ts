@@ -2,7 +2,7 @@ import { OnlinePackageProvider } from "../../src/providers/online";
 import { Visitor } from "../../src/visitors/visitor";
 import { OraLogger } from "../../src/loggers/OraLogger";
 import { createMockNpmServer, IMockServer } from "../server";
-import { ReleaseDecorator } from "../../src/extensions/decorators/ReleaseDecorator";
+import { ReleaseAttachment } from "../../src/attachments/ReleaseAttachment";
 import { ReleaseUtilities } from "../../src/extensions/utilities/ReleaseUtilities";
 
 describe(`OnlineProvider Tests`, () => {
@@ -32,7 +32,7 @@ describe(`OnlineProvider Tests`, () => {
 
     test(`Check oldest package`, async () => {
         const visitor = new Visitor(["react", "16.8.1"], provider, new OraLogger(), [
-            new ReleaseDecorator(provider)
+            new ReleaseAttachment(provider)
         ]);
         const p = await visitor.visit();
         const { oldest: oldestPackage } = new ReleaseUtilities(p);
@@ -46,7 +46,7 @@ describe(`OnlineProvider Tests`, () => {
 
     test(`Check newest package`, async () => {
         const visitor = new Visitor(["react", "16.8.1"], provider, new OraLogger(), [
-            new ReleaseDecorator(provider)
+            new ReleaseAttachment(provider)
         ]);
         const p = await visitor.visit();
         const { newest: newestPackage } = new ReleaseUtilities(p);

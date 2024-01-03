@@ -1,17 +1,19 @@
 import { Package, IPackage } from "../package/package";
 import { INpmKeyValue, IPackageJson } from "../npm";
-import { Decorators, IDecorator } from "../extensions/decorators/Decorator";
 import { IPackageJsonProvider } from "../providers/provider";
 import { ILogger } from "../loggers/ILogger";
 import { DependencyTypes } from "../reports/Validation";
+import { AttachmentData, Attachments, IAttachment } from "../attachments/Attachments";
 
 export type PackageVersion = [name: string, version?: string];
 
-interface IPackageVisitor<D extends Decorators> {
-    visit: (depType?: DependencyTypes) => Promise<IPackage<D>>;
+interface IPackageVisitor<T extends Attachments> {
+    visit: (depType?: DependencyTypes) => Promise<IPackage<AttachmentData<T>>>;
 }
 
-export class Visitor<T extends Decorators> implements IPackageVisitor<T> {
+export class Visitor<T extends Attachments = IAttachment<string, any>>
+    implements IPackageVisitor<T>
+{
     private _depthStack: string[] = [];
     private _depType: DependencyTypes = "dependencies";
 
@@ -19,21 +21,21 @@ export class Visitor<T extends Decorators> implements IPackageVisitor<T> {
         private readonly _entry: PackageVersion,
         private readonly _provider: IPackageJsonProvider,
         private readonly _logger: ILogger,
-        private readonly _decorators: T = Array<IDecorator<string, unknown>>() as T,
+        private readonly _attachments: Array<IAttachment<string, any>> = [],
         private readonly _maxDepth: number = Infinity
     ) {}
 
-    async visit(depType = this._depType): Promise<Package<T>> {
+    async visit(depType = this._depType): Promise<Package<AttachmentData<T>>> {
         try {
             const [name, version] = this._entry;
             const rootPkg = await this._provider.getPackageJson(name, version);
-            const root = new Package<T>(rootPkg);
+            const root = new Package<AttachmentData<T>>(rootPkg);
 
             this._logger.start();
             this._logger.log("Fetching");
             this._depType = depType;
 
-            await this._addDecorator(root);
+            await this._addAttachment(root);
 
             this._depthStack.push(root.fullName);
             this._logger.log(`Fetched ${root.fullName}`);
@@ -54,7 +56,7 @@ export class Visitor<T extends Decorators> implements IPackageVisitor<T> {
     }
 
     private async visitDependencies(
-        parent: Package<T>,
+        parent: Package<AttachmentData<T>>,
         dependencies: INpmKeyValue | undefined
     ): Promise<void> {
         try {
@@ -69,9 +71,9 @@ export class Visitor<T extends Decorators> implements IPackageVisitor<T> {
             }
 
             for (const p of packages) {
-                const dependency = new Package<T>(p);
+                const dependency = new Package<AttachmentData<T>>(p);
 
-                await this._addDecorator(dependency);
+                await this._addAttachment(dependency);
 
                 this._logger.log(`Fetched ${dependency.fullName}`);
                 parent.addDependency(dependency);
@@ -90,26 +92,25 @@ export class Visitor<T extends Decorators> implements IPackageVisitor<T> {
         }
     }
 
-    private async _addDecorator(p: Package<T>): Promise<void> {
-        const totalDecorators = this._decorators.length;
+    private async _addAttachment(p: Package<AttachmentData<T>>): Promise<void> {
+        const totalAttachments = this._attachments.length;
 
-        for (const [i, decorator] of this._decorators.entries()) {
+        for (const [i, attachment] of this._attachments.entries()) {
             try {
-                const decoratorMsg = `[${p.fullName}][Decorator: ${numPadding(
+                const attachmentMsg = `[${p.fullName}][Attachment: ${numPadding(
                     i,
-                    totalDecorators
-                )} - ${decorator.name}]`;
-                this._logger.log(decoratorMsg);
+                    totalAttachments
+                )} - ${attachment.name}]`;
+                this._logger.log(attachmentMsg);
 
-                const data = await decorator.apply({
+                const data = await attachment.apply({
                     p,
-                    logger: (msg: string) => this._logger.log(`${decoratorMsg} - ${msg}`)
+                    logger: (msg: string) => this._logger.log(`${attachmentMsg} - ${msg}`)
                 });
 
-                // @ts-ignore :'( todo fix later
-                p.setDecoratorData(decorator.key, data);
+                p.setAttachmentData(attachment.key, data);
             } catch {
-                this._logger.log(`Failed to apply decorator: ${decorator.name}`);
+                this._logger.log(`Failed to apply attachment: ${attachment.name}`);
             }
         }
     }

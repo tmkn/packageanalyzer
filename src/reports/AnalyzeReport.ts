@@ -2,7 +2,7 @@ import * as chalk from "chalk";
 import { z } from "zod";
 
 import { daysAgo } from "../cli/common";
-import { ReleaseDecorator } from "../extensions/decorators/ReleaseDecorator";
+import { ReleaseAttachment } from "../attachments/ReleaseAttachment";
 import {
     DependencyUtilities,
     IMostReferred,
@@ -20,6 +20,7 @@ import { getPackageVersionFromPath } from "../visitors/util.node";
 import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
 import { AbstractReport, EntryTypes, IReportContext } from "./Report";
 import { BaseFolderParameter, BasePackageParameter, TypeParameter } from "./Validation";
+import { AttachmentData } from "../attachments/Attachments";
 
 const FullParameter = z.object({
     full: z.boolean()
@@ -37,7 +38,7 @@ export class AnalyzeReport extends AbstractReport<
     IAnalyzeParams,
     EntryTypes,
     z.ZodTypeAny,
-    [ReleaseDecorator]
+    [ReleaseAttachment]
 > {
     name = `Analyze Report`;
     pkg: PackageVersion;
@@ -47,7 +48,7 @@ export class AnalyzeReport extends AbstractReport<
 
         if (this._isPackageParams(this.params)) {
             this.pkg = getPackageVersionfromString(this.params.package);
-            this.decorators = [new ReleaseDecorator(npmOnline)];
+            this.attachments = [new ReleaseAttachment(npmOnline)];
         } else {
             this.pkg = getPackageVersionFromPath(this.params.folder);
             this.provider = new FileSystemPackageProvider(this.params.folder);
@@ -56,7 +57,7 @@ export class AnalyzeReport extends AbstractReport<
 
     async report(
         { stdoutFormatter }: IReportContext,
-        pkg: IPackage<[ReleaseDecorator]>
+        pkg: IPackage<AttachmentData<ReleaseAttachment>>
     ): Promise<void> {
         await printStatistics(pkg, this.params.full, stdoutFormatter);
     }
@@ -71,7 +72,7 @@ export class AnalyzeReport extends AbstractReport<
 }
 
 export async function printStatistics(
-    p: IPackage<[ReleaseDecorator]>,
+    p: IPackage<AttachmentData<ReleaseAttachment>>,
     all: boolean,
     formatter: IFormatter
 ): Promise<void> {
@@ -83,7 +84,7 @@ export async function printStatistics(
 const PaddingLeft = 4;
 
 async function printAllStatistics(
-    p: IPackage<[ReleaseDecorator]>,
+    p: IPackage<AttachmentData<ReleaseAttachment>>,
     formatter: IFormatter
 ): Promise<void> {
     printPublished(p, formatter);
@@ -119,7 +120,10 @@ function printDependencyCount(p: IPackage, formatter: IFormatter): void {
     ]);
 }
 
-async function printNewest(p: IPackage<[ReleaseDecorator]>, formatter: IFormatter): Promise<void> {
+async function printNewest(
+    p: IPackage<AttachmentData<ReleaseAttachment>>,
+    formatter: IFormatter
+): Promise<void> {
     const { newest } = new ReleaseUtilities(p);
 
     if (newest) {
@@ -136,7 +140,10 @@ async function printNewest(p: IPackage<[ReleaseDecorator]>, formatter: IFormatte
     }
 }
 
-async function printOldest(p: IPackage<[ReleaseDecorator]>, formatter: IFormatter): Promise<void> {
+async function printOldest(
+    p: IPackage<AttachmentData<ReleaseAttachment>>,
+    formatter: IFormatter
+): Promise<void> {
     const { oldest } = new ReleaseUtilities(p);
 
     if (oldest) {
@@ -153,7 +160,10 @@ async function printOldest(p: IPackage<[ReleaseDecorator]>, formatter: IFormatte
     }
 }
 
-function printPublished(p: IPackage<[ReleaseDecorator]>, formatter: IFormatter): void {
+function printPublished(
+    p: IPackage<AttachmentData<ReleaseAttachment>>,
+    formatter: IFormatter
+): void {
     const { published } = new ReleaseUtilities(p);
 
     if (!published) return;

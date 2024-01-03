@@ -63,7 +63,7 @@ export class ReportService {
             entry,
             report.provider ?? npmOnline,
             new OraLogger(),
-            report.decorators ?? [],
+            report.attachments ?? [],
             report.depth
         );
 

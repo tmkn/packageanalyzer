@@ -2,7 +2,7 @@ import * as https from "https";
 
 import * as tar from "tar";
 
-import { IApplyArgs, IDecorator } from "./Decorator";
+import { IApplyArgs, IAttachment } from "./Attachments";
 import { pipeline } from "stream";
 
 export interface ITarData {
@@ -11,10 +11,10 @@ export interface ITarData {
 
 type TarCache = Map<string, ITarData>;
 
-export class TarDecorator implements IDecorator<"tar", ITarData> {
+export class TarAttachment implements IAttachment<"tar", ITarData> {
     constructor(private _cache: TarCache = new Map()) {}
 
-    readonly name: string = `TarDecorator`;
+    readonly name: string = `TarAttachment`;
     readonly key = "tar";
 
     apply({ p }: IApplyArgs): Promise<ITarData> {
