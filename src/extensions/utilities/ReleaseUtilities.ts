@@ -5,19 +5,19 @@ import { ReleaseAttachment } from "../../attachments/ReleaseAttachment";
 export class ReleaseUtilities {
     constructor(private _p: IPackage<AttachmentData<ReleaseAttachment>>) {}
 
-    get published(): Date | undefined {
-        return this._getPublished(this._p);
+    get publishDate(): Date | undefined {
+        return this._getPublishDate(this._p);
     }
 
-    get newest(): IPackage<AttachmentData<ReleaseAttachment>> | undefined {
-        return this._getNewest(this._p);
+    get newestPackage(): IPackage<AttachmentData<ReleaseAttachment>> | undefined {
+        return this._getNewestPackage(this._p);
     }
 
-    get oldest(): IPackage<AttachmentData<ReleaseAttachment>> | undefined {
-        return this._getOldest(this._p);
+    get oldestPackage(): IPackage<AttachmentData<ReleaseAttachment>> | undefined {
+        return this._getOldestPackage(this._p);
     }
 
-    private _getPublished(p: IPackage<AttachmentData<ReleaseAttachment>>): Date | undefined {
+    private _getPublishDate(p: IPackage<AttachmentData<ReleaseAttachment>>): Date | undefined {
         try {
             const data = p.getAttachmentData("releaseinfo");
 
@@ -29,53 +29,45 @@ export class ReleaseUtilities {
         }
     }
 
-    private _getNewest(
+    private _getNewestPackage(
         p: IPackage<AttachmentData<ReleaseAttachment>>
     ): IPackage<AttachmentData<ReleaseAttachment>> | undefined {
-        let newest: IPackage<AttachmentData<ReleaseAttachment>> | undefined = undefined;
-        const published = this._getPublished(p);
-
-        if (published) newest = p;
+        let newestPackage = p;
 
         p.visit(d => {
-            const dPublished = this._getPublished(d);
+            const newestPublishDate = this._getPublishDate(newestPackage);
+            const currentPublishDate = this._getPublishDate(d);
 
-            if (newest) {
-                const newestPublished = this._getPublished(newest);
-
-                if (dPublished && newestPublished) {
-                    if (dPublished > newestPublished) newest = d;
+            if (currentPublishDate) {
+                if (newestPublishDate) {
+                    if (currentPublishDate > newestPublishDate) newestPackage = d;
+                } else {
+                    newestPackage = d;
                 }
-            } else {
-                if (dPublished) newest = d;
             }
         }, false);
 
-        return newest;
+        return this._getPublishDate(newestPackage) ? newestPackage : undefined;
     }
 
-    private _getOldest(
+    private _getOldestPackage(
         p: IPackage<AttachmentData<ReleaseAttachment>>
     ): IPackage<AttachmentData<ReleaseAttachment>> | undefined {
-        let oldest: IPackage<AttachmentData<ReleaseAttachment>> | undefined = undefined;
-        const published = this._getPublished(p);
-
-        if (published) oldest = p;
+        let oldestPackage = p;
 
         p.visit(d => {
-            const dPublished = this._getPublished(d);
+            const oldestPublishDate = this._getPublishDate(oldestPackage);
+            const currentPublishDate = this._getPublishDate(d);
 
-            if (oldest) {
-                const oldestPublished = this._getPublished(oldest);
-
-                if (dPublished && oldestPublished) {
-                    if (dPublished < oldestPublished) oldest = d;
+            if (currentPublishDate) {
+                if (oldestPublishDate) {
+                    if (currentPublishDate < oldestPublishDate) oldestPackage = d;
+                } else {
+                    oldestPackage = d;
                 }
-            } else {
-                if (dPublished) oldest = d;
             }
         }, false);
 
-        return oldest;
+        return this._getPublishDate(oldestPackage) ? oldestPackage : undefined;
     }
 }

@@ -35,7 +35,7 @@ describe(`OnlineProvider Tests`, () => {
             new ReleaseAttachment(provider)
         ]);
         const p = await visitor.visit();
-        const { oldest: oldestPackage } = new ReleaseUtilities(p);
+        const { oldestPackage } = new ReleaseUtilities(p);
 
         expect.assertions(1);
 
@@ -49,7 +49,7 @@ describe(`OnlineProvider Tests`, () => {
             new ReleaseAttachment(provider)
         ]);
         const p = await visitor.visit();
-        const { newest: newestPackage } = new ReleaseUtilities(p);
+        const { newestPackage } = new ReleaseUtilities(p);
 
         expect.assertions(1);
 

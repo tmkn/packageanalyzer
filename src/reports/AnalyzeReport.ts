@@ -124,18 +124,20 @@ async function printNewest(
     p: IPackage<AttachmentData<ReleaseAttachment>>,
     formatter: IFormatter
 ): Promise<void> {
-    const { newest } = new ReleaseUtilities(p);
+    const { newestPackage } = new ReleaseUtilities(p);
 
-    if (newest) {
-        const { published } = new ReleaseUtilities(newest);
+    if (newestPackage) {
+        const { publishDate } = new ReleaseUtilities(newestPackage);
 
-        if (published)
+        if (publishDate)
             formatter.writeGroup([
                 [
                     `Newest package`,
-                    `${newest.fullName} - ${published.toUTCString()} ${daysAgo(published)}`
+                    `${newestPackage.fullName} - ${publishDate.toUTCString()} ${daysAgo(
+                        publishDate
+                    )}`
                 ],
-                [`Newest package path`, new PathUtilities(newest).pathString]
+                [`Newest package path`, new PathUtilities(newestPackage).pathString]
             ]);
     }
 }
@@ -144,18 +146,20 @@ async function printOldest(
     p: IPackage<AttachmentData<ReleaseAttachment>>,
     formatter: IFormatter
 ): Promise<void> {
-    const { oldest } = new ReleaseUtilities(p);
+    const { oldestPackage } = new ReleaseUtilities(p);
 
-    if (oldest) {
-        const { published } = new ReleaseUtilities(oldest);
+    if (oldestPackage) {
+        const { publishDate } = new ReleaseUtilities(oldestPackage);
 
-        if (published)
+        if (publishDate)
             formatter.writeGroup([
                 [
                     `Oldest package`,
-                    `${oldest.fullName} - ${published.toUTCString()} ${daysAgo(published)}`
+                    `${oldestPackage.fullName} - ${publishDate.toUTCString()} ${daysAgo(
+                        publishDate
+                    )}`
                 ],
-                [`Oldest package path`, new PathUtilities(oldest).pathString]
+                [`Oldest package path`, new PathUtilities(oldestPackage).pathString]
             ]);
     }
 }
@@ -164,7 +168,7 @@ function printPublished(
     p: IPackage<AttachmentData<ReleaseAttachment>>,
     formatter: IFormatter
 ): void {
-    const { published } = new ReleaseUtilities(p);
+    const { publishDate: published } = new ReleaseUtilities(p);
 
     if (!published) return;
 

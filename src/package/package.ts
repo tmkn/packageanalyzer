@@ -105,8 +105,8 @@ export class Package<T extends Record<string, any>> implements IPackage<T> {
         this.visit(d => {
             if (typeof version === "undefined") {
                 if (d.name === name) matches.push(d);
-            } else {
-                if (d.name === name && d.version === version) matches.push(d);
+            } else if (d.name === name && d.version === version) {
+                matches.push(d);
             }
         }, true);
 

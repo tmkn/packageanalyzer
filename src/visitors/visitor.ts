@@ -80,11 +80,9 @@ export class Visitor<T extends Attachments = IAttachment<string, any>>
 
                 if (this._depthStack.includes(dependency.fullName)) {
                     dependency.isLoop = true;
-                } else {
-                    if (this._depthStack.length < this._maxDepth) {
-                        this._depthStack.push(dependency.fullName);
-                        await this.visitDependencies(dependency, p[this._depType]);
-                    }
+                } else if (this._depthStack.length < this._maxDepth) {
+                    this._depthStack.push(dependency.fullName);
+                    await this.visitDependencies(dependency, p[this._depType]);
                 }
             }
         } finally {

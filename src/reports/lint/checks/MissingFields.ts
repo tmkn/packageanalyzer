@@ -21,10 +21,8 @@ export class MissingFields implements ILintCheck<IMissingFieldConfig> {
                 if (!pkg.getData(field)) {
                     messages.push(`missing field: ${field}`);
                 }
-            } else {
-                if (!field.validator(pkg.getData(field.path))) {
-                    messages.push(`invalid field: ${field.path}`);
-                }
+            } else if (!field.validator(pkg.getData(field.path))) {
+                messages.push(`invalid field: ${field.path}`);
             }
         }
 
