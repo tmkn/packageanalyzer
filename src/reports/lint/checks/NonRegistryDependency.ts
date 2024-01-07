@@ -4,6 +4,14 @@ import { ILintCheck } from "../LintRule";
 export const NonRegistryDependency: ILintCheck = {
     name: "non-registry-dependency",
     check: (pkg: IPackage) => {
+        const gitProtocols = [
+            "git:",
+            "git+https:",
+            "git+ssh:",
+            "git+file:",
+            "git+http:",
+            "git+git:"
+        ];
         const dependencyTypes = [
             "dependencies",
             "devDependencies",
@@ -24,16 +32,8 @@ export const NonRegistryDependency: ILintCheck = {
                     results.push(`detected a local dependency (${name})`);
                 }
 
-                if (
-                    target.startsWith(
-                        "git:" ||
-                            "git+https:" ||
-                            "git+ssh:" ||
-                            "git+file:" ||
-                            "git+http:" ||
-                            "git+git:"
-                    )
-                ) {
+                const match = gitProtocols.find(protocol => target.startsWith(protocol));
+                if (match) {
                     results.push(`detected a git dependency (${name})`);
                 }
             }

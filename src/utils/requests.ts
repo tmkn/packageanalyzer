@@ -11,7 +11,7 @@ function download(url: Url, timeoutLimit: number): Promise<string> {
          * else reject
          */
         if (!url.startsWith(`http://`) && !url.startsWith(`https://`))
-            reject(`Wrong protocol: ${url}`);
+            reject(new Error(`Wrong protocol: ${url}`));
 
         const protocol = url.startsWith(`http://`) ? http : https;
 
@@ -21,7 +21,7 @@ function download(url: Url, timeoutLimit: number): Promise<string> {
                 let data = "";
 
                 if (statusCode !== 200) {
-                    reject(`Server Error '${url}'`);
+                    reject(new Error(`Server Error '${url}'`));
                     clearTimeout(id);
                 }
 
@@ -35,16 +35,16 @@ function download(url: Url, timeoutLimit: number): Promise<string> {
                 });
             })
             .on("error", () => {
-                reject();
+                reject(new Error());
                 clearTimeout(id);
             })
             .setTimeout(timeoutLimit, () => {
-                reject(`Timeout '${url}'`);
+                reject(new Error(`Timeout '${url}'`));
                 clearTimeout(id);
             });
 
         const id = setTimeout(() => {
-            reject(`Timeout 2 '${url}'`);
+            reject(new Error(`Timeout 2 '${url}'`));
             clearTimeout(id);
         }, timeoutLimit);
     });

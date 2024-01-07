@@ -6,6 +6,7 @@ import { IPackageJsonProvider } from "../src/providers/provider";
 type MockBasePackageJson = Omit<Partial<IBasePackageJson>, "dependencies" | "devDependencies">;
 
 export interface IMockPackageJson extends MockBasePackageJson {
+    attachments?: Record<string, unknown>;
     dependencies?: IMockPackageJson[];
     devDependencies?: IMockPackageJson[];
     [key: string]: unknown;
@@ -27,6 +28,12 @@ export function createMockPackage(
     const parent = new Package(pkgJson);
 
     const dependencies = mockData[type] ?? [];
+
+    // set attachment data
+    const attachments = mockData.attachments ?? {};
+    for (const [key, value] of Object.entries(attachments)) {
+        parent.setAttachmentData(key, value);
+    }
 
     for (const depMockData of dependencies) {
         parent.addDependency(createMockPackage(depMockData, type));
