@@ -11,11 +11,12 @@ export interface ILintCheck<T = undefined> {
     check: (pkg: IPackage, params: T) => string | string[] | void;
 }
 
-export type LintRule<T> = T extends ILintCheck<infer Params>
-    ? Params extends undefined
-        ? [ILintTypes, ILintCheck<Params>]
-        : [ILintTypes, T, Params]
-    : never;
+export type LintRule<T> =
+    T extends ILintCheck<infer Params>
+        ? Params extends undefined
+            ? [ILintTypes, ILintCheck<Params>]
+            : [ILintTypes, T, Params]
+        : never;
 
 export const ZodLintRule = z.custom<LintRule<ILintCheck<any>>>(data => {
     if (Array.isArray(data)) {
