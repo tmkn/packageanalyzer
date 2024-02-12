@@ -24,3 +24,17 @@ exports[`"internal-error" Lint Test prints out internal errors & exit message 1`
 `;
 
 exports[`"internal-error" Lint Test prints out internal errors & exit message 2`] = `[]`;
+
+exports[`LintReport Test correctly throws on failed custom validation 1`] = `
+[
+  "PackageLint: medallo@1.0.0",
+  "",
+  "medallo@1.0.0",
+  "  [internal-error][medallo@1.0.0][test-rule]: invalid params ""some param""",
+  "",
+  "Found 0 warning(s) and 0 error(s)",
+  "Terminated with 1 internal error(s), please check lint output",
+  "",
+  "",
+]
+`;

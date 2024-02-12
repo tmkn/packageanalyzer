@@ -5,64 +5,56 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug Jest Tests",
             "type": "node",
             "request": "launch",
-            "runtimeArgs": [
-              "--inspect-brk",
-              "${workspaceRoot}/node_modules/jest/bin/jest.js",
-              "--runInBand",
-              "analyzeCommand"
-            ],
-            "console": "integratedTerminal",
-            "internalConsoleOptions": "neverOpen"
-          },
-
+            "name": "Debug Current Test File",
+            "autoAttachChildProcesses": true,
+            "skipFiles": ["<node_internals>/**", "**/node_modules/**"],
+            "program": "${workspaceRoot}/node_modules/jest/bin/jest.js",
+            "args": ["--", "${fileBasenameNoExtension}"],
+            "smartStep": true,
+            "console": "integratedTerminal"
+        },
         {
             "type": "node",
             "request": "launch",
             "name": "Analyze Webpack",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
+            "skipFiles": ["<node_internals>/**"],
             "program": "${workspaceFolder}/build/src/cli.js",
-            "args": [
-                "analyze",
-                "--package",
-                "webpack"
-            ],
+            "args": ["analyze", "--package", "webpack"],
             "preLaunchTask": "tsc: build - tsconfig.json",
-            "outFiles": [
-                "${workspaceFolder}/build/**/*.js"
-            ],
-            "console" : "integratedTerminal"
+            "outFiles": ["${workspaceFolder}/build/**/*.js"],
+            "console": "integratedTerminal"
         },
         {
             "type": "node",
             "request": "launch",
             "name": "Launch Sample Report",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
+            "skipFiles": ["<node_internals>/**"],
             "program": "${workspaceFolder}/build/src/cli.js",
-            "args": [
-                "report",
-                "--config",
-                "./tests/sampleReport.js"
-            ],
+            "args": ["report", "--config", "./tests/sampleReport.js"],
             "preLaunchTask": "tsc: build - tsconfig.json",
-            "outFiles": [
-                "${workspaceFolder}/build/**/*.js"
+            "outFiles": ["${workspaceFolder}/build/**/*.js"],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Launch Analyze Command",
+            "type": "node",
+            "request": "launch",
+            "runtimeArgs": [
+                "--inspect-brk",
+                "${workspaceRoot}/node_modules/jest/bin/jest.js",
+                "--runInBand",
+                "analyzeCommand"
             ],
-            "console" : "integratedTerminal"
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen"
         },
         {
             "type": "node",
             "request": "launch",
             "name": "Launch Lint Command",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
+            "skipFiles": ["<node_internals>/**"],
             "program": "${workspaceFolder}/build/src/cli.js",
             "args": [
                 "lint",
@@ -74,18 +66,14 @@
                 // "./tests/data/lint_data/exportTest.js"
             ],
             //"preLaunchTask": "tsc: build - tsconfig.json",
-            "outFiles": [
-                "${workspaceFolder}/build/**/*.js"
-            ],
-            "console" : "integratedTerminal"
+            "outFiles": ["${workspaceFolder}/build/**/*.js"],
+            "console": "integratedTerminal"
         },
         {
             "type": "node",
             "request": "launch",
             "name": "Launch Dump Command",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
+            "skipFiles": ["<node_internals>/**"],
             "program": "${workspaceFolder}/build/src/cli.js",
             "args": [
                 "dependencydump",
@@ -97,29 +85,19 @@
                 "./tests/data/dump"
             ],
             //"preLaunchTask": "tsc: build - tsconfig.json",
-            "outFiles": [
-                "${workspaceFolder}/build/**/*.js"
-            ],
-            "console" : "integratedTerminal"
+            "outFiles": ["${workspaceFolder}/build/**/*.js"],
+            "console": "integratedTerminal"
         },
         {
             "type": "node",
             "request": "launch",
             "name": "Custom Report",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
+            "skipFiles": ["<node_internals>/**"],
             "program": "${workspaceFolder}/build/src/cli.js",
-            "args": [
-                "report",
-                "--config",
-                "testReport.js"
-            ],
+            "args": ["report", "--config", "testReport.js"],
             "preLaunchTask": "tsc: build - tsconfig.json",
-            "outFiles": [
-                "${workspaceFolder}/build/**/*.js"
-            ],
-            "console" : "integratedTerminal"
+            "outFiles": ["${workspaceFolder}/build/**/*.js"],
+            "console": "integratedTerminal"
         }
     ]
 }

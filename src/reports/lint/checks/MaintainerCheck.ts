@@ -1,34 +1,73 @@
-import { ILintCheck } from "../LintRule";
+import { z } from "zod";
+import type { ILintCheck } from "../LintRule";
+import type { IPackage } from "../../../package/package";
+import type { INpmUser } from "../../../npm";
 
 interface IMaintainerCheck {
+    // list of authors to check for
     authors: string[];
 }
 
-export const MaintainerCheck: ILintCheck<IMaintainerCheck> = {
-    name: "maintainer-check",
-    check: (pkg, { authors }) => {
+export class MaintainerCheck implements ILintCheck<IMaintainerCheck> {
+    name = "maintainer-check";
+    check(pkg: IPackage, { authors }: IMaintainerCheck) {
         const authorMessages: string[] = [];
 
         for (const author of authors) {
-            // check maintainers entry
-            const maintainers = pkg.getData("maintainers");
+            const keysWithUserInfo = ["maintainers", "author", "contributors"] as const;
 
-            if (Array.isArray(maintainers)) {
-                const foundMaintainer = maintainers.find(maintainer => maintainer.name === author);
+            for (const key of keysWithUserInfo) {
+                const possibleUserInfoData = pkg.getData(key);
+                const foundAuthors = this.#checkUserInfoData(possibleUserInfoData, author);
 
-                if (foundMaintainer) {
-                    authorMessages.push(`found ${author} as a maintainer`);
+                for (const foundAuthor of foundAuthors) {
+                    authorMessages.push(`found ${foundAuthor} in "${key}"`);
                 }
-            }
-
-            // check author entry
-            const pkgAuthor = pkg.getData("author");
-
-            if (typeof pkgAuthor === "string" && pkgAuthor === author) {
-                authorMessages.push(`found ${author} as an author`);
             }
         }
 
         return authorMessages;
     }
-};
+
+    checkParams() {
+        return z.object({
+            authors: z.array(z.string())
+        });
+    }
+
+    #isNpmAuthor(data: unknown): data is INpmUser {
+        return npmUserSchema.safeParse(data).success;
+    }
+
+    // user info can be a standalone string or an object or wrapped in an array
+    // convert to array for easier processing
+    #toArray(data: unknown): any[] {
+        return Array.isArray(data) ? data : [data];
+    }
+
+    #checkUserInfoData(possibleUserInfoData: unknown, author: string): string[] {
+        const foundAuthors: string[] = [];
+
+        for (const entry of this.#toArray(possibleUserInfoData)) {
+            // check string
+            if (typeof entry === "string") {
+                const parts = entry.split(" ").map(part => part.trim());
+
+                if (parts.includes(author)) {
+                    foundAuthors.push(author);
+                }
+                // check for npm person object
+            } else if (this.#isNpmAuthor(entry) && entry.name === author) {
+                foundAuthors.push(author);
+            }
+        }
+
+        return foundAuthors;
+    }
+}
+
+const npmUserSchema = z.object({
+    name: z.string(),
+    email: z.string().optional(),
+    url: z.string().optional()
+});

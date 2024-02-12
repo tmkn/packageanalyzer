@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { ZodType, z } from "zod";
 
 import type { IPackage } from "../../package/package";
 
@@ -9,6 +9,7 @@ export type ILintTypes = z.infer<typeof LintTypes>;
 export interface ILintCheck<T = undefined> {
     name: string;
     check: (pkg: IPackage, params: T) => string | string[] | void;
+    checkParams?: () => ZodType<T>;
 }
 
 export type LintRule<T> =
