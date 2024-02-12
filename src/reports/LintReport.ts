@@ -87,7 +87,14 @@ export class LintReport extends AbstractReport<ILintParams> {
                 let checkResult;
 
                 try {
-                    checkResult = rule.check(dep, params) as unknown;
+                    const checkParams = rule.checkParams?.() ?? z.any();
+                    const checkParamsResult = checkParams.safeParse(params);
+
+                    if (!checkParamsResult.success) {
+                        throw new Error(`invalid params "${JSON.stringify(params)}"`);
+                    }
+
+                    checkResult = rule.check(dep, checkParamsResult.data);
 
                     if (this._isvalidResultFormat(checkResult)) {
                         if (type === `error`) {

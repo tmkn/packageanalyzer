@@ -1,3 +1,4 @@
+import { z } from "zod";
 import { ZodLintRule, createRule } from "../../src/reports/lint/LintRule";
 import { ILintFile, LintReport } from "../../src/reports/LintReport";
 import { ReportService } from "../../src/reports/ReportService";
@@ -49,7 +50,7 @@ describe(`LintReport Test`, () => {
 
         await reportService.process();
 
-        expect(mockFn).toBeCalledTimes(3);
+        expect(mockFn).toHaveBeenCalledTimes(3);
     });
 
     test(`calls lint function only on root`, async () => {
@@ -82,7 +83,93 @@ describe(`LintReport Test`, () => {
 
         await reportService.process();
 
-        expect(mockFn).toBeCalledTimes(1);
+        expect(mockFn).toHaveBeenCalledTimes(1);
+    });
+
+    test(`uses custom validation from lint check`, async () => {
+        const validateFn = jest.fn();
+        jest.doMock(
+            `/getsMockedAnyway.js`,
+            () => ({
+                rules: [
+                    createRule(
+                        `error`,
+                        {
+                            name: `test-rule`,
+                            check: () => {},
+                            checkParams: () => z.custom(validateFn)
+                        },
+                        { name: `medallo` }
+                    )
+                ]
+            }),
+            {
+                virtual: true
+            }
+        );
+
+        const lintReport = new LintReport({
+            lintFile: `/getsMockedAnyway.js`,
+            package: `medallo@1.0.0`,
+            depth: 0
+        });
+        lintReport.provider = provider;
+
+        const { stdout, stderr } = createMockContext();
+        const reportService = new ReportService(
+            {
+                reports: [lintReport]
+            },
+            stdout,
+            stderr
+        );
+
+        await reportService.process();
+
+        expect(validateFn).toHaveBeenCalledTimes(1);
+    });
+
+    test(`correctly throws on failed custom validation`, async () => {
+        jest.doMock(
+            `/getsMockedAnyway.js`,
+            () => ({
+                rules: [
+                    createRule(
+                        `error`,
+                        {
+                            name: `test-rule`,
+                            check: () => {},
+                            checkParams: () => z.custom(() => false)
+                        },
+                        "some param"
+                    )
+                ]
+            }),
+            {
+                virtual: true
+            }
+        );
+
+        const lintReport = new LintReport({
+            lintFile: `/getsMockedAnyway.js`,
+            package: `medallo@1.0.0`,
+            depth: 0
+        });
+        lintReport.provider = provider;
+
+        const { stdout, stderr } = createMockContext();
+        const reportService = new ReportService(
+            {
+                reports: [lintReport]
+            },
+            stdout,
+            stderr
+        );
+
+        expect.assertions(1);
+        await reportService.process();
+
+        expect(stdout.lines).toMatchSnapshot();
     });
 
     test(`calls lint function with custom params`, async () => {

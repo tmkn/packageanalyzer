@@ -37,7 +37,8 @@ interface IUnpublishedInfo {
 
 export interface INpmUser {
     name: string;
-    email: string;
+    email?: string;
+    url?: string;
 }
 
 export interface INpmKeyValue {
@@ -65,13 +66,14 @@ export interface IMalformedLicenseField {
 }
 
 export interface IPackageMetadata {
-    author: INpmUser;
+    author: INpmUser | string;
+    contributors: Array<INpmUser | string>;
     description: string;
     "dist-tags": INpmKeyValue[] & { latest: string };
     homepage: string;
     keywords: string[];
     license: string;
-    maintainers: INpmUser[];
+    maintainers: Array<INpmUser | string>;
     name: string;
     readme: string;
     readmeFilename: string;
