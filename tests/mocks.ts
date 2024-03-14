@@ -15,7 +15,7 @@ export interface IMockPackageJson extends MockBasePackageJson {
 export function createMockPackage(
     mockData: IMockPackageJson,
     type: DependencyTypes = "dependencies"
-): Package<Record<string, unknown>> {
+): Package<any> {
     const data = convertToPackageJson(mockData, type);
     // @ts-expect-error
     const pkgJson: IPackageJson = {

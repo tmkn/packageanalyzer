@@ -37,7 +37,7 @@ export class Package<T extends Record<string, any>> implements IPackage<T> {
     parent: IPackage<T> | null = null;
     isLoop = false;
 
-    private _attachmentData: Partial<T> = {};
+    private _attachmentData: T = {} as T;
     private readonly _dependencies: IPackage<T>[] = [];
 
     constructor(private readonly _data: Readonly<IPackageJson>) {}
