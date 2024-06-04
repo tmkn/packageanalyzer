@@ -50,7 +50,9 @@ abstract class AbstractMockServer {
         return new Promise(resolve => {
             if (!this._server) resolve();
             else {
+                // close all connections
                 this._server.closeAllConnections();
+
                 this._server.close(e => {
                     if (e) process.stderr.write(e.message);
                     resolve();

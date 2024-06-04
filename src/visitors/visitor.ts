@@ -1,11 +1,22 @@
 import { Package, IPackage } from "../package/package";
-import { INpmKeyValue, IPackageJson } from "../npm";
+import { IPackageJson } from "../npm";
 import { IPackageJsonProvider } from "../providers/provider";
 import { ILogger } from "../loggers/ILogger";
 import { DependencyTypes } from "../reports/Validation";
 import { AttachmentData, Attachments, IAttachment } from "../attachments/Attachments";
 
 export type PackageVersion = [name: string, version?: string];
+
+// nested structure of resolved dependencies and their package.json
+export interface IDependencyTreeNode {
+    // a version including caret, tilde, etc.
+    // undefined means it uses the latest available version
+    rawVersion: string | undefined;
+    resolvedVersion: string;
+    pkgJson: IPackageJson;
+    dependencies: IDependencyTreeNode[];
+    isLoop: boolean;
+}
 
 interface IPackageVisitor<T extends Attachments> {
     visit: (depType?: DependencyTypes) => Promise<IPackage<AttachmentData<T>>>;
@@ -14,6 +25,7 @@ interface IPackageVisitor<T extends Attachments> {
 export class Visitor<T extends Attachments = IAttachment<string, any>>
     implements IPackageVisitor<T>
 {
+    private _dependencyTree: IDependencyTreeNode | undefined = undefined;
     private _depthStack: string[] = [];
     private _depType: DependencyTypes = "dependencies";
 
@@ -27,67 +39,107 @@ export class Visitor<T extends Attachments = IAttachment<string, any>>
 
     async visit(depType = this._depType): Promise<Package<AttachmentData<T>>> {
         try {
-            const [name, version] = this._entry;
-            const rootPkg = await this._provider.getPackageJson(name, version);
-            const root = new Package<AttachmentData<T>>(rootPkg);
-
             this._logger.start();
             this._logger.log("Fetching");
             this._depType = depType;
 
-            await this._addAttachment(root);
-
-            this._depthStack.push(root.fullName);
-            this._logger.log(`Fetched ${root.fullName}`);
-
             try {
-                if (this._depthStack.length <= this._maxDepth)
-                    await this.visitDependencies(root, rootPkg[depType]);
+                if (!this._dependencyTree) {
+                    this._depthStack = []; // reset stack
+
+                    this._dependencyTree = await this._resolveDependencies(
+                        this._entry,
+                        this._depType,
+                        this._provider
+                    );
+                }
+
+                // add attachments
+                const root = await this._createPackageTree(this._dependencyTree, this._attachments);
+
+                return root;
             } catch (e) {
                 this._logger.error("Error evaluating dependencies");
 
                 throw e;
             }
-
-            return root;
         } finally {
             this._logger.stop();
         }
     }
 
-    private async visitDependencies(
-        parent: Package<AttachmentData<T>>,
-        dependencies: INpmKeyValue | undefined
-    ): Promise<void> {
+    private async _resolveDependencies(
+        entry: PackageVersion,
+        type: DependencyTypes,
+        provider: IPackageJsonProvider
+    ): Promise<IDependencyTreeNode> {
         try {
-            if (typeof dependencies === "undefined") return;
+            const [name, version] = entry;
 
-            const packages: IPackageJson[] = [];
+            const dependency = await this._createDependencyTreeNode(name, version);
+            const fullName = this._getFullName(dependency);
 
-            for (const [name, version] of Object.entries(dependencies)) {
-                const resolved = await this._provider.getPackageJson(name, version);
+            this._logger.log(`Fetched ${fullName}`);
+            this._depthStack.push(fullName);
 
-                packages.push(resolved);
-            }
+            if (this._depthStack.length <= this._maxDepth) {
+                const dependencies = dependency.pkgJson[type] ?? {};
 
-            for (const p of packages) {
-                const dependency = new Package<AttachmentData<T>>(p);
+                for (const [depName, rawDepVersion] of Object.entries(dependencies)) {
+                    const directDependency = await this._createDependencyTreeNode(
+                        depName,
+                        rawDepVersion
+                    );
+                    const directDependencyFullName = this._getFullName(directDependency);
 
-                await this._addAttachment(dependency);
+                    // look for loops in the dependency tree
+                    // if loop, set flag and empty dependencies, return
+                    if (this._depthStack.includes(directDependencyFullName)) {
+                        directDependency.isLoop = true;
 
-                this._logger.log(`Fetched ${dependency.fullName}`);
-                parent.addDependency(dependency);
+                        dependency.dependencies.push(directDependency);
+                    }
+                    // if not loop, resolve dependencies
+                    else {
+                        const dep = await this._resolveDependencies(
+                            [depName, rawDepVersion],
+                            type,
+                            provider
+                        );
 
-                if (this._depthStack.includes(dependency.fullName)) {
-                    dependency.isLoop = true;
-                } else if (this._depthStack.length < this._maxDepth) {
-                    this._depthStack.push(dependency.fullName);
-                    await this.visitDependencies(dependency, p[this._depType]);
+                        dependency.dependencies.push(dep);
+                    }
                 }
             }
+
+            Object.freeze(dependency.dependencies);
+
+            return Object.freeze(dependency);
         } finally {
             this._depthStack.pop();
         }
+    }
+
+    private _getFullName(pkg: IDependencyTreeNode): string {
+        return `${pkg.pkgJson.name}@${pkg.pkgJson.version}`;
+    }
+
+    private async _createPackageTree(
+        resolvedDependency: IDependencyTreeNode,
+        attachments: Array<IAttachment<string, any>> = []
+    ): Promise<Package<AttachmentData<T>>> {
+        const pkg = new Package<AttachmentData<T>>(resolvedDependency.pkgJson);
+
+        pkg.isLoop = resolvedDependency.isLoop;
+        await this._addAttachment(pkg);
+
+        for (const dependency of resolvedDependency.dependencies) {
+            const child = await this._createPackageTree(dependency, attachments);
+
+            pkg.addDependency(child);
+        }
+
+        return pkg;
     }
 
     private async _addAttachment(p: Package<AttachmentData<T>>): Promise<void> {
@@ -111,6 +163,21 @@ export class Visitor<T extends Attachments = IAttachment<string, any>>
                 this._logger.log(`Failed to apply attachment: ${attachment.name}`);
             }
         }
+    }
+
+    private async _createDependencyTreeNode(
+        name: string,
+        version: string | undefined
+    ): Promise<IDependencyTreeNode> {
+        const pkgJson = await this._provider.getPackageJson(name, version);
+
+        return {
+            rawVersion: version,
+            resolvedVersion: pkgJson.version,
+            pkgJson,
+            dependencies: [],
+            isLoop: false
+        };
     }
 }
 
