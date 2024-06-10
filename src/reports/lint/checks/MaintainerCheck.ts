@@ -10,6 +10,7 @@ interface IMaintainerCheck {
 
 export class MaintainerCheck implements ILintCheck<IMaintainerCheck> {
     name = "maintainer-check";
+
     check(pkg: IPackage, { authors }: IMaintainerCheck) {
         const authorMessages: string[] = [];
 

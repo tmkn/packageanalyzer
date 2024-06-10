@@ -4,17 +4,11 @@ import { z } from "zod";
 import { IPackage } from "../package/package";
 import { AbstractReport, IReportContext } from "./Report";
 import { PathUtilities } from "../extensions/utilities/PathUtilities";
-import { ILintCheck, ZodLintRule } from "./lint/LintRule";
+import { ILintCheck, ILintFile, LintFile } from "./lint/LintRule";
 import { ILintResult, LintResultFormatter } from "./lint/LintResultFormatter";
 import { PackageVersion, getPackageVersionfromString } from "../visitors/visitor";
 import { getPackageVersionFromPath } from "../visitors/util.node";
 import { FileSystemPackageProvider } from "../providers/folder";
-
-const LintFile = z.object({
-    rules: z.array(ZodLintRule)
-});
-
-export type ILintFile = z.infer<typeof LintFile>;
 
 const BaseLintParams = z.object({
     lintFile: z.string(),

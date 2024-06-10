@@ -1,9 +1,11 @@
 import { z } from "zod";
-import { ZodLintRule, createRule } from "../../src/reports/lint/LintRule";
-import { ILintFile, LintReport } from "../../src/reports/LintReport";
+import { ILintFile, ZodLintRule, createRule } from "../../src/reports/lint/LintRule";
+import { LintReport } from "../../src/reports/LintReport";
 import { ReportService } from "../../src/reports/ReportService";
 import { createMockContext } from "../common";
 import { IMockPackageJson, MockProvider } from "../mocks";
+import { MetaFileAttachment } from "../../src/attachments/MetaFileAttachment";
+import { npmOnline } from "../../src";
 
 describe(`LintReport Test`, () => {
     const medalloPkg: IMockPackageJson = {
@@ -58,7 +60,7 @@ describe(`LintReport Test`, () => {
         jest.doMock(
             `/getsMockedAnyway.js`,
             () => ({
-                rules: [createRule(`error`, { name: `test-rule`, check: mockFn })]
+                rules: [createRule(`error`, { name: `test-rule`, check: mockFn }, {})]
             }),
             {
                 virtual: true
@@ -171,6 +173,33 @@ describe(`LintReport Test`, () => {
 
         expect(stdout.lines).toMatchSnapshot();
     });
+
+    const abc = createRule(
+        `error`,
+        {
+            name: `test-rule`,
+            attachments: [new MetaFileAttachment(npmOnline)],
+            check: (pkg, params) => {
+                expect(params.foo).toBe(`bar`);
+                pkg.getAttachmentData(`metafile`);
+                // @ts-expect-error
+                pkg.getAttachmentData(`npm-online`);
+            }
+        },
+        { foo: `bar` }
+    );
+
+    const abc2 = createRule(
+        `error`,
+        {
+            name: `test-rule`,
+            // attachments: [new MetaFileAttachment(npmOnline)],
+            check: (_, params) => {
+                expect(params.foo).toBe(`bar`);
+            }
+        },
+        { foo: `bar` }
+    );
 
     test(`calls lint function with custom params`, async () => {
         jest.doMock(
@@ -295,17 +324,13 @@ describe(`"internal-error" Lint Test`, () => {
 
     const lintFile: ILintFile = {
         rules: [
-            createRule(`warning`, { name: `report-all`, check: () => `` }, {}),
-            createRule(
-                `warning`,
-                {
-                    name: `will-throw`,
-                    check: () => {
-                        throw new Error(`whoops`);
-                    }
-                },
-                {}
-            )
+            createRule(`warning`, { name: `report-all`, check: () => `` }),
+            createRule(`warning`, {
+                name: `will-throw`,
+                check: () => {
+                    throw new Error(`whoops`);
+                }
+            })
         ]
     };
 
