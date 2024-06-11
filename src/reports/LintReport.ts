@@ -87,16 +87,21 @@ export class LintReport extends AbstractReport<ILintParams> {
                 let checkResult;
 
                 try {
-                    checkResult = rule.check(dep, params) as unknown;
+                    const checkParams = rule.checkParams?.() ?? z.any();
+                    const checkParamsResult = checkParams.safeParse(params);
+
+                    if (!checkParamsResult.success) {
+                        throw new Error(`invalid params "${JSON.stringify(params)}"`);
+                    }
+
+                    checkResult = rule.check(dep, checkParamsResult.data);
 
                     if (this._isvalidResultFormat(checkResult)) {
                         if (type === `error`) {
                             this.exitCode = 1;
                         }
 
-                        const messages = Array.isArray(checkResult) ? checkResult : [checkResult];
-
-                        for (const message of messages) {
+                        for (const message of this.#toMessageArray(checkResult)) {
                             lintResults.push({
                                 type,
                                 name: rule.name,
@@ -117,6 +122,10 @@ export class LintReport extends AbstractReport<ILintParams> {
         }, true);
 
         resultFormatter.format(lintResults);
+    }
+
+    #toMessageArray(result: string | string[]): string[] {
+        return Array.isArray(result) ? result : [result];
     }
 
     private _reportError(

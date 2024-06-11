@@ -71,4 +71,15 @@ describe("validateKeys", () => {
         // @ts-expect-error
         expect(() => void rule.check(pkg, 123)).toThrow();
     });
+
+    test(`has custom validation`, () => {
+        const rule = new ValidateKey();
+        const schema = rule.checkParams();
+        const valid = schema.safeParse({
+            key: "description",
+            validator: () => true
+        });
+
+        expect(valid.success).toBe(true);
+    });
 });

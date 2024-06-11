@@ -1,15 +1,15 @@
 {
-	"version": "2.0.0",
-	"tasks": [
-		{
-			"type": "npm",
-			"script": "dev",
-			"problemMatcher": [],
-			"label": "Compile & watch",
-			//"detail": "",
-			"runOptions": {
-				"runOn": "folderOpen"
-			}
-		}
-	]
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "npm",
+            "script": "dev",
+            "problemMatcher": [],
+            "label": "Compile & watch",
+            //"detail": "",
+            "runOptions": {
+                "runOn": "folderOpen"
+            }
+        }
+    ]
 }

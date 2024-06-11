@@ -1,14 +1,17 @@
+import { z } from "zod";
 import type { IPackage } from "../../../package/package";
 import { ILintCheck } from "../LintRule";
 
-interface IConfigValidator {
-    path: string;
-    validator: (value: unknown) => boolean;
-}
+const configValidatorScheme = z.object({
+    path: z.string(),
+    validator: z.function().args(z.unknown()).returns(z.boolean())
+});
 
-export interface IMissingFieldConfig {
-    fields: Array<string | IConfigValidator>;
-}
+const missingFieldConfigSchema = z.object({
+    fields: z.array(z.union([z.string(), configValidatorScheme]))
+});
+
+export type IMissingFieldConfig = z.infer<typeof missingFieldConfigSchema>;
 
 export class MissingFields implements ILintCheck<IMissingFieldConfig> {
     name: string = "missing-field";
@@ -17,7 +20,7 @@ export class MissingFields implements ILintCheck<IMissingFieldConfig> {
         const messages: string[] = [];
 
         for (const field of fields) {
-            if (typeof field === "string") {
+            if (this.#isStringField(field)) {
                 if (!pkg.getData(field)) {
                     messages.push(`missing field: ${field}`);
                 }
@@ -27,5 +30,13 @@ export class MissingFields implements ILintCheck<IMissingFieldConfig> {
         }
 
         return messages;
+    }
+
+    checkParams() {
+        return missingFieldConfigSchema;
+    }
+
+    #isStringField(field: unknown): field is string {
+        return z.string().safeParse(field).success;
     }
 }

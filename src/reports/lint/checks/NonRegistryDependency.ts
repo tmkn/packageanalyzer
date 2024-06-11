@@ -24,17 +24,17 @@ export const NonRegistryDependency: ILintCheck = {
             const dependencies = pkg.getData(dependencyType);
 
             if (typeof dependencies !== "object" || dependencies === null) {
-                return;
+                continue;
             }
 
             for (const [name, target] of Object.entries(dependencies)) {
                 if (target.startsWith("file:")) {
-                    results.push(`detected a local dependency (${name})`);
+                    results.push(`dependency ${name} is included via file:`);
                 }
 
-                const match = gitProtocols.find(protocol => target.startsWith(protocol));
-                if (match) {
-                    results.push(`detected a git dependency (${name})`);
+                const foundProtocol = gitProtocols.find(protocol => target.startsWith(protocol));
+                if (foundProtocol) {
+                    results.push(`dependency ${name} is included via ${foundProtocol}`);
                 }
             }
         }
