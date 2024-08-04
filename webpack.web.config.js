@@ -16,7 +16,10 @@ const compiler = webpack({
                     options: {
                         projectReferences: true,
                         configFile: "./tsconfig.json",
-                        transpileOnly: true
+                        transpileOnly: true,
+                        // TS5069: Option 'declarationMap' cannot be specified without specifying option 'declaration' or option 'composite'.
+                        // introduced when upgrading from 5.5.3 to 5.5.4 ¯\_(ツ)_/¯
+                        ignoreDiagnostics: [5069]
                     }
                 },
                 exclude: /node_modules/
