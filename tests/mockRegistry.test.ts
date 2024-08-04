@@ -1,6 +1,6 @@
 import * as path from "path";
 
-import * as nock from "nock";
+import nock from "nock";
 
 import { npmOnline } from "../src";
 import { setupRegistryMocks } from "./common";

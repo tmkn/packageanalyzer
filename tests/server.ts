@@ -4,7 +4,7 @@ import * as path from "path";
 import * as fs from "fs";
 import { Server } from "http";
 
-import * as express from "express";
+import express from "express";
 
 import { IPackageMetadata, isUnpublished } from "../src/npm";
 
@@ -49,12 +49,13 @@ abstract class AbstractMockServer {
     close(): Promise<void> {
         return new Promise(resolve => {
             if (!this._server) resolve();
-            else
+            else {
+                this._server.closeAllConnections();
                 this._server.close(e => {
                     if (e) process.stderr.write(e.message);
-
                     resolve();
                 });
+            }
         });
     }
 }

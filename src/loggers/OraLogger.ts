@@ -1,4 +1,4 @@
-import * as ora from "ora";
+import ora from "ora";
 
 import { ILogger } from "./ILogger";
 

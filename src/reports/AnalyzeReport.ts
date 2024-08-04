@@ -1,4 +1,4 @@
-import * as chalk from "chalk";
+import chalk from "chalk";
 import { z } from "zod";
 
 import { daysAgo } from "../cli/common";
