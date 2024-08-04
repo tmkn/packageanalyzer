@@ -1,4 +1,4 @@
-import * as chalk from "chalk";
+import chalk from "chalk";
 
 import { IPackage } from "../../package/package";
 import { IFormatter } from "../../utils/formatter";

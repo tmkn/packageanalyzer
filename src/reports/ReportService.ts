@@ -1,5 +1,5 @@
 import { Writable } from "stream";
-import * as chalk from "chalk";
+import chalk from "chalk";
 import { z } from "zod";
 
 import { IPackage } from "../package/package";

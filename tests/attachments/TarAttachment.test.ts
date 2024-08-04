@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 
-import * as nock from "nock";
+import nock from "nock";
 
 import { IPackage } from "../../src/package/package";
 import { ITarData, TarAttachment } from "../../src/attachments/TarAttachment";

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import * as chalk from "chalk";
+import chalk from "chalk";
 
 import { defaultDependencyType } from "../cli/common";
 import { DependencyUtilities } from "../extensions/utilities/DependencyUtilities";

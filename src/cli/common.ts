@@ -1,7 +1,7 @@
 import * as path from "path";
 import * as fs from "fs";
 
-import * as dayjs from "dayjs";
+import dayjs from "dayjs";
 import { Command } from "clipanion";
 
 import { AbstractReport } from "../reports/Report";

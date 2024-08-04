@@ -1,4 +1,4 @@
-import * as chalk from "chalk";
+import chalk from "chalk";
 import { z, ZodTypeAny } from "zod";
 
 import { LoopUtilities } from "../extensions/utilities/LoopUtilities";

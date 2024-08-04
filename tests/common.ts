@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import { BaseContext } from "clipanion";
-import * as nock from "nock";
+import nock from "nock";
 
 import { Writable } from "stream";
 import { IPackage } from "../src/package/package";
