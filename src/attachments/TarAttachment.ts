@@ -5,6 +5,25 @@ import * as tar from "tar";
 import { IApplyArgs, IAttachment } from "./Attachments";
 import { pipeline } from "stream";
 
+// process tarball, discard directories and save files to files map
+function processTar(files: Map<string, string>): tar.Parser {
+    return tar.t({
+        filter: (path, entry) => entry instanceof tar.ReadEntry && entry.type === "File",
+        onReadEntry: entry => {
+            let buffer: Buffer = Buffer.from(``);
+
+            entry.on("data", chunk => {
+                buffer = Buffer.concat([buffer, chunk]);
+            });
+
+            entry.on("end", () => {
+                const file = buffer.toString("utf8");
+                files.set(entry.path, file);
+            });
+        }
+    });
+}
+
 export interface ITarData {
     files: Map<string, string>;
 }
@@ -28,34 +47,13 @@ export class TarAttachment implements IAttachment<"tar", ITarData> {
 
                 if (typeof url === "string") {
                     https.get(url, res => {
-                        pipeline(
-                            res,
-                            new tar.Parse({
-                                filter: (path, entry) => entry.type === "File",
-                                onentry: entry => {
-                                    let buffer: Buffer = Buffer.from(``);
-
-                                    entry.on("data", chunk => {
-                                        buffer = Buffer.concat([buffer, chunk]);
-                                    });
-
-                                    entry.on("end", chunk => {
-                                        buffer += chunk;
-
-                                        const file = buffer.toString("utf8");
-
-                                        files.set(entry.path, file);
-                                    });
-                                }
-                            }),
-                            error => {
-                                if (error) reject(error);
-                                else {
-                                    this._cache.set(p.fullName, { files });
-                                    resolve({ files });
-                                }
+                        pipeline(res, processTar(files), error => {
+                            if (error) reject(error);
+                            else {
+                                this._cache.set(p.fullName, { files });
+                                resolve({ files });
                             }
-                        );
+                        });
                     });
                 } else {
                     reject(new Error(`No tarball url found for ${p.fullName}`));
