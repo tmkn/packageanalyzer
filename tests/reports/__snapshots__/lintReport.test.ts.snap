@@ -38,3 +38,10 @@ exports[`LintReport Test correctly throws on failed custom validation 1`] = `
   "",
 ]
 `;
+
+exports[`LintReport Test errors on invalid lint file 1`] = `
+[
+  "Error: Invalid lint file format: /getsMockedAnyway.js",
+  "",
+]
+`;

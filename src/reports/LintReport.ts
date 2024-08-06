@@ -33,8 +33,6 @@ export class LintReport extends AbstractReport<ILintParams> {
     pkg: PackageVersion;
     override depth: number | undefined;
 
-    rules: ILintFile;
-
     constructor(params: ILintParams) {
         super(params);
         this.depth = params.depth;
@@ -45,27 +43,22 @@ export class LintReport extends AbstractReport<ILintParams> {
             this.pkg = getPackageVersionFromPath(params.folder);
             this.provider = new FileSystemPackageProvider(params.folder);
         }
-
-        const lintFile = this._loadLintFile(params.lintFile);
-
-        if (this._isLintFile(lintFile)) {
-            this.rules = lintFile;
-        } else {
-            throw new Error(`Invalid lint file format: ${params.lintFile}`);
-        }
     }
 
-    private _loadLintFile(lintFile: string): unknown {
-        let lintFileData: unknown;
-
+    private async _loadLintFile(lintFile: string): Promise<ILintFile> {
         const importPath: string = path.isAbsolute(lintFile)
             ? lintFile
             : path.join(process.cwd(), lintFile);
 
-        const data = require(importPath);
-        lintFileData = data;
+        const importedLintFile = await import(importPath);
 
-        return lintFileData;
+        if (this._isLintFile(importedLintFile)) {
+            return importedLintFile;
+        } else {
+            this.exitCode = 1;
+
+            throw new Error(`Invalid lint file format: ${this.params.lintFile}`);
+        }
     }
 
     private _isPackageLintParams(data: unknown): data is z.infer<typeof PackageLintParams> {
@@ -77,13 +70,15 @@ export class LintReport extends AbstractReport<ILintParams> {
     }
 
     async report(context: IReportContext, pkg: IPackage): Promise<void> {
+        const rules: ILintFile = await this._loadLintFile(this.params.lintFile);
+
         const resultFormatter = new LintResultFormatter(context.stdoutFormatter);
         const lintResults: ILintResult[] = [];
 
         context.stdoutFormatter.writeLine(`PackageLint: ${pkg.fullName}`);
 
         pkg.visit(dep => {
-            for (const [type, rule, params] of this.rules.rules) {
+            for (const [type, rule, params] of rules.rules) {
                 let checkResult;
 
                 try {

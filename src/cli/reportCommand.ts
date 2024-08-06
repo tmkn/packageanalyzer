@@ -23,7 +23,7 @@ export class ReportCommand extends Command {
         const importPath: string = path.isAbsolute(this.config)
             ? this.config
             : path.join(process.cwd(), this.config);
-        const config = require(importPath);
+        const config = await import(importPath);
         const reportService = new ReportService(config, this.context.stdout, this.context.stderr);
 
         await reportService.process();
