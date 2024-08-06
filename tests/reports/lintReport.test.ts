@@ -1,9 +1,12 @@
+import path from "path";
+
 import { z } from "zod";
 import { ZodLintRule, createRule } from "../../src/reports/lint/LintRule";
 import { ILintFile, LintReport } from "../../src/reports/LintReport";
 import { ReportService } from "../../src/reports/ReportService";
 import { createMockContext } from "../common";
 import { IMockPackageJson, MockProvider } from "../mocks";
+import exp from "constants";
 
 describe(`LintReport Test`, () => {
     const medalloPkg: IMockPackageJson = {
@@ -20,7 +23,7 @@ describe(`LintReport Test`, () => {
         jest.resetModules();
     });
 
-    test(`calls lint function for all dependencies`, async () => {
+    test(`loads and executes lint file with absolute path`, async () => {
         const mockFn = jest.fn();
         jest.doMock(
             `/getsMockedAnyway.js`,
@@ -51,6 +54,67 @@ describe(`LintReport Test`, () => {
         await reportService.process();
 
         expect(mockFn).toHaveBeenCalledTimes(3);
+    });
+
+    test(`loads and executes lint file with relative path`, async () => {
+        const mockFn = jest.fn();
+        jest.doMock(
+            path.join(process.cwd(), `./getsMockedAnyway.js`),
+            () => ({
+                rules: [createRule(`error`, { name: `test-rule`, check: mockFn })]
+            }),
+            {
+                virtual: true
+            }
+        );
+
+        const lintReport = new LintReport({
+            lintFile: `./getsMockedAnyway.js`,
+            package: `medallo@1.0.0`,
+            depth: Infinity
+        });
+        lintReport.provider = provider;
+
+        const { stdout, stderr } = createMockContext();
+        const reportService = new ReportService(
+            {
+                reports: [lintReport]
+            },
+            stdout,
+            stderr
+        );
+
+        await reportService.process();
+
+        expect(mockFn).toHaveBeenCalledTimes(3);
+    });
+
+    test(`errors on invalid lint file`, async () => {
+        jest.doMock(`/getsMockedAnyway.js`, () => ({}), {
+            virtual: true
+        });
+
+        const lintReport = new LintReport({
+            lintFile: `/getsMockedAnyway.js`,
+            package: `medallo@1.0.0`,
+            depth: Infinity
+        });
+        lintReport.provider = provider;
+
+        const { stdout, stderr } = createMockContext();
+        const reportService = new ReportService(
+            {
+                reports: [lintReport]
+            },
+            stdout,
+            stderr
+        );
+
+        expect.assertions(2);
+        const exitCode = await reportService.process();
+
+        expect(stderr.lines).toMatchSnapshot();
+        expect(exitCode).toBe(1);
     });
 
     test(`calls lint function only on root`, async () => {
