@@ -70,8 +70,10 @@ export class UpdateInfoReport extends AbstractReport<IUpdateInfoParams> {
                     `${data.latestOverall.version} ${daysAgo(data.latestOverall.releaseDate)}`
                 ]
             ]);
-        } catch (e: any) {
-            stderrFormatter.writeLine(e?.toString());
+        } catch (e: unknown) {
+            if (e instanceof Error) {
+                stderrFormatter.writeLine(e?.toString());
+            }
         }
     }
 

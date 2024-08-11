@@ -52,7 +52,7 @@ describe(`Update Info Command`, () => {
         const { mockContext, stdout, stderr } = createMockContext();
         command.context = mockContext;
         command.beforeProcess = report => {
-            let wrongProvider = new (class implements IPackageJsonProvider {
+            const wrongProvider = new (class implements IPackageJsonProvider {
                 getPackageJson(name: string, version?: string | undefined): Promise<IPackageJson> {
                     return provider.getPackageJson(name, version);
                 }

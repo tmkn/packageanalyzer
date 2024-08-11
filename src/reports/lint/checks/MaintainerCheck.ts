@@ -41,7 +41,7 @@ export class MaintainerCheck implements ILintCheck<IMaintainerCheck> {
 
     // user info can be a standalone string or an object or wrapped in an array
     // convert to array for easier processing
-    #toArray(data: unknown): any[] {
+    #toArray(data: unknown): unknown[] {
         return Array.isArray(data) ? data : [data];
     }
 

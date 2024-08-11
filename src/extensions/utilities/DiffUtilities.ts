@@ -15,7 +15,7 @@ export class DiffUtilities {
             const toMaintainers = this._toPkg.getData(`maintainers`);
 
             if (isNpmUserArray(fromMaintainers) && isNpmUserArray(toMaintainers)) {
-                let newMaintainers: INpmUser[] = [];
+                const newMaintainers: INpmUser[] = [];
 
                 for (const maintainer of toMaintainers) {
                     const isAlreadyMaintainer = fromMaintainers.find(

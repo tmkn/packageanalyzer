@@ -189,7 +189,7 @@ describe(`DiffReport Tests`, () => {
     });
 
     test(`Correctly throws on malformed params`, () => {
-        //@ts-expect-error
+        //@ts-expect-error params are intentionally wrong
         expect(() => new DiffReport({})).toThrow();
     });
 });

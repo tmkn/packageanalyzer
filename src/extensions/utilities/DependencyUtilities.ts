@@ -58,7 +58,7 @@ class BaseDependencyUtilities {
             }
         }, this._includeSelf);
 
-        let max: number = [...mostReferred.values()].reduce(
+        const max: number = [...mostReferred.values()].reduce(
             (prev, current) => (current > prev ? current : prev),
             0
         );

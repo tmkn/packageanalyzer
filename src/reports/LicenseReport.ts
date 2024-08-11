@@ -114,7 +114,7 @@ class LicenseCheckPrinter {
     }
 
     private _print(data: Map<IPackage, ILicenseCheckResult>): void {
-        let padding = [...data.keys()].reduce(
+        const padding = [...data.keys()].reduce(
             (previous, current) =>
                 current.fullName.length > previous ? current.fullName.length : previous,
             0

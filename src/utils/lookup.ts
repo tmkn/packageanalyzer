@@ -150,7 +150,7 @@ function verifySingleLookup(
         } else {
             throw new Error(`Package name didn't match [${name}/${pkg.name}]`);
         }
-    } catch (e) {
+    } catch {
         throw new Error(`Couldn't verify lookup`);
     }
 }

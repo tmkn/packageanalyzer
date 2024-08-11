@@ -42,12 +42,9 @@ describe(`LoopsReport Test`, () => {
         try {
             const report = new LoopsReport({
                 package: `foo`,
-                //@ts-expect-error
+                //@ts-expect-error type needs to be a valid dependency type
                 type: `xxx`
             });
-
-            //@ts-expect-error
-            await report.report(null, {});
         } catch (e) {
             expect(e).toBeInstanceOf(Error);
         }

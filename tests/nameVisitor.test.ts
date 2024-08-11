@@ -98,7 +98,7 @@ describe(`visitFromFolder Tests`, () => {
         expect.assertions(2);
 
         expect(match).not.toBe(null);
-        expect(match!.name).toBe("has-value"); //eslint-disable-line
+        expect(match!.name).toBe("has-value");  
     });
 
     test(`Test getPackageByName with version`, () => {
@@ -107,8 +107,8 @@ describe(`visitFromFolder Tests`, () => {
         expect.assertions(3);
 
         expect(match).not.toBe(null);
-        expect(match!.name).toBe("has-value"); //eslint-disable-line
-        expect(match!.version).toBe("1.0.0"); //eslint-disable-line
+        expect(match!.name).toBe("has-value");  
+        expect(match!.version).toBe("1.0.0");  
     });
 
     test(`Test getPackageByName with version`, () => {

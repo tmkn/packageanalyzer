@@ -12,7 +12,8 @@ export default [
         files: ["tests/**/*.ts"],
         rules: {
             "@typescript-eslint/no-unused-vars": "off",
-            "@typescript-eslint/no-explicit-any": "off"
+            "@typescript-eslint/no-explicit-any": "off",
+            "no-case-declarations": "off"
         }
     }
 ];

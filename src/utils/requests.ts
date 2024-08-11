@@ -62,7 +62,7 @@ export async function downloadJson<T extends object>(
             const response = await download(url, timeoutLimit);
 
             return JSON.parse(response);
-        } catch (e) {
+        } catch {
             retries++;
 
             continue;

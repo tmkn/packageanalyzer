@@ -78,6 +78,7 @@ export async function printStatistics(
 ): Promise<void> {
     formatter.writeLine(`Statistics for ${chalk.bold(p.fullName)}\n`);
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     all ? await printAllStatistics(p, formatter) : printBasicStatistics(p, formatter);
 }
 
@@ -232,7 +233,6 @@ function printMostReferred(mostReferred: IMostReferred, formatter: IFormatter): 
 
         const names = [...mostReferred.pkgs.values()].map(name => name).join(`, `);
         str = `"[${names}]": ${mostReferred.count}`;
-    } catch {
     } finally {
         formatter.writeGroup([[`Most referred package`, `${str}`]]);
     }

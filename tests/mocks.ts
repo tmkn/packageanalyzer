@@ -17,7 +17,7 @@ export function createMockPackage(
     type: DependencyTypes = "dependencies"
 ): Package<any> {
     const data = convertToPackageJson(mockData, type);
-    // @ts-expect-error
+    // @ts-expect-error some properties are missing
     const pkgJson: IPackageJson = {
         ...{
             name: `mockPackage`,

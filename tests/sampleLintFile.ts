@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import { createRule } from "../src/reports/lint/LintRule";
 import { MissingFields } from "../src/reports/lint/checks/MissingFields";
 import { MissingLicense } from "../src/reports/lint/checks/MissingLicense";
