@@ -46,17 +46,17 @@ function visit<T>(node: T, converter: ITreeFormatter<T>, prefix: string, lines: 
 }
 
 //adapts the last part of a prefix for a new level
-//e.g. changes '├──' to '│  ' and '└──' to '   '
+//e.g. changes '├──' to '│  ' and '└──' to '    '
 function adaptPrefix(prefix: string): string {
     const basePrefix = prefix.slice(0, -4);
     const lastIdentation = prefix.slice(-4);
 
     if (lastIdentation === Leaf) {
-        const newIdentation = `    `;
+        const newIdentation = `    `;
 
         return `${basePrefix}${newIdentation}`;
     } else if (lastIdentation === NonLeaf) {
-        const newIdentation = `│   `;
+        const newIdentation = `│   `;
 
         return `${basePrefix}${newIdentation}`;
     }

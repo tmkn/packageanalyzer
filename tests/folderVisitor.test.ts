@@ -108,8 +108,8 @@ describe(`visitFromName Error Handling`, () => {
         size = 0;
 
         getPackageJson(
-            name: string /* eslint-disable-line */,
-            version?: string | undefined /* eslint-disable-line */
+            name: string  ,
+            version?: string | undefined  
         ): Promise<IPackageJson> {
             throw new CustomError(`getPackageByVersion not implemented`);
         }

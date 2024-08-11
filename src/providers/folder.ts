@@ -53,7 +53,7 @@ export class FileSystemPackageProvider implements IPackageJsonProvider {
                 const pkg: IPackageJson = JSON.parse(content);
 
                 this.addPackage(pkg);
-            } catch (e) {
+            } catch {
                 failedPaths.push(pkgPath);
 
                 continue;
@@ -163,7 +163,7 @@ export class DumpPackageProvider extends AbstractPackageProvider {
                 const pkg: IPackageMetadata = JSON.parse(content);
 
                 this._cache.set(pkg.name, pkg);
-            } catch (e) {
+            } catch {
                 failedPaths.push(pkgPath);
 
                 continue;

@@ -131,7 +131,7 @@ describe(`Diff Utilities Tests`, () => {
     });
 
     test(`isMaintainerTakeover returns false on malformed user`, () => {
-        // @ts-expect-error
+        // @ts-expect-error only provide necessary data
         const toPkg = createMockPackage({
             ...toBaseData,
             ...{

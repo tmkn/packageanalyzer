@@ -68,7 +68,7 @@ describe(`DependencyDumper Tests`, () => {
             const dumper = new DependencyDumper();
 
             await dumper.collect(["react", "16.8.1"], `http://localhost:${server.port}`);
-            //@ts-expect-error
+            //@ts-expect-error idk anymore
             dumper.pkg._data.name = `unknownpkg`;
 
             await fs.rm(outputFolder, { recursive: true, force: true });

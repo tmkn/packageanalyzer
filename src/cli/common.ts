@@ -16,7 +16,7 @@ export function getVersion(): string {
         const file = path.join(__dirname, "./../../../package.json");
 
         return JSON.parse(fs.readFileSync(file, "utf8")).version;
-    } catch (e) {
+    } catch {
         return "version parse error!";
     }
 }
@@ -45,10 +45,10 @@ export abstract class CliCommand<T extends AbstractReport<any>> extends Command 
 
             this.beforeProcess?.(report);
             this.exitCode = (await reportService.process()) ?? 0;
-        } catch (e: any) {
+        } catch (e: unknown) {
             const stderrFormatter: IFormatter = new Formatter(this.context.stderr);
 
-            stderrFormatter.writeLine(e);
+            if (e) stderrFormatter.writeLine(e?.toString());
             this.exitCode = 1;
         }
 

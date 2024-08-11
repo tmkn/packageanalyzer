@@ -58,7 +58,7 @@ class WhitelistLicenseCheckService {
                     all.set(pkg, result);
                     failedChecks.set(pkg, result);
                 }
-            } catch (e: unknown) {
+            } catch {
                 result = {
                     ok: false,
                     parseError: true

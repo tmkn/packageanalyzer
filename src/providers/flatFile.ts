@@ -24,7 +24,7 @@ export class FlatFileProvider implements IPackageJsonProvider {
             const folder = path.dirname(npmFile);
 
             return path.join(folder, `${baseName}.lookup.txt`);
-        } catch (e) {
+        } catch {
             throw new Error(`Couldn't find lookup file for ${npmFile}`);
         }
     }
@@ -95,7 +95,7 @@ export class FlatFileProvider implements IPackageJsonProvider {
                 this._logger.log(
                     `Parsing Lookup [${getPercentage(parsedBytes, fileSize)}%] ${name}`
                 );
-            } catch (e) {
+            } catch {
                 this._logger.log(`Couldn't parse line: ${lineNum}`);
             }
         }

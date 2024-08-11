@@ -1,6 +1,7 @@
 import { IPackage } from "../../src/package/package";
 import { DownloadReport } from "../../src/reports/DownloadCountReport";
 import { Formatter } from "../../src/utils/formatter";
+import { createMockPackage } from "../mocks";
 import { createMockContext } from "./../common";
 import { createMockDownloadServer, IMockServer } from "./../server";
 
@@ -19,10 +20,9 @@ describe(`DownloadCountReport Tests`, () => {
             url: `http://localhost:${server.port}/`
         });
 
-        //@ts-expect-error
-        const fakePgk: IPackage = {
+        const fakePgk = createMockPackage({
             name: `_downloads`
-        };
+        });
         const { stdout, stderr } = createMockContext();
         const stdoutFormatter = new Formatter(stdout);
         const stderrFormatter = new Formatter(stderr);

@@ -68,7 +68,7 @@ describe("validateKeys", () => {
         const pkg = createMockPackage({});
         const rule = new ValidateKey();
 
-        // @ts-expect-error
+        // @ts-expect-error invalid params
         expect(() => void rule.check(pkg, 123)).toThrow();
     });
 

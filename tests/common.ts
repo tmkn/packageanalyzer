@@ -24,7 +24,7 @@ class TestWritable extends Writable {
         if (this._output === "") return [];
 
         //remove ansi escape codes, azure doesn't like them
-        let cleaned: string = this._output.replace(TestWritable._regex, "");
+        const cleaned: string = this._output.replace(TestWritable._regex, "");
 
         return cleaned.split("\n");
     }

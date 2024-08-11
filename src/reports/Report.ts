@@ -6,7 +6,6 @@ import { IFormatter } from "../utils/formatter";
 import { PackageVersion } from "../visitors/visitor";
 import { DependencyTypes } from "./Validation";
 import { AttachmentData, IAttachment } from "../attachments/Attachments";
-import { MetaFileAttachment } from "../attachments/MetaFileAttachment";
 
 export interface IReportContext {
     stdoutFormatter: IFormatter;
@@ -28,8 +27,6 @@ export type Args<T, D extends Array<IAttachment<string, any>>> = T extends [Pack
         : T extends PackageVersion
           ? [IPackage<AttachmentData<D>>]
           : Array<IPackage<AttachmentData<D>> | undefined>;
-
-let test: Args<[PackageVersion, PackageVersion], [MetaFileAttachment]>;
 
 export interface IReport<
     PackageEntry,

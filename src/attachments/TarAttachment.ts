@@ -38,7 +38,7 @@ export class TarAttachment implements IAttachment<"tar", ITarData> {
 
     apply({ p }: IApplyArgs): Promise<ITarData> {
         return new Promise<ITarData>((resolve, reject) => {
-            let cachedFiles = this._cache.get(p.fullName);
+            const cachedFiles = this._cache.get(p.fullName);
 
             if (cachedFiles) resolve(cachedFiles);
             else {

@@ -46,7 +46,7 @@ describe(`Request Tests`, () => {
     });
 
     test(`Returns null for invalid protocol`, async () => {
-        //@ts-expect-error
+        //@ts-expect-error protocol is not a valid protocol
         const response = await downloadJson(`abc`, threshold);
 
         expect(response).toBeNull();

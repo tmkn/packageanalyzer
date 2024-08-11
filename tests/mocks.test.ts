@@ -92,7 +92,7 @@ describe(`Mock Tests`, () => {
     });
 
     test(`Throws on wrong "type"`, () => {
-        //@ts-expect-error
+        //@ts-expect-error type is wrong
         expect(() => createMockPackage({}, "wrong_type")).toThrow();
     });
 
