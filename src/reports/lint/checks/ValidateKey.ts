@@ -1,10 +1,10 @@
-import { z } from "zod";
+import { z, ZodType } from "zod";
 import { IPackage } from "../../../package/package";
 import { ILintCheck } from "../LintRule";
 
 const stringParamSchema = z.string();
 const keyConfigParamSchema = z.object({
-    key: stringParamSchema,
+    key: z.string(),
     validator: z.function().args(z.unknown()).returns(z.boolean()),
     message: z.string().optional()
 });
@@ -35,7 +35,7 @@ export class ValidateKey implements ILintCheck<ValidateKeyParams> {
         }
     }
 
-    checkParams() {
+    checkParams(): ZodType<ValidateKeyParams> {
         return paramsSchema;
     }
 

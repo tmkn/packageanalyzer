@@ -52,6 +52,8 @@ export interface IReport<
     validate?(): ZodValidateObject;
 }
 
+export type GenericReport = IReport<EntryTypes, any, z.ZodTypeAny>;
+
 export type ReportMethodSignature<T> = IReport<T, {}, z.ZodTypeAny>["report"];
 export type SingleReportMethodSignature = ReportMethodSignature<PackageVersion>;
 

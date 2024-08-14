@@ -37,6 +37,7 @@ export abstract class CliCommand<T extends AbstractReport<any>> extends Command 
             const report = this.getReport();
             const reportService = new ReportService(
                 {
+                    mode: "distinct",
                     reports: [report]
                 },
                 this.context.stdout,
