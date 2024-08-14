@@ -1,25 +1,56 @@
-import { ZodType, z } from "zod";
+import { ZodTypeAny, z } from "zod";
 
 import type { IPackage } from "../../package/package";
+import { AttachmentData, IAttachment } from "../../attachments/Attachments";
 
 const LintTypes = z.union([z.literal("error"), z.literal("warning")]);
 
 export type ILintTypes = z.infer<typeof LintTypes>;
 
-export interface ILintCheck<T = undefined> {
+interface ISharedLintCheckParams {
     name: string;
-    check: (pkg: IPackage, params: T) => string | string[] | void;
-    checkParams?: () => ZodType<T>;
+    checkParams?: () => ZodTypeAny;
 }
 
-export type LintRule<T> =
-    T extends ILintCheck<infer Params>
-        ? Params extends undefined
-            ? [ILintTypes, ILintCheck<Params>]
-            : [ILintTypes, T, Params]
-        : never;
+interface IBaseLintCheck<T> extends ISharedLintCheckParams {
+    check: (pkg: IPackage, params: T) => string | string[] | void;
+}
 
-export const ZodLintRule = z.custom<LintRule<ILintCheck<any>>>(data => {
+interface ILintCheckWithAttachments<T, A extends IAttachment<string, any>[]>
+    extends ISharedLintCheckParams {
+    check: (pkg: IPackage<AttachmentData<A>>, params: T) => string | string[] | void;
+    attachments: A;
+}
+
+export type ILintCheck<
+    T = undefined,
+    A extends IAttachment<string, any>[] | undefined = undefined
+> = A extends {} ? ILintCheckWithAttachments<T, A> : IBaseLintCheck<T>;
+
+type IBaseLintTuple<P> = P extends {}
+    ? [ILintTypes, IBaseLintCheck<P>, P]
+    : [ILintTypes, IBaseLintCheck<P>];
+
+type ILintTupleWithAttachmentsTuple<P, A extends IAttachment<string, any>[]> = P extends {}
+    ? [ILintTypes, ILintCheckWithAttachments<P, A>, P]
+    : [ILintTypes, ILintCheckWithAttachments<P, A>];
+
+// infer the correct LintCheck type
+// it somehow does what it's supposed to do lol
+export type LintRuleTuple<C extends ILintCheck<any, any> = ILintCheck> =
+    C extends ILintCheck<infer P, infer A extends IAttachment<string, any>[]>
+        ? ILintTupleWithAttachmentsTuple<P, A>
+        : C extends ILintCheck<infer P>
+          ? IBaseLintTuple<P>
+          : never;
+
+export function hasAttachments<P>(
+    check: IBaseLintCheck<P> | ILintCheckWithAttachments<P, any>
+): check is ILintCheckWithAttachments<P, any> {
+    return "attachments" in check;
+}
+
+export const ZodLintRule = z.custom<LintRuleTuple<ILintCheck<any>>>(data => {
     if (Array.isArray(data)) {
         const [type, check] = data;
 
@@ -35,6 +66,19 @@ export const ZodLintRule = z.custom<LintRule<ILintCheck<any>>>(data => {
     return false;
 });
 
-export function createRule<T>(...args: LintRule<ILintCheck<T>>): LintRule<ILintCheck<T>> {
+// todo unify createRule and createRuleWithAttachment for better developer experience
+export function createRule<P = undefined>(...args: IBaseLintTuple<P>): IBaseLintTuple<P> {
     return [...args];
 }
+
+export function createRuleWithAttachment<P = undefined, A extends IAttachment<string, any>[] = []>(
+    ...args: ILintTupleWithAttachmentsTuple<P, A>
+): ILintTupleWithAttachmentsTuple<P, A> {
+    return [...args];
+}
+
+export const LintFile = z.object({
+    rules: z.array(ZodLintRule)
+});
+
+export type ILintFile = z.infer<typeof LintFile>;

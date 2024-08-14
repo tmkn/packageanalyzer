@@ -1,12 +1,14 @@
 import { Command, Option } from "clipanion";
-import { z } from "zod";
 
-import { LintReport, LintReportParams } from "../reports/LintReport";
-import { CliCommand } from "./common";
+import { ILintServiceConfig, LintService } from "../reports/lint/LintService";
+import { LintFileLoader } from "../reports/lint/RulesLoader";
+import { getPackageVersionfromString } from "../visitors/visitor";
+import { npmOnline } from "../providers/online";
+import { FileSystemPackageProvider } from "../providers/folder";
+import { Formatter, IFormatter } from "../utils/formatter";
+import { getPackageVersionFromPath } from "../visitors/util.node";
 
-export type IAnalyzeParams = z.infer<typeof LintReportParams>;
-
-export class LintCommand extends CliCommand<LintReport> {
+export class LintCommand extends Command {
     public lintFile = Option.String();
 
     public depth = Option.String(`--depth`, "no_valid_number", {
@@ -39,31 +41,48 @@ export class LintCommand extends CliCommand<LintReport> {
 
     static override paths = [[`lint`]];
 
-    getReport(): LintReport {
+    async execute() {
+        try {
+            const config = this.#getConfig();
+            this.beforeProcess?.(config);
+            const lintService = new LintService(config, this.context.stdout, this.context.stderr);
+
+            return lintService.process();
+        } catch (e: any) {
+            const stderrFormatter: IFormatter = new Formatter(this.context.stderr);
+
+            stderrFormatter.writeLine(e?.toString());
+            console.error(e?.toString());
+
+            return 1;
+        }
+    }
+
+    #getConfig(): ILintServiceConfig {
         let depth = parseInt(this.depth, 10);
 
         if (isNaN(depth)) {
             depth = Infinity;
         }
 
-        if (this.folder) {
-            const params: IAnalyzeParams = {
-                folder: this.folder,
-                depth: depth,
-                lintFile: this.lintFile
+        if (this.package) {
+            return {
+                entry: getPackageVersionfromString(this.package),
+                loader: new LintFileLoader(this.lintFile),
+                depth,
+                provider: npmOnline
             };
-
-            return new LintReport(params);
-        } else if (this.package) {
-            const params: IAnalyzeParams = {
-                package: this.package,
-                depth: depth,
-                lintFile: this.lintFile
+        } else if (this.folder) {
+            return {
+                entry: getPackageVersionFromPath(this.folder),
+                loader: new LintFileLoader(this.lintFile),
+                depth,
+                provider: new FileSystemPackageProvider(this.folder)
             };
-
-            return new LintReport(params);
+        } else {
+            throw new Error(`No package nor folder option was provided`);
         }
-
-        throw new Error(`No package nor folder option was provided`);
     }
+
+    beforeProcess: ((config: ILintServiceConfig) => void) | undefined = undefined;
 }

@@ -1,64 +1,92 @@
 import { Writable } from "stream";
 import chalk from "chalk";
-import { z } from "zod";
 
 import { IPackage } from "../package/package";
 import { npmOnline } from "../providers/online";
 import { Formatter, IFormatter } from "../utils/formatter";
 import { OraLogger } from "../loggers/OraLogger";
 import { PackageVersion, Visitor } from "../visitors/visitor";
-import { EntryTypes, IReport, isPackageVersionArray } from "./Report";
+import { GenericReport, isPackageVersionArray, ReportMethodSignature } from "./Report";
 
-export interface IReports {
-    reports: IReport<EntryTypes, any, z.ZodTypeAny>[];
+// each report is executed individually
+interface IDistinctReportConfig {
+    mode: "distinct";
+    reports: GenericReport[];
 }
+
+// each entry in reports gets resolved and the resulting dependency trees
+// are delivered to the report method for further processing
+export interface ICombinedReportConfig {
+    mode: "combined";
+    reports: GenericReport[];
+    report: ReportMethodSignature<PackageVersion[]>;
+}
+
+export type ReportConfig = IDistinctReportConfig | ICombinedReportConfig;
 
 export class ReportService {
     constructor(
-        private _config: IReports,
-        private _stdout: Writable,
-        private _stderr: Writable
+        private readonly _config: ReportConfig,
+        private readonly _stdout: Writable,
+        private readonly _stderr: Writable
     ) {}
 
     async process(): Promise<number | void> {
-        const { reports } = this._config;
+        const { mode } = this._config;
+        let exitCode: number = 0;
 
         try {
-            for (const report of reports) {
-                this._usesNetworkInTests(report);
-
-                const entries: Array<PackageVersion> = isPackageVersionArray(report.pkg)
-                    ? report.pkg
-                    : [report.pkg];
-                const packageArgs: IPackage[] = [];
-
-                for (const entry of entries) {
-                    packageArgs.push(await this._getPackage(entry, report));
-                }
-
-                const stdoutFormatter: IFormatter = new Formatter(this._stdout);
-                const stderrFormatter: IFormatter = new Formatter(this._stderr);
-
-                if (reports.length > 1)
-                    stdoutFormatter.writeLine(chalk.underline.bgBlue(`Report: ${report.name}`));
-
-                await report.report({ stdoutFormatter, stderrFormatter }, ...packageArgs);
-                stdoutFormatter.writeLine(``);
+            if (mode === "distinct") {
+                exitCode = await this._reportAsDistinct(this._config);
+            } else {
+                exitCode = await this._reportAsCombined(this._config);
             }
         } catch (e: any) {
             const stderrFormatter: IFormatter = new Formatter(this._stderr);
 
             stderrFormatter.writeLine(e?.toString());
             console.error(e?.toString());
+
+            exitCode = 1;
+        }
+
+        return exitCode;
+    }
+
+    private async _reportAsDistinct({ reports }: IDistinctReportConfig): Promise<number> {
+        for (const report of reports) {
+            const packages: IPackage[] = await this._getPackages(report);
+
+            const stdoutFormatter: IFormatter = new Formatter(this._stdout);
+            const stderrFormatter: IFormatter = new Formatter(this._stderr);
+
+            if (reports.length > 1)
+                stdoutFormatter.writeLine(chalk.underline.bgBlue(`Report: ${report.name}`));
+
+            await report.report({ stdoutFormatter, stderrFormatter }, ...packages);
+            stdoutFormatter.writeLine(``);
         }
 
         return Math.max(...reports.map(report => report.exitCode));
     }
 
-    private async _getPackage(
-        entry: PackageVersion,
-        report: IReport<EntryTypes, any, z.ZodTypeAny>
-    ): Promise<IPackage> {
+    private async _reportAsCombined({ reports, report }: ICombinedReportConfig): Promise<number> {
+        const packages: IPackage[] = [];
+
+        for (const report of reports) {
+            packages.push(...(await this._getPackages(report)));
+        }
+
+        const stdoutFormatter: IFormatter = new Formatter(this._stdout);
+        const stderrFormatter: IFormatter = new Formatter(this._stderr);
+
+        const exitCode = await report({ stdoutFormatter, stderrFormatter }, ...packages);
+        stdoutFormatter.writeLine(``);
+
+        return exitCode ?? 0;
+    }
+
+    private async _getPackage(entry: PackageVersion, report: GenericReport): Promise<IPackage> {
         const visitor = new Visitor(
             entry,
             report.provider ?? npmOnline,
@@ -70,8 +98,23 @@ export class ReportService {
         return visitor.visit(report.type);
     }
 
+    private async _getPackages(report: GenericReport): Promise<IPackage[]> {
+        this._usesNetworkInTests(report);
+
+        const entries: Array<PackageVersion> = isPackageVersionArray(report.pkg)
+            ? report.pkg
+            : [report.pkg];
+        const packageArgs: IPackage[] = [];
+
+        for (const entry of entries) {
+            packageArgs.push(await this._getPackage(entry, report));
+        }
+
+        return packageArgs;
+    }
+
     /* istanbul ignore next */
-    private _usesNetworkInTests({ name, provider }: IReport<EntryTypes, any, z.ZodTypeAny>): void {
+    private _usesNetworkInTests({ name, provider }: GenericReport): void {
         if (process.env.NODE_ENV === "test") {
             if (typeof provider === "undefined")
                 throw new Error(`${name}: Unit Test will default to online package provider`);

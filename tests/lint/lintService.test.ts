@@ -1,14 +1,13 @@
 import path from "path";
 
 import { z } from "zod";
-import { ZodLintRule, createRule } from "../../src/reports/lint/LintRule";
-import { ILintFile, LintReport } from "../../src/reports/LintReport";
-import { ReportService } from "../../src/reports/ReportService";
+import { ILintFile, ZodLintRule, createRule } from "../../src/reports/lint/LintRule";
 import { createMockContext } from "../common";
 import { IMockPackageJson, MockProvider } from "../mocks";
-import exp from "constants";
+import { LintService } from "../../src/reports/lint/LintService";
+import { LintFileLoader } from "../../src/reports/lint/RulesLoader";
 
-describe(`LintReport Test`, () => {
+describe(`Lint Service Test`, () => {
     const medalloPkg: IMockPackageJson = {
         name: `medallo`,
         version: `1.0.0`,
@@ -35,23 +34,19 @@ describe(`LintReport Test`, () => {
             }
         );
 
-        const lintReport = new LintReport({
-            lintFile: `/getsMockedAnyway.js`,
-            package: `medallo@1.0.0`,
-            depth: Infinity
-        });
-        lintReport.provider = provider;
-
         const { stdout, stderr } = createMockContext();
-        const reportService = new ReportService(
+        const lintService = new LintService(
             {
-                reports: [lintReport]
+                entry: [`medallo`, `1.0.0`],
+                loader: new LintFileLoader(`/getsMockedAnyway.js`),
+                depth: Infinity,
+                provider
             },
             stdout,
             stderr
         );
 
-        await reportService.process();
+        await lintService.process();
 
         expect(mockFn).toHaveBeenCalledTimes(3);
     });
@@ -68,23 +63,19 @@ describe(`LintReport Test`, () => {
             }
         );
 
-        const lintReport = new LintReport({
-            lintFile: `./getsMockedAnyway.js`,
-            package: `medallo@1.0.0`,
-            depth: Infinity
-        });
-        lintReport.provider = provider;
-
         const { stdout, stderr } = createMockContext();
-        const reportService = new ReportService(
+        const lintService = new LintService(
             {
-                reports: [lintReport]
+                entry: [`medallo`, `1.0.0`],
+                loader: new LintFileLoader(`./getsMockedAnyway.js`),
+                depth: Infinity,
+                provider
             },
             stdout,
             stderr
         );
 
-        await reportService.process();
+        await lintService.process();
 
         expect(mockFn).toHaveBeenCalledTimes(3);
     });
@@ -94,24 +85,20 @@ describe(`LintReport Test`, () => {
             virtual: true
         });
 
-        const lintReport = new LintReport({
-            lintFile: `/getsMockedAnyway.js`,
-            package: `medallo@1.0.0`,
-            depth: Infinity
-        });
-        lintReport.provider = provider;
-
         const { stdout, stderr } = createMockContext();
-        const reportService = new ReportService(
+        const lintService = new LintService(
             {
-                reports: [lintReport]
+                entry: [`medallo`, `1.0.0`],
+                loader: new LintFileLoader(`/getsMockedAnyway.js`),
+                depth: Infinity,
+                provider
             },
             stdout,
             stderr
         );
 
         expect.assertions(2);
-        const exitCode = await reportService.process();
+        const exitCode = await lintService.process();
 
         expect(stderr.lines).toMatchSnapshot();
         expect(exitCode).toBe(1);
@@ -129,23 +116,19 @@ describe(`LintReport Test`, () => {
             }
         );
 
-        const lintReport = new LintReport({
-            lintFile: `/getsMockedAnyway.js`,
-            package: `medallo@1.0.0`,
-            depth: 0
-        });
-        lintReport.provider = provider;
-
         const { stdout, stderr } = createMockContext();
-        const reportService = new ReportService(
+        const lintService = new LintService(
             {
-                reports: [lintReport]
+                entry: [`medallo`, `1.0.0`],
+                loader: new LintFileLoader(`/getsMockedAnyway.js`),
+                depth: 0,
+                provider
             },
             stdout,
             stderr
         );
 
-        await reportService.process();
+        await lintService.process();
 
         expect(mockFn).toHaveBeenCalledTimes(1);
     });
@@ -172,23 +155,19 @@ describe(`LintReport Test`, () => {
             }
         );
 
-        const lintReport = new LintReport({
-            lintFile: `/getsMockedAnyway.js`,
-            package: `medallo@1.0.0`,
-            depth: 0
-        });
-        lintReport.provider = provider;
-
         const { stdout, stderr } = createMockContext();
-        const reportService = new ReportService(
+        const lintService = new LintService(
             {
-                reports: [lintReport]
+                entry: [`medallo`, `1.0.0`],
+                loader: new LintFileLoader(`/getsMockedAnyway.js`),
+                depth: 0,
+                provider
             },
             stdout,
             stderr
         );
 
-        await reportService.process();
+        await lintService.process();
 
         expect(validateFn).toHaveBeenCalledTimes(1);
     });
@@ -214,24 +193,20 @@ describe(`LintReport Test`, () => {
             }
         );
 
-        const lintReport = new LintReport({
-            lintFile: `/getsMockedAnyway.js`,
-            package: `medallo@1.0.0`,
-            depth: 0
-        });
-        lintReport.provider = provider;
-
         const { stdout, stderr } = createMockContext();
-        const reportService = new ReportService(
+        const lintService = new LintService(
             {
-                reports: [lintReport]
+                entry: [`medallo`, `1.0.0`],
+                loader: new LintFileLoader(`/getsMockedAnyway.js`),
+                depth: 0,
+                provider
             },
             stdout,
             stderr
         );
 
         expect.assertions(1);
-        await reportService.process();
+        await lintService.process();
 
         expect(stdout.lines).toMatchSnapshot();
     });
@@ -258,24 +233,20 @@ describe(`LintReport Test`, () => {
             }
         );
 
-        const lintReport = new LintReport({
-            lintFile: `/getsMockedAnyway.js`,
-            package: `medallo@1.0.0`,
-            depth: Infinity
-        });
-        lintReport.provider = provider;
-
         const { stdout, stderr } = createMockContext();
-        const reportService = new ReportService(
+        const lintService = new LintService(
             {
-                reports: [lintReport]
+                entry: [`medallo`, `1.0.0`],
+                loader: new LintFileLoader(`/getsMockedAnyway.js`),
+                depth: Infinity,
+                provider
             },
             stdout,
             stderr
         );
 
         expect.assertions(3);
-        await reportService.process();
+        await lintService.process();
     });
 
     test(`sets exitCode to 1 if at least 1 error is reported`, async () => {
@@ -292,23 +263,19 @@ describe(`LintReport Test`, () => {
             }
         );
 
-        const lintReport = new LintReport({
-            lintFile: `/getsMockedAnyway.js`,
-            package: `medallo@1.0.0`,
-            depth: Infinity
-        });
-        lintReport.provider = provider;
-
         const { stdout, stderr } = createMockContext();
-        const reportService = new ReportService(
+        const lintService = new LintService(
             {
-                reports: [lintReport]
+                entry: [`medallo`, `1.0.0`],
+                loader: new LintFileLoader(`/getsMockedAnyway.js`),
+                depth: Infinity,
+                provider
             },
             stdout,
             stderr
         );
 
-        const exitCode = await reportService.process();
+        const exitCode = await lintService.process();
 
         expect(exitCode).toBe(1);
     });
@@ -324,25 +291,119 @@ describe(`LintReport Test`, () => {
             }
         );
 
-        const lintReport = new LintReport({
-            lintFile: `/getsMockedAnyway.js`,
-            package: `medallo@1.0.0`,
-            depth: Infinity
-        });
-        lintReport.provider = provider;
-
         const { stdout, stderr } = createMockContext();
-        const reportService = new ReportService(
+        const lintService = new LintService(
             {
-                reports: [lintReport]
+                entry: [`medallo`, `1.0.0`],
+                loader: new LintFileLoader(`/getsMockedAnyway.js`),
+                depth: Infinity,
+                provider
             },
             stdout,
             stderr
         );
 
-        const exitCode = await reportService.process();
+        const exitCode = await lintService.process();
 
         expect(exitCode).toBe(0);
+    });
+
+    test(`lint check can return a string`, async () => {
+        jest.doMock(
+            `/getsMockedAnyway.js`,
+            () => ({
+                rules: [createRule(`error`, { name: `test-rule`, check: () => `error message` })]
+            }),
+            {
+                virtual: true
+            }
+        );
+
+        const { stdout, stderr } = createMockContext();
+        const lintService = new LintService(
+            {
+                entry: [`medallo`, `1.0.0`],
+                loader: new LintFileLoader(`/getsMockedAnyway.js`),
+                depth: 0,
+                provider
+            },
+            stdout,
+            stderr
+        );
+
+        expect.assertions(1);
+        await lintService.process();
+
+        expect(stdout.lines).toMatchSnapshot();
+    });
+
+    test(`lint check can return a string array`, async () => {
+        jest.doMock(
+            `/getsMockedAnyway.js`,
+            () => ({
+                rules: [
+                    createRule(`error`, {
+                        name: `test-rule`,
+                        check: () => [`error message 1`, `error message 2`]
+                    })
+                ]
+            }),
+            {
+                virtual: true
+            }
+        );
+
+        const { stdout, stderr } = createMockContext();
+        const lintService = new LintService(
+            {
+                entry: [`medallo`, `1.0.0`],
+                loader: new LintFileLoader(`/getsMockedAnyway.js`),
+                depth: 0,
+                provider
+            },
+            stdout,
+            stderr
+        );
+
+        expect.assertions(1);
+        await lintService.process();
+
+        expect(stdout.lines).toMatchSnapshot();
+    });
+
+    test(`writes help message on invalid lint check return type`, async () => {
+        jest.doMock(
+            `/getsMockedAnyway.js`,
+            () => ({
+                rules: [
+                    createRule(`error`, {
+                        name: `test-rule`,
+                        // @ts-expect-error
+                        check: () => 3
+                    })
+                ]
+            }),
+            {
+                virtual: true
+            }
+        );
+
+        const { stdout, stderr } = createMockContext();
+        const lintService = new LintService(
+            {
+                entry: [`medallo`, `1.0.0`],
+                loader: new LintFileLoader(`/getsMockedAnyway.js`),
+                depth: 0,
+                provider
+            },
+            stdout,
+            stderr
+        );
+
+        expect.assertions(1);
+        await lintService.process();
+
+        expect(stdout.lines).toMatchSnapshot();
     });
 });
 
@@ -382,23 +443,19 @@ describe(`"internal-error" Lint Test`, () => {
             virtual: true
         });
 
-        const lintReport = new LintReport({
-            lintFile: `/getsMockedAnyway.js`,
-            package: `medallo@1.0.0`,
-            depth: Infinity
-        });
-        lintReport.provider = provider;
-
         const { stdout, stderr } = createMockContext();
-        const reportService = new ReportService(
+        const lintService = new LintService(
             {
-                reports: [lintReport]
+                entry: [`medallo`, `1.0.0`],
+                loader: new LintFileLoader(`/getsMockedAnyway.js`),
+                depth: Infinity,
+                provider
             },
             stdout,
             stderr
         );
 
-        const exitCode = await reportService.process();
+        const exitCode = await lintService.process();
 
         expect(exitCode).toBe(1);
     });
@@ -408,23 +465,19 @@ describe(`"internal-error" Lint Test`, () => {
             virtual: true
         });
 
-        const lintReport = new LintReport({
-            lintFile: `/getsMockedAnyway.js`,
-            package: `medallo@1.0.0`,
-            depth: Infinity
-        });
-        lintReport.provider = provider;
-
         const { stdout, stderr } = createMockContext();
-        const reportService = new ReportService(
+        const lintService = new LintService(
             {
-                reports: [lintReport]
+                entry: [`medallo`, `1.0.0`],
+                loader: new LintFileLoader(`/getsMockedAnyway.js`),
+                depth: Infinity,
+                provider
             },
             stdout,
             stderr
         );
 
-        await reportService.process();
+        await lintService.process();
 
         expect(stdout.lines).toMatchSnapshot();
         expect(stderr.lines).toMatchSnapshot();

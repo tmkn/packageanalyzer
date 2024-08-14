@@ -24,6 +24,7 @@ describe(`LoopsReport Test`, () => {
         const { stdout, stderr } = createMockContext();
         const reportService = new ReportService(
             {
+                mode: "distinct",
                 reports: [report]
             },
             stdout,
