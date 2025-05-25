@@ -107,10 +107,7 @@ describe(`visitFromName Error Handling`, () => {
     class MockProvider implements IPackageJsonProvider {
         size = 0;
 
-        getPackageJson(
-            name: string  ,
-            version?: string | undefined  
-        ): Promise<IPackageJson> {
+        getPackageJson(name: string, version?: string | undefined): Promise<IPackageJson> {
             throw new CustomError(`getPackageByVersion not implemented`);
         }
     }
