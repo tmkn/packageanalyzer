@@ -18,10 +18,10 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Analyze Webpack",
+            "name": "Analyze Bug",
             "skipFiles": ["<node_internals>/**"],
             "program": "${workspaceFolder}/build/src/cli.js",
-            "args": ["analyze", "--package", "webpack"],
+            "args": ["analyze", "--package", "@tanstack/start"],
             "preLaunchTask": "tsc: build - tsconfig.json",
             "outFiles": ["${workspaceFolder}/build/**/*.js"],
             "console": "integratedTerminal"
