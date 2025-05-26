@@ -1,6 +1,6 @@
 import { get } from "lodash";
 
-import { IPackageJson } from "../npm";
+import { AliasName, IPackageJson } from "../npm";
 import { CollectorNode, ICollectorNode } from "./collector";
 
 interface IDeprecatedInfo {
@@ -12,6 +12,7 @@ export interface IPackage<T extends Record<string, any> = Record<string, any>> {
     parent: IPackage<T> | null;
     isLoop: boolean;
     name: string;
+    alias: string | null;
     version: string;
     fullName: string;
     directDependencies: IPackage<T>[];
@@ -46,6 +47,15 @@ export class Package<T extends Record<string, any>> implements IPackage<T> {
         return this._data.name;
     }
 
+    get alias(): string | null {
+        const aliasName = this._data[AliasName];
+
+        if (typeof aliasName === "string") {
+            return aliasName;
+        }
+
+        return null;
+    }
     get version(): string {
         return this._data.version;
     }

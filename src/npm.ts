@@ -19,8 +19,10 @@ export interface IBasePackageJson {
     version: string;
 }
 
+export const AliasName = Symbol("aliasName");
+
 export interface IPackageJson extends IBasePackageJson {
-    [key: string]: unknown;
+    [key: string | symbol]: unknown;
 }
 
 export interface IUnpublishedPackageMetadata {

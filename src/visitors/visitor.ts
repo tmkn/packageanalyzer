@@ -1,5 +1,5 @@
 import { Package, IPackage } from "../package/package";
-import { INpmKeyValue, IPackageJson } from "../npm";
+import { AliasName, INpmKeyValue, IPackageJson } from "../npm";
 import { IPackageJsonProvider } from "../providers/provider";
 import { ILogger } from "../loggers/ILogger";
 import { DependencyTypes } from "../reports/Validation";
@@ -65,7 +65,25 @@ export class Visitor<T extends Attachments = IAttachment<string, any>>
             const packages: IPackageJson[] = [];
 
             for (const [name, version] of Object.entries(dependencies)) {
-                const resolved = await this._provider.getPackageJson(name, version);
+                let resolvedName = name;
+                let resolvedVersion: string | undefined = version;
+                let isAlias = false;
+
+                if (version.startsWith("npm:")) {
+                    const actualDependency = version.slice(4);
+                    const [actualName, actualVersion] =
+                        getPackageVersionfromString(actualDependency);
+
+                    isAlias = true;
+                    resolvedName = actualName;
+                    resolvedVersion = actualVersion;
+                }
+
+                const resolved = await this._provider.getPackageJson(resolvedName, resolvedVersion);
+
+                if (isAlias) {
+                    resolved[AliasName] = name;
+                }
 
                 packages.push(resolved);
             }
