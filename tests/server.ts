@@ -8,12 +8,6 @@ import express from "express";
 
 import { IPackageMetadata, isUnpublished } from "../src/npm";
 
-let i = 3000;
-
-function getPort(): number {
-    return i++;
-}
-
 export interface IMockServer {
     port: number;
     close(): Promise<void>;
@@ -23,17 +17,23 @@ abstract class AbstractMockServer {
     abstract name: string;
     private _server: Server | undefined;
     protected _app: express.Application = express();
-    port: number = 3000;
+
+    get port(): number {
+        const address = this._server?.address();
+
+        if (address && typeof address !== "string") {
+            return address.port;
+        }
+
+        throw new Error(`Server is not yet running for port number`);
+    }
 
     abstract setup(): void;
 
-    start(port: number): Promise<void> {
+    start(): Promise<void> {
         return new Promise((resolve, reject) => {
-            //if (!this._server) reject();
-            //else {
-            this.port = port;
             this._server = this._app
-                .listen(this.port, () => {
+                .listen(0, () => {
                     process.stdout.write(`Started ${this.name}\n`);
                     resolve();
                 })
@@ -42,7 +42,6 @@ abstract class AbstractMockServer {
 
                     reject();
                 });
-            //}
         });
     }
 
@@ -61,20 +60,17 @@ abstract class AbstractMockServer {
 }
 
 export async function createMockServer(server: AbstractMockServer): Promise<void> {
-    const maxRetries = 100;
-
     server.setup();
-    for (let i = 0; i < maxRetries; i++) {
-        try {
-            await server.start(getPort());
 
-            return;
-        } catch (e) {
-            server.close();
-        }
+    try {
+        await server.start();
+
+        return;
+    } catch (e) {
+        await server.close();
+
+        console.error(`Error starting server: ${e}`);
     }
-
-    throw new Error(`Couldn't start server`);
 }
 
 class MockNpmServer extends AbstractMockServer {
@@ -193,7 +189,7 @@ class MockRequestServer extends AbstractMockServer {
     setup() {
         let stallCalls = 0;
 
-        this._app.get("/echo", (req, res) => res.json({ hello: "world" }));
+        this._app.get("/echo", (req, res) => void res.json({ hello: "world" }));
         this._app.get("/stall", (req, res) => {
             stallCalls++;
 
@@ -203,8 +199,11 @@ class MockRequestServer extends AbstractMockServer {
         this._app.get("/stall2", (req, res) => {
             setTimeout(() => res.json({ hello: "world" }), this._artificalDelay);
         });
-        this._app.get("/notjson", (req, res) => res.send("not json"));
-        this._app.get("/forbidden", (req, res) => res.status(401).json({ message: "forbidden" }));
+        this._app.get("/notjson", (req, res) => void res.send("not json"));
+        this._app.get(
+            "/forbidden",
+            (req, res) => void res.status(401).json({ message: "forbidden" })
+        );
     }
 }
 
