@@ -1,37 +1,37 @@
 version: 2
 updates:
-- package-ecosystem: npm
-  directory: "/"
-  schedule:
-    interval: daily
-  open-pull-requests-limit: 15
-  ignore:
-  - dependency-name: "@types/express"
-    versions:
-    - "> 4.17.7, < 4.18"
-  - dependency-name: "@types/node"
-    versions:
-    - 14.14.30
-    - 14.14.34
-    - 15.0.0
-  - dependency-name: eslint
-    versions:
-    - 7.23.0
-    - 7.24.0
-  - dependency-name: typescript
-    versions:
-    - 4.2.4
-  - dependency-name: "@typescript-eslint/eslint-plugin"
-    versions:
-    - 4.17.0
-    - 4.18.0
-    - 4.19.0
-    - 4.20.0
-    - 4.21.0
-  - dependency-name: "@typescript-eslint/parser"
-    versions:
-    - 4.17.0
-    - 4.18.0
-    - 4.19.0
-    - 4.20.0
-    - 4.21.0
+    - package-ecosystem: npm
+      directory: "/"
+      schedule:
+          interval: "weekly"
+      open-pull-requests-limit: 15
+      ignore:
+          - dependency-name: "@types/express"
+            versions:
+                - "> 4.17.7, < 4.18"
+          - dependency-name: "@types/node"
+            versions:
+                - 14.14.30
+                - 14.14.34
+                - 15.0.0
+          - dependency-name: eslint
+            versions:
+                - 7.23.0
+                - 7.24.0
+          - dependency-name: typescript
+            versions:
+                - 4.2.4
+          - dependency-name: "@typescript-eslint/eslint-plugin"
+            versions:
+                - 4.17.0
+                - 4.18.0
+                - 4.19.0
+                - 4.20.0
+                - 4.21.0
+          - dependency-name: "@typescript-eslint/parser"
+            versions:
+                - 4.17.0
+                - 4.18.0
+                - 4.19.0
+                - 4.20.0
+                - 4.21.0
