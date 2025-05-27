@@ -26,7 +26,7 @@ class WhitelistLicenseCheckService {
 
     private _satisfiesLicense(packageLicense: string, spdxIdentifier: string): boolean {
         try {
-            return satisfies(packageLicense, spdxIdentifier);
+            return satisfies(packageLicense, [spdxIdentifier]);
         } catch {
             return false;
         }
