@@ -62,7 +62,7 @@
         "@types/lodash": "^4.14.202",
         "@types/node": "^22.1.0",
         "@types/semver": "^7.5.8",
-        "@types/spdx-satisfies": "^0.1.2",
+        "@types/spdx-satisfies": "^6.0.0",
         "@types/tar": "^6.1.10",
         "eslint": "9.27.0",
         "express": "^5.1.0",
@@ -85,7 +85,7 @@
         "ora": "^5.1.0",
         "postinstall-postinstall": "^2.1.0",
         "semver": "^7.6.0",
-        "spdx-satisfies": "^5.0.1",
+        "spdx-satisfies": "^6.0.0",
         "tar": "^7.4.3",
         "zod": "^3.22.4"
     },
