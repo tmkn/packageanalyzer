@@ -27,12 +27,7 @@ describe(`Mock Tests`, () => {
                 {
                     name: `dep1`,
                     version: `9.9.9`,
-                    dependencies: [
-                        {
-                            name: `dep2`,
-                            version: `8.8.8`
-                        }
-                    ]
+                    dependencies: [{ name: `dep2`, version: `8.8.8` }]
                 }
             ]
         });
@@ -59,12 +54,7 @@ describe(`Mock Tests`, () => {
                     {
                         name: `dep1`,
                         version: `9.9.9`,
-                        devDependencies: [
-                            {
-                                name: `dep2`,
-                                version: `8.8.8`
-                            }
-                        ]
+                        devDependencies: [{ name: `dep2`, version: `8.8.8` }]
                     }
                 ]
             },
@@ -108,6 +98,6 @@ describe(`Mock Tests`, () => {
     test(`MockProvider throws on missing data`, async () => {
         const provider: MockProvider = new MockProvider([]);
 
-        await expect(provider.getPackageJson(`doesnt_exist`, `1.2.3`)).rejects.toThrowError();
+        await expect(provider.getPackageJson(`doesnt_exist`, `1.2.3`)).rejects.toThrow();
     });
 });
