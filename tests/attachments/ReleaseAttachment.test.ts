@@ -4,9 +4,7 @@ import { IPackageMetaDataProvider } from "../../src/providers/provider";
 import { createMockPackage, IMockPackageJson } from "../mocks";
 
 describe(`ReleaseAttachment Tests`, () => {
-    const logStub = {
-        logger: function () {}
-    };
+    const logStub = { logger: function () {} };
 
     test(`Correctly returns info`, async () => {
         const timestamp = "0";
@@ -15,19 +13,13 @@ describe(`ReleaseAttachment Tests`, () => {
             async getPackageMetadata(
                 name: string
             ): Promise<IPackageMetadata | IUnpublishedPackageMetadata | undefined> {
-                const data: Partial<IPackageMetadata> = {
-                    time: {
-                        [version]: timestamp
-                    }
-                };
+                const data: Partial<IPackageMetadata> = { time: { [version]: timestamp } };
 
                 return data as IPackageMetadata;
             }
         })();
         const extension = new ReleaseAttachment(provider);
-        const data: IMockPackageJson = {
-            version: version
-        };
+        const data: IMockPackageJson = { version: version };
         const p = createMockPackage(data);
 
         const extensionData = await extension.apply({ p, ...logStub });
@@ -46,7 +38,7 @@ describe(`ReleaseAttachment Tests`, () => {
         const extension = new ReleaseAttachment(provider);
         const p = createMockPackage({});
 
-        await expect(extension.apply({ p, ...logStub })).rejects.toThrowError();
+        await expect(extension.apply({ p, ...logStub })).rejects.toThrow();
     });
 
     test(`Throws on missing version entry`, async () => {
@@ -54,9 +46,7 @@ describe(`ReleaseAttachment Tests`, () => {
             async getPackageMetadata(
                 name: string
             ): Promise<IPackageMetadata | IUnpublishedPackageMetadata | undefined> {
-                const data: Partial<IPackageMetadata> = {
-                    time: {}
-                };
+                const data: Partial<IPackageMetadata> = { time: {} };
 
                 return data as IPackageMetadata;
             }
@@ -64,6 +54,6 @@ describe(`ReleaseAttachment Tests`, () => {
         const extension = new ReleaseAttachment(provider);
         const p = createMockPackage({});
 
-        await expect(extension.apply({ p, ...logStub })).rejects.toThrowError();
+        await expect(extension.apply({ p, ...logStub })).rejects.toThrow();
     });
 });
