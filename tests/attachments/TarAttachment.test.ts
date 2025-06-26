@@ -13,9 +13,7 @@ describe(`TarAttachment Tests`, () => {
     };
 
     beforeAll(() => {
-        jest.useFakeTimers({
-            legacyFakeTimers: true
-        });
+        vi.useFakeTimers();
         nock.disableNetConnect();
     });
 
@@ -71,8 +69,6 @@ describe(`TarAttachment Tests`, () => {
     afterAll(() => {
         nock.cleanAll();
         nock.enableNetConnect();
-        jest.useFakeTimers({
-            legacyFakeTimers: false
-        });
+        vi.useFakeTimers();
     });
 });

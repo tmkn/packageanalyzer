@@ -13,7 +13,7 @@ describe(`Dependency Dumper`, () => {
 
     beforeAll(async () => {
         server = await createMockNpmServer();
-        jest.useRealTimers();
+        vi.useRealTimers();
     });
 
     test(`works`, async () => {

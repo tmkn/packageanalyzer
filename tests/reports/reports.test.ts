@@ -15,7 +15,7 @@ describe(`ReportService Tests`, () => {
 
     test(`Executes report method`, async () => {
         const { stdout, stderr } = createMockContext();
-        const cb = jest.fn();
+        const cb = vi.fn();
         const testReport = new TestReport({
             pkg: [`react`],
             report: async () => {
@@ -38,7 +38,7 @@ describe(`ReportService Tests`, () => {
 
     test(`Executes multiple reports`, async () => {
         const { stdout, stderr } = createMockContext();
-        const cb = jest.fn();
+        const cb = vi.fn();
         const testReport = new TestReport({
             pkg: [`react`],
             report: async () => {

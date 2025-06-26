@@ -1,8 +1,8 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`DownloadCountReport Tests works: stderr 1`] = `[]`;
+exports[`DownloadCountReport Tests > works > stderr 1`] = `[]`;
 
-exports[`DownloadCountReport Tests works: stdout 1`] = `
+exports[`DownloadCountReport Tests > works > stdout 1`] = `
 [
   "_downloads: 8609192 Downloads",
   "",

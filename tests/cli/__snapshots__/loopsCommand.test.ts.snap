@@ -1,8 +1,8 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Loops Command --package --type: stderr 1`] = `[]`;
+exports[`Loops Command > --package --type > stderr 1`] = `[]`;
 
-exports[`Loops Command --package --type: stdout 1`] = `
+exports[`Loops Command > --package --type > stdout 1`] = `
 [
   "8 Loop(s) found for testproject2@1.0.0",
   "",

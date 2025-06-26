@@ -1,8 +1,8 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Report Command works: stderr 1`] = `[]`;
+exports[`Report Command > works > stderr 1`] = `[]`;
 
-exports[`Report Command works: stdout 1`] = `
+exports[`Report Command > works > stdout 1`] = `
 [
   "Report: Tree Report",
   "@webassemblyjs/ast@1.9.0 (14 dependencies)",

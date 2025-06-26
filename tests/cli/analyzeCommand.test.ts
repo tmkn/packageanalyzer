@@ -16,7 +16,7 @@ describe(`Analyze Command`, () => {
         server = await createMockNpmServer();
         provider = new OnlinePackageProvider(`http://localhost:${server.port}`);
 
-        jest.setSystemTime(new Date(`2021-10-26`).getTime());
+        vi.setSystemTime(new Date(`2021-10-26`).getTime());
     });
 
     test(`--package --type --full`, async () => {
@@ -156,7 +156,7 @@ describe(`Analyze Command`, () => {
     });
 
     afterAll(() => {
-        jest.useRealTimers();
+        vi.useRealTimers();
 
         return server.close();
     });

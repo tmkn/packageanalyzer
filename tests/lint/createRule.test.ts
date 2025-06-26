@@ -26,15 +26,9 @@ describe(`createRule tests`, () => {
         };
         const provider = new MockProvider([medalloPkg]);
 
-        jest.doMock(
-            `/getsMockedAnyway.js`,
-            () => ({
-                rules
-            }),
-            {
-                virtual: true
-            }
-        );
+        vi.doMock(`/getsMockedAnyway.js`, () => ({
+            rules
+        }));
 
         const { stdout, stderr } = createMockContext();
         const lintService = new LintService(
@@ -110,7 +104,7 @@ describe(`createRule tests`, () => {
     }
 
     beforeEach(() => {
-        jest.resetModules();
+        vi.resetModules();
     });
 
     test(`creates rule without params and without attachments`, async () => {

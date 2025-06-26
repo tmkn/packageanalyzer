@@ -233,7 +233,7 @@ describe(`Deprecated Package Tests`, () => {
             expect(deprecated).toBe(true);
             expect(typeof message).toBe("string");
         } else {
-            fail(`Couldn't find package "extnode"`);
+            throw new Error(`Couldn't find package "extnode"`);
         }
     });
 });

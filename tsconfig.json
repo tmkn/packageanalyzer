@@ -7,12 +7,13 @@
         "sourceMap": true,
         "lib": ["ESNext"],
         "target": "es2020",
-        "module": "commonjs",
+        "module": "nodenext",
         "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,
         "declaration": true,
         "declarationMap": true,
-        "isolatedModules": true
+        "isolatedModules": true,
+        "moduleResolution": "nodenext"
     },
     "include": [],
     "references": [

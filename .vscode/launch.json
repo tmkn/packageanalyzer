@@ -10,8 +10,8 @@
             "name": "Debug Current Test File",
             "autoAttachChildProcesses": true,
             "skipFiles": ["<node_internals>/**", "**/node_modules/**"],
-            "program": "${workspaceRoot}/node_modules/jest/bin/jest.js",
-            "args": ["--", "${fileBasenameNoExtension}"],
+            "program": "${workspaceRoot}/node_modules/vitest/vitest.mjs",
+            "args": ["run", "${relativeFile}"],
             "smartStep": true,
             "console": "integratedTerminal"
         },
@@ -36,19 +36,6 @@
             "preLaunchTask": "tsc: build - tsconfig.json",
             "outFiles": ["${workspaceFolder}/build/**/*.js"],
             "console": "integratedTerminal"
-        },
-        {
-            "name": "Launch Analyze Command",
-            "type": "node",
-            "request": "launch",
-            "runtimeArgs": [
-                "--inspect-brk",
-                "${workspaceRoot}/node_modules/jest/bin/jest.js",
-                "--runInBand",
-                "analyzeCommand"
-            ],
-            "console": "integratedTerminal",
-            "internalConsoleOptions": "neverOpen"
         },
         {
             "type": "node",

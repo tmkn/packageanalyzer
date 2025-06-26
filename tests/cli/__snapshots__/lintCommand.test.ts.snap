@@ -1,8 +1,8 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Lint Command --depth --depth: 0  | correctly reports only root package in the tree: stderr 1`] = `[]`;
+exports[`Lint Command > --depth > --depth: 0  | correctly reports only root package in the tree > stderr 1`] = `[]`;
 
-exports[`Lint Command --depth --depth: 0  | correctly reports only root package in the tree: stdout 1`] = `
+exports[`Lint Command > --depth > --depth: 0  | correctly reports only root package in the tree > stdout 1`] = `
 [
   "PackageLint: medallo@1.0.0",
   "",
@@ -15,9 +15,9 @@ exports[`Lint Command --depth --depth: 0  | correctly reports only root package 
 ]
 `;
 
-exports[`Lint Command --depth --depth: invalid  | correctly falls back to "Infinity" when depth is not valid: stderr 1`] = `[]`;
+exports[`Lint Command > --depth > --depth: invalid  | correctly falls back to "Infinity" when depth is not valid > stderr 1`] = `[]`;
 
-exports[`Lint Command --depth --depth: invalid  | correctly falls back to "Infinity" when depth is not valid: stdout 1`] = `
+exports[`Lint Command > --depth > --depth: invalid  | correctly falls back to "Infinity" when depth is not valid > stdout 1`] = `
 [
   "PackageLint: medallo@1.0.0",
   "",
@@ -36,9 +36,9 @@ exports[`Lint Command --depth --depth: invalid  | correctly falls back to "Infin
 ]
 `;
 
-exports[`Lint Command --folder correctly reports all packages as errors: stderr 1`] = `[]`;
+exports[`Lint Command > --folder > correctly reports all packages as errors > stderr 1`] = `[]`;
 
-exports[`Lint Command --folder correctly reports all packages as errors: stdout 1`] = `
+exports[`Lint Command > --folder > correctly reports all packages as errors > stdout 1`] = `
 [
   "PackageLint: lint-test@1.0.0",
   "",
@@ -57,9 +57,9 @@ exports[`Lint Command --folder correctly reports all packages as errors: stdout 
 ]
 `;
 
-exports[`Lint Command --folder correctly reports all packages as warnings: stderr 1`] = `[]`;
+exports[`Lint Command > --folder > correctly reports all packages as warnings > stderr 1`] = `[]`;
 
-exports[`Lint Command --folder correctly reports all packages as warnings: stdout 1`] = `
+exports[`Lint Command > --folder > correctly reports all packages as warnings > stdout 1`] = `
 [
   "PackageLint: lint-test@1.0.0",
   "",
@@ -78,9 +78,9 @@ exports[`Lint Command --folder correctly reports all packages as warnings: stdou
 ]
 `;
 
-exports[`Lint Command --folder correctly shows success message: stderr 1`] = `[]`;
+exports[`Lint Command > --folder > correctly shows success message > stderr 1`] = `[]`;
 
-exports[`Lint Command --folder correctly shows success message: stdout 1`] = `
+exports[`Lint Command > --folder > correctly shows success message > stdout 1`] = `
 [
   "PackageLint: lint-test@1.0.0",
   "",
@@ -90,9 +90,9 @@ exports[`Lint Command --folder correctly shows success message: stdout 1`] = `
 ]
 `;
 
-exports[`Lint Command --package correctly reports all packages in the tree: stderr 1`] = `[]`;
+exports[`Lint Command > --package > correctly reports all packages in the tree > stderr 1`] = `[]`;
 
-exports[`Lint Command --package correctly reports all packages in the tree: stdout 1`] = `
+exports[`Lint Command > --package > correctly reports all packages in the tree > stdout 1`] = `
 [
   "PackageLint: medallo@1.0.0",
   "",
@@ -111,9 +111,9 @@ exports[`Lint Command --package correctly reports all packages in the tree: stdo
 ]
 `;
 
-exports[`Lint Command --package correctly shows success message: stderr 1`] = `[]`;
+exports[`Lint Command > --package > correctly shows success message > stderr 1`] = `[]`;
 
-exports[`Lint Command --package correctly shows success message: stdout 1`] = `
+exports[`Lint Command > --package > correctly shows success message > stdout 1`] = `
 [
   "PackageLint: medallo@1.0.0",
   "",
@@ -123,18 +123,18 @@ exports[`Lint Command --package correctly shows success message: stdout 1`] = `
 ]
 `;
 
-exports[`Lint Command Error Handling fails on missing --package and --folder: stderr 1`] = `
+exports[`Lint Command > Error Handling > fails on missing --package and --folder > stderr 1`] = `
 [
   "Error: No package nor folder option was provided",
   "",
 ]
 `;
 
-exports[`Lint Command Error Handling fails on missing --package and --folder: stdout 1`] = `[]`;
+exports[`Lint Command > Error Handling > fails on missing --package and --folder > stdout 1`] = `[]`;
 
-exports[`Lint Command Error Handling shows error message for invalid check return value: stderr 1`] = `[]`;
+exports[`Lint Command > Error Handling > shows error message for invalid check return value > stderr 1`] = `[]`;
 
-exports[`Lint Command Error Handling shows error message for invalid check return value: stdout 1`] = `
+exports[`Lint Command > Error Handling > shows error message for invalid check return value > stdout 1`] = `
 [
   "PackageLint: lint-test@1.0.0",
   "",

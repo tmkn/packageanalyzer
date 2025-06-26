@@ -1,17 +1,17 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Diff Command handles invalid params: stderr 1`] = `
+exports[`Diff Command > handles invalid params > stderr 1`] = `
 [
   "Error: No range option was provided",
   "",
 ]
 `;
 
-exports[`Diff Command handles invalid params: stdout 1`] = `[]`;
+exports[`Diff Command > handles invalid params > stdout 1`] = `[]`;
 
-exports[`Diff Command works correctly: stderr 1`] = `[]`;
+exports[`Diff Command > works correctly > stderr 1`] = `[]`;
 
-exports[`Diff Command works correctly: stdout 1`] = `
+exports[`Diff Command > works correctly > stdout 1`] = `
 [
   "Dependency Diff: medallo@1.0.0 (4/4) -> barranquilla@1.0.0 (4/4)",
   "Direct Dependencies Δ: 0",

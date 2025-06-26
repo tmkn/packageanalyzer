@@ -1,8 +1,8 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Download Command --package: stderr 1`] = `[]`;
+exports[`Download Command > --package > stderr 1`] = `[]`;
 
-exports[`Download Command --package: stdout 1`] = `
+exports[`Download Command > --package > stdout 1`] = `
 [
   "react: 8609192 Downloads",
   "",

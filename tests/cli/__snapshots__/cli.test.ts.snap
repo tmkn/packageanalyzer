@@ -1,10 +1,10 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`CliCommand Tests Correctly writes to stderr on exception: stderr 1`] = `
+exports[`CliCommand Tests > Correctly writes to stderr on exception > stderr 1`] = `
 [
   "Error: Whoops",
   "",
 ]
 `;
 
-exports[`CliCommand Tests Correctly writes to stderr on exception: stdout 1`] = `[]`;
+exports[`CliCommand Tests > Correctly writes to stderr on exception > stdout 1`] = `[]`;
