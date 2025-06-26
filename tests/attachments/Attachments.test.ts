@@ -1,6 +1,6 @@
-import { Package } from "../../src/package/package";
-import { AttachmentData, IAttachment } from "../../src/attachments/Attachments";
-import { createMockPackage } from "../mocks";
+import { Package } from "../../src/package/package.js";
+import type { AttachmentData, IAttachment } from "../../src/attachments/Attachments.js";
+import { createMockPackage } from "../mocks.js";
 
 // tests to make sure that the types work
 describe("Attachments Tests", () => {

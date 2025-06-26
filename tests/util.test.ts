@@ -1,5 +1,5 @@
-import { urlType } from "../src/reports/Validation";
-import { numPadding } from "../src/visitors/visitor";
+import { urlType } from "../src/reports/Validation.js";
+import { numPadding } from "../src/visitors/visitor.js";
 
 describe(`Num Padding Tests`, () => {
     test(`Correctly prefixes 1/1`, () => {

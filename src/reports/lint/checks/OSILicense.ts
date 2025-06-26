@@ -1,5 +1,5 @@
-import { IPackage } from "../../../package/package";
-import { ILintCheck } from "../LintRule";
+import { type IPackage } from "../../../package/package.js";
+import { type ILintCheck } from "../LintRule.js";
 
 export class OSILicenseCheck implements ILintCheck {
     name = "has-osi-license";

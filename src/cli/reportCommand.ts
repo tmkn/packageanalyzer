@@ -2,7 +2,7 @@ import * as path from "path";
 
 import { Command, Option } from "clipanion";
 
-import { ReportService } from "../reports/ReportService";
+import { ReportService } from "../reports/ReportService.js";
 
 export class ReportCommand extends Command {
     public config: string = Option.String(`--config`, {

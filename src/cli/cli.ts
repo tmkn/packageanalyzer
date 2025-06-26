@@ -1,19 +1,19 @@
 import { Cli, Builtins } from "clipanion";
 
-import { AnalyzeCommand } from "./analyzeCommand";
-import { UpdateInfoCommand } from "./updateInfoCommand";
-import { DownloadCommand } from "./downloadCommand";
-import { LoopsCommand } from "./loopsCommand";
-import { TreeCommand } from "./treeCommand";
-import { NpmDumpCommand } from "./npmDumpCommand";
-import { getVersion } from "./common";
-import { NpmDumpLookupCreatorCommand } from "./npmLookupCreatorCommand";
-import { LicenseCheckCommand } from "./licenseCommand";
-import { ReportCommand } from "./reportCommand";
-import { DependencyDumperCommand } from "./dependencyDumpCommand";
-import { TestCommand } from "./testCommand";
-import { DiffCommand } from "./diffCommand";
-import { LintCommand } from "./lintCommand";
+import { AnalyzeCommand } from "./analyzeCommand.js";
+import { UpdateInfoCommand } from "./updateInfoCommand.js";
+import { DownloadCommand } from "./downloadCommand.js";
+import { LoopsCommand } from "./loopsCommand.js";
+import { TreeCommand } from "./treeCommand.js";
+import { NpmDumpCommand } from "./npmDumpCommand.js";
+import { getVersion } from "./common.js";
+import { NpmDumpLookupCreatorCommand } from "./npmLookupCreatorCommand.js";
+import { LicenseCheckCommand } from "./licenseCommand.js";
+import { ReportCommand } from "./reportCommand.js";
+import { DependencyDumperCommand } from "./dependencyDumpCommand.js";
+import { TestCommand } from "./testCommand.js";
+import { DiffCommand } from "./diffCommand.js";
+import { LintCommand } from "./lintCommand.js";
 
 export const cli = new Cli({
     binaryLabel: `packageanalyzer`,

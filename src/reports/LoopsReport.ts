@@ -1,11 +1,11 @@
 import chalk from "chalk";
-import { z, ZodTypeAny } from "zod";
+import { z, type ZodTypeAny } from "zod";
 
-import { LoopUtilities } from "../extensions/utilities/LoopUtilities";
-import { IPackage } from "../package/package";
-import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
-import { AbstractReport, IReportContext } from "./Report";
-import { BasePackageParameter, TypeParameter } from "./Validation";
+import { LoopUtilities } from "../extensions/utilities/LoopUtilities.js";
+import { type IPackage } from "../package/package.js";
+import { getPackageVersionfromString, type PackageVersion } from "../visitors/visitor.js";
+import { AbstractReport, type IReportContext } from "./Report.js";
+import { BasePackageParameter, TypeParameter } from "./Validation.js";
 
 const LoopParams = BasePackageParameter.merge(TypeParameter);
 

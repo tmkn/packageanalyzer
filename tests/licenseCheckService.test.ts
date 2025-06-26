@@ -1,11 +1,11 @@
 import * as path from "path";
 
-import { IPackage } from "../src/package/package";
-import { OraLogger } from "../src/loggers/OraLogger";
-import { FileSystemPackageProvider } from "../src/providers/folder";
-import { createWhitelistLicenseCheckReport } from "../src/utils/licenseCheckService";
-import { Visitor } from "../src/visitors/visitor";
-import { getPackageVersionFromPath } from "../src/visitors/util.node";
+import { type IPackage } from "../src/package/package.js";
+import { OraLogger } from "../src/loggers/OraLogger.js";
+import { FileSystemPackageProvider } from "../src/providers/folder.js";
+import { createWhitelistLicenseCheckReport } from "../src/utils/licenseCheckService.js";
+import { Visitor } from "../src/visitors/visitor.js";
+import { getPackageVersionFromPath } from "../src/visitors/util.node.js";
 
 describe(`License Check Service Tests`, () => {
     let p: IPackage;

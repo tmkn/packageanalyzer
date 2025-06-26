@@ -1,8 +1,8 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Analyze Command --folder --type --full: stderr 1`] = `[]`;
+exports[`Analyze Command > --folder --type --full > stderr 1`] = `[]`;
 
-exports[`Analyze Command --folder --type --full: stdout 1`] = `
+exports[`Analyze Command > --folder --type --full > stdout 1`] = `
 [
   "Statistics for testproject1@1.0.0",
   "",
@@ -24,9 +24,29 @@ exports[`Analyze Command --folder --type --full: stdout 1`] = `
 ]
 `;
 
-exports[`Analyze Command --package --type --full: stderr 1`] = `[]`;
+exports[`Analyze Command > --package --type > stderr 1`] = `[]`;
 
-exports[`Analyze Command --package --type --full: stdout 1`] = `
+exports[`Analyze Command > --package --type > stdout 1`] = `
+[
+  "Statistics for react@16.8.1",
+  "",
+  "Direct dependencies:     4",
+  "Transitive dependencies: 12",
+  "Distinct dependencies: 6",
+  "Most referred package: "[loose-envify, js-tokens, object-assign]": 3",
+  "Most direct dependencies: "[react]": 4",
+  "Package(s) with multiple versions:",
+  "    (none)",
+  "Licenses:",
+  "    7x MIT",
+  "",
+  "",
+]
+`;
+
+exports[`Analyze Command > --package --type --full > stderr 1`] = `[]`;
+
+exports[`Analyze Command > --package --type --full > stdout 1`] = `
 [
   "Statistics for react@16.8.1",
   "",
@@ -52,36 +72,16 @@ exports[`Analyze Command --package --type --full: stdout 1`] = `
 ]
 `;
 
-exports[`Analyze Command --package --type: stderr 1`] = `[]`;
-
-exports[`Analyze Command --package --type: stdout 1`] = `
-[
-  "Statistics for react@16.8.1",
-  "",
-  "Direct dependencies:     4",
-  "Transitive dependencies: 12",
-  "Distinct dependencies: 6",
-  "Most referred package: "[loose-envify, js-tokens, object-assign]": 3",
-  "Most direct dependencies: "[react]": 4",
-  "Package(s) with multiple versions:",
-  "    (none)",
-  "Licenses:",
-  "    7x MIT",
-  "",
-  "",
-]
-`;
-
-exports[`Analyze Command aborts on missing --folder or --package: stderr 1`] = `
+exports[`Analyze Command > aborts on missing --folder or --package > stderr 1`] = `
 [
   "Error: No package nor folder option was provided",
   "",
 ]
 `;
 
-exports[`Analyze Command aborts on missing --folder or --package: stdout 1`] = `[]`;
+exports[`Analyze Command > aborts on missing --folder or --package > stdout 1`] = `[]`;
 
-exports[`Analyze Command aborts on wrong --type: stderr 1`] = `
+exports[`Analyze Command > aborts on wrong --type > stderr 1`] = `
 [
   "Error: Please only specify "dependencies" or "devDependencies" for the --type argument",
   "Received abc",
@@ -90,11 +90,11 @@ exports[`Analyze Command aborts on wrong --type: stderr 1`] = `
 ]
 `;
 
-exports[`Analyze Command aborts on wrong --type: stdout 1`] = `[]`;
+exports[`Analyze Command > aborts on wrong --type > stdout 1`] = `[]`;
 
-exports[`Analyze Command display loops info: stderr 1`] = `[]`;
+exports[`Analyze Command > display loops info > stderr 1`] = `[]`;
 
-exports[`Analyze Command display loops info: stdout 1`] = `
+exports[`Analyze Command > display loops info > stdout 1`] = `
 [
   "Statistics for @webassemblyjs/ast@1.9.0",
   "",

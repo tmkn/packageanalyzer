@@ -1,6 +1,6 @@
-import { IPackage } from "../src/package/package";
-import { DiffUtilities } from "../src/extensions/utilities/DiffUtilities";
-import { createMockPackage, IMockPackageJson } from "./mocks";
+import { type IPackage } from "../src/package/package.js";
+import { DiffUtilities } from "../src/extensions/utilities/DiffUtilities.js";
+import { createMockPackage, type IMockPackageJson } from "./mocks.js";
 
 describe(`Diff Utilities Tests`, () => {
     const fromBaseData: IMockPackageJson = {

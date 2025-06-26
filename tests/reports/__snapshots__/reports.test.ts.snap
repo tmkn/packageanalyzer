@@ -1,10 +1,10 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`ReportService Tests Writes to stderr on throw: stderr 1`] = `
+exports[`ReportService Tests > Writes to stderr on throw > stderr 1`] = `
 [
   "Error: Whoopsie",
   "",
 ]
 `;
 
-exports[`ReportService Tests Writes to stderr on throw: stdout 1`] = `[]`;
+exports[`ReportService Tests > Writes to stderr on throw > stdout 1`] = `[]`;

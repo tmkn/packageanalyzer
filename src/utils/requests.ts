@@ -1,7 +1,7 @@
 import * as http from "http";
 import * as https from "https";
 
-import type { Url } from "../reports/Validation";
+import type { Url } from "../reports/Validation.js";
 
 function download(url: Url, timeoutLimit: number): Promise<string> {
     return new Promise<string>((resolve, reject) => {

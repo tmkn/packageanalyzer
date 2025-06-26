@@ -1,9 +1,9 @@
 import * as path from "path";
 
-import { cli } from "../../src/cli/cli";
-import { FileSystemPackageProvider } from "../../src/providers/folder";
-import { createMockContext } from "../common";
-import { LoopsCommand } from "../../src/cli/loopsCommand";
+import { cli } from "../../src/cli/cli.js";
+import { FileSystemPackageProvider } from "../../src/providers/folder.js";
+import { createMockContext } from "../common.js";
+import { LoopsCommand } from "../../src/cli/loopsCommand.js";
 
 describe(`Loops Command`, () => {
     test(`--package --type`, async () => {

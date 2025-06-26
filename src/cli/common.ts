@@ -1,18 +1,20 @@
 import * as path from "path";
 import * as fs from "fs";
+import { fileURLToPath } from "url";
 
 import dayjs from "dayjs";
 import { Command } from "clipanion";
 
-import { AbstractReport } from "../reports/Report";
-import { ReportService } from "../reports/ReportService";
-import { Formatter, IFormatter } from "../utils/formatter";
-import { DependencyTypes } from "../reports/Validation";
+import { AbstractReport } from "../reports/Report.js";
+import { ReportService } from "../reports/ReportService.js";
+import { Formatter, type IFormatter } from "../utils/formatter.js";
+import { type DependencyTypes } from "../reports/Validation.js";
 
 export const defaultDependencyType: DependencyTypes = "dependencies";
 
 export function getVersion(): string {
     try {
+        const __dirname = path.dirname(fileURLToPath(import.meta.url));
         const file = path.join(__dirname, "./../../../package.json");
 
         return JSON.parse(fs.readFileSync(file, "utf8")).version;

@@ -1,7 +1,7 @@
-import { cli } from "../../src/cli/cli";
-import { DiffCommand } from "../../src/cli/diffCommand";
-import { createMockContext } from "../common";
-import { IMockPackageJson, MockProvider } from "../mocks";
+import { cli } from "../../src/cli/cli.js";
+import { DiffCommand } from "../../src/cli/diffCommand.js";
+import { createMockContext } from "../common.js";
+import { type IMockPackageJson, MockProvider } from "../mocks.js";
 
 describe(`Diff Command`, () => {
     const fromPkg: IMockPackageJson = {

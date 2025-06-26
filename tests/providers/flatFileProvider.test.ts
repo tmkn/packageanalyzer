@@ -1,6 +1,6 @@
 import * as path from "path";
 
-import { FlatFileProvider } from "../../src/providers/flatFile";
+import { FlatFileProvider } from "../../src/providers/flatFile.js";
 
 describe(`flatFileProvider Tests`, () => {
     const destination = path.join("tests", "data", "npmdump");

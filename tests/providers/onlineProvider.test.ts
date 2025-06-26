@@ -1,9 +1,9 @@
-import { OnlinePackageProvider } from "../../src/providers/online";
-import { Visitor } from "../../src/visitors/visitor";
-import { OraLogger } from "../../src/loggers/OraLogger";
-import { createMockNpmServer, IMockServer } from "../server";
-import { ReleaseAttachment } from "../../src/attachments/ReleaseAttachment";
-import { ReleaseUtilities } from "../../src/extensions/utilities/ReleaseUtilities";
+import { OnlinePackageProvider } from "../../src/providers/online.js";
+import { Visitor } from "../../src/visitors/visitor.js";
+import { OraLogger } from "../../src/loggers/OraLogger.js";
+import { createMockNpmServer, type IMockServer } from "../server.js";
+import { ReleaseAttachment } from "../../src/attachments/ReleaseAttachment.js";
+import { ReleaseUtilities } from "../../src/extensions/utilities/ReleaseUtilities.js";
 
 describe(`OnlineProvider Tests`, () => {
     let server: IMockServer;

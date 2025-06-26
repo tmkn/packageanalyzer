@@ -1,8 +1,8 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Update Info Command --package: stderr 1`] = `[]`;
+exports[`Update Info Command > --package > stderr 1`] = `[]`;
 
-exports[`Update Info Command --package: stdout 1`] = `
+exports[`Update Info Command > --package > stdout 1`] = `
 [
   "Update Info for react@16.8.1",
   "",

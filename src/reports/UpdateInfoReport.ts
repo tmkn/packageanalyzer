@@ -1,13 +1,13 @@
 import chalk from "chalk";
 import { z } from "zod";
 
-import { daysAgo } from "../cli/common";
-import { IPackage } from "../package/package";
-import { OnlinePackageProvider } from "../providers/online";
-import { updateInfo } from "../utils/update";
-import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
-import { AbstractReport, IReportContext } from "./Report";
-import { BasePackageParameter } from "./Validation";
+import { daysAgo } from "../cli/common.js";
+import { type IPackage } from "../package/package.js";
+import { OnlinePackageProvider } from "../providers/online.js";
+import { updateInfo } from "../utils/update.js";
+import { getPackageVersionfromString, type PackageVersion } from "../visitors/visitor.js";
+import { AbstractReport, type IReportContext } from "./Report.js";
+import { BasePackageParameter } from "./Validation.js";
 
 export const onlinePackageProviderType = z.custom<OnlinePackageProvider>(input => {
     return (

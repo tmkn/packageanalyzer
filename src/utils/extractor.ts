@@ -1,10 +1,10 @@
 import * as path from "path";
 import * as fs from "fs";
 
-import { FlatFileProvider } from "../providers/flatFile";
-import { OraLogger } from "../loggers/OraLogger";
-import { IPackage } from "../package/package";
-import { getPackageVersionfromString, PackageVersion, Visitor } from "../visitors/visitor";
+import { FlatFileProvider } from "../providers/flatFile.js";
+import { OraLogger } from "../loggers/OraLogger.js";
+import { type IPackage } from "../package/package.js";
+import { getPackageVersionfromString, type PackageVersion, Visitor } from "../visitors/visitor.js";
 
 type Formatter = (p: IPackage) => object;
 type ExtractCallback = (data: string, p: IPackage, i: number, max: number) => Promise<void>;

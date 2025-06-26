@@ -1,8 +1,8 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`License Check Command --folder: stderr 1`] = `[]`;
+exports[`License Check Command > --folder > stderr 1`] = `[]`;
 
-exports[`License Check Command --folder: stdout 1`] = `
+exports[`License Check Command > --folder > stdout 1`] = `
 [
   "js-tokens@4.0.0     MIT",
   "loose-envify@1.4.0  MIT",
@@ -25,9 +25,9 @@ exports[`License Check Command --folder: stdout 1`] = `
 ]
 `;
 
-exports[`License Check Command --package --allow: stderr 1`] = `[]`;
+exports[`License Check Command > --package > stderr 1`] = `[]`;
 
-exports[`License Check Command --package --allow: stdout 1`] = `
+exports[`License Check Command > --package > stdout 1`] = `
 [
   "js-tokens@4.0.0     MIT",
   "loose-envify@1.4.0  MIT",
@@ -48,9 +48,9 @@ exports[`License Check Command --package --allow: stdout 1`] = `
 ]
 `;
 
-exports[`License Check Command --package --grouped: stderr 1`] = `[]`;
+exports[`License Check Command > --package --allow > stderr 1`] = `[]`;
 
-exports[`License Check Command --package --grouped: stdout 1`] = `
+exports[`License Check Command > --package --allow > stdout 1`] = `
 [
   "js-tokens@4.0.0     MIT",
   "loose-envify@1.4.0  MIT",
@@ -71,35 +71,35 @@ exports[`License Check Command --package --grouped: stdout 1`] = `
 ]
 `;
 
-exports[`License Check Command --package --type: stderr 1`] = `[]`;
+exports[`License Check Command > --package --grouped > stderr 1`] = `[]`;
 
-exports[`License Check Command --package --type: stdout 1`] = `
+exports[`License Check Command > --package --grouped > stdout 1`] = `
+[
+  "js-tokens@4.0.0     MIT",
+  "loose-envify@1.4.0  MIT",
+  "object-assign@4.1.1 MIT",
+  "prop-types@15.7.2   MIT",
+  "react-is@16.8.6     MIT",
+  "scheduler@0.13.6    MIT",
+  "",
+  "6/6 packages failed the license check",
+  "js-tokens@4.0.0     MIT",
+  "loose-envify@1.4.0  MIT",
+  "object-assign@4.1.1 MIT",
+  "prop-types@15.7.2   MIT",
+  "react-is@16.8.6     MIT",
+  "scheduler@0.13.6    MIT",
+  "",
+  "",
+]
+`;
+
+exports[`License Check Command > --package --type > stderr 1`] = `[]`;
+
+exports[`License Check Command > --package --type > stdout 1`] = `
 [
   "",
   "All packages passed the license check",
-  "",
-  "",
-]
-`;
-
-exports[`License Check Command --package: stderr 1`] = `[]`;
-
-exports[`License Check Command --package: stdout 1`] = `
-[
-  "js-tokens@4.0.0     MIT",
-  "loose-envify@1.4.0  MIT",
-  "object-assign@4.1.1 MIT",
-  "prop-types@15.7.2   MIT",
-  "react-is@16.8.6     MIT",
-  "scheduler@0.13.6    MIT",
-  "",
-  "6/6 packages failed the license check",
-  "js-tokens@4.0.0     MIT",
-  "loose-envify@1.4.0  MIT",
-  "object-assign@4.1.1 MIT",
-  "prop-types@15.7.2   MIT",
-  "react-is@16.8.6     MIT",
-  "scheduler@0.13.6    MIT",
   "",
   "",
 ]

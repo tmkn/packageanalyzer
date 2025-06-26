@@ -1,16 +1,21 @@
 import { Writable } from "stream";
-import { z, ZodTypeAny } from "zod";
+import { z, type ZodTypeAny } from "zod";
 
-import { AbstractReport, EntryTypes, GenericReport, IReportContext } from "../Report";
-import { ICombinedReportConfig, ReportService } from "../ReportService";
-import { IRulesLoader } from "./RulesLoader";
-import { IAttachment } from "../../attachments/Attachments";
-import { IPackage } from "../../package/package";
-import { ILintCheck, IPackageJsonProvider, PackageVersion } from "../..";
-import { ILintResult, LintResultFormatter } from "./LintResultFormatter";
-import { PathUtilities } from "../../extensions/utilities/PathUtilities";
-import { hasAttachments } from "./LintRule";
-import { Formatter, IFormatter } from "../../utils/formatter";
+import {
+    AbstractReport,
+    type EntryTypes,
+    type GenericReport,
+    type IReportContext
+} from "../Report.js";
+import { type ICombinedReportConfig, ReportService } from "../ReportService.js";
+import { type IRulesLoader } from "./RulesLoader.js";
+import { type IAttachment } from "../../attachments/Attachments.js";
+import { type IPackage } from "../../package/package.js";
+import type { ILintCheck, IPackageJsonProvider, PackageVersion } from "../../index.js";
+import { type ILintResult, LintResultFormatter } from "./LintResultFormatter.js";
+import { PathUtilities } from "../../extensions/utilities/PathUtilities.js";
+import { hasAttachments } from "./LintRule.js";
+import { Formatter, type IFormatter } from "../../utils/formatter.js";
 
 // dummy lint report to just fetch all data
 class LintReport extends AbstractReport<{}, EntryTypes, ZodTypeAny, IAttachment<string, any>[]> {

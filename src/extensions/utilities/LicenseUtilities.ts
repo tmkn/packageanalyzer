@@ -1,5 +1,5 @@
-import { IPackage } from "../../package/package";
-import { IMalformedLicenseField } from "../../npm";
+import { type IPackage } from "../../package/package.js";
+import { type IMalformedLicenseField } from "../../npm.js";
 
 type Name = string;
 type Version = string;

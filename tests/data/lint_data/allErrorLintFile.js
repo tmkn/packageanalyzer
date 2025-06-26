@@ -5,6 +5,8 @@ const SampleCheck = {
     }
 };
 
-module.exports = {
+const foo = {
     rules: [["error", SampleCheck]]
 };
+
+export default foo;

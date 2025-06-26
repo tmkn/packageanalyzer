@@ -1,14 +1,14 @@
 /* eslint-disable */
 
-import { IAttachment } from "../src";
-import { IApplyArgs } from "../src/attachments/Attachments";
-import { getDownloadsLastWeek } from "../src/reports/DownloadCountReport";
-import { createRule, createRuleWithAttachment } from "../src/reports/lint/LintRule";
-import { MissingFields } from "../src/reports/lint/checks/MissingFields";
-import { MissingLicense } from "../src/reports/lint/checks/MissingLicense";
-import { NoScripts } from "../src/reports/lint/checks/NoScripts";
-import { NonRegistryDependency } from "../src/reports/lint/checks/NonRegistryDependency";
-import { ValidateKey } from "../src/reports/lint/checks/ValidateKey";
+import { type IAttachment } from "../src/index.js";
+import { type IApplyArgs } from "../src/attachments/Attachments.js";
+import { getDownloadsLastWeek } from "../src/reports/DownloadCountReport.js";
+import { createRule, createRuleWithAttachment } from "../src/reports/lint/LintRule.js";
+import { MissingFields } from "../src/reports/lint/checks/MissingFields.js";
+import { MissingLicense } from "../src/reports/lint/checks/MissingLicense.js";
+import { NoScripts } from "../src/reports/lint/checks/NoScripts.js";
+import { NonRegistryDependency } from "../src/reports/lint/checks/NonRegistryDependency.js";
+import { ValidateKey } from "../src/reports/lint/checks/ValidateKey.js";
 
 class DownloadCount implements IAttachment<"count", number> {
     readonly key = "count";
@@ -20,7 +20,7 @@ class DownloadCount implements IAttachment<"count", number> {
     }
 }
 
-module.exports = {
+const foo = {
     rules: [
         createRule("error", new ValidateKey(), "description"),
         createRule("error", new ValidateKey(), "foobar")
@@ -48,3 +48,5 @@ module.exports = {
         // ["warning", MissingLicense, undefined]
     ]
 };
+
+export default foo;

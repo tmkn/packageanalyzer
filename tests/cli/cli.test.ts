@@ -1,7 +1,7 @@
-import { CliCommand } from "../../src/cli/common";
-import { AbstractReport } from "../../src/reports/Report";
-import { isValidDependencyType } from "../../src/reports/Validation";
-import { createMockContext } from "../common";
+import { CliCommand } from "../../src/cli/common.js";
+import { AbstractReport } from "../../src/reports/Report.js";
+import { isValidDependencyType } from "../../src/reports/Validation.js";
+import { createMockContext } from "../common.js";
 
 describe(`CLI Utility`, () => {
     test(`isValidDependencyType`, () => {

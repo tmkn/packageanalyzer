@@ -1,5 +1,5 @@
-import { INpmUser } from "../../npm";
-import { IPackage } from "../../package/package";
+import { type INpmUser } from "../../npm.js";
+import { type IPackage } from "../../package/package.js";
 
 export type UpdateTuple = [from: IPackage, to: IPackage];
 

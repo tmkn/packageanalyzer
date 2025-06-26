@@ -1,7 +1,7 @@
 import satisfies from "spdx-satisfies";
 
-import { LicenseUtilities } from "../extensions/utilities/LicenseUtilities";
-import { IPackage } from "../package/package";
+import { LicenseUtilities } from "../extensions/utilities/LicenseUtilities.js";
+import { type IPackage } from "../package/package.js";
 
 export interface ILicenseCheckResult {
     ok: boolean;

@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Tree Command --folder --type 1`] = `
+exports[`Tree Command > --folder --type 1`] = `
 [
   "testproject1@1.0.0 (13 dependencies)",
   "└── react@16.8.6 (12 dependencies)",
@@ -21,7 +21,7 @@ exports[`Tree Command --folder --type 1`] = `
 ]
 `;
 
-exports[`Tree Command --package --type 1`] = `
+exports[`Tree Command > --package --type 1`] = `
 [
   "react@16.8.1 (12 dependencies)",
   "├── loose-envify@1.4.0 (1 dependencies)",

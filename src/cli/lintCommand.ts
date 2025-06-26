@@ -1,12 +1,12 @@
 import { Command, Option } from "clipanion";
 
-import { ILintServiceConfig, LintService } from "../reports/lint/LintService";
-import { LintFileLoader } from "../reports/lint/RulesLoader";
-import { getPackageVersionfromString } from "../visitors/visitor";
-import { npmOnline } from "../providers/online";
-import { FileSystemPackageProvider } from "../providers/folder";
-import { Formatter, IFormatter } from "../utils/formatter";
-import { getPackageVersionFromPath } from "../visitors/util.node";
+import { type ILintServiceConfig, LintService } from "../reports/lint/LintService.js";
+import { LintFileLoader } from "../reports/lint/RulesLoader.js";
+import { getPackageVersionfromString } from "../visitors/visitor.js";
+import { npmOnline } from "../providers/online.js";
+import { FileSystemPackageProvider } from "../providers/folder.js";
+import { Formatter, type IFormatter } from "../utils/formatter.js";
+import { getPackageVersionFromPath } from "../visitors/util.node.js";
 
 export class LintCommand extends Command {
     public lintFile = Option.String();

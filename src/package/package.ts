@@ -1,7 +1,8 @@
-import { get } from "lodash";
+import _ from "lodash";
+const { get } = _;
 
-import { AliasName, IPackageJson } from "../npm";
-import { CollectorNode, ICollectorNode } from "./collector";
+import { AliasName, type IPackageJson } from "../npm.js";
+import { CollectorNode, type ICollectorNode } from "./collector.js";
 
 interface IDeprecatedInfo {
     deprecated: boolean;

@@ -27,7 +27,11 @@ const compiler = webpack({
         ]
     },
     resolve: {
-        extensions: [".tsx", ".ts", ".js"]
+        extensions: [".tsx", ".ts", ".js"],
+        extensionAlias: {
+            ".js": [".ts", ".js"],
+            ".mjs": [".mts", ".mjs"]
+        }
     },
     externals: ["spdx-satisfies"],
     output: {

@@ -1,20 +1,20 @@
 import { z } from "zod";
 import chalk from "chalk";
 
-import { defaultDependencyType } from "../cli/common";
-import { LicenseUtilities } from "../extensions/utilities/LicenseUtilities";
-import { IPackage } from "../package/package";
-import { FileSystemPackageProvider } from "../providers/folder";
-import { IFormatter } from "../utils/formatter";
+import { defaultDependencyType } from "../cli/common.js";
+import { LicenseUtilities } from "../extensions/utilities/LicenseUtilities.js";
+import { type IPackage } from "../package/package.js";
+import { FileSystemPackageProvider } from "../providers/folder.js";
+import { type IFormatter } from "../utils/formatter.js";
 import {
     createWhitelistLicenseCheckReport,
-    ILicenseCheckResult,
-    LicenseCheckReport
-} from "../utils/licenseCheckService";
-import { getPackageVersionFromPath } from "../visitors/util.node";
-import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
-import { AbstractReport, IReportContext } from "./Report";
-import { dependencyTypes, BaseFolderParameter, BasePackageParameter } from "./Validation";
+    type ILicenseCheckResult,
+    type LicenseCheckReport
+} from "../utils/licenseCheckService.js";
+import { getPackageVersionFromPath } from "../visitors/util.node.js";
+import { getPackageVersionfromString, type PackageVersion } from "../visitors/visitor.js";
+import { AbstractReport, type IReportContext } from "./Report.js";
+import { dependencyTypes, BaseFolderParameter, BasePackageParameter } from "./Validation.js";
 
 const OptionalParams = z.object({
     type: z.optional(dependencyTypes),

@@ -1,10 +1,11 @@
 import * as path from "path";
 import { spawnSync } from "child_process";
 
-import { cli } from "../../src/cli/cli";
-import { LintCommand } from "../../src/cli/lintCommand";
-import { createMockContext } from "../common";
-import { IMockPackageJson, MockProvider } from "../mocks";
+import { cli } from "../../src/cli/cli.js";
+import { LintCommand } from "../../src/cli/lintCommand.js";
+import { createMockContext } from "../common.js";
+import { type IMockPackageJson, MockProvider } from "../mocks.js";
+import { pathToFileURL } from "url";
 
 describe(`Lint Command`, () => {
     const medalloPkg: IMockPackageJson = {
@@ -269,16 +270,19 @@ describe(`Lint Command`, () => {
 
     describe(`exit codes`, () => {
         test(`returns 1 when reports are all 'error'`, async () => {
+            const cwd = path.join(__dirname, "..", "..");
             const cliPath = path.join("build", "src", "cli.js");
             const packageJsonPath = path.join("tests", "data", "lint_data");
-            const lintFilePath = path.join("tests", "data", "lint_data", "allErrorLintFile.js");
+            const lintFilePath = pathToFileURL(
+                path.join("tests", "data", "lint_data", "allErrorLintFile.js")
+            ).href;
             const { status, stdout, stderr } = spawnSync(
                 "node",
                 [cliPath, "lint", "--folder", packageJsonPath, lintFilePath],
                 {
                     encoding: "utf-8",
                     stdio: "pipe",
-                    cwd: path.join(__dirname, "..", "..")
+                    cwd
                 }
             );
 
@@ -286,16 +290,19 @@ describe(`Lint Command`, () => {
         });
 
         test(`returns 1 when reports are mixed ('error' & 'warning')`, async () => {
+            const cwd = path.join(__dirname, "..", "..");
             const cliPath = path.join("build", "src", "cli.js");
             const packageJsonPath = path.join("tests", "data", "lint_data");
-            const lintFilePath = path.join("tests", "data", "lint_data", "allMixedLintFile.js");
+            const lintFilePath = pathToFileURL(
+                path.join("tests", "data", "lint_data", "allMixedLintFile.js")
+            ).href;
             const { status, stdout, stderr } = spawnSync(
                 "node",
                 [cliPath, "lint", "--folder", packageJsonPath, lintFilePath],
                 {
                     encoding: "utf-8",
                     stdio: "pipe",
-                    cwd: path.join(__dirname, "..", "..")
+                    cwd
                 }
             );
 
@@ -303,16 +310,19 @@ describe(`Lint Command`, () => {
         });
 
         test(`returns 0 when reports are all 'warning'`, async () => {
+            const cwd = path.join(__dirname, "..", "..");
             const cliPath = path.join("build", "src", "cli.js");
-            const packageJsonPath = path.join("tests", "data", "lint_data");
-            const lintFilePath = path.join("tests", "data", "lint_data", "allWarningLintFile.js");
+            const packageJsonPath = path.join(cwd, "tests", "data", "lint_data");
+            const lintFilePath = pathToFileURL(
+                path.join("tests", "data", "lint_data", "allWarningLintFile.js")
+            ).href;
             const { status, stdout, stderr } = spawnSync(
                 "node",
                 [cliPath, "lint", "--folder", packageJsonPath, lintFilePath],
                 {
                     encoding: "utf-8",
                     stdio: "pipe",
-                    cwd: path.join(__dirname, "..", "..")
+                    cwd
                 }
             );
 

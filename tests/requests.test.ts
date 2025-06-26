@@ -1,5 +1,5 @@
-import { downloadJson } from "../src/utils/requests";
-import { createMockRequestServer, IMockServer } from "./server";
+import { downloadJson } from "../src/utils/requests.js";
+import { createMockRequestServer, type IMockServer } from "./server.js";
 
 describe(`Request Tests`, () => {
     let server: IMockServer;

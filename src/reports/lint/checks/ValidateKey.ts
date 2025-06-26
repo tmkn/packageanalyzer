@@ -1,6 +1,6 @@
 import { z, ZodType } from "zod";
-import { IPackage } from "../../../package/package";
-import { ILintCheck } from "../LintRule";
+import { type IPackage } from "../../../package/package.js";
+import { type ILintCheck } from "../LintRule.js";
 
 const stringParamSchema = z.string();
 const keyConfigParamSchema = z.object({

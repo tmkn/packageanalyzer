@@ -1,11 +1,11 @@
 import * as path from "path";
 import { promises as fs } from "fs";
 
-import { cli } from "../../src/cli/cli";
-import { createMockNpmServer, IMockServer } from "../server";
-import { DependencyDumperCommand } from "../../src/cli/dependencyDumpCommand";
-import { createMockContext } from "../common";
-import { OnlinePackageProvider } from "../../src";
+import { cli } from "../../src/cli/cli.js";
+import { createMockNpmServer, type IMockServer } from "../server.js";
+import { DependencyDumperCommand } from "../../src/cli/dependencyDumpCommand.js";
+import { createMockContext } from "../common.js";
+import { OnlinePackageProvider } from "../../src/index.js";
 
 describe(`Dependency Dumper`, () => {
     let server: IMockServer;
@@ -13,7 +13,7 @@ describe(`Dependency Dumper`, () => {
 
     beforeAll(async () => {
         server = await createMockNpmServer();
-        jest.useRealTimers();
+        vi.useRealTimers();
     });
 
     test(`works`, async () => {

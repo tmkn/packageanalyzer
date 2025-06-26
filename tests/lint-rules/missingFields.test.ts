@@ -1,5 +1,5 @@
-import { MissingFields } from "../../src/reports/lint/checks/MissingFields";
-import { createMockPackage } from "../mocks";
+import { MissingFields } from "../../src/reports/lint/checks/MissingFields.js";
+import { createMockPackage } from "../mocks.js";
 
 describe("missingFields", () => {
     test("has custom validation", () => {

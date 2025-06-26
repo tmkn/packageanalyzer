@@ -1,13 +1,13 @@
 import * as path from "path";
 
-import { FileSystemPackageProvider } from "../../src/providers/folder";
-import { ReportService } from "../../src/reports/ReportService";
+import { FileSystemPackageProvider } from "../../src/providers/folder.js";
+import { ReportService } from "../../src/reports/ReportService.js";
 import {
     createMockContext,
-    ITestReportNoValidationParams,
+    type ITestReportNoValidationParams,
     TestReport,
     TestReportNoValidation
-} from "../common";
+} from "../common.js";
 
 describe(`ReportService Tests`, () => {
     const rootPath = path.join("tests", "data", "testproject1");
@@ -15,7 +15,7 @@ describe(`ReportService Tests`, () => {
 
     test(`Executes report method`, async () => {
         const { stdout, stderr } = createMockContext();
-        const cb = jest.fn();
+        const cb = vi.fn();
         const testReport = new TestReport({
             pkg: [`react`],
             report: async () => {
@@ -38,7 +38,7 @@ describe(`ReportService Tests`, () => {
 
     test(`Executes multiple reports`, async () => {
         const { stdout, stderr } = createMockContext();
-        const cb = jest.fn();
+        const cb = vi.fn();
         const testReport = new TestReport({
             pkg: [`react`],
             report: async () => {

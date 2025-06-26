@@ -1,10 +1,10 @@
 import * as path from "path";
 import { promises as fs } from "fs";
 
-import { DependencyDumper } from "../src/utils/dumper";
-import { createMockNpmServer, IMockServer } from "./server";
-import { DependencyUtilities } from "../src/extensions/utilities/DependencyUtilities";
-import { DumpPackageProvider } from "../src/providers/folder";
+import { DependencyDumper } from "../src/utils/dumper.js";
+import { createMockNpmServer, type IMockServer } from "./server.js";
+import { DependencyUtilities } from "../src/extensions/utilities/DependencyUtilities.js";
+import { DumpPackageProvider } from "../src/providers/folder.js";
 
 describe(`DependencyDumper Tests`, () => {
     let server: IMockServer;

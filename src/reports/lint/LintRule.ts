@@ -1,7 +1,7 @@
-import { ZodTypeAny, z } from "zod";
+import { type ZodTypeAny, z } from "zod";
 
-import type { IPackage } from "../../package/package";
-import { AttachmentData, IAttachment } from "../../attachments/Attachments";
+import type { IPackage } from "../../package/package.js";
+import type { AttachmentData, IAttachment } from "../../attachments/Attachments.js";
 
 const LintTypes = z.union([z.literal("error"), z.literal("warning")]);
 
@@ -12,11 +12,11 @@ interface ISharedLintCheckParams {
     checkParams?: () => ZodTypeAny;
 }
 
-interface IBaseLintCheck<T> extends ISharedLintCheckParams {
+export interface IBaseLintCheck<T> extends ISharedLintCheckParams {
     check: (pkg: IPackage, params: T) => string | string[] | void;
 }
 
-interface ILintCheckWithAttachments<T, A extends IAttachment<string, any>[]>
+export interface ILintCheckWithAttachments<T, A extends IAttachment<string, any>[]>
     extends ISharedLintCheckParams {
     check: (pkg: IPackage<AttachmentData<A>>, params: T) => string | string[] | void;
     attachments: A;

@@ -2,10 +2,8 @@
 
 import { Cli } from "clipanion";
 
-import { cli } from "./cli/cli";
+import { cli } from "./cli/cli.js";
 
-if (require.main === module) {
-    cli.runExit(process.argv.slice(2), {
-        ...Cli.defaultContext
-    });
-}
+cli.runExit(process.argv.slice(2), {
+    ...Cli.defaultContext
+});

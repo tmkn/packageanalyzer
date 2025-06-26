@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import { IPackageJson } from "../src/npm";
+import { type IPackageJson } from "../src/npm.js";
 
 function getFolderRecursively(folder: string): string[] {
     try {

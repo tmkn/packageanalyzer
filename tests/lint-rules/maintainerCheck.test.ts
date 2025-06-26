@@ -1,5 +1,5 @@
-import { createMockPackage } from "../mocks";
-import { MaintainerCheck } from "../../src/reports/lint/checks/MaintainerCheck";
+import { createMockPackage } from "../mocks.js";
+import { MaintainerCheck } from "../../src/reports/lint/checks/MaintainerCheck.js";
 
 describe(`maintainerCheck`, () => {
     test(`correctly reports maintainers`, () => {

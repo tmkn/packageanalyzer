@@ -1,8 +1,8 @@
-import { IPackage } from "../../package/package";
-import { IFormatter } from "../../utils/formatter";
-import { ITreeFormatter, print } from "../../utils/tree";
-import { DependencyUtilities } from "./DependencyUtilities";
-import { PathUtilities } from "./PathUtilities";
+import { type IPackage } from "../../package/package.js";
+import { type IFormatter } from "../../utils/formatter.js";
+import { type ITreeFormatter, print } from "../../utils/tree.js";
+import { DependencyUtilities } from "./DependencyUtilities.js";
+import { PathUtilities } from "./PathUtilities.js";
 
 export function printDependencyTree(p: IPackage, formatter: IFormatter): void {
     const converter: ITreeFormatter<IPackage> = {

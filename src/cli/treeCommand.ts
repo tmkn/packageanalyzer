@@ -1,8 +1,8 @@
 import { Command, Option } from "clipanion";
 
-import { CliCommand, defaultDependencyType } from "./common";
-import { ITreeReportParams, TreeReport } from "../reports/TreeReport";
-import { DependencyTypes } from "../reports/Validation";
+import { CliCommand, defaultDependencyType } from "./common.js";
+import { type ITreeReportParams, TreeReport } from "../reports/TreeReport.js";
+import { type DependencyTypes } from "../reports/Validation.js";
 
 export class TreeCommand extends CliCommand<TreeReport> {
     public package = Option.String(`--package`, {

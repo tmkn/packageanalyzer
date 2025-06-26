@@ -1,9 +1,9 @@
-import { Package, IPackage } from "../package/package";
-import { AliasName, INpmKeyValue, IPackageJson } from "../npm";
-import { IPackageJsonProvider } from "../providers/provider";
-import { ILogger } from "../loggers/ILogger";
-import { DependencyTypes } from "../reports/Validation";
-import { AttachmentData, Attachments, IAttachment } from "../attachments/Attachments";
+import { Package, type IPackage } from "../package/package.js";
+import { AliasName, type INpmKeyValue, type IPackageJson } from "../npm.js";
+import { type IPackageJsonProvider } from "../providers/provider.js";
+import { type ILogger } from "../loggers/ILogger.js";
+import { type DependencyTypes } from "../reports/Validation.js";
+import type { AttachmentData, Attachments, IAttachment } from "../attachments/Attachments.js";
 
 export type PackageVersion = [name: string, version?: string];
 

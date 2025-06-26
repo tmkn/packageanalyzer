@@ -1,11 +1,11 @@
 import { z } from "zod";
 
-import { IPackage } from "../package/package";
-import { IPackageJsonProvider } from "../providers/provider";
-import { IFormatter } from "../utils/formatter";
-import { PackageVersion } from "../visitors/visitor";
-import { DependencyTypes } from "./Validation";
-import { AttachmentData, IAttachment } from "../attachments/Attachments";
+import { type IPackage } from "../package/package.js";
+import { type IPackageJsonProvider } from "../providers/provider.js";
+import { type IFormatter } from "../utils/formatter.js";
+import { type PackageVersion } from "../visitors/visitor.js";
+import { type DependencyTypes } from "./Validation.js";
+import type { AttachmentData, IAttachment } from "../attachments/Attachments.js";
 
 export interface IReportContext {
     stdoutFormatter: IFormatter;

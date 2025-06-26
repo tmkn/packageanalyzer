@@ -1,11 +1,11 @@
 import * as path from "path";
 
-import { FileSystemPackageProvider } from "../src/providers/folder";
-import { IPackage } from "../src/package/package";
-import { Visitor } from "../src/visitors/visitor";
-import { OraLogger } from "../src/loggers/OraLogger";
-import { LicenseUtilities } from "../src/extensions/utilities/LicenseUtilities";
-import { DependencyUtilities } from "../src/extensions/utilities/DependencyUtilities";
+import { FileSystemPackageProvider } from "../src/providers/folder.js";
+import { type IPackage } from "../src/package/package.js";
+import { Visitor } from "../src/visitors/visitor.js";
+import { OraLogger } from "../src/loggers/OraLogger.js";
+import { LicenseUtilities } from "../src/extensions/utilities/LicenseUtilities.js";
+import { DependencyUtilities } from "../src/extensions/utilities/DependencyUtilities.js";
 
 describe(`visitFromFolder Tests`, () => {
     let p: IPackage;

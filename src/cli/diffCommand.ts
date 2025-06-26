@@ -1,8 +1,8 @@
 import { Command, Option } from "clipanion";
 
-import { CliCommand, defaultDependencyType } from "./common";
-import { DependencyTypes } from "../reports/Validation";
-import { DiffReport, IDiffReportParams } from "../reports/DiffReport";
+import { CliCommand, defaultDependencyType } from "./common.js";
+import { type DependencyTypes } from "../reports/Validation.js";
+import { DiffReport, type IDiffReportParams } from "../reports/DiffReport.js";
 
 export class DiffCommand extends CliCommand<DiffReport> {
     public range = Option.Array(`--range`, {

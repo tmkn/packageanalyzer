@@ -1,4 +1,4 @@
-import { IPackage } from "../package/package";
+import { type IPackage } from "../package/package.js";
 
 export interface IAttachment<K extends string, T> {
     readonly key: K;

@@ -1,8 +1,8 @@
 import { Command, Option } from "clipanion";
 
-import { DownloadReport, IDownloadParams } from "../reports/DownloadCountReport";
-import type { Url } from "../reports/Validation";
-import { CliCommand } from "./common";
+import { DownloadReport, type IDownloadParams } from "../reports/DownloadCountReport.js";
+import type { Url } from "../reports/Validation.js";
+import { CliCommand } from "./common.js";
 
 export class DownloadCommand extends CliCommand<DownloadReport> {
     public package?: string = Option.String(`--package`, {

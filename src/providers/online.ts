@@ -1,7 +1,7 @@
-import { IPackageMetadata, IUnpublishedPackageMetadata } from "../npm";
-import type { Url } from "../reports/Validation";
-import { downloadJson } from "../utils/requests";
-import { AbstractPackageProvider } from "./provider";
+import { type IPackageMetadata, type IUnpublishedPackageMetadata } from "../npm.js";
+import type { Url } from "../reports/Validation.js";
+import { downloadJson } from "../utils/requests.js";
+import { AbstractPackageProvider } from "./provider.js";
 
 //loads npm data from the web
 export class OnlinePackageProvider extends AbstractPackageProvider {

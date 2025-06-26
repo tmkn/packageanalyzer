@@ -1,26 +1,29 @@
 import chalk from "chalk";
 import { z } from "zod";
 
-import { daysAgo } from "../cli/common";
-import { ReleaseAttachment } from "../attachments/ReleaseAttachment";
+import { daysAgo } from "../cli/common.js";
+import { ReleaseAttachment } from "../attachments/ReleaseAttachment.js";
 import {
     DependencyUtilities,
-    IMostReferred,
-    VersionSummary
-} from "../extensions/utilities/DependencyUtilities";
-import { GroupedLicenseSummary, LicenseUtilities } from "../extensions/utilities/LicenseUtilities";
-import { LoopUtilities } from "../extensions/utilities/LoopUtilities";
-import { PathUtilities } from "../extensions/utilities/PathUtilities";
-import { ReleaseUtilities } from "../extensions/utilities/ReleaseUtilities";
-import { IPackage } from "../package/package";
-import { FileSystemPackageProvider } from "../providers/folder";
-import { npmOnline } from "../providers/online";
-import { IFormatter } from "../utils/formatter";
-import { getPackageVersionFromPath } from "../visitors/util.node";
-import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
-import { AbstractReport, EntryTypes, IReportContext } from "./Report";
-import { BaseFolderParameter, BasePackageParameter, TypeParameter } from "./Validation";
-import { AttachmentData } from "../attachments/Attachments";
+    type IMostReferred,
+    type VersionSummary
+} from "../extensions/utilities/DependencyUtilities.js";
+import {
+    type GroupedLicenseSummary,
+    LicenseUtilities
+} from "../extensions/utilities/LicenseUtilities.js";
+import { LoopUtilities } from "../extensions/utilities/LoopUtilities.js";
+import { PathUtilities } from "../extensions/utilities/PathUtilities.js";
+import { ReleaseUtilities } from "../extensions/utilities/ReleaseUtilities.js";
+import { type IPackage } from "../package/package.js";
+import { FileSystemPackageProvider } from "../providers/folder.js";
+import { npmOnline } from "../providers/online.js";
+import { type IFormatter } from "../utils/formatter.js";
+import { getPackageVersionFromPath } from "../visitors/util.node.js";
+import { getPackageVersionfromString, type PackageVersion } from "../visitors/visitor.js";
+import { AbstractReport, type EntryTypes, type IReportContext } from "./Report.js";
+import { BaseFolderParameter, BasePackageParameter, TypeParameter } from "./Validation.js";
+import { type AttachmentData } from "../attachments/Attachments.js";
 
 const FullParameter = z.object({
     full: z.boolean()

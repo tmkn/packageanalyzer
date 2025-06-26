@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Tree Tests Print tree 1`] = `
+exports[`Tree Tests > Print tree 1`] = `
 [
   "testproject1@1.0.0",
   "└── react@16.8.6",
@@ -20,7 +20,7 @@ exports[`Tree Tests Print tree 1`] = `
 ]
 `;
 
-exports[`Tree Tests Print tree with multi lines 1`] = `
+exports[`Tree Tests > Print tree with multi lines 1`] = `
 [
   "testproject1@1.0.0 (13 dependencies)",
   "License: ISC",

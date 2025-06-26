@@ -2,14 +2,12 @@ import * as path from "path";
 
 import nock from "nock";
 
-import { npmOnline } from "../src";
-import { setupRegistryMocks } from "./common";
+import { npmOnline } from "../src/index.js";
+import { setupRegistryMocks } from "./common.js";
 
 describe(`Mock Registry Tests`, () => {
     beforeAll(() => {
-        jest.useFakeTimers({
-            legacyFakeTimers: true
-        });
+        vi.useFakeTimers();
         nock.disableNetConnect();
 
         const destination = path.join("tests", "data", "dump");
@@ -36,8 +34,6 @@ describe(`Mock Registry Tests`, () => {
 
     afterAll(() => {
         nock.enableNetConnect();
-        jest.useFakeTimers({
-            legacyFakeTimers: false
-        });
+        vi.useFakeTimers();
     });
 });

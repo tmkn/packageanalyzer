@@ -1,4 +1,4 @@
-import { CodeAnalyzer } from "../src/utils/code";
+import { CodeAnalyzer } from "../src/utils/code.js";
 
 const example1 = `
 module.exports = typeof queueMicrotask === 'function'

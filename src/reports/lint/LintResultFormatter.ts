@@ -1,8 +1,8 @@
 import chalk from "chalk";
 
-import { IPackage } from "../../package/package";
-import { IFormatter } from "../../utils/formatter";
-import { ILintTypes } from "./LintRule";
+import { type IPackage } from "../../package/package.js";
+import { type IFormatter } from "../../utils/formatter.js";
+import { type ILintTypes } from "./LintRule.js";
 
 export interface ILintResult {
     type: ILintTypes | "internal-error";

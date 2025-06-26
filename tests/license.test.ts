@@ -1,8 +1,8 @@
 import * as path from "path";
 
-import { FileSystemPackageProvider } from "../src/providers/folder";
-import { LicenseUtilities } from "../src/extensions/utilities/LicenseUtilities";
-import { createMockPackage } from "./mocks";
+import { FileSystemPackageProvider } from "../src/providers/folder.js";
+import { LicenseUtilities } from "../src/extensions/utilities/LicenseUtilities.js";
+import { createMockPackage } from "./mocks.js";
 
 describe(`License Tests`, () => {
     let provider: FileSystemPackageProvider;

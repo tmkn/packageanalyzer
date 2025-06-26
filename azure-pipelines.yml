@@ -4,54 +4,55 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
 
 trigger:
-- master
+    - master
 
 pr:
-- master
+    - master
 
 strategy:
-  matrix:
-    linux:
-      imageName: 'ubuntu-latest'
-    mac:
-      imageName: 'macOS-latest'
-    windows:
-      imageName: 'windows-latest'
+    matrix:
+        linux:
+            imageName: "ubuntu-latest"
+        mac:
+            imageName: "macOS-latest"
+        windows:
+            imageName: "windows-latest"
 
 pool:
-  vmImage: $(imageName)
+    vmImage: $(imageName)
 
 steps:
-- task: NodeTool@0
-  inputs:
-    versionSpec: '18.x'
-  displayName: 'Install Node.js'
+    - task: NodeTool@0
+      inputs:
+          versionSpec: "22.x"
+      displayName: "Install Node.js"
 
-- script: yarn install
-  displayName: 'yarn install'
+    - script: yarn install
+      displayName: "yarn install"
 
-- script: yarn build
-  displayName: 'Build'
+    - script: yarn build
+      displayName: "Build"
 
-- script: yarn lint:web
-  displayName: 'Check web version for NodeJS code'
+    - script: yarn lint:web
+      displayName: "Check web version for NodeJS code"
 
-- script: yarn test:exports
-  displayName: 'Test exports'
+    - script: yarn test:exports
+      condition: eq( variables['Agent.OS'], 'Linux' )
+      displayName: "Test exports"
 
-- script: |
-    yarn test
-  displayName: 'Run tests'
+    - script: |
+          yarn test
+      displayName: "Run tests"
 
-- script: |
-    yarn test:coverage
-    curl https://keybase.io/codecovsecurity/pgp_keys.asc | gpg --import # One-time step 
-    curl -Os https://uploader.codecov.io/latest/linux/codecov 
-    curl -Os https://uploader.codecov.io/latest/linux/codecov.SHA256SUM
-    curl -Os https://uploader.codecov.io/latest/linux/codecov.SHA256SUM.sig 
-    gpg --verify codecov.SHA256SUM.sig codecov.SHA256SUM 
-    shasum -a 256 -c codecov.SHA256SUM 
-    chmod +x codecov 
-    ./codecov -t ${CODECOV_TOKEN}
-  condition: eq( variables['Agent.OS'], 'Linux' )
-  displayName: 'Generate code coverage'
+    - script: |
+          yarn test:coverage
+          curl https://keybase.io/codecovsecurity/pgp_keys.asc | gpg --import # One-time step 
+          curl -Os https://uploader.codecov.io/latest/linux/codecov 
+          curl -Os https://uploader.codecov.io/latest/linux/codecov.SHA256SUM
+          curl -Os https://uploader.codecov.io/latest/linux/codecov.SHA256SUM.sig 
+          gpg --verify codecov.SHA256SUM.sig codecov.SHA256SUM 
+          shasum -a 256 -c codecov.SHA256SUM 
+          chmod +x codecov 
+          ./codecov -t ${CODECOV_TOKEN}
+      condition: eq( variables['Agent.OS'], 'Linux' )
+      displayName: "Generate code coverage"

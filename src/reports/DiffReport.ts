@@ -1,14 +1,14 @@
 import { z } from "zod";
 import chalk from "chalk";
 
-import { defaultDependencyType } from "../cli/common";
-import { DependencyUtilities } from "../extensions/utilities/DependencyUtilities";
-import { IPackage } from "../package/package";
-import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
-import { AbstractReport, IReportContext } from "./Report";
-import { TypeParameter } from "./Validation";
-import { DiffUtilities } from "../extensions/utilities/DiffUtilities";
-import { IFormatter } from "../utils/formatter";
+import { defaultDependencyType } from "../cli/common.js";
+import { DependencyUtilities } from "../extensions/utilities/DependencyUtilities.js";
+import { type IPackage } from "../package/package.js";
+import { getPackageVersionfromString, type PackageVersion } from "../visitors/visitor.js";
+import { AbstractReport, type IReportContext } from "./Report.js";
+import { TypeParameter } from "./Validation.js";
+import { DiffUtilities } from "../extensions/utilities/DiffUtilities.js";
+import { type IFormatter } from "../utils/formatter.js";
 
 const FromParameter = z.object({
     from: z.string()

@@ -1,8 +1,8 @@
 import * as path from "path";
 import * as fs from "fs";
 
-import { PackageVersion } from "./visitor";
-import { IPackageJson } from "../npm";
+import { type PackageVersion } from "./visitor.js";
+import { type IPackageJson } from "../npm.js";
 
 export function getPackageVersionFromPath(folder: string): PackageVersion {
     const packageJsonPath = path.join(folder, `package.json`);

@@ -1,5 +1,5 @@
-import { ReleaseUtilities } from "../src/extensions/utilities/ReleaseUtilities";
-import { createMockPackage } from "./mocks";
+import { ReleaseUtilities } from "../src/extensions/utilities/ReleaseUtilities.js";
+import { createMockPackage } from "./mocks.js";
 
 describe(`Release Utilities Tests`, () => {
     test(`returns oldest package`, () => {

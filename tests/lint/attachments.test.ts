@@ -1,10 +1,10 @@
-import { IAttachment } from "../../src";
-import { IApplyArgs } from "../../src/attachments/Attachments";
-import { createRuleWithAttachment, ILintFile } from "../../src/reports/lint/LintRule";
-import { LintService } from "../../src/reports/lint/LintService";
-import { IRulesLoader } from "../../src/reports/lint/RulesLoader";
-import { createMockContext } from "../common";
-import { IMockPackageJson, MockProvider } from "../mocks";
+import { type IAttachment } from "../../src/index.js";
+import { type IApplyArgs } from "../../src/attachments/Attachments.js";
+import { createRuleWithAttachment, type ILintFile } from "../../src/reports/lint/LintRule.js";
+import { LintService } from "../../src/reports/lint/LintService.js";
+import { type IRulesLoader } from "../../src/reports/lint/RulesLoader.js";
+import { createMockContext } from "../common.js";
+import { type IMockPackageJson, MockProvider } from "../mocks.js";
 
 describe(`Lint Service Attachment Tests`, () => {
     const medalloPkg: IMockPackageJson = {
