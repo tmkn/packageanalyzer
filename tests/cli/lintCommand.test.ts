@@ -5,7 +5,6 @@ import { cli } from "../../src/cli/cli.js";
 import { LintCommand } from "../../src/cli/lintCommand.js";
 import { createMockContext } from "../common.js";
 import { type IMockPackageJson, MockProvider } from "../mocks.js";
-import { pathToFileURL } from "url";
 
 describe(`Lint Command`, () => {
     const medalloPkg: IMockPackageJson = {
@@ -34,7 +33,7 @@ describe(`Lint Command`, () => {
             await command.execute();
 
             expect(stdout.lines.length).toBe(0);
-            expect(stderr.lines.length).toBe(2);
+            expect(stderr.lines.length).toBe(4);
             expect(stderr.lines[0]).toContain(`Error:`);
         });
 
@@ -273,9 +272,7 @@ describe(`Lint Command`, () => {
             const cwd = path.join(__dirname, "..", "..");
             const cliPath = path.join("build", "src", "cli.js");
             const packageJsonPath = path.join("tests", "data", "lint_data");
-            const lintFilePath = pathToFileURL(
-                path.join("tests", "data", "lint_data", "allErrorLintFile.js")
-            ).href;
+            const lintFilePath = path.join("tests", "data", "lint_data", "allErrorLintFile.js");
             const { status, stdout, stderr } = spawnSync(
                 "node",
                 [cliPath, "lint", "--folder", packageJsonPath, lintFilePath],
@@ -293,9 +290,7 @@ describe(`Lint Command`, () => {
             const cwd = path.join(__dirname, "..", "..");
             const cliPath = path.join("build", "src", "cli.js");
             const packageJsonPath = path.join("tests", "data", "lint_data");
-            const lintFilePath = pathToFileURL(
-                path.join("tests", "data", "lint_data", "allMixedLintFile.js")
-            ).href;
+            const lintFilePath = path.join("tests", "data", "lint_data", "allMixedLintFile.js");
             const { status, stdout, stderr } = spawnSync(
                 "node",
                 [cliPath, "lint", "--folder", packageJsonPath, lintFilePath],
@@ -313,9 +308,7 @@ describe(`Lint Command`, () => {
             const cwd = path.join(__dirname, "..", "..");
             const cliPath = path.join("build", "src", "cli.js");
             const packageJsonPath = path.join(cwd, "tests", "data", "lint_data");
-            const lintFilePath = pathToFileURL(
-                path.join("tests", "data", "lint_data", "allWarningLintFile.js")
-            ).href;
+            const lintFilePath = path.join("tests", "data", "lint_data", "allWarningLintFile.js");
             const { status, stdout, stderr } = spawnSync(
                 "node",
                 [cliPath, "lint", "--folder", packageJsonPath, lintFilePath],

@@ -5,8 +5,6 @@ const SampleCheck = {
     }
 };
 
-const foo = {
+export default {
     rules: [["warning", SampleCheck]]
 };
-
-export default foo;
