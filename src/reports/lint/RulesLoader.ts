@@ -1,6 +1,9 @@
 import path from "path";
 import { z } from "zod";
 
+import { createJiti } from "jiti";
+const jiti = createJiti(import.meta.url);
+
 import { type ILintFile, ZodLintRule } from "./LintRule.js";
 
 export interface IRulesLoader {
@@ -27,10 +30,10 @@ export class LintFileLoader implements IRulesLoader {
                 : path.join(process.cwd(), this._lintFile);
         }
 
-        const importedLintFile = await import(importPath);
+        const importedLintFile = await jiti.import(importPath, { default: true });
 
-        if (this._isLintFile(importedLintFile.default)) {
-            return importedLintFile.default;
+        if (this._isLintFile(importedLintFile)) {
+            return importedLintFile;
         } else {
             throw new Error(`Invalid lint file format: ${this._lintFile}`);
         }
