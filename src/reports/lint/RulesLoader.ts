@@ -1,6 +1,9 @@
 import path from "path";
 import { z } from "zod";
 
+import { createJiti } from "jiti";
+const jiti = createJiti(import.meta.url);
+
 import { ILintFile, ZodLintRule } from "./LintRule";
 
 export interface IRulesLoader {
