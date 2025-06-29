@@ -1,4 +1,4 @@
-import { IPackage } from "../../package/package";
+import { type IPackage } from "../../package/package.js";
 
 type Name = string;
 type Version = string;

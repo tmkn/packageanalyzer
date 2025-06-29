@@ -1,18 +1,40 @@
 {
+    // "compilerOptions": {
+    // "rootDir": ".",
+    // "strict": true,
+    // "noImplicitOverride": true,
+    // "outDir": "build",
+    // "sourceMap": true,
+    // "lib": ["ESNext"],
+    // "target": "es2020",
+    // "module": "commonjs",
+    // "esModuleInterop": true,
+    // "allowSyntheticDefaultImports": true,
+    // "declaration": true,
+    // "declarationMap": true,
+    // "isolatedModules": true
+    // },
     "compilerOptions": {
+        /* Base Options: */
         "rootDir": ".",
-        "strict": true,
-        "noImplicitOverride": true,
         "outDir": "build",
-        "sourceMap": true,
-        "lib": ["ESNext"],
-        "target": "es2020",
-        "module": "commonjs",
         "esModuleInterop": true,
-        "allowSyntheticDefaultImports": true,
+        "skipLibCheck": true,
+        "target": "es2022",
+        "allowJs": true,
+        "resolveJsonModule": true,
+        "moduleDetection": "force",
+        "isolatedModules": true,
+        "verbatimModuleSyntax": true,
+        /* Strictness */
+        "strict": true,
+        /* If transpiling with TypeScript: */
+        "module": "NodeNext",
+        "sourceMap": true,
+        /* AND if you're building for a library: */
         "declaration": true,
-        "declarationMap": true,
-        "isolatedModules": true
+        /* If your code doesn't run in the DOM: */
+        "lib": ["es2022"]
     },
     "include": [],
     "references": [

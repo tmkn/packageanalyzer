@@ -1,6 +1,6 @@
 import * as semver from "semver";
-import { isUnpublished, IPackageMetadata } from "../npm";
-import { IPackageMetaDataProvider } from "../providers/provider";
+import { isUnpublished, type IPackageMetadata } from "../npm.js";
+import { type IPackageMetaDataProvider } from "../providers/provider.js";
 
 interface IReleaseInfo {
     version: string;

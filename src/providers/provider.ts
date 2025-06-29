@@ -1,7 +1,12 @@
 import * as semver from "semver";
 
-import { IPackageMetadata, IPackageJson, IUnpublishedPackageMetadata, isUnpublished } from "../npm";
-import { PackageVersion } from "../visitors/visitor";
+import {
+    type IPackageMetadata,
+    type IPackageJson,
+    type IUnpublishedPackageMetadata,
+    isUnpublished
+} from "../npm.js";
+import { type PackageVersion } from "../visitors/visitor.js";
 
 export type PackageMetaData = IPackageMetadata | IUnpublishedPackageMetadata;
 

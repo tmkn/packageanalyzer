@@ -1,5 +1,5 @@
-import { createMockPackage } from "../mocks";
-import { NonRegistryDependency } from "../../src/reports/lint/checks/NonRegistryDependency";
+import { createMockPackage } from "../mocks.js";
+import { NonRegistryDependency } from "../../src/reports/lint/checks/NonRegistryDependency.js";
 
 describe(`NonRegistryDependency`, () => {
     describe(`reports local dependency`, () => {

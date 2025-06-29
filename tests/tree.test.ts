@@ -1,15 +1,15 @@
 import * as path from "path";
 
-import { FileSystemPackageProvider } from "../src/providers/folder";
-import { Visitor } from "../src/visitors/visitor";
-import { OraLogger } from "../src/loggers/OraLogger";
-import { ITreeFormatter, print } from "../src/utils/tree";
-import { IPackage } from "../src/package/package";
-import { Formatter } from "../src/utils/formatter";
-import { createMockContext } from "./common";
-import { DependencyUtilities } from "../src/extensions/utilities/DependencyUtilities";
-import { LicenseUtilities } from "../src/extensions/utilities/LicenseUtilities";
-import { getPackageVersionFromPath } from "../src/visitors/util.node";
+import { FileSystemPackageProvider } from "../src/providers/folder.js";
+import { Visitor } from "../src/visitors/visitor.js";
+import { OraLogger } from "../src/loggers/OraLogger.js";
+import { type ITreeFormatter, print } from "../src/utils/tree.js";
+import { type IPackage } from "../src/package/package.js";
+import { Formatter } from "../src/utils/formatter.js";
+import { createMockContext } from "./common.js";
+import { DependencyUtilities } from "../src/extensions/utilities/DependencyUtilities.js";
+import { LicenseUtilities } from "../src/extensions/utilities/LicenseUtilities.js";
+import { getPackageVersionFromPath } from "../src/visitors/util.node.js";
 
 describe(`Tree Tests`, () => {
     test(`Print tree`, async () => {

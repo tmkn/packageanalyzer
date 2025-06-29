@@ -1,14 +1,14 @@
 import * as path from "path";
 
-import { IPackage } from "../src/package/package";
-import { FileSystemPackageProvider } from "../src/providers/folder";
-import { getPackageVersionfromString, Visitor } from "../src/visitors/visitor";
-import { OraLogger } from "../src/loggers/OraLogger";
-import { LoopUtilities } from "../src/extensions/utilities/LoopUtilities";
-import { LicenseUtilities } from "../src/extensions/utilities/LicenseUtilities";
-import { PathUtilities } from "../src/extensions/utilities/PathUtilities";
-import { getPackageVersionFromPath } from "../src/visitors/util.node";
-import { IAttachment } from "../src/attachments/Attachments";
+import { type IPackage } from "../src/package/package.js";
+import { FileSystemPackageProvider } from "../src/providers/folder.js";
+import { getPackageVersionfromString, Visitor } from "../src/visitors/visitor.js";
+import { OraLogger } from "../src/loggers/OraLogger.js";
+import { LoopUtilities } from "../src/extensions/utilities/LoopUtilities.js";
+import { LicenseUtilities } from "../src/extensions/utilities/LicenseUtilities.js";
+import { PathUtilities } from "../src/extensions/utilities/PathUtilities.js";
+import { getPackageVersionFromPath } from "../src/visitors/util.node.js";
+import { type IAttachment } from "../src/attachments/Attachments.js";
 
 describe(`Package Tests`, () => {
     let p: IPackage;
@@ -233,7 +233,7 @@ describe(`Deprecated Package Tests`, () => {
             expect(deprecated).toBe(true);
             expect(typeof message).toBe("string");
         } else {
-            fail(`Couldn't find package "extnode"`);
+            throw new Error(`Couldn't find package "extnode"`);
         }
     });
 });

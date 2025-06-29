@@ -3,13 +3,13 @@ import * as fs from "fs";
 
 import { z } from "zod";
 
-import { IPackage } from "../package/package";
-import { OnlinePackageProvider } from "../providers/online";
-import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
-import { AbstractReport, IReportContext } from "./Report";
-import { urlType } from "./../reports/Validation";
-import { MetaFileAttachment } from "../attachments/MetaFileAttachment";
-import { AttachmentData } from "../attachments/Attachments";
+import { type IPackage } from "../package/package.js";
+import { OnlinePackageProvider } from "../providers/online.js";
+import { getPackageVersionfromString, type PackageVersion } from "../visitors/visitor.js";
+import { AbstractReport, type IReportContext } from "./Report.js";
+import { urlType } from "./../reports/Validation.js";
+import { MetaFileAttachment } from "../attachments/MetaFileAttachment.js";
+import { type AttachmentData } from "../attachments/Attachments.js";
 
 const DependencyDumpParams = z.object({
     entries: z.array(z.string()),

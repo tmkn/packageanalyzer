@@ -2,8 +2,8 @@ import * as path from "path";
 import * as fs from "fs";
 import * as semver from "semver";
 
-import { IPackageJson, IPackageMetadata, IUnpublishedPackageMetadata } from "../npm";
-import { AbstractPackageProvider, IPackageJsonProvider } from "./provider";
+import type { IPackageJson, IPackageMetadata, IUnpublishedPackageMetadata } from "../npm.js";
+import { AbstractPackageProvider, type IPackageJsonProvider } from "./provider.js";
 
 // todo replace in unit tests with FolderPackageProvider
 // aka make FolderPackageProvider the default for unit tests

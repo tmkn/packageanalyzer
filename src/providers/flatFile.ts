@@ -4,10 +4,15 @@ import * as os from "os";
 import * as path from "path";
 import * as semver from "semver";
 
-import { OraLogger } from "../loggers/OraLogger";
+import { OraLogger } from "../loggers/OraLogger.js";
 
-import { IPackageJson, IPackageMetadata, INpmDumpRow, IUnpublishedPackageMetadata } from "../npm";
-import { IPackageJsonProvider } from "./provider";
+import type {
+    IPackageJson,
+    IPackageMetadata,
+    INpmDumpRow,
+    IUnpublishedPackageMetadata
+} from "../npm.js";
+import { type IPackageJsonProvider } from "./provider.js";
 
 //parses npm data from https://replicate.npmjs.com/_all_docs?limit=4&include_docs=true
 //needs a lookup file

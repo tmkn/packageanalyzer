@@ -1,12 +1,12 @@
 import { Writable } from "stream";
 import chalk from "chalk";
 
-import { IPackage } from "../package/package";
-import { npmOnline } from "../providers/online";
-import { Formatter, IFormatter } from "../utils/formatter";
-import { OraLogger } from "../loggers/OraLogger";
-import { PackageVersion, Visitor } from "../visitors/visitor";
-import { GenericReport, isPackageVersionArray, ReportMethodSignature } from "./Report";
+import { type IPackage } from "../package/package.js";
+import { npmOnline } from "../providers/online.js";
+import { Formatter, type IFormatter } from "../utils/formatter.js";
+import { OraLogger } from "../loggers/OraLogger.js";
+import { type PackageVersion, Visitor } from "../visitors/visitor.js";
+import { type GenericReport, isPackageVersionArray, type ReportMethodSignature } from "./Report.js";
 
 // each report is executed individually
 interface IDistinctReportConfig {

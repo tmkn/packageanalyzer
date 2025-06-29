@@ -4,9 +4,9 @@ import {
     getMinorVersionString,
     updateCheck,
     updateInfo
-} from "../src/utils/update";
-import { OnlinePackageProvider } from "../src/providers/online";
-import { createMockNpmServer, IMockServer } from "./server";
+} from "../src/utils/update.js";
+import { OnlinePackageProvider } from "../src/providers/online.js";
+import { createMockNpmServer, type IMockServer } from "./server.js";
 
 describe(`Update Tests`, () => {
     let server: IMockServer;

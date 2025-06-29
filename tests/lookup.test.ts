@@ -2,8 +2,8 @@ import * as path from "path";
 import * as fs from "fs";
 import * as os from "os";
 
-import { INpmDumpRow } from "../src/npm";
-import { LookupFileCreator, ILookupEntry, LookupFileWriter } from "../src/utils/lookup";
+import { type INpmDumpRow } from "../src/npm.js";
+import { LookupFileCreator, type ILookupEntry, LookupFileWriter } from "../src/utils/lookup.js";
 
 describe(`Lookup Creator Tests`, () => {
     const destination = path.join("tests", "data", "npmdump");

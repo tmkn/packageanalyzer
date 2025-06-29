@@ -6,7 +6,7 @@ import { Server } from "http";
 
 import express from "express";
 
-import { IPackageMetadata, isUnpublished } from "../src/npm";
+import { type IPackageMetadata, isUnpublished } from "../src/npm.js";
 
 export interface IMockServer {
     port: number;

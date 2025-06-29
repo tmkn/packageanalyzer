@@ -1,4 +1,4 @@
-import { createMockPackage, IMockPackageJson } from "./mocks";
+import { createMockPackage, type IMockPackageJson } from "./mocks.js";
 
 describe(`Collector Tests`, () => {
     const mockData: IMockPackageJson = {

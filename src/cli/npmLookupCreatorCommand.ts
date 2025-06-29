@@ -1,6 +1,6 @@
 import { Command, Option } from "clipanion";
 
-import { createLookupFile } from "../utils/lookup";
+import { createLookupFile } from "../utils/lookup.js";
 
 export class NpmDumpLookupCreatorCommand extends Command {
     public npmFile?: string = Option.String(`--npmfile`, { description: `path to a npmdump.json` });

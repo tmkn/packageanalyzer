@@ -1,8 +1,8 @@
-import { cli } from "../../src/cli/cli";
-import { createMockDownloadServer, IMockServer, createMockNpmServer } from "../server";
-import { DownloadCommand } from "../../src/cli/downloadCommand";
-import { createMockContext } from "../common";
-import { OnlinePackageProvider } from "../../src/providers/online";
+import { cli } from "../../src/cli/cli.js";
+import { createMockDownloadServer, type IMockServer, createMockNpmServer } from "../server.js";
+import { DownloadCommand } from "../../src/cli/downloadCommand.js";
+import { createMockContext } from "../common.js";
+import { OnlinePackageProvider } from "../../src/providers/online.js";
 
 describe(`Download Command`, () => {
     let downloadServer: IMockServer;

@@ -1,6 +1,6 @@
-import { AttachmentData } from "../../attachments/Attachments";
-import { IPackage } from "../../package/package";
-import { ReleaseAttachment } from "../../attachments/ReleaseAttachment";
+import { type AttachmentData } from "../../attachments/Attachments.js";
+import { type IPackage } from "../../package/package.js";
+import { ReleaseAttachment } from "../../attachments/ReleaseAttachment.js";
 
 export class ReleaseUtilities {
     constructor(private _p: IPackage<AttachmentData<ReleaseAttachment>>) {}

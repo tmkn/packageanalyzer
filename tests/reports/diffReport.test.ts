@@ -1,7 +1,7 @@
-import { DiffReport } from "../../src/reports/DiffReport";
-import { ReportService } from "../../src/reports/ReportService";
-import { createMockContext } from "../common";
-import { IMockPackageJson, MockProvider } from "../mocks";
+import { DiffReport } from "../../src/reports/DiffReport.js";
+import { ReportService } from "../../src/reports/ReportService.js";
+import { createMockContext } from "../common.js";
+import { type IMockPackageJson, MockProvider } from "../mocks.js";
 
 describe(`DiffReport Tests`, () => {
     const fromBaseData: IMockPackageJson = {

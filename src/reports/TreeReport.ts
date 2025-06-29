@@ -1,13 +1,13 @@
 import { z } from "zod";
 
-import { defaultDependencyType } from "../cli/common";
-import { printDependencyTree } from "../extensions/utilities/LoopUtilities";
-import { IPackage } from "../package/package";
-import { FileSystemPackageProvider } from "../providers/folder";
-import { getPackageVersionFromPath } from "../visitors/util.node";
-import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
-import { AbstractReport, IReportContext } from "./Report";
-import { BaseFolderParameter, BasePackageParameter, TypeParameter } from "./Validation";
+import { defaultDependencyType } from "../cli/common.js";
+import { printDependencyTree } from "../extensions/utilities/LoopUtilities.js";
+import { type IPackage } from "../package/package.js";
+import { FileSystemPackageProvider } from "../providers/folder.js";
+import { getPackageVersionFromPath } from "../visitors/util.node.js";
+import { getPackageVersionfromString, type PackageVersion } from "../visitors/visitor.js";
+import { AbstractReport, type IReportContext } from "./Report.js";
+import { BaseFolderParameter, BasePackageParameter, TypeParameter } from "./Validation.js";
 
 const PackageParams = BasePackageParameter.merge(TypeParameter);
 const FolderParams = BaseFolderParameter.merge(TypeParameter);

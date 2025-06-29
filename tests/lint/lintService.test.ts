@@ -1,11 +1,11 @@
 import path from "path";
 
 import { z } from "zod";
-import { ILintFile, ZodLintRule, createRule } from "../../src/reports/lint/LintRule";
-import { createMockContext } from "../common";
-import { IMockPackageJson, MockProvider } from "../mocks";
-import { LintService } from "../../src/reports/lint/LintService";
-import { LintFileLoader } from "../../src/reports/lint/RulesLoader";
+import { type ILintFile, ZodLintRule, createRule } from "../../src/reports/lint/LintRule.js";
+import { createMockContext } from "../common.js";
+import { type IMockPackageJson, MockProvider } from "../mocks.js";
+import { LintService } from "../../src/reports/lint/LintService.js";
+import { LintFileLoader } from "../../src/reports/lint/RulesLoader.js";
 
 describe(`Lint Service Test`, () => {
     const medalloPkg: IMockPackageJson = {
@@ -19,20 +19,16 @@ describe(`Lint Service Test`, () => {
     const provider = new MockProvider([medalloPkg]);
 
     beforeEach(() => {
-        jest.resetModules();
+        vi.resetModules();
     });
 
     test(`loads and executes lint file with absolute path`, async () => {
-        const mockFn = jest.fn();
-        jest.doMock(
-            `/getsMockedAnyway.js`,
-            () => ({
+        const mockFn = vi.fn();
+        vi.doMock(`/getsMockedAnyway.js`, () => ({
+            default: {
                 rules: [createRule(`error`, { name: `test-rule`, check: mockFn })]
-            }),
-            {
-                virtual: true
             }
-        );
+        }));
 
         const { stdout, stderr } = createMockContext();
         const lintService = new LintService(
@@ -52,16 +48,12 @@ describe(`Lint Service Test`, () => {
     });
 
     test(`loads and executes lint file with relative path`, async () => {
-        const mockFn = jest.fn();
-        jest.doMock(
-            path.join(process.cwd(), `./getsMockedAnyway.js`),
-            () => ({
+        const mockFn = vi.fn();
+        vi.doMock(path.join(process.cwd(), `./getsMockedAnyway.js`), () => ({
+            default: {
                 rules: [createRule(`error`, { name: `test-rule`, check: mockFn })]
-            }),
-            {
-                virtual: true
             }
-        );
+        }));
 
         const { stdout, stderr } = createMockContext();
         const lintService = new LintService(
@@ -81,9 +73,7 @@ describe(`Lint Service Test`, () => {
     });
 
     test(`errors on invalid lint file`, async () => {
-        jest.doMock(`/getsMockedAnyway.js`, () => ({}), {
-            virtual: true
-        });
+        vi.doMock(`/getsMockedAnyway.js`, () => ({ default: {} }));
 
         const { stdout, stderr } = createMockContext();
         const lintService = new LintService(
@@ -105,16 +95,12 @@ describe(`Lint Service Test`, () => {
     });
 
     test(`calls lint function only on root`, async () => {
-        const mockFn = jest.fn();
-        jest.doMock(
-            `/getsMockedAnyway.js`,
-            () => ({
+        const mockFn = vi.fn();
+        vi.doMock(`/getsMockedAnyway.js`, () => ({
+            default: {
                 rules: [createRule(`error`, { name: `test-rule`, check: mockFn })]
-            }),
-            {
-                virtual: true
             }
-        );
+        }));
 
         const { stdout, stderr } = createMockContext();
         const lintService = new LintService(
@@ -134,10 +120,9 @@ describe(`Lint Service Test`, () => {
     });
 
     test(`uses custom validation from lint check`, async () => {
-        const validateFn = jest.fn();
-        jest.doMock(
-            `/getsMockedAnyway.js`,
-            () => ({
+        const validateFn = vi.fn();
+        vi.doMock(`/getsMockedAnyway.js`, () => ({
+            default: {
                 rules: [
                     createRule(
                         `error`,
@@ -149,11 +134,8 @@ describe(`Lint Service Test`, () => {
                         { name: `medallo` }
                     )
                 ]
-            }),
-            {
-                virtual: true
             }
-        );
+        }));
 
         const { stdout, stderr } = createMockContext();
         const lintService = new LintService(
@@ -173,9 +155,8 @@ describe(`Lint Service Test`, () => {
     });
 
     test(`correctly throws on failed custom validation`, async () => {
-        jest.doMock(
-            `/getsMockedAnyway.js`,
-            () => ({
+        vi.doMock(`/getsMockedAnyway.js`, () => ({
+            default: {
                 rules: [
                     createRule(
                         `error`,
@@ -187,11 +168,8 @@ describe(`Lint Service Test`, () => {
                         "some param"
                     )
                 ]
-            }),
-            {
-                virtual: true
             }
-        );
+        }));
 
         const { stdout, stderr } = createMockContext();
         const lintService = new LintService(
@@ -212,9 +190,8 @@ describe(`Lint Service Test`, () => {
     });
 
     test(`calls lint function with custom params`, async () => {
-        jest.doMock(
-            `/getsMockedAnyway.js`,
-            () => ({
+        vi.doMock(`/getsMockedAnyway.js`, () => ({
+            default: {
                 rules: [
                     createRule(
                         `error`,
@@ -227,11 +204,8 @@ describe(`Lint Service Test`, () => {
                         { foo: `bar` }
                     )
                 ]
-            }),
-            {
-                virtual: true
             }
-        );
+        }));
 
         const { stdout, stderr } = createMockContext();
         const lintService = new LintService(
@@ -250,18 +224,14 @@ describe(`Lint Service Test`, () => {
     });
 
     test(`sets exitCode to 1 if at least 1 error is reported`, async () => {
-        jest.doMock(
-            `/getsMockedAnyway.js`,
-            () => ({
+        vi.doMock(`/getsMockedAnyway.js`, () => ({
+            default: {
                 rules: [
                     createRule(`warning`, { name: `test-rule-warning`, check: () => `` }, {}),
                     createRule(`error`, { name: `test-rule-error`, check: () => `` }, {})
                 ]
-            }),
-            {
-                virtual: true
             }
-        );
+        }));
 
         const { stdout, stderr } = createMockContext();
         const lintService = new LintService(
@@ -281,15 +251,11 @@ describe(`Lint Service Test`, () => {
     });
 
     test(`sets exitCode to 0 if only warnings are reported`, async () => {
-        jest.doMock(
-            `/getsMockedAnyway.js`,
-            () => ({
+        vi.doMock(`/getsMockedAnyway.js`, () => ({
+            default: {
                 rules: [createRule(`warning`, { name: `test-rule-warning`, check: () => `` }, {})]
-            }),
-            {
-                virtual: true
             }
-        );
+        }));
 
         const { stdout, stderr } = createMockContext();
         const lintService = new LintService(
@@ -309,15 +275,11 @@ describe(`Lint Service Test`, () => {
     });
 
     test(`lint check can return a string`, async () => {
-        jest.doMock(
-            `/getsMockedAnyway.js`,
-            () => ({
+        vi.doMock(`/getsMockedAnyway.js`, () => ({
+            default: {
                 rules: [createRule(`error`, { name: `test-rule`, check: () => `error message` })]
-            }),
-            {
-                virtual: true
             }
-        );
+        }));
 
         const { stdout, stderr } = createMockContext();
         const lintService = new LintService(
@@ -338,20 +300,16 @@ describe(`Lint Service Test`, () => {
     });
 
     test(`lint check can return a string array`, async () => {
-        jest.doMock(
-            `/getsMockedAnyway.js`,
-            () => ({
+        vi.doMock(`/getsMockedAnyway.js`, () => ({
+            default: {
                 rules: [
                     createRule(`error`, {
                         name: `test-rule`,
                         check: () => [`error message 1`, `error message 2`]
                     })
                 ]
-            }),
-            {
-                virtual: true
             }
-        );
+        }));
 
         const { stdout, stderr } = createMockContext();
         const lintService = new LintService(
@@ -372,9 +330,8 @@ describe(`Lint Service Test`, () => {
     });
 
     test(`writes help message on invalid lint check return type`, async () => {
-        jest.doMock(
-            `/getsMockedAnyway.js`,
-            () => ({
+        vi.doMock(`/getsMockedAnyway.js`, () => ({
+            default: {
                 rules: [
                     createRule(`error`, {
                         name: `test-rule`,
@@ -382,11 +339,8 @@ describe(`Lint Service Test`, () => {
                         check: () => 3
                     })
                 ]
-            }),
-            {
-                virtual: true
             }
-        );
+        }));
 
         const { stdout, stderr } = createMockContext();
         const lintService = new LintService(
@@ -435,13 +389,11 @@ describe(`"internal-error" Lint Test`, () => {
     };
 
     beforeEach(() => {
-        jest.resetModules();
+        vi.resetModules();
     });
 
     test(`sets exitCode to 1 if there are internal errors`, async () => {
-        jest.doMock(`/getsMockedAnyway.js`, () => lintFile, {
-            virtual: true
-        });
+        vi.doMock(`/getsMockedAnyway.js`, () => ({ default: lintFile }));
 
         const { stdout, stderr } = createMockContext();
         const lintService = new LintService(
@@ -461,9 +413,7 @@ describe(`"internal-error" Lint Test`, () => {
     });
 
     test(`prints out internal errors & exit message`, async () => {
-        jest.doMock(`/getsMockedAnyway.js`, () => lintFile, {
-            virtual: true
-        });
+        vi.doMock(`/getsMockedAnyway.js`, () => ({ default: lintFile }));
 
         const { stdout, stderr } = createMockContext();
         const lintService = new LintService(

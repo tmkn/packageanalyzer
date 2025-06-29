@@ -1,11 +1,11 @@
 import * as path from "path";
 
-import { IPackage } from "../src/package/package";
-import { FileSystemPackageProvider } from "../src/providers/folder";
-import { Visitor } from "../src/visitors/visitor";
-import { OraLogger } from "../src/loggers/OraLogger";
-import { DependencyUtilities } from "../src/extensions/utilities/DependencyUtilities";
-import { getPackageVersionFromPath } from "../src/visitors/util.node";
+import { type IPackage } from "../src/package/package.js";
+import { FileSystemPackageProvider } from "../src/providers/folder.js";
+import { Visitor } from "../src/visitors/visitor.js";
+import { OraLogger } from "../src/loggers/OraLogger.js";
+import { DependencyUtilities } from "../src/extensions/utilities/DependencyUtilities.js";
+import { getPackageVersionFromPath } from "../src/visitors/util.node.js";
 
 describe(`Dependency Utilities Tests`, () => {
     let p: IPackage;

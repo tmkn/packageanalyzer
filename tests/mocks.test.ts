@@ -1,5 +1,5 @@
-import { DependencyUtilities } from "../src/extensions/utilities/DependencyUtilities";
-import { createMockPackage, IMockPackageJson, MockProvider } from "./mocks";
+import { DependencyUtilities } from "../src/extensions/utilities/DependencyUtilities.js";
+import { createMockPackage, type IMockPackageJson, MockProvider } from "./mocks.js";
 
 describe(`Mock Tests`, () => {
     test(`Creates a package`, () => {

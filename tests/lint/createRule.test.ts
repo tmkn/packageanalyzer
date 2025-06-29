@@ -1,14 +1,14 @@
-import { IApplyArgs, IAttachment } from "../../src/attachments/Attachments";
+import type { IApplyArgs, IAttachment } from "../../src/attachments/Attachments.js";
 import {
     createRule,
     createRuleWithAttachment,
-    ILintCheck,
-    ILintFile
-} from "../../src/reports/lint/LintRule";
-import { LintService } from "../../src/reports/lint/LintService";
-import { LintFileLoader } from "../../src/reports/lint/RulesLoader";
-import { createMockContext } from "../common";
-import { IMockPackageJson, MockProvider } from "../mocks";
+    type ILintCheck,
+    type ILintFile
+} from "../../src/reports/lint/LintRule.js";
+import { LintService } from "../../src/reports/lint/LintService.js";
+import { LintFileLoader } from "../../src/reports/lint/RulesLoader.js";
+import { createMockContext } from "../common.js";
+import { type IMockPackageJson, MockProvider } from "../mocks.js";
 
 describe(`createRule tests`, () => {
     const mockAttachment = new (class implements IAttachment<"mock", number> {
@@ -26,15 +26,11 @@ describe(`createRule tests`, () => {
         };
         const provider = new MockProvider([medalloPkg]);
 
-        jest.doMock(
-            `/getsMockedAnyway.js`,
-            () => ({
+        vi.doMock(`/getsMockedAnyway.js`, () => ({
+            default: {
                 rules
-            }),
-            {
-                virtual: true
             }
-        );
+        }));
 
         const { stdout, stderr } = createMockContext();
         const lintService = new LintService(
@@ -110,7 +106,7 @@ describe(`createRule tests`, () => {
     }
 
     beforeEach(() => {
-        jest.resetModules();
+        vi.resetModules();
     });
 
     test(`creates rule without params and without attachments`, async () => {

@@ -1,4 +1,4 @@
-import { IFormatter } from "./formatter";
+import { type IFormatter } from "./formatter.js";
 
 enum Markup {
     Spacer = ` `,

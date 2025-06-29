@@ -1,10 +1,10 @@
 import * as path from "path";
 
-import { cli } from "../../src/cli/cli";
-import { OnlinePackageProvider } from "../../src/providers/online";
-import { createMockNpmServer, IMockServer } from "../server";
-import { createMockContext } from "../common";
-import { TreeCommand } from "../../src/cli/treeCommand";
+import { cli } from "../../src/cli/cli.js";
+import { OnlinePackageProvider } from "../../src/providers/online.js";
+import { createMockNpmServer, type IMockServer } from "../server.js";
+import { createMockContext } from "../common.js";
+import { TreeCommand } from "../../src/cli/treeCommand.js";
 
 describe(`Tree Command`, () => {
     let server: IMockServer;

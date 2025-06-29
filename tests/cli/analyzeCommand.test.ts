@@ -1,12 +1,12 @@
 import * as path from "path";
 
-import { cli } from "../../src/cli/cli";
-import { OnlinePackageProvider } from "../../src/providers/online";
-import { createMockNpmServer, IMockServer } from "../server";
-import { createMockContext } from "../common";
-import { AnalyzeCommand } from "../../src/cli/analyzeCommand";
-import { DumpPackageProvider } from "../../src/providers/folder";
-import { ReleaseAttachment } from "../../src/attachments/ReleaseAttachment";
+import { cli } from "../../src/cli/cli.js";
+import { OnlinePackageProvider } from "../../src/providers/online.js";
+import { createMockNpmServer, type IMockServer } from "../server.js";
+import { createMockContext } from "../common.js";
+import { AnalyzeCommand } from "../../src/cli/analyzeCommand.js";
+import { DumpPackageProvider } from "../../src/providers/folder.js";
+import { ReleaseAttachment } from "../../src/attachments/ReleaseAttachment.js";
 
 describe(`Analyze Command`, () => {
     let server: IMockServer;
@@ -16,7 +16,7 @@ describe(`Analyze Command`, () => {
         server = await createMockNpmServer();
         provider = new OnlinePackageProvider(`http://localhost:${server.port}`);
 
-        jest.setSystemTime(new Date(`2021-10-26`).getTime());
+        vi.setSystemTime(new Date(`2021-10-26`).getTime());
     });
 
     test(`--package --type --full`, async () => {
@@ -156,7 +156,7 @@ describe(`Analyze Command`, () => {
     });
 
     afterAll(() => {
-        jest.useRealTimers();
+        vi.useRealTimers();
 
         return server.close();
     });

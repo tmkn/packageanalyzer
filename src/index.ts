@@ -1,19 +1,19 @@
-export { Visitor, getPackageVersionfromString } from "./visitors/visitor";
-export type { PackageVersion } from "./visitors/visitor";
-export { Package } from "./package/package";
-export { npmOnline, OnlinePackageProvider } from "./providers/online";
-export type { IPackageJsonProvider } from "./providers/provider";
-export { OraLogger } from "./loggers/OraLogger";
-export type { ILogger } from "./loggers/ILogger";
-export type { IAttachment } from "./attachments/Attachments";
+export { Visitor, getPackageVersionfromString } from "./visitors/visitor.js";
+export type { PackageVersion } from "./visitors/visitor.js";
+export { Package } from "./package/package.js";
+export { npmOnline, OnlinePackageProvider } from "./providers/online.js";
+export type { IPackageJsonProvider } from "./providers/provider.js";
+export { OraLogger } from "./loggers/OraLogger.js";
+export type { ILogger } from "./loggers/ILogger.js";
+export type { IAttachment } from "./attachments/Attachments.js";
 
-export { TreeReport } from "./reports/TreeReport";
-export { AnalyzeReport } from "./reports/AnalyzeReport";
-export { DownloadReport } from "./reports/DownloadCountReport";
-export { LicenseReport } from "./reports/LicenseReport";
-export { LoopsReport } from "./reports/LoopsReport";
-export { UpdateInfoReport } from "./reports/UpdateInfoReport";
+export { TreeReport } from "./reports/TreeReport.js";
+export { AnalyzeReport } from "./reports/AnalyzeReport.js";
+export { DownloadReport } from "./reports/DownloadCountReport.js";
+export { LicenseReport } from "./reports/LicenseReport.js";
+export { LoopsReport } from "./reports/LoopsReport.js";
+export { UpdateInfoReport } from "./reports/UpdateInfoReport.js";
 
-export type { ILintTypes, ILintCheck } from "./reports/lint/LintRule";
-export { createRule } from "./reports/lint/LintRule";
-export { ValidateKey } from "./reports/lint/checks/ValidateKey";
+export type { ILintTypes, ILintCheck } from "./reports/lint/LintRule.js";
+export { createRule } from "./reports/lint/LintRule.js";
+export { ValidateKey } from "./reports/lint/checks/ValidateKey.js";

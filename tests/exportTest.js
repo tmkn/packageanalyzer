@@ -1,7 +1,9 @@
-const { ValidateKey } = require("@tmkn/packageanalyzer");
+import { ValidateKey } from "@tmkn/packageanalyzer";
 
 const validateKey = new ValidateKey();
 
-module.exports = {
+const foo = {
     rules: []
 };
+
+export default foo;

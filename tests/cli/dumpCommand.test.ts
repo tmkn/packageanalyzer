@@ -1,5 +1,5 @@
-import { cli } from "../../src/cli/cli";
-import { NpmDumpCommand } from "../../src/cli/npmDumpCommand";
+import { cli } from "../../src/cli/cli.js";
+import { NpmDumpCommand } from "../../src/cli/npmDumpCommand.js";
 
 describe(`Npmdump Command`, () => {
     test(`--npmfile --package`, async () => {

@@ -1,14 +1,18 @@
 /* istanbul ignore file */
 
 import { z } from "zod";
-import { BaseContext } from "clipanion";
+import { type BaseContext } from "clipanion";
 import nock from "nock";
 
 import { Writable } from "stream";
-import { IPackage } from "../src/package/package";
-import { AbstractReport, IReportContext, SingleReportMethodSignature } from "../src/reports/Report";
-import { PackageVersion } from "../src/visitors/visitor";
-import { DumpPackageProvider } from "../src/providers/folder";
+import { type IPackage } from "../src/package/package.js";
+import {
+    AbstractReport,
+    type IReportContext,
+    type SingleReportMethodSignature
+} from "../src/reports/Report.js";
+import { type PackageVersion } from "../src/visitors/visitor.js";
+import { DumpPackageProvider } from "../src/providers/folder.js";
 
 class TestWritable extends Writable {
     private static _pattern = [

@@ -1,6 +1,6 @@
 import ora from "ora";
 
-import { ILogger } from "./ILogger";
+import { type ILogger } from "./ILogger.js";
 
 export class OraLogger implements ILogger {
     private _logger: ora.Ora = ora();

@@ -1,9 +1,9 @@
 import * as path from "path";
-import { DumpPackageProvider } from "../../src/providers/folder";
+import { DumpPackageProvider } from "../../src/providers/folder.js";
 
-import { LoopsReport } from "../../src/reports/LoopsReport";
-import { ReportService } from "../../src/reports/ReportService";
-import { createMockContext } from "../common";
+import { LoopsReport } from "../../src/reports/LoopsReport.js";
+import { ReportService } from "../../src/reports/ReportService.js";
+import { createMockContext } from "../common.js";
 
 describe(`LoopsReport Test`, () => {
     const rootPath = path.join("tests", "data", "loops_data");

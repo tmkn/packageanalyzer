@@ -1,8 +1,8 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`DiffReport Tests Correctly displays added dependencies: stderr 1`] = `[]`;
+exports[`DiffReport Tests > Correctly displays added dependencies > stderr 1`] = `[]`;
 
-exports[`DiffReport Tests Correctly displays added dependencies: stdout 1`] = `
+exports[`DiffReport Tests > Correctly displays added dependencies > stdout 1`] = `
 [
   "Dependency Diff: medallo@1.0.0 (0/0) -> medallo@2.0.0 (2/2)",
   "Direct Dependencies Δ: +2",
@@ -17,9 +17,9 @@ exports[`DiffReport Tests Correctly displays added dependencies: stdout 1`] = `
 ]
 `;
 
-exports[`DiffReport Tests Correctly displays removed dependencies: stderr 1`] = `[]`;
+exports[`DiffReport Tests > Correctly displays removed dependencies > stderr 1`] = `[]`;
 
-exports[`DiffReport Tests Correctly displays removed dependencies: stdout 1`] = `
+exports[`DiffReport Tests > Correctly displays removed dependencies > stdout 1`] = `
 [
   "Dependency Diff: medallo@1.0.0 (2/2) -> medallo@2.0.0 (0/0)",
   "Direct Dependencies Δ: -2",
@@ -34,9 +34,9 @@ exports[`DiffReport Tests Correctly displays removed dependencies: stdout 1`] = 
 ]
 `;
 
-exports[`DiffReport Tests Correctly displays unchanged dependencies: stderr 1`] = `[]`;
+exports[`DiffReport Tests > Correctly displays unchanged dependencies > stderr 1`] = `[]`;
 
-exports[`DiffReport Tests Correctly displays unchanged dependencies: stdout 1`] = `
+exports[`DiffReport Tests > Correctly displays unchanged dependencies > stdout 1`] = `
 [
   "Dependency Diff: medallo@1.0.0 (2/2) -> medallo@2.0.0 (2/2)",
   "Direct Dependencies Δ: 0",
@@ -51,9 +51,9 @@ exports[`DiffReport Tests Correctly displays unchanged dependencies: stdout 1`] 
 ]
 `;
 
-exports[`DiffReport Tests Correctly displays upgraded dependencies: stderr 1`] = `[]`;
+exports[`DiffReport Tests > Correctly displays upgraded dependencies > stderr 1`] = `[]`;
 
-exports[`DiffReport Tests Correctly displays upgraded dependencies: stdout 1`] = `
+exports[`DiffReport Tests > Correctly displays upgraded dependencies > stdout 1`] = `
 [
   "Dependency Diff: medallo@1.0.0 (2/2) -> medallo@2.0.0 (2/2)",
   "Direct Dependencies Δ: 0",

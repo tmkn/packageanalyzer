@@ -1,5 +1,5 @@
-import { cli } from "../../src/cli/cli";
-import { NpmDumpLookupCreatorCommand } from "../../src/cli/npmLookupCreatorCommand";
+import { cli } from "../../src/cli/cli.js";
+import { NpmDumpLookupCreatorCommand } from "../../src/cli/npmLookupCreatorCommand.js";
 
 describe(`Npmdump Lookup Creater`, () => {
     test(`--npmfile`, async () => {

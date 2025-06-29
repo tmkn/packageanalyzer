@@ -5,14 +5,18 @@ import * as path from "path";
 
 import { Option } from "clipanion";
 
-import { CliCommand, defaultDependencyType } from "./common";
-import { DependencyTypes, BasePackageParameter, TypeParameter } from "../reports/Validation";
-import { AbstractReport, IReportContext } from "../reports/Report";
-import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
-import { TarAttachment } from "../attachments/TarAttachment";
-import { DumpPackageProvider } from "../providers/folder";
-import { IPackage } from "../package/package";
-import { z, ZodTypeAny } from "zod";
+import { CliCommand, defaultDependencyType } from "./common.js";
+import {
+    type DependencyTypes,
+    BasePackageParameter,
+    TypeParameter
+} from "../reports/Validation.js";
+import { AbstractReport, type IReportContext } from "../reports/Report.js";
+import { getPackageVersionfromString, type PackageVersion } from "../visitors/visitor.js";
+import { TarAttachment } from "../attachments/TarAttachment.js";
+import { DumpPackageProvider } from "../providers/folder.js";
+import { type IPackage } from "../package/package.js";
+import { z, type ZodTypeAny } from "zod";
 
 export class TestCommand extends CliCommand<TestReport> {
     public package = Option.String(`--package`, `typescript`);

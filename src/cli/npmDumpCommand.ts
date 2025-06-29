@@ -1,9 +1,9 @@
 import { Command, Option } from "clipanion";
 
-import { FlatFileProvider } from "../providers/flatFile";
+import { FlatFileProvider } from "../providers/flatFile.js";
 import { Writable } from "stream";
-import { AnalyzeReport } from "../reports/AnalyzeReport";
-import { ReportService } from "../reports/ReportService";
+import { AnalyzeReport } from "../reports/AnalyzeReport.js";
+import { ReportService } from "../reports/ReportService.js";
 
 export class NpmDumpCommand extends Command {
     public npmFile?: string = Option.String(`--npmfile`, { description: `path to a npmdump.json` });

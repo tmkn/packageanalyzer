@@ -2,7 +2,7 @@ import * as https from "https";
 
 import * as tar from "tar";
 
-import { IApplyArgs, IAttachment } from "./Attachments";
+import type { IApplyArgs, IAttachment } from "./Attachments.js";
 import { pipeline } from "stream";
 
 // process tarball, discard directories and save files to files map

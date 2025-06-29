@@ -1,9 +1,9 @@
-import { IPackage } from "../../src/package/package";
-import { DownloadReport } from "../../src/reports/DownloadCountReport";
-import { Formatter } from "../../src/utils/formatter";
-import { createMockPackage } from "../mocks";
-import { createMockContext } from "./../common";
-import { createMockDownloadServer, IMockServer } from "./../server";
+import { type IPackage } from "../../src/package/package.js";
+import { DownloadReport } from "../../src/reports/DownloadCountReport.js";
+import { Formatter } from "../../src/utils/formatter.js";
+import { createMockPackage } from "../mocks.js";
+import { createMockContext } from "./../common.js";
+import { createMockDownloadServer, type IMockServer } from "./../server.js";
 
 describe(`DownloadCountReport Tests`, () => {
     let server: IMockServer;

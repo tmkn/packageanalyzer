@@ -1,7 +1,7 @@
-import { ReleaseAttachment } from "../../src/attachments/ReleaseAttachment";
-import { IPackageMetadata, IUnpublishedPackageMetadata } from "../../src/npm";
-import { IPackageMetaDataProvider } from "../../src/providers/provider";
-import { createMockPackage, IMockPackageJson } from "../mocks";
+import { ReleaseAttachment } from "../../src/attachments/ReleaseAttachment.js";
+import type { IPackageMetadata, IUnpublishedPackageMetadata } from "../../src/npm.js";
+import { type IPackageMetaDataProvider } from "../../src/providers/provider.js";
+import { createMockPackage, type IMockPackageJson } from "../mocks.js";
 
 describe(`ReleaseAttachment Tests`, () => {
     const logStub = { logger: function () {} };

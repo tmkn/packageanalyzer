@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`"internal-error" Lint Test prints out internal errors & exit message 1`] = `
+exports[`"internal-error" Lint Test > prints out internal errors & exit message 1`] = `
 [
   "PackageLint: medallo@1.0.0",
   "",
@@ -23,9 +23,9 @@ exports[`"internal-error" Lint Test prints out internal errors & exit message 1`
 ]
 `;
 
-exports[`"internal-error" Lint Test prints out internal errors & exit message 2`] = `[]`;
+exports[`"internal-error" Lint Test > prints out internal errors & exit message 2`] = `[]`;
 
-exports[`Lint Service Test correctly throws on failed custom validation 1`] = `
+exports[`Lint Service Test > correctly throws on failed custom validation 1`] = `
 [
   "PackageLint: medallo@1.0.0",
   "",
@@ -39,14 +39,14 @@ exports[`Lint Service Test correctly throws on failed custom validation 1`] = `
 ]
 `;
 
-exports[`Lint Service Test errors on invalid lint file 1`] = `
+exports[`Lint Service Test > errors on invalid lint file 1`] = `
 [
   "Error: Invalid lint file format: /getsMockedAnyway.js",
   "",
 ]
 `;
 
-exports[`Lint Service Test lint check can return a string 1`] = `
+exports[`Lint Service Test > lint check can return a string 1`] = `
 [
   "PackageLint: medallo@1.0.0",
   "",
@@ -59,7 +59,7 @@ exports[`Lint Service Test lint check can return a string 1`] = `
 ]
 `;
 
-exports[`Lint Service Test lint check can return a string array 1`] = `
+exports[`Lint Service Test > lint check can return a string array 1`] = `
 [
   "PackageLint: medallo@1.0.0",
   "",
@@ -73,7 +73,7 @@ exports[`Lint Service Test lint check can return a string array 1`] = `
 ]
 `;
 
-exports[`Lint Service Test writes help message on invalid lint check return type 1`] = `
+exports[`Lint Service Test > writes help message on invalid lint check return type 1`] = `
 [
   "PackageLint: medallo@1.0.0",
   "",

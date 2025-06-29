@@ -4,8 +4,8 @@ import * as readline from "readline";
 import * as os from "os";
 import * as crypto from "crypto";
 
-import { INpmDumpRow } from "../npm";
-import { getPercentage } from "../providers/flatFile";
+import { type INpmDumpRow } from "../npm.js";
+import { getPercentage } from "../providers/flatFile.js";
 
 const newLine = "\n";
 

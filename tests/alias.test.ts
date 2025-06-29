@@ -1,5 +1,5 @@
-import { OraLogger, Visitor } from "../src";
-import { IMockPackageJson, MockProvider } from "./mocks";
+import { OraLogger, Visitor } from "../src/index.js";
+import { type IMockPackageJson, MockProvider } from "./mocks.js";
 
 describe(`Alias Tests`, () => {
     test(`correctly returns alias`, async () => {

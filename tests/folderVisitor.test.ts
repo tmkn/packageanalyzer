@@ -1,14 +1,14 @@
 import * as path from "path";
 
-import { IPackage } from "../src/package/package";
-import { FileSystemPackageProvider } from "../src/providers/folder";
-import { IPackageJson } from "../src/npm";
-import { Visitor } from "../src/visitors/visitor";
-import { OraLogger } from "../src/loggers/OraLogger";
-import { LoopUtilities } from "../src/extensions/utilities/LoopUtilities";
-import { LicenseUtilities } from "../src/extensions/utilities/LicenseUtilities";
-import { IPackageJsonProvider } from "../src/providers/provider";
-import { getPackageVersionFromPath } from "../src/visitors/util.node";
+import { type IPackage } from "../src/package/package.js";
+import { FileSystemPackageProvider } from "../src/providers/folder.js";
+import { type IPackageJson } from "../src/npm.js";
+import { Visitor } from "../src/visitors/visitor.js";
+import { OraLogger } from "../src/loggers/OraLogger.js";
+import { LoopUtilities } from "../src/extensions/utilities/LoopUtilities.js";
+import { LicenseUtilities } from "../src/extensions/utilities/LicenseUtilities.js";
+import { type IPackageJsonProvider } from "../src/providers/provider.js";
+import { getPackageVersionFromPath } from "../src/visitors/util.node.js";
 
 describe(`visitFromFolder Tests`, () => {
     let p: IPackage;

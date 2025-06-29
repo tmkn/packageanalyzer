@@ -1,5 +1,5 @@
-import { getDownloadsLastWeek } from "../src/reports/DownloadCountReport";
-import { createMockDownloadServer, IMockServer } from "./server";
+import { getDownloadsLastWeek } from "../src/reports/DownloadCountReport.js";
+import { createMockDownloadServer, type IMockServer } from "./server.js";
 
 describe(`Download Tests`, () => {
     let server: IMockServer;

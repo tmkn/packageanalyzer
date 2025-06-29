@@ -1,8 +1,8 @@
 import * as path from "path";
 
-import { cli } from "../../src/cli/cli";
-import { createMockContext } from "../common";
-import { ReportCommand } from "../../src/cli/reportCommand";
+import { cli } from "../../src/cli/cli.js";
+import { createMockContext } from "../common.js";
+import { ReportCommand } from "../../src/cli/reportCommand.js";
 
 describe(`Report Command`, () => {
     test(`works`, async () => {

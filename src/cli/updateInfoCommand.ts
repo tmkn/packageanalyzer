@@ -1,7 +1,7 @@
 import { Command, Option } from "clipanion";
 
-import { IUpdateInfoParams, UpdateInfoReport } from "../reports/UpdateInfoReport";
-import { CliCommand } from "./common";
+import { type IUpdateInfoParams, UpdateInfoReport } from "../reports/UpdateInfoReport.js";
+import { CliCommand } from "./common.js";
 
 export class UpdateInfoCommand extends CliCommand<UpdateInfoReport> {
     public package?: string = Option.String(`--package`, {

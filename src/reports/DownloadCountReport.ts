@@ -1,12 +1,12 @@
 import { z } from "zod";
 
-import { INpmDownloadStatistic } from "../npm";
-import { IPackage } from "../package/package";
-import { IFormatter } from "../utils/formatter";
-import { downloadJson } from "../utils/requests";
-import { getPackageVersionfromString, PackageVersion } from "../visitors/visitor";
-import { AbstractReport, IReportContext } from "./Report";
-import { BasePackageParameter, Url, urlType } from "./Validation";
+import { type INpmDownloadStatistic } from "../npm.js";
+import { type IPackage } from "../package/package.js";
+import { type IFormatter } from "../utils/formatter.js";
+import { downloadJson } from "../utils/requests.js";
+import { getPackageVersionfromString, type PackageVersion } from "../visitors/visitor.js";
+import { AbstractReport, type IReportContext } from "./Report.js";
+import { BasePackageParameter, type Url, urlType } from "./Validation.js";
 
 const OptionalParams = z.object({
     url: z.optional(urlType)

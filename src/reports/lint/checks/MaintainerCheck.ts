@@ -1,7 +1,7 @@
 import { z } from "zod";
-import type { ILintCheck } from "../LintRule";
-import type { IPackage } from "../../../package/package";
-import type { INpmUser } from "../../../npm";
+import type { ILintCheck } from "../LintRule.js";
+import type { IPackage } from "../../../package/package.js";
+import type { INpmUser } from "../../../npm.js";
 
 interface IMaintainerCheck {
     // list of authors to check for

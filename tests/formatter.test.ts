@@ -1,5 +1,5 @@
 import { Writable } from "stream";
-import { Formatter } from "../src/utils/formatter";
+import { Formatter } from "../src/utils/formatter.js";
 
 describe(`Formatter Tests`, () => {
     //todo unify with TestWritable?

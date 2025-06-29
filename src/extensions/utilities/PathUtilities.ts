@@ -1,4 +1,4 @@
-import { IPackage } from "../../package/package";
+import { type IPackage } from "../../package/package.js";
 
 export class PathUtilities {
     constructor(private _p: IPackage) {}

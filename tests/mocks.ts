@@ -1,7 +1,7 @@
-import { Package } from "../src/package/package";
-import { IBasePackageJson, INpmKeyValue, IPackageJson } from "../src/npm";
-import { DependencyTypes } from "../src/reports/Validation";
-import { IPackageJsonProvider } from "../src/providers/provider";
+import { Package } from "../src/package/package.js";
+import type { IBasePackageJson, INpmKeyValue, IPackageJson } from "../src/npm.js";
+import { type DependencyTypes } from "../src/reports/Validation.js";
+import { type IPackageJsonProvider } from "../src/providers/provider.js";
 
 type MockBasePackageJson = Omit<Partial<IBasePackageJson>, "dependencies" | "devDependencies">;
 

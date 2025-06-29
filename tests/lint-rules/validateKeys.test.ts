@@ -1,5 +1,5 @@
-import { createMockPackage } from "../mocks";
-import { ValidateKey } from "../../src/reports/lint/checks/ValidateKey";
+import { createMockPackage } from "../mocks.js";
+import { ValidateKey } from "../../src/reports/lint/checks/ValidateKey.js";
 
 describe("validateKeys", () => {
     describe(`string parameter`, () => {

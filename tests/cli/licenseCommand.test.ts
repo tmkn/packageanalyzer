@@ -1,10 +1,10 @@
 import * as path from "path";
 
-import { cli } from "../../src/cli/cli";
-import { OnlinePackageProvider } from "../../src/providers/online";
-import { createMockNpmServer, IMockServer } from "../server";
-import { createMockContext } from "../common";
-import { LicenseCheckCommand } from "../../src/cli/licenseCommand";
+import { cli } from "../../src/cli/cli.js";
+import { OnlinePackageProvider } from "../../src/providers/online.js";
+import { createMockNpmServer, type IMockServer } from "../server.js";
+import { createMockContext } from "../common.js";
+import { LicenseCheckCommand } from "../../src/cli/licenseCommand.js";
 
 describe(`License Check Command`, () => {
     let server: IMockServer;

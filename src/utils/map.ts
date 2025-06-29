@@ -1,4 +1,4 @@
-import { IPackage } from "../package/package";
+import { type IPackage } from "../package/package.js";
 
 interface IMappedDependency<T> {
     parent: T | null;

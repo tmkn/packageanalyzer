@@ -1,6 +1,6 @@
 import * as path from "path";
 
-import { DumpPackageProvider } from "../../src/providers/folder";
+import { DumpPackageProvider } from "../../src/providers/folder.js";
 
 describe(`DumpProvider Tests`, () => {
     const folder = path.join("tests", "data", "dump");

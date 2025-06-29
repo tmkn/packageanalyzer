@@ -1,13 +1,13 @@
 import * as path from "path";
 import { promises as fs } from "fs";
 
-import { IPackage } from "../package/package";
-import { OnlinePackageProvider } from "../providers/online";
-import { Visitor } from "../visitors/visitor";
-import { OraLogger } from "../loggers/OraLogger";
-import { DependencyUtilities } from "../extensions/utilities/DependencyUtilities";
-import { EntryTypes, isPackageVersionArray } from "../reports/Report";
-import type { Url } from "../reports/Validation";
+import { type IPackage } from "../package/package.js";
+import { OnlinePackageProvider } from "../providers/online.js";
+import { Visitor } from "../visitors/visitor.js";
+import { OraLogger } from "../loggers/OraLogger.js";
+import { DependencyUtilities } from "../extensions/utilities/DependencyUtilities.js";
+import { type EntryTypes, isPackageVersionArray } from "../reports/Report.js";
+import type { Url } from "../reports/Validation.js";
 
 export class DependencyDumper {
     pkgs: IPackage[] = [];

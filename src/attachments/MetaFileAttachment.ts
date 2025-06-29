@@ -1,5 +1,5 @@
-import { IPackageMetaDataProvider, PackageMetaData } from "../providers/provider";
-import { IApplyArgs, IAttachment } from "./Attachments";
+import type { IPackageMetaDataProvider, PackageMetaData } from "../providers/provider.js";
+import type { IApplyArgs, IAttachment } from "./Attachments.js";
 
 interface IMetaFileData {
     metaFile: PackageMetaData;

@@ -1,10 +1,10 @@
-import { cli } from "../../src/cli/cli";
-import { OnlinePackageProvider } from "../../src/providers/online";
-import { createMockNpmServer, IMockServer } from "../server";
-import { createMockContext } from "../common";
-import { UpdateInfoCommand } from "../../src/cli/updateInfoCommand";
-import { IPackageJsonProvider } from "../../src/providers/provider";
-import { IPackageJson } from "../../src/npm";
+import { cli } from "../../src/cli/cli.js";
+import { OnlinePackageProvider } from "../../src/providers/online.js";
+import { createMockNpmServer, type IMockServer } from "../server.js";
+import { createMockContext } from "../common.js";
+import { UpdateInfoCommand } from "../../src/cli/updateInfoCommand.js";
+import { type IPackageJsonProvider } from "../../src/providers/provider.js";
+import { type IPackageJson } from "../../src/npm.js";
 
 describe(`Update Info Command`, () => {
     let server: IMockServer;
@@ -14,7 +14,7 @@ describe(`Update Info Command`, () => {
         server = await createMockNpmServer();
         provider = new OnlinePackageProvider(`http://localhost:${server.port}`);
 
-        jest.setSystemTime(new Date(`2021-10-26`).getTime());
+        vi.setSystemTime(new Date(`2021-10-26`).getTime());
     });
 
     test(`--package`, async () => {
@@ -67,7 +67,7 @@ describe(`Update Info Command`, () => {
     });
 
     afterAll(() => {
-        jest.useRealTimers();
+        vi.useRealTimers();
 
         return server.close();
     });

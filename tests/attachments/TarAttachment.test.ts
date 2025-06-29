@@ -3,9 +3,9 @@ import * as path from "path";
 
 import nock from "nock";
 
-import { IPackage } from "../../src/package/package";
-import { ITarData, TarAttachment } from "../../src/attachments/TarAttachment";
-import { createMockPackage, IMockPackageJson } from "../mocks";
+import { type IPackage } from "../../src/package/package.js";
+import { type ITarData, TarAttachment } from "../../src/attachments/TarAttachment.js";
+import { createMockPackage, type IMockPackageJson } from "../mocks.js";
 
 describe(`TarAttachment Tests`, () => {
     const logStub = {
@@ -13,9 +13,7 @@ describe(`TarAttachment Tests`, () => {
     };
 
     beforeAll(() => {
-        jest.useFakeTimers({
-            legacyFakeTimers: true
-        });
+        vi.useFakeTimers();
         nock.disableNetConnect();
     });
 
@@ -71,8 +69,6 @@ describe(`TarAttachment Tests`, () => {
     afterAll(() => {
         nock.cleanAll();
         nock.enableNetConnect();
-        jest.useFakeTimers({
-            legacyFakeTimers: false
-        });
+        vi.useFakeTimers();
     });
 });
