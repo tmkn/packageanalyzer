@@ -31,7 +31,7 @@
         "test:update": "vitest run --update",
         "test:clean": "node build/tests/clean.js",
         "test:exports": "node ./build/src/cli.js lint --package react ./tests/exportTest.js",
-        "prettier": "prettier --write \"{src,tests,utility}/**/{*.ts,*.js}\" webpack.web.config.js",
+        "prettier": "prettier --write \"{src,tests,utility}/**/{*.ts,*.js}\" webpack.web.config.cjs vitest.config.ts",
         "pa": "node build/src/cli.js",
         "preview": "npm pack && tar -xvzf *.tgz && rm -rf package *.tgz",
         "lint": "eslint \"src/**\" \"tests/**\"",
