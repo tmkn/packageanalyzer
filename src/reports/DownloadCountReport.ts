@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { QueryClient } from "@tanstack/query-core";
 
 import { type INpmDownloadStatistic } from "../npm.js";
 import { type IPackage } from "../package/package.js";
@@ -53,9 +54,27 @@ export async function getDownloadsLastWeek(
     name: string,
     url: Url = `https://api.npmjs.org/downloads/point/last-week/`
 ): Promise<INpmDownloadStatistic> {
-    const json = await downloadJson<INpmDownloadStatistic>(`${url}${encodeURIComponent(name)}`);
+    const queryClient = new QueryClient({
+        defaultOptions: {
+            queries: {
+                retry: 3
+            }
+        }
+    });
 
-    if (json !== null) return json;
+    const downloadResponse = await queryClient.fetchQuery({
+        queryKey: ["downloads", name],
+        queryFn: async ({ signal }) => {
+            const json = await downloadJson<INpmDownloadStatistic>(
+                `${url}${encodeURIComponent(name)}`,
+                { signal }
+            );
 
-    throw new Error(`Couldn't get download numbers for ${name}`);
+            if (json !== null) return json;
+
+            throw new Error(`Couldn't get download numbers for ${name}`);
+        }
+    });
+
+    return downloadResponse;
 }

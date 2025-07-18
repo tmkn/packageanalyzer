@@ -1,10 +1,22 @@
+import { QueryClient } from "@tanstack/query-core";
+
 import { type IPackageMetadata, type IUnpublishedPackageMetadata } from "../npm.js";
 import type { Url } from "../reports/Validation.js";
-import { downloadJson } from "../utils/requests.js";
 import { AbstractPackageProvider } from "./provider.js";
+import { downloadJson } from "../utils/requests.js";
 
 //loads npm data from the web
 export class OnlinePackageProvider extends AbstractPackageProvider {
+    private _queryClient = new QueryClient({
+        defaultOptions: {
+            queries: {
+                retry: 3,
+                retryDelay: 0, // with the default, the tests ran into timeouts, no delay yolo
+                staleTime: Infinity // not really useful right now as caching is done via _cache
+            }
+        }
+    });
+
     constructor(private _url: Url) {
         super();
     }
@@ -17,11 +29,27 @@ export class OnlinePackageProvider extends AbstractPackageProvider {
         if (typeof cachedInfo !== "undefined") {
             return cachedInfo;
         } else {
-            const data = await downloadJson<IPackageMetadata>(
-                `${this._url}/${encodeURIComponent(name)}`
-            );
+            const packageMetadata = await this._queryClient.fetchQuery({
+                queryKey: ["package", name],
+                queryFn: async ({ signal }) => {
+                    const response = await downloadJson<
+                        IPackageMetadata | IUnpublishedPackageMetadata
+                    >(`${this._url}/${encodeURIComponent(name)}`, { signal });
 
-            return data ?? undefined;
+                    if (response === null) {
+                        console.error(
+                            `Failed to fetch package metadata for "${name}" from ${this._url}, RETRYING...`
+                        );
+                        throw new Error(
+                            `Failed to fetch package metadata for "${name}" from ${this._url}`
+                        );
+                    }
+
+                    return response;
+                }
+            });
+
+            return packageMetadata;
         }
     }
 }
