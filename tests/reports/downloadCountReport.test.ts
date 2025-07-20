@@ -1,4 +1,3 @@
-import { type IPackage } from "../../src/package/package.js";
 import { DownloadReport } from "../../src/reports/DownloadCountReport.js";
 import { Formatter } from "../../src/utils/formatter.js";
 import { createMockPackage } from "../mocks.js";

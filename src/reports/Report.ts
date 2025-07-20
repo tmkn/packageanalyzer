@@ -7,74 +7,76 @@ import { type PackageVersion } from "../visitors/visitor.js";
 import { type DependencyTypes } from "./Validation.js";
 import type { AttachmentData, Attachments } from "../attachments/Attachments.js";
 
+export interface IReportConfig<
+    TAttachments extends Attachments = Attachments
+    // Params extends Record<string, any> = Record<string, any>
+> {
+    pkg: PackageVersion;
+    type?: DependencyTypes;
+    depth?: number;
+    attachments?: TAttachments;
+}
+
+export type ReportConfigs = IReportConfig | IReportConfig[];
+
+type PackageFromConfig<T> =
+    T extends IReportConfig<infer Attachments> ? IPackage<AttachmentData<Attachments>> : never;
+
+type PackagesFromConfigs<T> = T extends readonly IReportConfig<any>[]
+    ? { [K in keyof T]: PackageFromConfig<T[K]> }
+    : T extends IReportConfig<any>
+      ? [PackageFromConfig<T>]
+      : never;
+
 export interface IReportContext {
     stdoutFormatter: IFormatter;
     stderrFormatter: IFormatter;
 }
 
-type MapPackageVersionsToPackages<T extends readonly unknown[], D extends Attachments> = {
-    [K in keyof T]: T[K] extends PackageVersion ? IPackage<AttachmentData<D>> : never;
-};
-
-type Args<T, D extends Attachments> = T extends readonly PackageVersion[]
-    ? MapPackageVersionsToPackages<T, D>
-    : T extends PackageVersion
-      ? [IPackage<AttachmentData<D>>]
-      : never;
-
 export interface IReport<
-    PackageEntry,
-    Params extends {},
-    ZodValidateObject extends z.ZodTypeAny,
-    TAttachments extends Attachments = Attachments
+    TReportConfigs extends ReportConfigs,
+    TParams extends {},
+    TZodValidateObject extends z.ZodTypeAny
 > {
+    readonly params: TParams;
     readonly name: string;
-    readonly params: Params;
-    readonly pkg: PackageEntry;
-
-    readonly attachments?: TAttachments;
+    readonly configs: TReportConfigs;
     readonly provider?: IPackageJsonProvider;
-    readonly type?: DependencyTypes;
-    readonly depth?: number;
 
     exitCode: number;
 
-    report(pkg: Args<PackageEntry, TAttachments>, context: IReportContext): Promise<number | void>;
-    validate?(): ZodValidateObject;
+    report(
+        packages: PackagesFromConfigs<TReportConfigs>,
+        context: IReportContext
+    ): Promise<number | void>;
+
+    validate?(): TZodValidateObject;
 }
 
-export type GenericReport = IReport<EntryTypes, any, z.ZodTypeAny>;
+export type GenericReport = IReport<ReportConfigs, {}, z.ZodTypeAny>;
 
-export type ReportMethodSignature<T> = IReport<T, {}, z.ZodTypeAny>["report"];
-export type SingleReportMethodSignature = ReportMethodSignature<PackageVersion>;
+export type ReportMethodSignature<T extends ReportConfigs> = IReport<T, {}, z.ZodTypeAny>["report"];
+export type SingleReportMethodSignature = ReportMethodSignature<IReportConfig>;
 
-export type EntryTypes = PackageVersion | PackageVersion[];
-
-export function isPackageVersionArray(x: EntryTypes): x is PackageVersion[] {
-    const [test] = x;
-
-    return Array.isArray(test);
+export function isReportConfigArray(x: ReportConfigs): x is IReportConfig[] {
+    return Array.isArray(x);
 }
 
 export abstract class AbstractReport<
-    Params extends {},
-    PackageEntry extends EntryTypes = EntryTypes,
-    ZodValidateObject extends z.ZodTypeAny = z.ZodTypeAny,
-    TAttachments extends Attachments = Attachments
-> implements IReport<PackageEntry, Params, ZodValidateObject, TAttachments>
+    TParams extends {},
+    TReportConfigs extends ReportConfigs = ReportConfigs,
+    TZodValidateObject extends z.ZodTypeAny = z.ZodTypeAny
+> implements IReport<TReportConfigs, TParams, TZodValidateObject>
 {
     abstract name: string;
-    readonly params: Params;
-    abstract pkg: PackageEntry;
+    readonly params: TParams;
+    abstract configs: TReportConfigs;
 
-    attachments: TAttachments | undefined;
     provider: IPackageJsonProvider | undefined;
-    type: DependencyTypes | undefined;
-    depth: number | undefined;
 
     exitCode: number = 0;
 
-    constructor(params: Params) {
+    constructor(params: TParams) {
         const result = this.validate?.().safeParse(params);
 
         if (result?.success) {
@@ -87,9 +89,9 @@ export abstract class AbstractReport<
     }
 
     abstract report(
-        pkg: Args<PackageEntry, TAttachments>,
+        packages: PackagesFromConfigs<TReportConfigs>,
         context: IReportContext
     ): Promise<number | void>;
 
-    validate?(): ZodValidateObject;
+    validate?(): TZodValidateObject;
 }

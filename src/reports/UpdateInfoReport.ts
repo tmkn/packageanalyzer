@@ -5,8 +5,8 @@ import { daysAgo } from "../cli/common.js";
 import { type IPackage } from "../package/package.js";
 import { OnlinePackageProvider } from "../providers/online.js";
 import { updateInfo } from "../utils/update.js";
-import { getPackageVersionfromString, type PackageVersion } from "../visitors/visitor.js";
-import { AbstractReport, type IReportContext } from "./Report.js";
+import { getPackageVersionfromString } from "../visitors/visitor.js";
+import { AbstractReport, type IReportConfig, type IReportContext } from "./Report.js";
 import { BasePackageParameter } from "./Validation.js";
 
 export const onlinePackageProviderType = z.custom<OnlinePackageProvider>(input => {
@@ -22,20 +22,19 @@ export type IUpdateInfoParams = z.infer<typeof BasePackageParameter>;
 
 export class UpdateInfoReport extends AbstractReport<IUpdateInfoParams> {
     name = `Update Info Report`;
-    pkg: PackageVersion;
+    configs: IReportConfig;
 
     constructor(params: IUpdateInfoParams) {
         super(params);
 
-        this.depth = 0;
-        this.pkg = getPackageVersionfromString(params.package);
+        this.configs = { pkg: getPackageVersionfromString(params.package), depth: 0 };
     }
 
     async report(
         [pkg]: [IPackage],
         { stdoutFormatter, stderrFormatter }: IReportContext
     ): Promise<void> {
-        const [name, version] = this.pkg;
+        const [name, version] = this.configs.pkg;
 
         try {
             if (typeof version === "undefined") {

@@ -5,8 +5,8 @@ import { printDependencyTree } from "../extensions/utilities/LoopUtilities.js";
 import { type IPackage } from "../package/package.js";
 import { FileSystemPackageProvider } from "../providers/folder.js";
 import { getPackageVersionFromPath } from "../visitors/util.node.js";
-import { getPackageVersionfromString, type PackageVersion } from "../visitors/visitor.js";
-import { AbstractReport, type IReportContext } from "./Report.js";
+import { getPackageVersionfromString } from "../visitors/visitor.js";
+import { AbstractReport, type IReportConfig, type IReportContext } from "./Report.js";
 import { BaseFolderParameter, BasePackageParameter, TypeParameter } from "./Validation.js";
 
 const PackageParams = BasePackageParameter.merge(TypeParameter);
@@ -18,17 +18,23 @@ export type ITreeReportParams = z.infer<typeof TreeReportParams>;
 
 export class TreeReport extends AbstractReport<ITreeReportParams> {
     name = `Tree Report`;
-    pkg: PackageVersion;
+    configs: IReportConfig;
 
     constructor(params: ITreeReportParams) {
         super(params);
 
-        this.type = params.type ?? defaultDependencyType;
+        const type = params.type ?? defaultDependencyType;
 
         if (this._isPackageParams(params)) {
-            this.pkg = getPackageVersionfromString(params.package);
+            this.configs = {
+                pkg: getPackageVersionfromString(params.package),
+                type
+            };
         } else {
-            this.pkg = getPackageVersionFromPath(params.folder);
+            this.configs = {
+                pkg: getPackageVersionFromPath(params.folder),
+                type
+            };
             this.provider = new FileSystemPackageProvider(params.folder);
         }
     }

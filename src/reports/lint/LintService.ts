@@ -3,13 +3,12 @@ import { z, type ZodTypeAny } from "zod";
 
 import {
     AbstractReport,
-    type EntryTypes,
     type GenericReport,
+    type IReportConfig,
     type IReportContext
 } from "../Report.js";
-import { type ICombinedReportConfig, ReportService } from "../ReportService.js";
+import { type ICombinedReportServiceConfig, ReportService } from "../ReportService.js";
 import { type IRulesLoader } from "./RulesLoader.js";
-import { type Attachments } from "../../attachments/Attachments.js";
 import { type IPackage } from "../../package/package.js";
 import type { ILintCheck, IPackageJsonProvider, PackageVersion } from "../../index.js";
 import { type ILintResult, LintResultFormatter } from "./LintResultFormatter.js";
@@ -18,14 +17,16 @@ import { hasAttachments } from "./LintRule.js";
 import { Formatter, type IFormatter } from "../../utils/formatter.js";
 
 // dummy lint report to just fetch all data
-class LintReport extends AbstractReport<{}, EntryTypes, ZodTypeAny, Attachments> {
-    override name: string;
-    override pkg: PackageVersion;
+class LintReport extends AbstractReport<{}, IReportConfig, ZodTypeAny> {
+    name: string;
+    configs: IReportConfig;
 
     constructor(name: string, pkg: PackageVersion) {
         super({});
         this.name = name;
-        this.pkg = pkg;
+        this.configs = {
+            pkg
+        };
     }
 
     override report(_pkg: IPackage[], context: IReportContext): Promise<number | void> {
@@ -67,7 +68,7 @@ export class LintService {
         return this.exitCode;
     }
 
-    private async _createReport(): Promise<ICombinedReportConfig> {
+    private async _createReport(): Promise<ICombinedReportServiceConfig> {
         const { entry, depth, provider, loader } = this._config;
         const { rules } = await loader.getRules();
         const reports: GenericReport[] = [];
@@ -76,9 +77,9 @@ export class LintService {
             const report = new LintReport(check.name, entry);
 
             if (hasAttachments(check)) {
-                report.attachments = check.attachments;
+                report.configs.attachments = check.attachments;
             }
-            report.depth = depth;
+            report.configs.depth = depth;
             report.provider ??= provider;
 
             reports.push(report);

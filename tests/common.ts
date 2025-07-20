@@ -8,6 +8,7 @@ import { Writable } from "stream";
 import { type IPackage } from "../src/package/package.js";
 import {
     AbstractReport,
+    type IReportConfig,
     type IReportContext,
     type SingleReportMethodSignature
 } from "../src/reports/Report.js";
@@ -58,14 +59,16 @@ const TestReportParams = z.object({
 
 type ITestReportParams = z.infer<typeof TestReportParams>;
 
-export class TestReport extends AbstractReport<ITestReportParams, PackageVersion> {
+export class TestReport extends AbstractReport<ITestReportParams, IReportConfig> {
     name = `Test Report`;
-    pkg: PackageVersion;
+    configs: IReportConfig;
 
     constructor(params: ITestReportParams) {
         super(params);
 
-        this.pkg = params.pkg;
+        this.configs = {
+            pkg: params.pkg
+        };
     }
 
     async report(pkg: [IPackage], context: IReportContext): Promise<number | void> {
@@ -83,12 +86,14 @@ export interface ITestReportNoValidationParams {
 
 export class TestReportNoValidation extends AbstractReport<ITestReportNoValidationParams> {
     name = `Test Report No Validation`;
-    pkg: PackageVersion;
+    configs: IReportConfig;
 
     constructor(params: ITestReportNoValidationParams) {
         super(params);
 
-        this.pkg = [params.foo];
+        this.configs = {
+            pkg: [params.foo]
+        };
     }
 
     async report([pkg]: [IPackage], context: IReportContext): Promise<void> {}

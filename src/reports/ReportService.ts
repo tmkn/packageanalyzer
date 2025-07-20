@@ -5,28 +5,33 @@ import { type IPackage } from "../package/package.js";
 import { npmOnline } from "../providers/online.js";
 import { Formatter, type IFormatter } from "../utils/formatter.js";
 import { OraLogger } from "../loggers/OraLogger.js";
-import { type PackageVersion, Visitor } from "../visitors/visitor.js";
-import { type GenericReport, isPackageVersionArray, type ReportMethodSignature } from "./Report.js";
+import { Visitor } from "../visitors/visitor.js";
+import {
+    type GenericReport,
+    type IReportConfig,
+    isReportConfigArray,
+    type ReportMethodSignature
+} from "./Report.js";
 
 // each report is executed individually
-interface IDistinctReportConfig {
+interface IDistinctReportServiceConfig {
     mode: "distinct";
     reports: GenericReport[];
 }
 
 // each entry in reports gets resolved and the resulting dependency trees
 // are delivered to the report method for further processing
-export interface ICombinedReportConfig {
+export interface ICombinedReportServiceConfig {
     mode: "combined";
     reports: GenericReport[];
-    report: ReportMethodSignature<PackageVersion[]>;
+    report: ReportMethodSignature<IReportConfig[]>;
 }
 
-export type ReportConfig = IDistinctReportConfig | ICombinedReportConfig;
+export type ReportServiceConfig = IDistinctReportServiceConfig | ICombinedReportServiceConfig;
 
 export class ReportService {
     constructor(
-        private readonly _config: ReportConfig,
+        private readonly _config: ReportServiceConfig,
         private readonly _stdout: Writable,
         private readonly _stderr: Writable
     ) {}
@@ -53,7 +58,7 @@ export class ReportService {
         return exitCode;
     }
 
-    private async _reportAsDistinct({ reports }: IDistinctReportConfig): Promise<number> {
+    private async _reportAsDistinct({ reports }: IDistinctReportServiceConfig): Promise<number> {
         for (const report of reports) {
             const packages: IPackage[] = await this._getPackages(report);
 
@@ -70,7 +75,10 @@ export class ReportService {
         return Math.max(...reports.map(report => report.exitCode));
     }
 
-    private async _reportAsCombined({ reports, report }: ICombinedReportConfig): Promise<number> {
+    private async _reportAsCombined({
+        reports,
+        report
+    }: ICombinedReportServiceConfig): Promise<number> {
         const packages: IPackage[] = [];
 
         for (const report of reports) {
@@ -86,24 +94,24 @@ export class ReportService {
         return exitCode ?? 0;
     }
 
-    private async _getPackage(entry: PackageVersion, report: GenericReport): Promise<IPackage> {
+    private async _getPackage(entry: IReportConfig, report: GenericReport): Promise<IPackage> {
         const visitor = new Visitor(
-            entry,
+            entry.pkg,
             report.provider ?? npmOnline,
             new OraLogger(),
-            report.attachments ?? {},
-            report.depth
+            entry.attachments ?? {},
+            entry.depth
         );
 
-        return visitor.visit(report.type);
+        return visitor.visit(entry.type);
     }
 
     private async _getPackages(report: GenericReport): Promise<IPackage[]> {
         this._usesNetworkInTests(report);
 
-        const entries: Array<PackageVersion> = isPackageVersionArray(report.pkg)
-            ? report.pkg
-            : [report.pkg];
+        const entries: Array<IReportConfig> = isReportConfigArray(report.configs)
+            ? report.configs
+            : [report.configs];
         const packageArgs: IPackage[] = [];
 
         for (const entry of entries) {

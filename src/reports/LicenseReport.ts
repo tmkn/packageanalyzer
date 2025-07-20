@@ -12,8 +12,8 @@ import {
     type LicenseCheckReport
 } from "../utils/licenseCheckService.js";
 import { getPackageVersionFromPath } from "../visitors/util.node.js";
-import { getPackageVersionfromString, type PackageVersion } from "../visitors/visitor.js";
-import { AbstractReport, type IReportContext } from "./Report.js";
+import { getPackageVersionfromString } from "../visitors/visitor.js";
+import { AbstractReport, type IReportConfig, type IReportContext } from "./Report.js";
 import { dependencyTypes, BaseFolderParameter, BasePackageParameter } from "./Validation.js";
 
 const OptionalParams = z.object({
@@ -31,7 +31,7 @@ export type ILicenseParams = z.infer<typeof LicenseParams>;
 
 export class LicenseReport extends AbstractReport<ILicenseParams> {
     name = `License Report`;
-    readonly pkg: PackageVersion;
+    configs: IReportConfig;
 
     allowList: string[];
     grouped: boolean;
@@ -39,14 +39,20 @@ export class LicenseReport extends AbstractReport<ILicenseParams> {
     constructor(params: ILicenseParams) {
         super(params);
 
+        const type = params.type ?? defaultDependencyType;
         if (this._isPackageParams(params)) {
-            this.pkg = getPackageVersionfromString(params.package);
+            this.configs = {
+                pkg: getPackageVersionfromString(params.package),
+                type
+            };
         } else {
-            this.pkg = getPackageVersionFromPath(params.folder);
+            this.configs = {
+                pkg: getPackageVersionFromPath(params.folder),
+                type
+            };
             this.provider = new FileSystemPackageProvider(params.folder);
         }
 
-        this.type = params.type ?? defaultDependencyType;
         this.allowList = params.allowList ?? [];
         this.grouped = params.grouped ?? false;
     }

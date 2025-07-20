@@ -33,7 +33,7 @@ describe(`Analyze Command`, () => {
         const { mockContext, stdout, stderr } = createMockContext();
         command.context = mockContext;
         command.beforeProcess = report => {
-            report.attachments = { releaseinfo: releaseAttachment(provider) };
+            report.configs.attachments = { releaseinfo: releaseAttachment(provider) };
             report.provider = provider;
         };
 
@@ -56,7 +56,7 @@ describe(`Analyze Command`, () => {
         const { mockContext, stdout, stderr } = createMockContext();
         command.context = mockContext;
         command.beforeProcess = report => {
-            report.attachments = { releaseinfo: releaseAttachment(provider) };
+            report.configs.attachments = { releaseinfo: releaseAttachment(provider) };
             report.provider = provider;
         };
 
@@ -103,7 +103,7 @@ describe(`Analyze Command`, () => {
         const { mockContext, stdout, stderr } = createMockContext();
         command.context = mockContext;
         command.beforeProcess = report => {
-            report.attachments = { releaseinfo: releaseAttachment(provider) };
+            report.configs.attachments = { releaseinfo: releaseAttachment(provider) };
             report.provider = provider;
         };
 

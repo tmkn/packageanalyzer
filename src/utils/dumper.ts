@@ -6,7 +6,7 @@ import { OnlinePackageProvider } from "../providers/online.js";
 import { Visitor } from "../visitors/visitor.js";
 import { OraLogger } from "../loggers/OraLogger.js";
 import { DependencyUtilities } from "../extensions/utilities/DependencyUtilities.js";
-import { type EntryTypes, isPackageVersionArray } from "../reports/Report.js";
+import { isReportConfigArray, type ReportConfigs } from "../reports/Report.js";
 import type { Url } from "../reports/Validation.js";
 
 export class DependencyDumper {
@@ -14,17 +14,17 @@ export class DependencyDumper {
 
     private _provider?: OnlinePackageProvider;
 
-    async collect(pkg: EntryTypes, repoUrl: Url): Promise<void> {
+    async collect(configs: ReportConfigs, repoUrl: Url): Promise<void> {
         this._provider = new OnlinePackageProvider(repoUrl);
 
-        if (isPackageVersionArray(pkg)) {
-            for (const entry of pkg) {
-                const visitor = new Visitor(entry, this._provider, new OraLogger());
+        if (isReportConfigArray(configs)) {
+            for (const entry of configs) {
+                const visitor = new Visitor(entry.pkg, this._provider, new OraLogger());
                 const pkg = await visitor.visit();
                 this.pkgs.push(pkg);
             }
         } else {
-            const visitor = new Visitor(pkg, this._provider, new OraLogger());
+            const visitor = new Visitor(configs.pkg, this._provider, new OraLogger());
             const p = await visitor.visit();
             this.pkgs.push(p);
         }

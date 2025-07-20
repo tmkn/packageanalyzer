@@ -118,7 +118,7 @@ describe(`ReportService Tests`, () => {
             }
         });
         testReport1.provider = provider;
-        testReport1.depth = 0;
+        testReport1.configs.depth = 0;
         const testReport2 = new TestReport({
             pkg: [`react`],
             report: async ([pkg], _context) => {
@@ -126,7 +126,7 @@ describe(`ReportService Tests`, () => {
             }
         });
         testReport2.provider = provider;
-        testReport2.depth = Infinity;
+        testReport2.configs.depth = Infinity;
         const reportService = new ReportService(
             {
                 mode: "distinct",

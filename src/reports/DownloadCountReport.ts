@@ -5,8 +5,8 @@ import { type INpmDownloadStatistic } from "../npm.js";
 import { type IPackage } from "../package/package.js";
 import { type IFormatter } from "../utils/formatter.js";
 import { downloadJson } from "../utils/requests.js";
-import { getPackageVersionfromString, type PackageVersion } from "../visitors/visitor.js";
-import { AbstractReport, type IReportContext } from "./Report.js";
+import { getPackageVersionfromString } from "../visitors/visitor.js";
+import { AbstractReport, type IReportConfig, type IReportContext } from "./Report.js";
 import { BasePackageParameter, type Url, urlType } from "./Validation.js";
 
 const OptionalParams = z.object({
@@ -19,14 +19,15 @@ export type IDownloadParams = z.infer<typeof DownloadParams>;
 
 export class DownloadReport extends AbstractReport<IDownloadParams> {
     name = `Download Report`;
-    pkg: PackageVersion;
+    configs: IReportConfig;
 
     constructor(params: IDownloadParams) {
         super(params);
 
-        this.depth = 0;
-
-        this.pkg = getPackageVersionfromString(params.package);
+        this.configs = {
+            pkg: getPackageVersionfromString(params.package),
+            depth: 0
+        };
     }
 
     async report([pkg]: [IPackage], { stdoutFormatter }: IReportContext): Promise<void> {
