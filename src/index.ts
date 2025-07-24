@@ -5,7 +5,7 @@ export { npmOnline, OnlinePackageProvider } from "./providers/online.js";
 export type { IPackageJsonProvider } from "./providers/provider.js";
 export { OraLogger } from "./loggers/OraLogger.js";
 export type { ILogger } from "./loggers/ILogger.js";
-export type { IAttachment } from "./attachments/Attachments.js";
+export type { AttachmentFn } from "./attachments/Attachments.js";
 
 export { TreeReport } from "./reports/TreeReport.js";
 export { AnalyzeReport } from "./reports/AnalyzeReport.js";

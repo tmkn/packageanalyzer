@@ -2,7 +2,7 @@ import chalk from "chalk";
 import { z } from "zod";
 
 import { daysAgo } from "../cli/common.js";
-import { ReleaseAttachment } from "../attachments/ReleaseAttachment.js";
+import { releaseAttachment } from "../attachments/ReleaseAttachment.js";
 import {
     DependencyUtilities,
     type IMostReferred,
@@ -37,11 +37,15 @@ const AnalyzeParams = z.union([PackageParams, FoldereParams]);
 
 export type IAnalyzeParams = z.infer<typeof AnalyzeParams>;
 
+type ReleaseAttachment = {
+    releaseinfo: ReturnType<typeof releaseAttachment>;
+};
+
 export class AnalyzeReport extends AbstractReport<
     IAnalyzeParams,
     EntryTypes,
     z.ZodTypeAny,
-    [ReleaseAttachment]
+    ReleaseAttachment
 > {
     name = `Analyze Report`;
     pkg: PackageVersion;
@@ -51,7 +55,7 @@ export class AnalyzeReport extends AbstractReport<
 
         if (this._isPackageParams(this.params)) {
             this.pkg = getPackageVersionfromString(this.params.package);
-            this.attachments = [new ReleaseAttachment(npmOnline)];
+            this.attachments = { releaseinfo: releaseAttachment(npmOnline) };
         } else {
             this.pkg = getPackageVersionFromPath(this.params.folder);
             this.provider = new FileSystemPackageProvider(this.params.folder);

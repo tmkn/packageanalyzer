@@ -1,4 +1,4 @@
-import { ReleaseAttachment } from "../../src/attachments/ReleaseAttachment.js";
+import { releaseAttachment } from "../../src/attachments/ReleaseAttachment.js";
 import type { IPackageMetadata, IUnpublishedPackageMetadata } from "../../src/npm.js";
 import { type IPackageMetaDataProvider } from "../../src/providers/provider.js";
 import { createMockPackage, type IMockPackageJson } from "../mocks.js";
@@ -18,11 +18,11 @@ describe(`ReleaseAttachment Tests`, () => {
                 return data as IPackageMetadata;
             }
         })();
-        const extension = new ReleaseAttachment(provider);
+        const extension = releaseAttachment(provider);
         const data: IMockPackageJson = { version: version };
         const p = createMockPackage(data);
 
-        const extensionData = await extension.apply({ p, ...logStub });
+        const extensionData = await extension({ p, ...logStub });
 
         expect(extensionData.published.toUTCString()).toEqual(new Date(timestamp).toUTCString());
     });
@@ -35,10 +35,10 @@ describe(`ReleaseAttachment Tests`, () => {
                 return undefined;
             }
         })();
-        const extension = new ReleaseAttachment(provider);
+        const extension = releaseAttachment(provider);
         const p = createMockPackage({});
 
-        await expect(extension.apply({ p, ...logStub })).rejects.toThrow();
+        await expect(extension({ p, ...logStub })).rejects.toThrow();
     });
 
     test(`Throws on missing version entry`, async () => {
@@ -51,9 +51,9 @@ describe(`ReleaseAttachment Tests`, () => {
                 return data as IPackageMetadata;
             }
         })();
-        const extension = new ReleaseAttachment(provider);
+        const extension = releaseAttachment(provider);
         const p = createMockPackage({});
 
-        await expect(extension.apply({ p, ...logStub })).rejects.toThrow();
+        await expect(extension({ p, ...logStub })).rejects.toThrow();
     });
 });

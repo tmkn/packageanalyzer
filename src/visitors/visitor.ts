@@ -3,7 +3,7 @@ import { AliasName, type INpmKeyValue, type IPackageJson } from "../npm.js";
 import { type IPackageJsonProvider } from "../providers/provider.js";
 import { type ILogger } from "../loggers/ILogger.js";
 import { type DependencyTypes } from "../reports/Validation.js";
-import type { AttachmentData, Attachments, IAttachment } from "../attachments/Attachments.js";
+import type { AttachmentData, Attachments } from "../attachments/Attachments.js";
 
 export type PackageVersion = [name: string, version?: string];
 
@@ -11,9 +11,7 @@ interface IPackageVisitor<T extends Attachments> {
     visit: (depType?: DependencyTypes) => Promise<IPackage<AttachmentData<T>>>;
 }
 
-export class Visitor<T extends Attachments = IAttachment<string, any>>
-    implements IPackageVisitor<T>
-{
+export class Visitor<T extends Attachments = Attachments> implements IPackageVisitor<T> {
     private _depthStack: string[] = [];
     private _depType: DependencyTypes = "dependencies";
 
@@ -21,7 +19,7 @@ export class Visitor<T extends Attachments = IAttachment<string, any>>
         private readonly _entry: PackageVersion,
         private readonly _provider: IPackageJsonProvider,
         private readonly _logger: ILogger,
-        private readonly _attachments: Array<IAttachment<string, any>> = [],
+        private readonly _attachments: Attachments = {},
         private readonly _maxDepth: number = Infinity
     ) {}
 
@@ -109,24 +107,27 @@ export class Visitor<T extends Attachments = IAttachment<string, any>>
     }
 
     private async _addAttachment(p: Package<AttachmentData<T>>): Promise<void> {
-        const totalAttachments = this._attachments.length;
+        const totalAttachments = Object.keys(this._attachments).length;
+        let i = 0;
 
-        for (const [i, attachment] of this._attachments.entries()) {
+        for (const [key, attachment] of Object.entries(this._attachments)) {
             try {
                 const attachmentMsg = `[${p.fullName}][Attachment: ${numPadding(
                     i,
                     totalAttachments
-                )} - ${attachment.name}]`;
+                )} - ${key}]`;
                 this._logger.log(attachmentMsg);
 
-                const data = await attachment.apply({
+                const data = await attachment({
                     p,
                     logger: (msg: string) => this._logger.log(`${attachmentMsg} - ${msg}`)
                 });
 
-                p.setAttachmentData(attachment.key, data);
-            } catch {
-                this._logger.log(`Failed to apply attachment: ${attachment.name}`);
+                p.setAttachmentData(key, data);
+            } catch (e) {
+                this._logger.log(`Failed to apply attachment: ${e}`);
+            } finally {
+                i++;
             }
         }
     }

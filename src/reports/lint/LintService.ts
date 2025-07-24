@@ -9,7 +9,7 @@ import {
 } from "../Report.js";
 import { type ICombinedReportConfig, ReportService } from "../ReportService.js";
 import { type IRulesLoader } from "./RulesLoader.js";
-import { type IAttachment } from "../../attachments/Attachments.js";
+import { type Attachments } from "../../attachments/Attachments.js";
 import { type IPackage } from "../../package/package.js";
 import type { ILintCheck, IPackageJsonProvider, PackageVersion } from "../../index.js";
 import { type ILintResult, LintResultFormatter } from "./LintResultFormatter.js";
@@ -18,7 +18,7 @@ import { hasAttachments } from "./LintRule.js";
 import { Formatter, type IFormatter } from "../../utils/formatter.js";
 
 // dummy lint report to just fetch all data
-class LintReport extends AbstractReport<{}, EntryTypes, ZodTypeAny, IAttachment<string, any>[]> {
+class LintReport extends AbstractReport<{}, EntryTypes, ZodTypeAny, Attachments> {
     override name: string;
     override pkg: PackageVersion;
 

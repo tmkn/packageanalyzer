@@ -1,4 +1,4 @@
-import type { IApplyArgs, IAttachment } from "../../src/attachments/Attachments.js";
+import type { IApplyArgs, AttachmentFn, Attachments } from "../../src/attachments/Attachments.js";
 import {
     createRule,
     createRuleWithAttachment,
@@ -11,13 +11,9 @@ import { createMockContext } from "../common.js";
 import { type IMockPackageJson, MockProvider } from "../mocks.js";
 
 describe(`createRule tests`, () => {
-    const mockAttachment = new (class implements IAttachment<"mock", number> {
-        readonly key = "mock";
-        readonly name = "Mock Attachment";
-        async apply(args: IApplyArgs) {
-            return 3;
-        }
-    })();
+    const mockAttachment: AttachmentFn<number> = async (args: IApplyArgs) => {
+        return 3;
+    };
 
     function setupLintService(rules: ILintFile["rules"]): LintService {
         const medalloPkg: IMockPackageJson = {
@@ -72,15 +68,15 @@ describe(`createRule tests`, () => {
         });
     }
 
-    function setupWithAttachment<A extends IAttachment<string, any>>(
+    function setupWithAttachment<A extends Attachments>(
         attachment: A,
         params?: undefined
-    ): Promise<Parameters<ILintCheck<undefined, [A]>["check"]>>;
-    function setupWithAttachment<A extends IAttachment<string, any>, T>(
+    ): Promise<Parameters<ILintCheck<undefined, A>["check"]>>;
+    function setupWithAttachment<A extends Attachments, T>(
         attachment: A,
         params: T
-    ): Promise<Parameters<ILintCheck<T, [A]>["check"]>>;
-    function setupWithAttachment<A extends IAttachment<string, any>>(attachment: A, params: any) {
+    ): Promise<Parameters<ILintCheck<T, A>["check"]>>;
+    function setupWithAttachment<A extends Attachments>(attachment: A, params: any) {
         return new Promise((resolve, reject) => {
             const rule = createRuleWithAttachment(
                 "error",
@@ -89,7 +85,7 @@ describe(`createRule tests`, () => {
                     check: (...args) => {
                         resolve([...args]);
                     },
-                    attachments: [attachment]
+                    attachments: attachment
                 },
                 params
             );
@@ -124,7 +120,7 @@ describe(`createRule tests`, () => {
     });
 
     test(`creates rule without params and with attachments`, async () => {
-        const [pkg, params] = await setupWithAttachment(mockAttachment);
+        const [pkg, params] = await setupWithAttachment({ mock: mockAttachment });
         const alias: undefined = params;
         const attachmentData: number = pkg.getAttachmentData("mock");
 
@@ -133,7 +129,7 @@ describe(`createRule tests`, () => {
     });
 
     test(`creates rule with params and with attachments`, async () => {
-        const [pkg, params] = await setupWithAttachment(mockAttachment, "params");
+        const [pkg, params] = await setupWithAttachment({ mock: mockAttachment }, "params");
         const alias: string = params;
         const attachmentData: number = pkg.getAttachmentData("mock");
 

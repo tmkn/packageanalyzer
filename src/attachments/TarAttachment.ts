@@ -2,7 +2,7 @@ import * as https from "https";
 
 import * as tar from "tar";
 
-import type { IApplyArgs, IAttachment } from "./Attachments.js";
+import { classToAttachmentFn, type IApplyArgs, type IClassAttachment } from "./Attachments.js";
 import { pipeline } from "stream";
 
 // process tarball, discard directories and save files to files map
@@ -30,11 +30,8 @@ export interface ITarData {
 
 type TarCache = Map<string, ITarData>;
 
-export class TarAttachment implements IAttachment<"tar", ITarData> {
+export class TarAttachment implements IClassAttachment<ITarData> {
     constructor(private _cache: TarCache = new Map()) {}
-
-    readonly name: string = `TarAttachment`;
-    readonly key = "tar";
 
     apply({ p }: IApplyArgs): Promise<ITarData> {
         return new Promise<ITarData>((resolve, reject) => {
@@ -62,3 +59,5 @@ export class TarAttachment implements IAttachment<"tar", ITarData> {
         });
     }
 }
+
+export const createTarAttachment = classToAttachmentFn(TarAttachment);

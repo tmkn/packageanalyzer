@@ -1,28 +1,25 @@
 import type { IPackageMetaDataProvider } from "../providers/provider.js";
-import type { IApplyArgs, IAttachment } from "./Attachments.js";
+import type { AttachmentFn, IApplyArgs } from "./Attachments.js";
 
-interface IReleaseData {
+export interface IReleaseData {
     published: Date;
 }
 
-export class ReleaseAttachment implements IAttachment<"releaseinfo", IReleaseData> {
-    constructor(private _provider: IPackageMetaDataProvider) {}
+export function releaseAttachment(provider: IPackageMetaDataProvider): AttachmentFn<IReleaseData> {
+    const name: string = `ReleaseAttachment`;
 
-    readonly name: string = `ReleaseAttachment`;
-    readonly key = "releaseinfo";
+    return async function ({ p }: IApplyArgs): Promise<IReleaseData> {
+        const info = await provider.getPackageMetadata(p.name);
 
-    async apply({ p }: IApplyArgs): Promise<IReleaseData> {
-        const info = await this._provider.getPackageMetadata(p.name);
-
-        if (!info) throw new Error(`${this.name}: Couldn't get data`);
+        if (!info) throw new Error(`${name}: Couldn't get data`);
 
         const time = info.time;
         const released = time[p.version];
 
-        if (!released) throw new Error(`${this.name}: Couldn't get release data`);
+        if (!released) throw new Error(`${name}: Couldn't get release data`);
 
         return {
             published: new Date(released)
         };
-    }
+    };
 }

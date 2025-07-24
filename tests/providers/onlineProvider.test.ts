@@ -2,7 +2,7 @@ import { OnlinePackageProvider } from "../../src/providers/online.js";
 import { Visitor } from "../../src/visitors/visitor.js";
 import { OraLogger } from "../../src/loggers/OraLogger.js";
 import { createMockNpmServer, type IMockServer } from "../server.js";
-import { ReleaseAttachment } from "../../src/attachments/ReleaseAttachment.js";
+import { releaseAttachment } from "../../src/attachments/ReleaseAttachment.js";
 import { ReleaseUtilities } from "../../src/extensions/utilities/ReleaseUtilities.js";
 
 describe(`OnlineProvider Tests`, () => {
@@ -31,9 +31,9 @@ describe(`OnlineProvider Tests`, () => {
     });
 
     test(`Check oldest package`, async () => {
-        const visitor = new Visitor(["react", "16.8.1"], provider, new OraLogger(), [
-            new ReleaseAttachment(provider)
-        ]);
+        const visitor = new Visitor(["react", "16.8.1"], provider, new OraLogger(), {
+            releaseinfo: releaseAttachment(provider)
+        });
         const p = await visitor.visit();
         const { oldestPackage } = new ReleaseUtilities(p);
 
@@ -45,9 +45,9 @@ describe(`OnlineProvider Tests`, () => {
     });
 
     test(`Check newest package`, async () => {
-        const visitor = new Visitor(["react", "16.8.1"], provider, new OraLogger(), [
-            new ReleaseAttachment(provider)
-        ]);
+        const visitor = new Visitor(["react", "16.8.1"], provider, new OraLogger(), {
+            releaseinfo: releaseAttachment(provider)
+        });
         const p = await visitor.visit();
         const { newestPackage } = new ReleaseUtilities(p);
 

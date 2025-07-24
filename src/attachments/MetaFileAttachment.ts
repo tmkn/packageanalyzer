@@ -1,11 +1,11 @@
 import type { IPackageMetaDataProvider, PackageMetaData } from "../providers/provider.js";
-import type { IApplyArgs, IAttachment } from "./Attachments.js";
+import { classToAttachmentFn, type IApplyArgs, type IClassAttachment } from "./Attachments.js";
 
 interface IMetaFileData {
     metaFile: PackageMetaData;
 }
 
-export class MetaFileAttachment implements IAttachment<"metafile", IMetaFileData> {
+class MetaFileAttachment implements IClassAttachment<IMetaFileData> {
     constructor(private _provider: IPackageMetaDataProvider) {}
 
     readonly name: string = `ReleaseAttachment`;
@@ -21,3 +21,7 @@ export class MetaFileAttachment implements IAttachment<"metafile", IMetaFileData
         };
     }
 }
+
+export const createMetaFileAttachment = classToAttachmentFn(MetaFileAttachment);
+
+export type MetaFileAttachmentFn = ReturnType<typeof createMetaFileAttachment>;
