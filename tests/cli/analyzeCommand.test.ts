@@ -6,7 +6,7 @@ import { createMockNpmServer, type IMockServer } from "../server.js";
 import { createMockContext } from "../common.js";
 import { AnalyzeCommand } from "../../src/cli/analyzeCommand.js";
 import { DumpPackageProvider } from "../../src/providers/folder.js";
-import { ReleaseAttachment } from "../../src/attachments/ReleaseAttachment.js";
+import { releaseAttachment } from "../../src/attachments/ReleaseAttachment.js";
 
 describe(`Analyze Command`, () => {
     let server: IMockServer;
@@ -33,7 +33,7 @@ describe(`Analyze Command`, () => {
         const { mockContext, stdout, stderr } = createMockContext();
         command.context = mockContext;
         command.beforeProcess = report => {
-            report.attachments = [new ReleaseAttachment(provider)];
+            report.attachments = { releaseinfo: releaseAttachment(provider) };
             report.provider = provider;
         };
 
@@ -56,7 +56,7 @@ describe(`Analyze Command`, () => {
         const { mockContext, stdout, stderr } = createMockContext();
         command.context = mockContext;
         command.beforeProcess = report => {
-            report.attachments = [new ReleaseAttachment(provider)];
+            report.attachments = { releaseinfo: releaseAttachment(provider) };
             report.provider = provider;
         };
 
@@ -103,7 +103,7 @@ describe(`Analyze Command`, () => {
         const { mockContext, stdout, stderr } = createMockContext();
         command.context = mockContext;
         command.beforeProcess = report => {
-            report.attachments = [new ReleaseAttachment(provider)];
+            report.attachments = { releaseinfo: releaseAttachment(provider) };
             report.provider = provider;
         };
 

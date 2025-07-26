@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-import { type IAttachment } from "../src/index.js";
+import { type AttachmentFn } from "../src/index.js";
 import { type IApplyArgs } from "../src/attachments/Attachments.js";
 import { getDownloadsLastWeek } from "../src/reports/DownloadCountReport.js";
 import { createRule, createRuleWithAttachment } from "../src/reports/lint/LintRule.js";
@@ -10,7 +10,7 @@ import { NoScripts } from "../src/reports/lint/checks/NoScripts.js";
 import { NonRegistryDependency } from "../src/reports/lint/checks/NonRegistryDependency.js";
 import { ValidateKey } from "../src/reports/lint/checks/ValidateKey.js";
 
-class DownloadCount implements IAttachment<"count", number> {
+class DownloadCount {
     readonly key = "count";
     readonly name = "Download Count";
     async apply(args: IApplyArgs) {
@@ -32,7 +32,7 @@ const foo = {
 
         //         return `Download count: ${data}`;
         //     },
-        //     attachments: [new DownloadCount()]
+        //     attachments: { count: new DownloadCount().apply }
         // })
         // createRule("error", validateKey, {
         //     key: "description",

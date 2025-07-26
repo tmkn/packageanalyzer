@@ -5,7 +5,6 @@ import { cli } from "../../src/cli/cli.js";
 import { createMockNpmServer, type IMockServer } from "../server.js";
 import { DependencyDumperCommand } from "../../src/cli/dependencyDumpCommand.js";
 import { createMockContext } from "../common.js";
-import { OnlinePackageProvider } from "../../src/index.js";
 
 describe(`Dependency Dumper`, () => {
     let server: IMockServer;

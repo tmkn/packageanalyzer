@@ -1,23 +1,28 @@
-import { type AttachmentData } from "../../attachments/Attachments.js";
 import { type IPackage } from "../../package/package.js";
-import { ReleaseAttachment } from "../../attachments/ReleaseAttachment.js";
+import { type IReleaseData } from "../../attachments/ReleaseAttachment.js";
+
+type ReleaseAttachments = {
+    releaseinfo: IReleaseData;
+};
+
+type ReleasePackage = IPackage<ReleaseAttachments>;
 
 export class ReleaseUtilities {
-    constructor(private _p: IPackage<AttachmentData<ReleaseAttachment>>) {}
+    constructor(private _p: ReleasePackage) {}
 
     get publishDate(): Date | undefined {
         return this._getPublishDate(this._p);
     }
 
-    get newestPackage(): IPackage<AttachmentData<ReleaseAttachment>> | undefined {
+    get newestPackage(): ReleasePackage | undefined {
         return this._getNewestPackage(this._p);
     }
 
-    get oldestPackage(): IPackage<AttachmentData<ReleaseAttachment>> | undefined {
+    get oldestPackage(): ReleasePackage | undefined {
         return this._getOldestPackage(this._p);
     }
 
-    private _getPublishDate(p: IPackage<AttachmentData<ReleaseAttachment>>): Date | undefined {
+    private _getPublishDate(p: ReleasePackage): Date | undefined {
         try {
             const data = p.getAttachmentData("releaseinfo");
 
@@ -29,9 +34,7 @@ export class ReleaseUtilities {
         }
     }
 
-    private _getNewestPackage(
-        p: IPackage<AttachmentData<ReleaseAttachment>>
-    ): IPackage<AttachmentData<ReleaseAttachment>> | undefined {
+    private _getNewestPackage(p: ReleasePackage): ReleasePackage | undefined {
         let newestPackage = p;
 
         p.visit(d => {
@@ -50,9 +53,7 @@ export class ReleaseUtilities {
         return this._getPublishDate(newestPackage) ? newestPackage : undefined;
     }
 
-    private _getOldestPackage(
-        p: IPackage<AttachmentData<ReleaseAttachment>>
-    ): IPackage<AttachmentData<ReleaseAttachment>> | undefined {
+    private _getOldestPackage(p: ReleasePackage): ReleasePackage | undefined {
         let oldestPackage = p;
 
         p.visit(d => {

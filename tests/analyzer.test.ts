@@ -8,7 +8,7 @@ import { LoopUtilities } from "../src/extensions/utilities/LoopUtilities.js";
 import { LicenseUtilities } from "../src/extensions/utilities/LicenseUtilities.js";
 import { PathUtilities } from "../src/extensions/utilities/PathUtilities.js";
 import { getPackageVersionFromPath } from "../src/visitors/util.node.js";
-import { type IAttachment } from "../src/attachments/Attachments.js";
+import type { Attachments } from "../src/attachments/Attachments.js";
 
 describe(`Package Tests`, () => {
     let p: IPackage;
@@ -119,17 +119,15 @@ describe(`Attachment Tests`, () => {
     });
 
     test(`correctly gets attachment data by key`, async () => {
-        const testAttachment: IAttachment<"key", boolean> = {
-            key: "key",
-            name: "test attachment",
-            apply: async () => true
+        const testAttachment: Attachments = {
+            key: async () => true
         };
 
         const visitor = new Visitor(
             getPackageVersionFromPath(rootPath),
             provider,
             new OraLogger(),
-            [testAttachment]
+            testAttachment
         );
 
         const p = await visitor.visit();
@@ -148,23 +146,16 @@ describe(`Attachment Tests`, () => {
     });
 
     test(`correctly returns whole attachment data`, async () => {
-        const testAttachment: IAttachment<"key", boolean> = {
-            key: "key",
-            name: "test attachment",
-            apply: async () => true
-        };
-
-        const testAttachment2: IAttachment<"hello", "world"> = {
-            key: "hello",
-            name: "test attachment 2",
-            apply: async () => "world"
+        const testAttachment: Attachments = {
+            key: async () => true,
+            hello: async () => "world"
         };
 
         const visitor = new Visitor(
             getPackageVersionFromPath(rootPath),
             provider,
             new OraLogger(),
-            [testAttachment, testAttachment2]
+            testAttachment
         );
 
         const p = await visitor.visit();
@@ -178,16 +169,9 @@ describe(`Attachment Tests`, () => {
     });
 
     test(`correctly returns partial attachment data`, async () => {
-        const testAttachment: IAttachment<"key", boolean> = {
-            key: "key",
-            name: "test attachment",
-            apply: async () => true
-        };
-
-        const testAttachment2: IAttachment<"hello", "world"> = {
-            key: "hello",
-            name: "test attachment 2",
-            apply: async () => {
+        const testAttachment: Attachments = {
+            key: async () => true,
+            hello: async () => {
                 throw new Error(`Whoops!`);
             }
         };
@@ -196,7 +180,7 @@ describe(`Attachment Tests`, () => {
             getPackageVersionFromPath(rootPath),
             provider,
             new OraLogger(),
-            [testAttachment, testAttachment2]
+            testAttachment
         );
 
         const p = await visitor.visit();

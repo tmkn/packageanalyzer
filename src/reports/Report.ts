@@ -5,7 +5,7 @@ import { type IPackageJsonProvider } from "../providers/provider.js";
 import { type IFormatter } from "../utils/formatter.js";
 import { type PackageVersion } from "../visitors/visitor.js";
 import { type DependencyTypes } from "./Validation.js";
-import type { AttachmentData, IAttachment } from "../attachments/Attachments.js";
+import type { AttachmentData, Attachments } from "../attachments/Attachments.js";
 
 export interface IReportContext {
     stdoutFormatter: IFormatter;
@@ -13,7 +13,7 @@ export interface IReportContext {
 }
 
 //better inferring for 1, 2 and 3 entries
-export type Args<T, D extends Array<IAttachment<string, any>>> = T extends [PackageVersion]
+export type Args<T, D extends Attachments> = T extends [PackageVersion]
     ? [IPackage<AttachmentData<D>>, ...undefined[]]
     : T extends [PackageVersion, PackageVersion]
       ? [IPackage<AttachmentData<D>>, IPackage<AttachmentData<D>>, ...undefined[]]
@@ -32,13 +32,13 @@ export interface IReport<
     PackageEntry,
     Params extends {},
     ZodValidateObject extends z.ZodTypeAny,
-    Attachments extends Array<IAttachment<string, any>> = Array<IAttachment<string, any>>
+    TAttachments extends Attachments = Attachments
 > {
     readonly name: string;
     readonly params: Params;
     readonly pkg: PackageEntry;
 
-    readonly attachments?: Attachments;
+    readonly attachments?: TAttachments;
     readonly provider?: IPackageJsonProvider;
     readonly type?: DependencyTypes;
     readonly depth?: number;
@@ -47,7 +47,7 @@ export interface IReport<
 
     report(
         context: IReportContext,
-        ...pkg: Args<PackageEntry, Attachments>
+        ...pkg: Args<PackageEntry, TAttachments>
     ): Promise<number | void>;
     validate?(): ZodValidateObject;
 }
@@ -69,14 +69,14 @@ export abstract class AbstractReport<
     Params extends {},
     PackageEntry extends EntryTypes = EntryTypes,
     ZodValidateObject extends z.ZodTypeAny = z.ZodTypeAny,
-    Attachments extends Array<IAttachment<string, any>> = Array<IAttachment<string, any>>
-> implements IReport<PackageEntry, Params, ZodValidateObject, Attachments>
+    TAttachments extends Attachments = Attachments
+> implements IReport<PackageEntry, Params, ZodValidateObject, TAttachments>
 {
     abstract name: string;
     readonly params: Params;
     abstract pkg: PackageEntry;
 
-    attachments: Attachments | undefined;
+    attachments: TAttachments | undefined;
     provider: IPackageJsonProvider | undefined;
     type: DependencyTypes | undefined;
     depth: number | undefined;
@@ -97,7 +97,7 @@ export abstract class AbstractReport<
 
     abstract report(
         context: IReportContext,
-        ...pkg: Args<PackageEntry, Attachments>
+        ...pkg: Args<PackageEntry, TAttachments>
     ): Promise<number | void>;
 
     validate?(): ZodValidateObject;

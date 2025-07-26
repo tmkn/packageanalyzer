@@ -1,4 +1,4 @@
-import { type IAttachment } from "../../src/index.js";
+import { type AttachmentFn } from "../../src/index.js";
 import { type IApplyArgs } from "../../src/attachments/Attachments.js";
 import { createRuleWithAttachment, type ILintFile } from "../../src/reports/lint/LintRule.js";
 import { LintService } from "../../src/reports/lint/LintService.js";
@@ -18,21 +18,9 @@ describe(`Lint Service Attachment Tests`, () => {
 
     const provider = new MockProvider([medalloPkg]);
 
-    class MockAttachment1 implements IAttachment<"mock", string> {
-        readonly key = "mock";
-        readonly name = "Mock Attachment";
-        async apply({ p }: IApplyArgs) {
-            return `${p.name} 13`;
-        }
-    }
+    const mockAttachment1: AttachmentFn<string> = async ({ p }: IApplyArgs) => `${p.name} 13`;
 
-    class MockAttachment2 implements IAttachment<"mock2", string> {
-        readonly key = "mock2";
-        readonly name = "Mock Attachment 2";
-        async apply({ p }: IApplyArgs) {
-            return `${p.name} 23`;
-        }
-    }
+    const mockAttachment2: AttachmentFn<string> = async ({ p }: IApplyArgs) => `${p.name} 23`;
 
     const createLoader = (rules: ILintFile["rules"]): IRulesLoader => {
         return {
@@ -50,7 +38,7 @@ describe(`Lint Service Attachment Tests`, () => {
 
                 expect(data).toBe(`${pkg.name} 13`);
             },
-            attachments: [new MockAttachment1()]
+            attachments: { mock: mockAttachment1 }
         });
 
         const { stdout, stderr } = createMockContext();
@@ -79,7 +67,7 @@ describe(`Lint Service Attachment Tests`, () => {
                 expect(data1).toBe(`${pkg.name} 13`);
                 expect(data2).toBe(`${pkg.name} 23`);
             },
-            attachments: [new MockAttachment1(), new MockAttachment2()]
+            attachments: { mock: mockAttachment1, mock2: mockAttachment2 }
         });
 
         const { stdout, stderr } = createMockContext();
@@ -106,7 +94,7 @@ describe(`Lint Service Attachment Tests`, () => {
 
                 expect(data).toBe(`${pkg.name} 13`);
             },
-            attachments: [new MockAttachment1()]
+            attachments: { mock: mockAttachment1 }
         });
 
         const ruleWithAttachment2 = createRuleWithAttachment("error", {
@@ -116,7 +104,7 @@ describe(`Lint Service Attachment Tests`, () => {
 
                 expect(data).toBe(`${pkg.name} 23`);
             },
-            attachments: [new MockAttachment2()]
+            attachments: { mock2: mockAttachment2 }
         });
 
         const { stdout, stderr } = createMockContext();
@@ -145,7 +133,7 @@ describe(`Lint Service Attachment Tests`, () => {
                 expect(data1).toBe(`${pkg.name} 13`);
                 expect(data2).toBe(`${pkg.name} 23`);
             },
-            attachments: [new MockAttachment2(), new MockAttachment1()]
+            attachments: { mock: mockAttachment1, mock2: mockAttachment2 }
         });
 
         const ruleWithAttachment2 = createRuleWithAttachment("error", {
@@ -157,7 +145,7 @@ describe(`Lint Service Attachment Tests`, () => {
                 expect(data1).toBe(`${pkg.name} 13`);
                 expect(data2).toBe(`${pkg.name} 23`);
             },
-            attachments: [new MockAttachment1(), new MockAttachment2()]
+            attachments: { mock: mockAttachment1, mock2: mockAttachment2 }
         });
 
         const { stdout, stderr } = createMockContext();
@@ -183,17 +171,13 @@ describe(`Lint Service Attachment Tests`, () => {
                 // trigger attachment error
                 pkg.getAttachmentData("mock");
             },
-            attachments: [
-                new (class implements IAttachment<"mock", string> {
-                    readonly key = "mock";
-                    readonly name = "Mock Attachment";
-                    async apply() {
-                        throw new Error(`Attachment failed intentionally`);
+            attachments: {
+                mock: async () => {
+                    throw new Error(`Attachment failed intentionally`);
 
-                        return `13`;
-                    }
-                })()
-            ]
+                    return `13`;
+                }
+            }
         });
 
         const { stdout, stderr } = createMockContext();

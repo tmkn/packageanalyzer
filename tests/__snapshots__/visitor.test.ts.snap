@@ -1,0 +1,3 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Visitor Tests > checks attachment log 1`] = `"[dep1@1.0.0][Attachment: 1/1 - attachmentName] - hello from attachment"`;

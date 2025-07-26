@@ -1,7 +1,7 @@
 import { type ZodTypeAny, z } from "zod";
 
 import type { IPackage } from "../../package/package.js";
-import type { AttachmentData, IAttachment } from "../../attachments/Attachments.js";
+import type { AttachmentData, Attachments } from "../../attachments/Attachments.js";
 
 const LintTypes = z.union([z.literal("error"), z.literal("warning")]);
 
@@ -16,29 +16,28 @@ export interface IBaseLintCheck<T> extends ISharedLintCheckParams {
     check: (pkg: IPackage, params: T) => string | string[] | void;
 }
 
-export interface ILintCheckWithAttachments<T, A extends IAttachment<string, any>[]>
+export interface ILintCheckWithAttachments<T, A extends Attachments>
     extends ISharedLintCheckParams {
     check: (pkg: IPackage<AttachmentData<A>>, params: T) => string | string[] | void;
     attachments: A;
 }
 
-export type ILintCheck<
-    T = undefined,
-    A extends IAttachment<string, any>[] | undefined = undefined
-> = A extends {} ? ILintCheckWithAttachments<T, A> : IBaseLintCheck<T>;
+export type ILintCheck<T = undefined, A extends Attachments | undefined = undefined> = A extends {}
+    ? ILintCheckWithAttachments<T, A>
+    : IBaseLintCheck<T>;
 
 type IBaseLintTuple<P> = P extends {}
     ? [ILintTypes, IBaseLintCheck<P>, P]
     : [ILintTypes, IBaseLintCheck<P>];
 
-type ILintTupleWithAttachmentsTuple<P, A extends IAttachment<string, any>[]> = P extends {}
+type ILintTupleWithAttachmentsTuple<P, A extends Attachments> = P extends {}
     ? [ILintTypes, ILintCheckWithAttachments<P, A>, P]
     : [ILintTypes, ILintCheckWithAttachments<P, A>];
 
 // infer the correct LintCheck type
 // it somehow does what it's supposed to do lol
 export type LintRuleTuple<C extends ILintCheck<any, any> = ILintCheck> =
-    C extends ILintCheck<infer P, infer A extends IAttachment<string, any>[]>
+    C extends ILintCheck<infer P, infer A extends Attachments>
         ? ILintTupleWithAttachmentsTuple<P, A>
         : C extends ILintCheck<infer P>
           ? IBaseLintTuple<P>
@@ -71,7 +70,7 @@ export function createRule<P = undefined>(...args: IBaseLintTuple<P>): IBaseLint
     return [...args];
 }
 
-export function createRuleWithAttachment<P = undefined, A extends IAttachment<string, any>[] = []>(
+export function createRuleWithAttachment<P = undefined, A extends Attachments = {}>(
     ...args: ILintTupleWithAttachmentsTuple<P, A>
 ): ILintTupleWithAttachmentsTuple<P, A> {
     return [...args];

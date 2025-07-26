@@ -8,7 +8,10 @@ import { OnlinePackageProvider } from "../providers/online.js";
 import { getPackageVersionfromString, type PackageVersion } from "../visitors/visitor.js";
 import { AbstractReport, type IReportContext } from "./Report.js";
 import { urlType } from "./../reports/Validation.js";
-import { MetaFileAttachment } from "../attachments/MetaFileAttachment.js";
+import {
+    createMetaFileAttachment,
+    type MetaFileAttachmentFn
+} from "../attachments/MetaFileAttachment.js";
 import { type AttachmentData } from "../attachments/Attachments.js";
 
 const DependencyDumpParams = z.object({
@@ -29,13 +32,13 @@ export class DependencyDumpReport extends AbstractReport<IDependencyDumpParams> 
         this.pkg = params.entries.map(entry => getPackageVersionfromString(entry));
 
         const provider = new OnlinePackageProvider(this.params.registry);
-        this.attachments = [new MetaFileAttachment(provider)];
+        this.attachments = { metafile: createMetaFileAttachment(provider) };
         this.provider = provider;
     }
 
     async report(
         { stdoutFormatter }: IReportContext,
-        ...pkgs: IPackage<AttachmentData<MetaFileAttachment>>[]
+        ...pkgs: IPackage<AttachmentData<{ metafile: MetaFileAttachmentFn }>>[]
     ): Promise<void> {
         for (const pkg of pkgs) {
             stdoutFormatter.writeLine(`Writing meta files for ${pkg.fullName}`);

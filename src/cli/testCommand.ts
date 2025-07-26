@@ -13,7 +13,7 @@ import {
 } from "../reports/Validation.js";
 import { AbstractReport, type IReportContext } from "../reports/Report.js";
 import { getPackageVersionfromString, type PackageVersion } from "../visitors/visitor.js";
-import { TarAttachment } from "../attachments/TarAttachment.js";
+import { createTarAttachment } from "../attachments/TarAttachment.js";
 import { DumpPackageProvider } from "../providers/folder.js";
 import { type IPackage } from "../package/package.js";
 import { z, type ZodTypeAny } from "zod";
@@ -43,7 +43,7 @@ export class TestReport extends AbstractReport<ITestReportParams> {
     name = `Test Report`;
     pkg: PackageVersion;
 
-    override attachments = [new TarAttachment()];
+    override attachments = { tar: createTarAttachment() };
 
     constructor(params: ITestReportParams) {
         super(params);

@@ -13,6 +13,7 @@ import {
 } from "../src/reports/Report.js";
 import { type PackageVersion } from "../src/visitors/visitor.js";
 import { DumpPackageProvider } from "../src/providers/folder.js";
+import type { ILogger } from "../src/loggers/ILogger.js";
 
 class TestWritable extends Writable {
     private static _pattern = [
@@ -138,4 +139,32 @@ export function setupRegistryMocks(
         });
 
     return scope;
+}
+
+export class MockLogger implements ILogger {
+    private _logs: string[] = [];
+
+    get logs(): string[] {
+        return this._logs;
+    }
+
+    start(): void {
+        // no-op
+    }
+
+    stop(): void {
+        // no-op
+    }
+
+    log(msg: string): void {
+        this._logs.push(msg);
+    }
+
+    error(msg: string): void {
+        this._logs.push(msg);
+    }
+
+    reset(): void {
+        this._logs = [];
+    }
 }

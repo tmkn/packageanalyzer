@@ -167,7 +167,7 @@ describe(`Visitor Max Depth Tests`, () => {
         const destination = path.join("tests", "data", "testproject2", "node_modules");
         const provider: FileSystemPackageProvider = new FileSystemPackageProvider(destination);
 
-        const visitor = new Visitor(["webpack"], provider, new OraLogger(), [], depth);
+        const visitor = new Visitor(["webpack"], provider, new OraLogger(), {}, depth);
 
         return visitor.visit();
     }
