@@ -64,7 +64,7 @@ describe(`ReportService Tests`, () => {
         let fullName: string = `Unknown`;
         const testReport = new TestReport({
             pkg: [`react`],
-            report: async (_context, pkg) => {
+            report: async ([pkg], _context) => {
                 fullName = pkg.fullName;
             }
         });
@@ -88,7 +88,7 @@ describe(`ReportService Tests`, () => {
         const token = `Hello World`;
         const testReport = new TestReport({
             pkg: [`react`],
-            report: async (context, pkg) => {
+            report: async (_, context) => {
                 context.stdoutFormatter.writeLine(token);
             }
         });
@@ -113,7 +113,7 @@ describe(`ReportService Tests`, () => {
         let directDependenciesCount2: number = -1;
         const testReport1 = new TestReport({
             pkg: [`react`],
-            report: async (_context, pkg) => {
+            report: async ([pkg], _context) => {
                 directDependenciesCount1 = pkg.directDependencies.length;
             }
         });
@@ -121,7 +121,7 @@ describe(`ReportService Tests`, () => {
         testReport1.depth = 0;
         const testReport2 = new TestReport({
             pkg: [`react`],
-            report: async (_context, pkg) => {
+            report: async ([pkg], _context) => {
                 directDependenciesCount2 = pkg.directDependencies.length;
             }
         });

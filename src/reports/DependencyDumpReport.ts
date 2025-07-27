@@ -37,8 +37,8 @@ export class DependencyDumpReport extends AbstractReport<IDependencyDumpParams> 
     }
 
     async report(
-        { stdoutFormatter }: IReportContext,
-        ...pkgs: IPackage<AttachmentData<{ metafile: MetaFileAttachmentFn }>>[]
+        pkgs: IPackage<AttachmentData<{ metafile: MetaFileAttachmentFn }>>[],
+        { stdoutFormatter }: IReportContext
     ): Promise<void> {
         for (const pkg of pkgs) {
             stdoutFormatter.writeLine(`Writing meta files for ${pkg.fullName}`);

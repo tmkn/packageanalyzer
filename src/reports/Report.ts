@@ -12,21 +12,15 @@ export interface IReportContext {
     stderrFormatter: IFormatter;
 }
 
-//better inferring for 1, 2 and 3 entries
-export type Args<T, D extends Attachments> = T extends [PackageVersion]
-    ? [IPackage<AttachmentData<D>>, ...undefined[]]
-    : T extends [PackageVersion, PackageVersion]
-      ? [IPackage<AttachmentData<D>>, IPackage<AttachmentData<D>>, ...undefined[]]
-      : T extends [PackageVersion, PackageVersion, PackageVersion]
-        ? [
-              IPackage<AttachmentData<D>>,
-              IPackage<AttachmentData<D>>,
-              IPackage<AttachmentData<D>>,
-              ...undefined[]
-          ]
-        : T extends PackageVersion
-          ? [IPackage<AttachmentData<D>>]
-          : Array<IPackage<AttachmentData<D>> | undefined>;
+type MapPackageVersionsToPackages<T extends readonly unknown[], D extends Attachments> = {
+    [K in keyof T]: T[K] extends PackageVersion ? IPackage<AttachmentData<D>> : never;
+};
+
+type Args<T, D extends Attachments> = T extends readonly PackageVersion[]
+    ? MapPackageVersionsToPackages<T, D>
+    : T extends PackageVersion
+      ? [IPackage<AttachmentData<D>>]
+      : never;
 
 export interface IReport<
     PackageEntry,
@@ -45,10 +39,7 @@ export interface IReport<
 
     exitCode: number;
 
-    report(
-        context: IReportContext,
-        ...pkg: Args<PackageEntry, TAttachments>
-    ): Promise<number | void>;
+    report(pkg: Args<PackageEntry, TAttachments>, context: IReportContext): Promise<number | void>;
     validate?(): ZodValidateObject;
 }
 
@@ -96,8 +87,8 @@ export abstract class AbstractReport<
     }
 
     abstract report(
-        context: IReportContext,
-        ...pkg: Args<PackageEntry, TAttachments>
+        pkg: Args<PackageEntry, TAttachments>,
+        context: IReportContext
     ): Promise<number | void>;
 
     validate?(): ZodValidateObject;
