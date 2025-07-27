@@ -28,7 +28,7 @@ class LintReport extends AbstractReport<{}, EntryTypes, ZodTypeAny, Attachments>
         this.pkg = pkg;
     }
 
-    override report(context: IReportContext, ..._pkg: IPackage[]): Promise<number | void> {
+    override report(_pkg: IPackage[], context: IReportContext): Promise<number | void> {
         throw new Error("Method should not be called");
     }
 }
@@ -97,7 +97,7 @@ export class LintService {
         return {
             mode: "combined",
             reports,
-            report: async (context, ...packages) => {
+            report: async (packages, context) => {
                 const resultFormatter = new LintResultFormatter(context.stdoutFormatter);
                 const lintResults: ILintResult[] = [];
                 const lookup: Map<IPackage, IPackage[]> = this._createPackageLookup(

@@ -42,7 +42,7 @@ export class DiffReport extends AbstractReport<
         ];
     }
 
-    async report(ctx: IReportContext, fromPkg: IPackage, toPkg: IPackage): Promise<void> {
+    async report([fromPkg, toPkg]: [IPackage, IPackage], ctx: IReportContext): Promise<void> {
         const { stdoutFormatter } = ctx;
         stdoutFormatter.writeLine(
             `Dependency Diff: ${chalk.bold.underline(fromPkg.fullName)} (${this._printCount(

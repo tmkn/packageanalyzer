@@ -63,7 +63,7 @@ export class ReportService {
             if (reports.length > 1)
                 stdoutFormatter.writeLine(chalk.underline.bgBlue(`Report: ${report.name}`));
 
-            await report.report({ stdoutFormatter, stderrFormatter }, ...packages);
+            await report.report(packages, { stdoutFormatter, stderrFormatter });
             stdoutFormatter.writeLine(``);
         }
 
@@ -80,7 +80,7 @@ export class ReportService {
         const stdoutFormatter: IFormatter = new Formatter(this._stdout);
         const stderrFormatter: IFormatter = new Formatter(this._stderr);
 
-        const exitCode = await report({ stdoutFormatter, stderrFormatter }, ...packages);
+        const exitCode = await report(packages, { stdoutFormatter, stderrFormatter });
         stdoutFormatter.writeLine(``);
 
         return exitCode ?? 0;

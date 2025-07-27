@@ -22,7 +22,7 @@ export class LoopsReport extends AbstractReport<ILoopParams> {
         this.type = params.type;
     }
 
-    async report({ stdoutFormatter }: IReportContext, pkg: IPackage): Promise<void> {
+    async report([pkg]: [IPackage], { stdoutFormatter }: IReportContext): Promise<void> {
         const loopPathMap = new LoopUtilities(pkg).loopPathMap;
         const distinctCount: number = [...loopPathMap].reduce((i, [, loops]) => i + loops.size, 0);
         const loopPadding = ("" + distinctCount).length;

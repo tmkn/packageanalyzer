@@ -68,8 +68,8 @@ export class TestReport extends AbstractReport<ITestReportParams, PackageVersion
         this.pkg = params.pkg;
     }
 
-    async report(context: IReportContext, pkg: IPackage): Promise<number | void> {
-        return this.params.report(context, pkg);
+    async report(pkg: [IPackage], context: IReportContext): Promise<number | void> {
+        return this.params.report(pkg, context);
     }
 
     override validate(): z.ZodTypeAny {
@@ -91,7 +91,7 @@ export class TestReportNoValidation extends AbstractReport<ITestReportNoValidati
         this.pkg = [params.foo];
     }
 
-    async report(context: IReportContext, pkg: IPackage): Promise<void> {}
+    async report([pkg]: [IPackage], context: IReportContext): Promise<void> {}
 }
 
 interface IMockContext {

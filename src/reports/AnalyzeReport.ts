@@ -63,8 +63,8 @@ export class AnalyzeReport extends AbstractReport<
     }
 
     async report(
-        { stdoutFormatter }: IReportContext,
-        pkg: IPackage<AttachmentData<ReleaseAttachment>>
+        [pkg]: [IPackage<AttachmentData<ReleaseAttachment>>],
+        { stdoutFormatter }: IReportContext
     ): Promise<void> {
         await printStatistics(pkg, this.params.full, stdoutFormatter);
     }

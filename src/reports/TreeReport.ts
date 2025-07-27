@@ -33,7 +33,7 @@ export class TreeReport extends AbstractReport<ITreeReportParams> {
         }
     }
 
-    async report({ stdoutFormatter }: IReportContext, pkg: IPackage): Promise<void> {
+    async report([pkg]: [IPackage], { stdoutFormatter }: IReportContext): Promise<void> {
         printDependencyTree(pkg, stdoutFormatter);
     }
 
