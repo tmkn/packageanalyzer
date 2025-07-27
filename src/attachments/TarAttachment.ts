@@ -30,7 +30,7 @@ export interface ITarData {
 
 type TarCache = Map<string, ITarData>;
 
-export class TarAttachment implements IClassAttachment<ITarData> {
+class TarAttachment implements IClassAttachment<ITarData> {
     constructor(private _cache: TarCache = new Map()) {}
 
     apply({ p }: IApplyArgs): Promise<ITarData> {
