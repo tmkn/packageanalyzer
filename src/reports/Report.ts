@@ -30,9 +30,7 @@ export type PackagesFromConfigs<T extends IReportConfig<any> | Array<IReportConf
         : [PackageFromConfig<T>];
 
 let reportConfig: IReportConfig<{ tar: ReturnType<typeof createTarAttachment> }>;
-let foo: PackageFromConfig<typeof reportConfig>;
-
-const abc = foo!.getAttachmentData("tar");
+// Remove problematic test code that was causing runtime errors
 
 export interface IReportContext {
     stdoutFormatter: IFormatter;
