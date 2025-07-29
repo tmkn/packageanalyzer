@@ -9,7 +9,7 @@ import type { AttachmentData, Attachments } from "../attachments/Attachments.js"
 import type { createTarAttachment } from "../attachments/TarAttachment.js";
 
 // todo add generics for attachments and params
-interface IReportConfig<
+export interface IReportConfig<
     TAttachments extends Attachments = Attachments
     // Params extends Record<string, any> = Record<string, any>
 > {
@@ -24,9 +24,10 @@ interface IReportConfig<
 type PackageFromConfig<T> =
     T extends IReportConfig<infer Attachments> ? IPackage<AttachmentData<Attachments>> : never;
 
-type PackagesFromConfigs<T extends Array<IReportConfig<any>>> = {
-    [K in keyof T]: PackageFromConfig<T[K]>;
-};
+export type PackagesFromConfigs<T extends IReportConfig<any> | Array<IReportConfig<any>>> = 
+    T extends Array<IReportConfig<any>> 
+        ? { [K in keyof T]: PackageFromConfig<T[K]> }
+        : [PackageFromConfig<T>];
 
 let reportConfig: IReportConfig<{ tar: ReturnType<typeof createTarAttachment> }>;
 let foo: PackageFromConfig<typeof reportConfig>;
@@ -48,7 +49,7 @@ type Args<T, D extends Attachments> = T extends readonly PackageVersion[]
       ? [IPackage<AttachmentData<D>>]
       : never;
 
-export interface IReport<
+interface ILegacyReport<
     PackageEntry,
     Params extends {},
     ZodValidateObject extends z.ZodTypeAny,
@@ -69,7 +70,7 @@ export interface IReport<
     validate?(): ZodValidateObject;
 }
 
-interface IReport2<ReportConfigs extends IReportConfig[], ZodValidateObject extends z.ZodTypeAny> {
+export interface IReport<ReportConfigs extends IReportConfig<any> | Array<IReportConfig<any>>, ZodValidateObject extends z.ZodTypeAny> {
     readonly name: string;
     readonly configs: ReportConfigs;
     readonly provider?: IPackageJsonProvider;
@@ -84,7 +85,7 @@ interface IReport2<ReportConfigs extends IReportConfig[], ZodValidateObject exte
     validate?(): ZodValidateObject;
 }
 
-let foo2: IReport2<
+let foo2: IReport<
     [typeof reportConfig, IReportConfig<{ asdfsadf: ReturnType<typeof createTarAttachment> }>],
     z.ZodTypeAny
 >;
@@ -94,10 +95,14 @@ function test([[a, b], context]: Parameters<(typeof foo2)["report"]>) {
     const test2 = b.getAttachmentData("asdfsadf");
 }
 
-export type GenericReport = IReport<EntryTypes, any, z.ZodTypeAny>;
+export type GenericReport = ILegacyReport<EntryTypes, any, z.ZodTypeAny>;
 
-export type ReportMethodSignature<T> = IReport<T, {}, z.ZodTypeAny>["report"];
+export type ModernReport<T extends IReportConfig<any> | Array<IReportConfig<any>>> = IReport<T, z.ZodTypeAny>;
+
+export type ReportMethodSignature<T> = ILegacyReport<T, {}, z.ZodTypeAny>["report"];
 export type SingleReportMethodSignature = ReportMethodSignature<PackageVersion>;
+
+export type NewReportMethodSignature<T extends IReportConfig<any> | Array<IReportConfig<any>>> = IReport<T, z.ZodTypeAny>["report"];
 
 export type EntryTypes = PackageVersion | PackageVersion[];
 
@@ -112,7 +117,7 @@ export abstract class AbstractReport<
     PackageEntry extends EntryTypes = EntryTypes,
     ZodValidateObject extends z.ZodTypeAny = z.ZodTypeAny,
     TAttachments extends Attachments = Attachments
-> implements IReport<PackageEntry, Params, ZodValidateObject, TAttachments>
+> implements ILegacyReport<PackageEntry, Params, ZodValidateObject, TAttachments>
 {
     abstract name: string;
     readonly params: Params;
