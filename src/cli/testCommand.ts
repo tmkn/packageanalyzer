@@ -55,7 +55,7 @@ export class TestReport extends AbstractReport<ITestReportParams> {
         }
     }
 
-    async report([pkg]: [IPackage], { stdoutFormatter }: IReportContext): Promise<void> {
+    async reportLegacy([pkg]: [IPackage], { stdoutFormatter }: IReportContext): Promise<void> {
         const destination = path.join("tests", "data", "dump");
         const provider = new DumpPackageProvider(destination);
 

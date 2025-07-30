@@ -68,7 +68,7 @@ export class TestReport extends AbstractReport<ITestReportParams, PackageVersion
         this.pkg = params.pkg;
     }
 
-    async report(pkg: [IPackage], context: IReportContext): Promise<number | void> {
+    async reportLegacy(pkg: [IPackage], context: IReportContext): Promise<number | void> {
         return this.params.report(pkg, context);
     }
 
@@ -91,7 +91,7 @@ export class TestReportNoValidation extends AbstractReport<ITestReportNoValidati
         this.pkg = [params.foo];
     }
 
-    async report([pkg]: [IPackage], context: IReportContext): Promise<void> {}
+    async reportLegacy([pkg]: [IPackage], context: IReportContext): Promise<void> {}
 }
 
 interface IMockContext {

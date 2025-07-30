@@ -36,7 +36,7 @@ export class DependencyDumpReport extends AbstractReport<IDependencyDumpParams> 
         this.provider = provider;
     }
 
-    async report(
+    async reportLegacy(
         pkgs: IPackage<AttachmentData<{ metafile: MetaFileAttachmentFn }>>[],
         { stdoutFormatter }: IReportContext
     ): Promise<void> {

@@ -62,7 +62,7 @@ export class AnalyzeReport extends AbstractReport<
         }
     }
 
-    async report(
+    async reportLegacy(
         [pkg]: [IPackage<AttachmentData<ReleaseAttachment>>],
         { stdoutFormatter }: IReportContext
     ): Promise<void> {

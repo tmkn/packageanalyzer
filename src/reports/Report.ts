@@ -24,9 +24,11 @@ interface IReportConfig<
 type PackageFromConfig<T> =
     T extends IReportConfig<infer Attachments> ? IPackage<AttachmentData<Attachments>> : never;
 
-type PackagesFromConfigs<T extends Array<IReportConfig<any>>> = {
-    [K in keyof T]: PackageFromConfig<T[K]>;
-};
+type PackagesFromConfigs<T> = T extends readonly IReportConfig<any>[]
+    ? { [K in keyof T]: PackageFromConfig<T[K]> }
+    : T extends IReportConfig<any>
+      ? [PackageFromConfig<T>]
+      : never;
 
 let reportConfig: IReportConfig<{ tar: ReturnType<typeof createTarAttachment> }>;
 let foo: PackageFromConfig<typeof reportConfig>;
@@ -48,28 +50,7 @@ type Args<T, D extends Attachments> = T extends readonly PackageVersion[]
       ? [IPackage<AttachmentData<D>>]
       : never;
 
-export interface IReport<
-    PackageEntry,
-    Params extends {},
-    ZodValidateObject extends z.ZodTypeAny,
-    TAttachments extends Attachments = Attachments
-> {
-    readonly name: string;
-    readonly params: Params;
-    readonly pkg: PackageEntry;
-
-    readonly attachments?: TAttachments;
-    readonly provider?: IPackageJsonProvider;
-    readonly type?: DependencyTypes;
-    readonly depth?: number;
-
-    exitCode: number;
-
-    report(pkg: Args<PackageEntry, TAttachments>, context: IReportContext): Promise<number | void>;
-    validate?(): ZodValidateObject;
-}
-
-interface IReport2<ReportConfigs extends IReportConfig[], ZodValidateObject extends z.ZodTypeAny> {
+export interface IReport<ReportConfigs, ZodValidateObject extends z.ZodTypeAny> {
     readonly name: string;
     readonly configs: ReportConfigs;
     readonly provider?: IPackageJsonProvider;
@@ -84,7 +65,7 @@ interface IReport2<ReportConfigs extends IReportConfig[], ZodValidateObject exte
     validate?(): ZodValidateObject;
 }
 
-let foo2: IReport2<
+let foo2: IReport<
     [typeof reportConfig, IReportConfig<{ asdfsadf: ReturnType<typeof createTarAttachment> }>],
     z.ZodTypeAny
 >;
@@ -94,10 +75,10 @@ function test([[a, b], context]: Parameters<(typeof foo2)["report"]>) {
     const test2 = b.getAttachmentData("asdfsadf");
 }
 
-export type GenericReport = IReport<EntryTypes, any, z.ZodTypeAny>;
+export type GenericReport = IReport<any, z.ZodTypeAny>;
 
-export type ReportMethodSignature<T> = IReport<T, {}, z.ZodTypeAny>["report"];
-export type SingleReportMethodSignature = ReportMethodSignature<PackageVersion>;
+export type ReportMethodSignature<T> = IReport<T, z.ZodTypeAny>["report"];
+export type SingleReportMethodSignature = ReportMethodSignature<IReportConfig<any>>;
 
 export type EntryTypes = PackageVersion | PackageVersion[];
 
@@ -112,7 +93,7 @@ export abstract class AbstractReport<
     PackageEntry extends EntryTypes = EntryTypes,
     ZodValidateObject extends z.ZodTypeAny = z.ZodTypeAny,
     TAttachments extends Attachments = Attachments
-> implements IReport<PackageEntry, Params, ZodValidateObject, TAttachments>
+> implements IReport<IReportConfig<TAttachments> | IReportConfig<TAttachments>[], ZodValidateObject>
 {
     abstract name: string;
     readonly params: Params;
@@ -137,7 +118,36 @@ export abstract class AbstractReport<
         }
     }
 
-    abstract report(
+    get configs(): IReportConfig<TAttachments> | IReportConfig<TAttachments>[] {
+        // For single PackageVersion, create a single config
+        if (Array.isArray(this.pkg)) {
+            // For multiple PackageVersions, create an array of configs
+            return this.pkg.map(pkg => ({
+                pkg: pkg as PackageVersion,
+                type: this.type ?? "dependencies",
+                depth: this.depth ?? 0,
+                attachments: this.attachments ?? ({} as TAttachments)
+            }));
+        }
+        
+        return {
+            pkg: this.pkg as PackageVersion,
+            type: this.type ?? "dependencies",
+            depth: this.depth ?? 0,
+            attachments: this.attachments ?? ({} as TAttachments)
+        };
+    }
+
+    async report(
+        packages: PackagesFromConfigs<IReportConfig<TAttachments> | IReportConfig<TAttachments>[]>,
+        context: IReportContext
+    ): Promise<number | void> {
+        // PackagesFromConfigs should handle both single config and array of configs
+        // We need to convert this to Args<PackageEntry, TAttachments>
+        return this.reportLegacy(packages as any, context);
+    }
+
+    abstract reportLegacy(
         pkg: Args<PackageEntry, TAttachments>,
         context: IReportContext
     ): Promise<number | void>;

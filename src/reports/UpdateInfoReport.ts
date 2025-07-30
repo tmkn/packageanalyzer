@@ -31,7 +31,7 @@ export class UpdateInfoReport extends AbstractReport<IUpdateInfoParams> {
         this.pkg = getPackageVersionfromString(params.package);
     }
 
-    async report(
+    async reportLegacy(
         [pkg]: [IPackage],
         { stdoutFormatter, stderrFormatter }: IReportContext
     ): Promise<void> {

@@ -28,7 +28,7 @@ class LintReport extends AbstractReport<{}, EntryTypes, ZodTypeAny, Attachments>
         this.pkg = pkg;
     }
 
-    override report(_pkg: IPackage[], context: IReportContext): Promise<number | void> {
+    override reportLegacy(_pkg: IPackage[], context: IReportContext): Promise<number | void> {
         throw new Error("Method should not be called");
     }
 }

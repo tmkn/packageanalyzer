@@ -6,7 +6,7 @@ import { npmOnline } from "../providers/online.js";
 import { Formatter, type IFormatter } from "../utils/formatter.js";
 import { OraLogger } from "../loggers/OraLogger.js";
 import { type PackageVersion, Visitor } from "../visitors/visitor.js";
-import { type GenericReport, isPackageVersionArray, type ReportMethodSignature } from "./Report.js";
+import { type GenericReport, isPackageVersionArray, type IReportContext } from "./Report.js";
 
 // each report is executed individually
 interface IDistinctReportConfig {
@@ -19,7 +19,7 @@ interface IDistinctReportConfig {
 export interface ICombinedReportConfig {
     mode: "combined";
     reports: GenericReport[];
-    report: ReportMethodSignature<PackageVersion[]>;
+    report: (packages: IPackage[], context: IReportContext) => Promise<number | void>;
 }
 
 export type ReportConfig = IDistinctReportConfig | ICombinedReportConfig;
@@ -55,7 +55,7 @@ export class ReportService {
 
     private async _reportAsDistinct({ reports }: IDistinctReportConfig): Promise<number> {
         for (const report of reports) {
-            const packages: IPackage[] = await this._getPackages(report);
+            const packages = await this._getPackagesFromConfigs(report.configs);
 
             const stdoutFormatter: IFormatter = new Formatter(this._stdout);
             const stderrFormatter: IFormatter = new Formatter(this._stderr);
@@ -63,7 +63,8 @@ export class ReportService {
             if (reports.length > 1)
                 stdoutFormatter.writeLine(chalk.underline.bgBlue(`Report: ${report.name}`));
 
-            await report.report(packages, { stdoutFormatter, stderrFormatter });
+            // Ensure packages is in the correct format for the report method
+            await report.report(packages as any, { stdoutFormatter, stderrFormatter });
             stdoutFormatter.writeLine(``);
         }
 
@@ -73,8 +74,8 @@ export class ReportService {
     private async _reportAsCombined({ reports, report }: ICombinedReportConfig): Promise<number> {
         const packages: IPackage[] = [];
 
-        for (const report of reports) {
-            packages.push(...(await this._getPackages(report)));
+        for (const rep of reports) {
+            packages.push(...(await this._getPackagesFromConfigs(rep.configs)));
         }
 
         const stdoutFormatter: IFormatter = new Formatter(this._stdout);
@@ -86,24 +87,50 @@ export class ReportService {
         return exitCode ?? 0;
     }
 
+    private async _getPackagesFromConfigs(configs: any): Promise<IPackage[]> {
+        // Handle single config vs array of configs (like PackagesFromConfigs type)
+        if (Array.isArray(configs)) {
+            const packages: IPackage[] = [];
+            for (const config of configs) {
+                packages.push(await this._getPackageFromConfig(config));
+            }
+            return packages;
+        } else {
+            // Single config returns array with one element
+            return [await this._getPackageFromConfig(configs)];
+        }
+    }
+
+    private async _getPackageFromConfig(config: any): Promise<IPackage> {
+        const visitor = new Visitor(
+            config.pkg,
+            config.provider ?? npmOnline,
+            new OraLogger(),
+            config.attachments ?? {},
+            config.depth
+        );
+
+        return visitor.visit(config.type);
+    }
+
     private async _getPackage(entry: PackageVersion, report: GenericReport): Promise<IPackage> {
         const visitor = new Visitor(
             entry,
             report.provider ?? npmOnline,
             new OraLogger(),
-            report.attachments ?? {},
-            report.depth
+            (report as any).attachments ?? {},
+            (report as any).depth
         );
 
-        return visitor.visit(report.type);
+        return visitor.visit((report as any).type);
     }
 
     private async _getPackages(report: GenericReport): Promise<IPackage[]> {
         this._usesNetworkInTests(report);
 
-        const entries: Array<PackageVersion> = isPackageVersionArray(report.pkg)
-            ? report.pkg
-            : [report.pkg];
+        const entries: Array<PackageVersion> = isPackageVersionArray((report as any).pkg)
+            ? (report as any).pkg
+            : [(report as any).pkg];
         const packageArgs: IPackage[] = [];
 
         for (const entry of entries) {
