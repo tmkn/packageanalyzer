@@ -93,7 +93,7 @@ export abstract class AbstractReport<
     PackageEntry extends EntryTypes = EntryTypes,
     ZodValidateObject extends z.ZodTypeAny = z.ZodTypeAny,
     TAttachments extends Attachments = Attachments
-> implements IReport<IReportConfig<TAttachments> | IReportConfig<TAttachments>[], ZodValidateObject>
+> implements IReport<any, ZodValidateObject>
 {
     abstract name: string;
     readonly params: Params;
@@ -118,7 +118,7 @@ export abstract class AbstractReport<
         }
     }
 
-    get configs(): IReportConfig<TAttachments> | IReportConfig<TAttachments>[] {
+    get configs(): any {
         // For single PackageVersion, create a single config
         if (Array.isArray(this.pkg)) {
             // For multiple PackageVersions, create an array of configs
@@ -139,11 +139,10 @@ export abstract class AbstractReport<
     }
 
     async report(
-        packages: PackagesFromConfigs<IReportConfig<TAttachments> | IReportConfig<TAttachments>[]>,
+        packages: any,
         context: IReportContext
     ): Promise<number | void> {
-        // PackagesFromConfigs should handle both single config and array of configs
-        // We need to convert this to Args<PackageEntry, TAttachments>
+        // Convert the new signature to the old signature for backward compatibility
         return this.reportLegacy(packages as any, context);
     }
 

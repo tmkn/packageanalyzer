@@ -91,7 +91,7 @@ export class TestReportNoValidation extends AbstractReport<ITestReportNoValidati
         this.pkg = [params.foo];
     }
 
-    async reportLegacy([pkg]: [IPackage], context: IReportContext): Promise<void> {}
+    async reportLegacy([_pkg]: [IPackage], _context: IReportContext): Promise<void> {}
 }
 
 interface IMockContext {

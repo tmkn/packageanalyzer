@@ -55,7 +55,8 @@ export class ReportService {
 
     private async _reportAsDistinct({ reports }: IDistinctReportConfig): Promise<number> {
         for (const report of reports) {
-            const packages = await this._getPackagesFromConfigs(report.configs);
+            // For backward compatibility, still use the old method for existing reports
+            const packages: IPackage[] = await this._getPackages(report);
 
             const stdoutFormatter: IFormatter = new Formatter(this._stdout);
             const stderrFormatter: IFormatter = new Formatter(this._stderr);
@@ -63,7 +64,6 @@ export class ReportService {
             if (reports.length > 1)
                 stdoutFormatter.writeLine(chalk.underline.bgBlue(`Report: ${report.name}`));
 
-            // Ensure packages is in the correct format for the report method
             await report.report(packages as any, { stdoutFormatter, stderrFormatter });
             stdoutFormatter.writeLine(``);
         }
@@ -75,7 +75,7 @@ export class ReportService {
         const packages: IPackage[] = [];
 
         for (const rep of reports) {
-            packages.push(...(await this._getPackagesFromConfigs(rep.configs)));
+            packages.push(...(await this._getPackages(rep)));
         }
 
         const stdoutFormatter: IFormatter = new Formatter(this._stdout);
