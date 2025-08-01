@@ -17,7 +17,7 @@ describe(`DependencyDumper Tests`, () => {
     test(`Correctly collect package & dependencies from online registry`, async () => {
         const dumper = new DependencyDumper();
 
-        await dumper.collect(["react", "16.8.1"], `http://localhost:${server.port}`);
+        await dumper.collect({ pkg: ["react", "16.8.1"] }, `http://localhost:${server.port}`);
 
         expect(dumper.pkgs).not.toBeUndefined();
         expect(dumper.pkgs[0].name).toEqual(`react`);
@@ -27,7 +27,7 @@ describe(`DependencyDumper Tests`, () => {
     test(`Correctly collect package & dependencies via array from online registry`, async () => {
         const dumper = new DependencyDumper();
 
-        await dumper.collect([["react", "16.8.1"]], `http://localhost:${server.port}`);
+        await dumper.collect([{ pkg: ["react", "16.8.1"] }], `http://localhost:${server.port}`);
 
         expect(dumper.pkgs).not.toBeUndefined();
         expect(dumper.pkgs[0].name).toEqual(`react`);
@@ -37,7 +37,7 @@ describe(`DependencyDumper Tests`, () => {
     test(`Save files`, async () => {
         const dumper = new DependencyDumper();
 
-        await dumper.collect(["react", "16.8.1"], `http://localhost:${server.port}`);
+        await dumper.collect({ pkg: ["react", "16.8.1"] }, `http://localhost:${server.port}`);
 
         await fs.rm(outputFolder, { recursive: true, force: true });
         await dumper.save(outputFolder);
@@ -67,7 +67,7 @@ describe(`DependencyDumper Tests`, () => {
         try {
             const dumper = new DependencyDumper();
 
-            await dumper.collect(["react", "16.8.1"], `http://localhost:${server.port}`);
+            await dumper.collect({ pkg: ["react", "16.8.1"] }, `http://localhost:${server.port}`);
             //@ts-expect-error idk anymore
             dumper.pkg._data.name = `unknownpkg`;
 

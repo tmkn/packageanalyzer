@@ -5,8 +5,8 @@ import { z } from "zod";
 
 import { type IPackage } from "../package/package.js";
 import { OnlinePackageProvider } from "../providers/online.js";
-import { getPackageVersionfromString, type PackageVersion } from "../visitors/visitor.js";
-import { AbstractReport, type IReportContext } from "./Report.js";
+import { getPackageVersionfromString } from "../visitors/visitor.js";
+import { AbstractReport, type IReportConfig, type IReportContext } from "./Report.js";
 import { urlType } from "./../reports/Validation.js";
 import {
     createMetaFileAttachment,
@@ -24,15 +24,16 @@ type IDependencyDumpParams = z.infer<typeof DependencyDumpParams>;
 
 export class DependencyDumpReport extends AbstractReport<IDependencyDumpParams> {
     name = `DependencyDump Report`;
-    pkg: PackageVersion[] = [];
+    configs: IReportConfig[];
 
     constructor(params: IDependencyDumpParams) {
         super(params);
 
-        this.pkg = params.entries.map(entry => getPackageVersionfromString(entry));
-
         const provider = new OnlinePackageProvider(this.params.registry);
-        this.attachments = { metafile: createMetaFileAttachment(provider) };
+        this.configs = params.entries.map(entry => ({
+            pkg: getPackageVersionfromString(entry),
+            attachments: { metafile: createMetaFileAttachment(provider) }
+        }));
         this.provider = provider;
     }
 

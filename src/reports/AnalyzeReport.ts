@@ -20,8 +20,13 @@ import { FileSystemPackageProvider } from "../providers/folder.js";
 import { npmOnline } from "../providers/online.js";
 import { type IFormatter } from "../utils/formatter.js";
 import { getPackageVersionFromPath } from "../visitors/util.node.js";
-import { getPackageVersionfromString, type PackageVersion } from "../visitors/visitor.js";
-import { AbstractReport, type EntryTypes, type IReportContext } from "./Report.js";
+import { getPackageVersionfromString } from "../visitors/visitor.js";
+import {
+    AbstractReport,
+    type IReportConfig,
+    type IReportContext,
+    type ReportConfigs
+} from "./Report.js";
 import { BaseFolderParameter, BasePackageParameter, TypeParameter } from "./Validation.js";
 import { type AttachmentData } from "../attachments/Attachments.js";
 
@@ -41,23 +46,23 @@ type ReleaseAttachment = {
     releaseinfo: ReturnType<typeof releaseAttachment>;
 };
 
-export class AnalyzeReport extends AbstractReport<
-    IAnalyzeParams,
-    EntryTypes,
-    z.ZodTypeAny,
-    ReleaseAttachment
-> {
+export class AnalyzeReport extends AbstractReport<IAnalyzeParams, ReportConfigs, z.ZodTypeAny> {
     name = `Analyze Report`;
-    pkg: PackageVersion;
+    configs: IReportConfig;
 
     constructor(params: IAnalyzeParams) {
         super(params);
 
         if (this._isPackageParams(this.params)) {
-            this.pkg = getPackageVersionfromString(this.params.package);
-            this.attachments = { releaseinfo: releaseAttachment(npmOnline) };
+            this.configs = {
+                pkg: getPackageVersionfromString(this.params.package),
+                attachments: { releaseinfo: releaseAttachment(npmOnline) }
+            };
         } else {
-            this.pkg = getPackageVersionFromPath(this.params.folder);
+            this.configs = {
+                pkg: getPackageVersionFromPath(this.params.folder)
+            };
+
             this.provider = new FileSystemPackageProvider(this.params.folder);
         }
     }

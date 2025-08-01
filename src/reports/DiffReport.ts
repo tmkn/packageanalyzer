@@ -4,8 +4,8 @@ import chalk from "chalk";
 import { defaultDependencyType } from "../cli/common.js";
 import { DependencyUtilities } from "../extensions/utilities/DependencyUtilities.js";
 import { type IPackage } from "../package/package.js";
-import { getPackageVersionfromString, type PackageVersion } from "../visitors/visitor.js";
-import { AbstractReport, type IReportContext } from "./Report.js";
+import { getPackageVersionfromString } from "../visitors/visitor.js";
+import { AbstractReport, type IReportConfig, type IReportContext } from "./Report.js";
 import { TypeParameter } from "./Validation.js";
 import { DiffUtilities } from "../extensions/utilities/DiffUtilities.js";
 import { type IFormatter } from "../utils/formatter.js";
@@ -24,21 +24,23 @@ export type IDiffReportParams = z.infer<typeof DiffParams>;
 
 type Status = "unchanged" | "added" | "removed";
 
-export class DiffReport extends AbstractReport<
-    IDiffReportParams,
-    [PackageVersion, PackageVersion]
-> {
+export class DiffReport extends AbstractReport<IDiffReportParams, [IReportConfig, IReportConfig]> {
     name = `Diff Report`;
-    pkg: [PackageVersion, PackageVersion];
+    configs: [IReportConfig, IReportConfig];
 
     constructor(params: IDiffReportParams) {
         super(params);
 
-        this.type = params.type ?? defaultDependencyType;
-
-        this.pkg = [
-            getPackageVersionfromString(params.from),
-            getPackageVersionfromString(params.to)
+        const type = params.type ?? defaultDependencyType;
+        this.configs = [
+            {
+                pkg: getPackageVersionfromString(params.from),
+                type
+            },
+            {
+                pkg: getPackageVersionfromString(params.to),
+                type
+            }
         ];
     }
 

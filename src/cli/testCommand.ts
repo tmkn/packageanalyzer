@@ -11,8 +11,8 @@ import {
     BasePackageParameter,
     TypeParameter
 } from "../reports/Validation.js";
-import { AbstractReport, type IReportContext } from "../reports/Report.js";
-import { getPackageVersionfromString, type PackageVersion } from "../visitors/visitor.js";
+import { AbstractReport, type IReportConfig, type IReportContext } from "../reports/Report.js";
+import { getPackageVersionfromString } from "../visitors/visitor.js";
 import { createTarAttachment } from "../attachments/TarAttachment.js";
 import { DumpPackageProvider } from "../providers/folder.js";
 import { type IPackage } from "../package/package.js";
@@ -41,15 +41,16 @@ export type ITestReportParams = z.infer<typeof PackageParams>;
 
 export class TestReport extends AbstractReport<ITestReportParams> {
     name = `Test Report`;
-    pkg: PackageVersion;
-
-    override attachments = { tar: createTarAttachment() };
+    configs: IReportConfig;
 
     constructor(params: ITestReportParams) {
         super(params);
 
         if (this._isPackageParams(params)) {
-            this.pkg = getPackageVersionfromString(params.package);
+            this.configs = {
+                pkg: getPackageVersionfromString(params.package),
+                attachments: { tar: createTarAttachment() }
+            };
         } else {
             throw new Error(`Error`);
         }

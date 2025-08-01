@@ -3,8 +3,8 @@ import { z, type ZodTypeAny } from "zod";
 
 import { LoopUtilities } from "../extensions/utilities/LoopUtilities.js";
 import { type IPackage } from "../package/package.js";
-import { getPackageVersionfromString, type PackageVersion } from "../visitors/visitor.js";
-import { AbstractReport, type IReportContext } from "./Report.js";
+import { getPackageVersionfromString } from "../visitors/visitor.js";
+import { AbstractReport, type IReportConfig, type IReportContext } from "./Report.js";
 import { BasePackageParameter, TypeParameter } from "./Validation.js";
 
 const LoopParams = BasePackageParameter.merge(TypeParameter);
@@ -13,13 +13,15 @@ export type ILoopParams = z.infer<typeof LoopParams>;
 
 export class LoopsReport extends AbstractReport<ILoopParams> {
     name = `Loop Report`;
-    pkg: PackageVersion;
+    configs: IReportConfig;
 
     constructor(params: ILoopParams) {
         super(params);
 
-        this.pkg = getPackageVersionfromString(params.package);
-        this.type = params.type;
+        this.configs = {
+            pkg: getPackageVersionfromString(params.package),
+            type: params.type
+        };
     }
 
     async report([pkg]: [IPackage], { stdoutFormatter }: IReportContext): Promise<void> {
