@@ -35,7 +35,7 @@ export class LoopsCommand extends CliCommand<LoopsReport> {
         ]
     });
 
-    getReport(): LoopsReport {
+    getReports(): LoopsReport {
         if (!isValidDependencyType(this.type)) {
             throw new Error(
                 `Please only specify "dependencies" or "devDependencies" for the --type argument`

@@ -27,7 +27,7 @@ export class TestCommand extends CliCommand<TestReport> {
 
     static override paths = [[`test`]];
 
-    getReport(): TestReport {
+    getReports(): TestReport {
         return new TestReport({
             package: this.package,
             type: this.type

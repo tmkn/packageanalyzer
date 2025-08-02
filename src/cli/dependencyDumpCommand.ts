@@ -35,7 +35,7 @@ export class DependencyDumperCommand extends CliCommand<DependencyDumpReport> {
 
     static override paths = [[`dependencydump`]];
 
-    getReport(): DependencyDumpReport {
+    getReports(): DependencyDumpReport {
         return new DependencyDumpReport({
             entries: this.packages,
             folder: this.folder,

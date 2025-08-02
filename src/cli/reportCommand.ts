@@ -1,10 +1,12 @@
 import * as path from "path";
+import z from "zod";
 
 import { Command, Option } from "clipanion";
 
-import { ReportService } from "../reports/ReportService.js";
+import { CliCommand } from "./common.js";
+import type { AbstractReport } from "../reports/Report.js";
 
-export class ReportCommand extends Command {
+export class ReportCommand extends CliCommand<AbstractReport<any> | AbstractReport<any>[]> {
     public config: string = Option.String(`--config`, {
         required: true,
         description: `path to the config file`
@@ -19,13 +21,20 @@ export class ReportCommand extends Command {
     });
 
     static override paths = [[`report`]];
-    async execute() {
+
+    async getReports(): Promise<AbstractReport<any> | AbstractReport<any>[]> {
         const importPath: string = path.isAbsolute(this.config)
             ? this.config
             : path.join(process.cwd(), this.config);
         const config = await import(importPath);
-        const reportService = new ReportService(config, this.context.stdout, this.context.stderr);
 
-        return reportService.process();
+        const { reports } = ReportServiceConfigSchema.parse(config);
+
+        return reports;
     }
 }
+
+export const ReportServiceConfigSchema = z.object({
+    // todo provide a more specific schema for reports
+    reports: z.array(z.any()).or(z.any())
+});
