@@ -1,12 +1,12 @@
 import type { IApplyArgs, AttachmentFn, Attachments } from "../../src/attachments/Attachments.js";
+import { LintReport } from "../../src/reports/lint/LintReport.js";
 import {
     createRule,
     createRuleWithAttachment,
     type ILintCheck,
     type ILintFile
 } from "../../src/reports/lint/LintRule.js";
-import { LintService } from "../../src/reports/lint/LintService.js";
-import { LintFileLoader } from "../../src/reports/lint/RulesLoader.js";
+import { ReportService } from "../../src/reports/ReportService.js";
 import { createMockContext } from "../common.js";
 import { type IMockPackageJson, MockProvider } from "../mocks.js";
 
@@ -15,32 +15,31 @@ describe(`createRule tests`, () => {
         return 3;
     };
 
-    function setupLintService(rules: ILintFile["rules"]): LintService {
+    function setupLintService(rules: ILintFile["rules"]): ReportService {
         const medalloPkg: IMockPackageJson = {
             name: `medallo`,
             version: `1.0.0`
         };
         const provider = new MockProvider([medalloPkg]);
 
-        vi.doMock(`/getsMockedAnyway.js`, () => ({
-            default: {
-                rules
-            }
-        }));
+        const report = new LintReport({
+            entry: [`medallo`, `1.0.0`],
+            lintFile: { rules },
+            depth: 0
+        });
+        report.provider = provider;
 
         const { stdout, stderr } = createMockContext();
-        const lintService = new LintService(
+
+        const reportService = new ReportService(
             {
-                entry: [`medallo`, `1.0.0`],
-                loader: new LintFileLoader(`/getsMockedAnyway.js`),
-                depth: 0,
-                provider
+                reports: [report]
             },
             stdout,
             stderr
         );
 
-        return lintService;
+        return reportService;
     }
 
     function setup(params?: undefined): Promise<Parameters<ILintCheck<undefined>["check"]>>;
@@ -100,10 +99,6 @@ describe(`createRule tests`, () => {
             });
         });
     }
-
-    beforeEach(() => {
-        vi.resetModules();
-    });
 
     test(`creates rule without params and without attachments`, async () => {
         const [pkg, params] = await setup();

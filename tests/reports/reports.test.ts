@@ -25,7 +25,6 @@ describe(`ReportService Tests`, () => {
         testReport.provider = provider;
         const reportService = new ReportService(
             {
-                mode: "distinct",
                 reports: [testReport]
             },
             stdout,
@@ -48,7 +47,6 @@ describe(`ReportService Tests`, () => {
         testReport.provider = provider;
         const reportService = new ReportService(
             {
-                mode: "distinct",
                 reports: [testReport, testReport, testReport]
             },
             stdout,
@@ -71,7 +69,6 @@ describe(`ReportService Tests`, () => {
         testReport.provider = provider;
         const reportService = new ReportService(
             {
-                mode: "distinct",
                 reports: [testReport]
             },
             stdout,
@@ -95,7 +92,6 @@ describe(`ReportService Tests`, () => {
         testReport.provider = provider;
         const reportService = new ReportService(
             {
-                mode: "distinct",
                 reports: [testReport]
             },
             stdout,
@@ -129,7 +125,6 @@ describe(`ReportService Tests`, () => {
         testReport2.configs.depth = Infinity;
         const reportService = new ReportService(
             {
-                mode: "distinct",
                 reports: [testReport1, testReport2]
             },
             stdout,
@@ -154,7 +149,6 @@ describe(`ReportService Tests`, () => {
 
         const reportService = new ReportService(
             {
-                mode: "distinct",
                 reports: [willThrow]
             },
             stdout,

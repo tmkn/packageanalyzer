@@ -1,159 +1,101 @@
-import { Writable } from "stream";
-import { z, type ZodTypeAny } from "zod";
+import z from "zod";
 
-import {
-    AbstractReport,
-    type GenericReport,
-    type IReportConfig,
-    type IReportContext
-} from "../Report.js";
-import { type ICombinedReportServiceConfig, ReportService } from "../ReportService.js";
-import { type IRulesLoader } from "./RulesLoader.js";
-import { type IPackage } from "../../package/package.js";
-import type { ILintCheck, IPackageJsonProvider, PackageVersion } from "../../index.js";
-import { type ILintResult, LintResultFormatter } from "./LintResultFormatter.js";
+import type { IPackage } from "../../package/package.js";
+import { AbstractReport, type IReportConfig, type IReportContext } from "../Report.js";
+import { hasAttachments, LintFile, type ILintCheck } from "./LintRule.js";
+import { PackageVersionSchema } from "../../visitors/visitor.js";
+import { LintResultFormatter, type ILintResult } from "./LintResultFormatter.js";
 import { PathUtilities } from "../../extensions/utilities/PathUtilities.js";
-import { hasAttachments } from "./LintRule.js";
-import { Formatter, type IFormatter } from "../../utils/formatter.js";
 
-// dummy lint report to just fetch all data
-class LintReport extends AbstractReport<{}, IReportConfig, ZodTypeAny> {
-    name: string;
-    configs: IReportConfig;
+const LintParams = z.object({
+    lintFile: LintFile,
+    depth: z.number(),
+    entry: PackageVersionSchema
+});
 
-    constructor(name: string, pkg: PackageVersion) {
-        super({});
-        this.name = name;
-        this.configs = {
-            pkg
-        };
-    }
+export type ILintParams = z.infer<typeof LintParams>;
 
-    override report(_pkg: IPackage[], context: IReportContext): Promise<number | void> {
-        throw new Error("Method should not be called");
-    }
-}
+export class LintReport extends AbstractReport<ILintParams, IReportConfig[]> {
+    name = "Lint Report";
+    configs: IReportConfig[];
 
-export interface ILintServiceConfig {
-    entry: PackageVersion;
-    loader: IRulesLoader;
-    depth: number;
-    provider: IPackageJsonProvider;
-}
+    constructor(params: ILintParams) {
+        super(params);
 
-export class LintService {
-    constructor(
-        private readonly _config: ILintServiceConfig,
-        private readonly _stdout: Writable,
-        private readonly _stderr: Writable
-    ) {}
+        const configs: IReportConfig[] = [];
+        for (const [_type, check] of params.lintFile.rules) {
+            const config: IReportConfig = {
+                pkg: params.entry,
+                attachments: hasAttachments(check) ? check.attachments : undefined,
+                depth: params.depth
+            };
 
-    private exitCode: number = 0;
-
-    async process(): Promise<number | void> {
-        try {
-            const lintReport = await this._createReport();
-            const reportService = new ReportService(lintReport, this._stdout, this._stderr);
-
-            this.exitCode = (await reportService.process()) ?? 0;
-        } catch (e: any) {
-            const stderrFormatter: IFormatter = new Formatter(this._stderr);
-
-            stderrFormatter.writeLine(e?.toString());
-            console.error(e?.toString());
-
-            this.exitCode = 1;
+            configs.push(config);
         }
 
-        return this.exitCode;
+        // Add a dummy config if no rules are provided to ensure the summary is shown
+        // Only really requires the 'pkg' property to display the package name.
+        if (params.lintFile.rules.length === 0) {
+            configs.push({
+                pkg: params.entry,
+                depth: 0
+            });
+        }
+
+        this.configs = configs;
     }
 
-    private async _createReport(): Promise<ICombinedReportServiceConfig> {
-        const { entry, depth, provider, loader } = this._config;
-        const { rules } = await loader.getRules();
-        const reports: GenericReport[] = [];
+    async report(packages: IPackage[], context: IReportContext): Promise<void> {
+        const resultFormatter = new LintResultFormatter(context.stdoutFormatter);
+        const lintResults: ILintResult[] = [];
+        const lookup: Map<IPackage, IPackage[]> = this._createPackageLookup(
+            packages.filter(pkg => pkg !== undefined)
+        );
 
-        for (const [_type, check] of rules) {
-            const report = new LintReport(check.name, entry);
+        context.stdoutFormatter.writeLine(`PackageLint: ${packages[0]?.fullName}`);
 
-            if (hasAttachments(check)) {
-                report.configs.attachments = check.attachments;
-            }
-            report.configs.depth = depth;
-            report.provider ??= provider;
+        const pkg = packages[0]!;
+        pkg.visit(dep => {
+            for (const [i, [type, rule, params]] of this.params.lintFile.rules.entries()) {
+                let checkResult;
 
-            reports.push(report);
-        }
+                try {
+                    const checkParams = rule.checkParams?.() ?? z.any();
+                    const checkParamsResult = checkParams.safeParse(params);
 
-        if (reports.length === 0) {
-            // todo should throw instead?
-            // throw new Error("No rules found!");
-            const report = new LintReport("check.name", entry);
-
-            report.provider ??= provider;
-
-            reports.push(report);
-        }
-
-        return {
-            mode: "combined",
-            reports,
-            report: async (packages, context) => {
-                const resultFormatter = new LintResultFormatter(context.stdoutFormatter);
-                const lintResults: ILintResult[] = [];
-                const lookup: Map<IPackage, IPackage[]> = this._createPackageLookup(
-                    packages.filter(pkg => pkg !== undefined)
-                );
-
-                context.stdoutFormatter.writeLine(`PackageLint: ${packages[0]?.fullName}`);
-
-                const pkg = packages[0]!;
-                pkg.visit(dep => {
-                    for (const [i, [type, rule, params]] of rules.entries()) {
-                        let checkResult;
-
-                        try {
-                            const checkParams = rule.checkParams?.() ?? z.any();
-                            const checkParamsResult = checkParams.safeParse(params);
-
-                            if (!checkParamsResult.success) {
-                                throw new Error(`invalid params "${JSON.stringify(params)}"`);
-                            }
-
-                            const attachmentSpecificPkg = lookup.get(dep)![i]!;
-                            checkResult = rule.check(attachmentSpecificPkg, checkParamsResult.data);
-
-                            if (this._isValidResultFormat(checkResult)) {
-                                if (type === `error`) {
-                                    this.exitCode = 1;
-                                }
-
-                                for (const message of this._toMessageArray(checkResult)) {
-                                    lintResults.push({
-                                        type,
-                                        name: rule.name,
-                                        message,
-                                        path: new PathUtilities(attachmentSpecificPkg).path,
-                                        pkg: dep
-                                    });
-                                }
-                            } else if (checkResult !== undefined) {
-                                throw new Error(
-                                    `Invalid check implementation! check() must return "string" or "string[]". Returned "${typeof checkResult}"`
-                                );
-                            }
-                        } catch (e) {
-                            this._reportError(e, lintResults, rule, dep);
-                        }
+                    if (!checkParamsResult.success) {
+                        throw new Error(`invalid params "${JSON.stringify(params)}"`);
                     }
-                }, true);
-                // }
 
-                resultFormatter.format(lintResults);
+                    const attachmentSpecificPkg = lookup.get(dep)![i]!;
+                    checkResult = rule.check(attachmentSpecificPkg, checkParamsResult.data);
 
-                return this.exitCode;
+                    if (this._isValidResultFormat(checkResult)) {
+                        if (type === `error`) {
+                            this.exitCode = 1;
+                        }
+
+                        for (const message of this._toMessageArray(checkResult)) {
+                            lintResults.push({
+                                type,
+                                name: rule.name,
+                                message,
+                                path: new PathUtilities(attachmentSpecificPkg).path,
+                                pkg: dep
+                            });
+                        }
+                    } else if (checkResult !== undefined) {
+                        throw new Error(
+                            `Invalid check implementation! check() must return "string" or "string[]". Returned "${typeof checkResult}"`
+                        );
+                    }
+                } catch (e) {
+                    this._reportError(e, lintResults, rule, dep);
+                }
             }
-        };
+        }, true);
+
+        resultFormatter.format(lintResults);
     }
 
     // WARNING: Complex implementation ahead!
@@ -258,5 +200,9 @@ export class LintService {
             typeof result === `string` ||
             (Array.isArray(result) && result.every(r => typeof r === `string`))
         );
+    }
+
+    override validate(): z.ZodTypeAny {
+        return LintParams;
     }
 }

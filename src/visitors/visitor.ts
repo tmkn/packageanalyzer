@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 import { Package, type IPackage } from "../package/package.js";
 import { AliasName, type INpmKeyValue, type IPackageJson } from "../npm.js";
 import { type IPackageJsonProvider } from "../providers/provider.js";
@@ -5,7 +7,12 @@ import { type ILogger } from "../loggers/ILogger.js";
 import { type DependencyTypes } from "../reports/Validation.js";
 import type { AttachmentData, Attachments } from "../attachments/Attachments.js";
 
-export type PackageVersion = [name: string, version?: string];
+export const PackageVersionSchema = z.union([
+    z.tuple([z.string()]),
+    z.tuple([z.string(), z.string().optional()])
+]);
+
+export type PackageVersion = z.infer<typeof PackageVersionSchema>;
 
 interface IPackageVisitor<T extends Attachments> {
     visit: (depType?: DependencyTypes) => Promise<IPackage<AttachmentData<T>>>;

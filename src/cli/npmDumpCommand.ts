@@ -61,7 +61,6 @@ async function cliResolveFile(
 
         const reportService = new ReportService(
             {
-                mode: `distinct`,
                 reports: [analyzeReport]
             },
             stdout,

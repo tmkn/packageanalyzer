@@ -41,7 +41,6 @@ export abstract class CliCommand<
             const reports = await this.getReports();
             const reportService = new ReportService(
                 {
-                    mode: "distinct",
                     reports: Array.isArray(reports) ? reports : [reports]
                 },
                 this.context.stdout,

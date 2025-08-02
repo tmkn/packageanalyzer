@@ -47,7 +47,6 @@ describe(`DiffReport Tests`, () => {
         const { stdout, stderr } = createMockContext();
         const reportService = new ReportService(
             {
-                mode: "distinct",
                 reports: [report]
             },
             stdout,
@@ -93,7 +92,6 @@ describe(`DiffReport Tests`, () => {
         const { stdout, stderr } = createMockContext();
         const reportService = new ReportService(
             {
-                mode: "distinct",
                 reports: [report]
             },
             stdout,
@@ -136,7 +134,6 @@ describe(`DiffReport Tests`, () => {
         const { stdout, stderr } = createMockContext();
         const reportService = new ReportService(
             {
-                mode: "distinct",
                 reports: [report]
             },
             stdout,
@@ -179,7 +176,6 @@ describe(`DiffReport Tests`, () => {
         const { stdout, stderr } = createMockContext();
         const reportService = new ReportService(
             {
-                mode: "distinct",
                 reports: [report]
             },
             stdout,
