@@ -5,7 +5,7 @@ import { type ILintFile, ZodLintRule, createRule } from "../../src/reports/lint/
 import { createMockContext } from "../common.js";
 import { type IMockPackageJson, MockProvider } from "../mocks.js";
 import { LintService } from "../../src/reports/lint/LintService.js";
-import { LintFileLoader } from "../../src/reports/lint/RulesLoader.js";
+import { LintFileLoader, NativeModuleLoader } from "../../src/reports/lint/RulesLoader.js";
 
 describe(`Lint Service Test`, () => {
     const medalloPkg: IMockPackageJson = {
@@ -34,7 +34,7 @@ describe(`Lint Service Test`, () => {
         const lintService = new LintService(
             {
                 entry: [`medallo`, `1.0.0`],
-                loader: new LintFileLoader(`/getsMockedAnyway.js`),
+                loader: new LintFileLoader(`/getsMockedAnyway.js`, new NativeModuleLoader()),
                 depth: Infinity,
                 provider
             },
@@ -59,7 +59,7 @@ describe(`Lint Service Test`, () => {
         const lintService = new LintService(
             {
                 entry: [`medallo`, `1.0.0`],
-                loader: new LintFileLoader(`./getsMockedAnyway.js`),
+                loader: new LintFileLoader(`./getsMockedAnyway.js`, new NativeModuleLoader()),
                 depth: Infinity,
                 provider
             },
@@ -79,7 +79,7 @@ describe(`Lint Service Test`, () => {
         const lintService = new LintService(
             {
                 entry: [`medallo`, `1.0.0`],
-                loader: new LintFileLoader(`/getsMockedAnyway.js`),
+                loader: new LintFileLoader(`/getsMockedAnyway.js`, new NativeModuleLoader()),
                 depth: Infinity,
                 provider
             },
@@ -106,7 +106,7 @@ describe(`Lint Service Test`, () => {
         const lintService = new LintService(
             {
                 entry: [`medallo`, `1.0.0`],
-                loader: new LintFileLoader(`/getsMockedAnyway.js`),
+                loader: new LintFileLoader(`/getsMockedAnyway.js`, new NativeModuleLoader()),
                 depth: 0,
                 provider
             },
@@ -141,7 +141,7 @@ describe(`Lint Service Test`, () => {
         const lintService = new LintService(
             {
                 entry: [`medallo`, `1.0.0`],
-                loader: new LintFileLoader(`/getsMockedAnyway.js`),
+                loader: new LintFileLoader(`/getsMockedAnyway.js`, new NativeModuleLoader()),
                 depth: 0,
                 provider
             },
@@ -175,7 +175,7 @@ describe(`Lint Service Test`, () => {
         const lintService = new LintService(
             {
                 entry: [`medallo`, `1.0.0`],
-                loader: new LintFileLoader(`/getsMockedAnyway.js`),
+                loader: new LintFileLoader(`/getsMockedAnyway.js`, new NativeModuleLoader()),
                 depth: 0,
                 provider
             },
@@ -211,7 +211,7 @@ describe(`Lint Service Test`, () => {
         const lintService = new LintService(
             {
                 entry: [`medallo`, `1.0.0`],
-                loader: new LintFileLoader(`/getsMockedAnyway.js`),
+                loader: new LintFileLoader(`/getsMockedAnyway.js`, new NativeModuleLoader()),
                 depth: Infinity,
                 provider
             },
@@ -237,7 +237,7 @@ describe(`Lint Service Test`, () => {
         const lintService = new LintService(
             {
                 entry: [`medallo`, `1.0.0`],
-                loader: new LintFileLoader(`/getsMockedAnyway.js`),
+                loader: new LintFileLoader(`/getsMockedAnyway.js`, new NativeModuleLoader()),
                 depth: Infinity,
                 provider
             },
@@ -261,7 +261,7 @@ describe(`Lint Service Test`, () => {
         const lintService = new LintService(
             {
                 entry: [`medallo`, `1.0.0`],
-                loader: new LintFileLoader(`/getsMockedAnyway.js`),
+                loader: new LintFileLoader(`/getsMockedAnyway.js`, new NativeModuleLoader()),
                 depth: Infinity,
                 provider
             },
@@ -285,7 +285,7 @@ describe(`Lint Service Test`, () => {
         const lintService = new LintService(
             {
                 entry: [`medallo`, `1.0.0`],
-                loader: new LintFileLoader(`/getsMockedAnyway.js`),
+                loader: new LintFileLoader(`/getsMockedAnyway.js`, new NativeModuleLoader()),
                 depth: 0,
                 provider
             },
@@ -315,7 +315,7 @@ describe(`Lint Service Test`, () => {
         const lintService = new LintService(
             {
                 entry: [`medallo`, `1.0.0`],
-                loader: new LintFileLoader(`/getsMockedAnyway.js`),
+                loader: new LintFileLoader(`/getsMockedAnyway.js`, new NativeModuleLoader()),
                 depth: 0,
                 provider
             },
@@ -346,7 +346,7 @@ describe(`Lint Service Test`, () => {
         const lintService = new LintService(
             {
                 entry: [`medallo`, `1.0.0`],
-                loader: new LintFileLoader(`/getsMockedAnyway.js`),
+                loader: new LintFileLoader(`/getsMockedAnyway.js`, new NativeModuleLoader()),
                 depth: 0,
                 provider
             },
@@ -399,7 +399,7 @@ describe(`"internal-error" Lint Test`, () => {
         const lintService = new LintService(
             {
                 entry: [`medallo`, `1.0.0`],
-                loader: new LintFileLoader(`/getsMockedAnyway.js`),
+                loader: new LintFileLoader(`/getsMockedAnyway.js`, new NativeModuleLoader()),
                 depth: Infinity,
                 provider
             },
@@ -419,7 +419,7 @@ describe(`"internal-error" Lint Test`, () => {
         const lintService = new LintService(
             {
                 entry: [`medallo`, `1.0.0`],
-                loader: new LintFileLoader(`/getsMockedAnyway.js`),
+                loader: new LintFileLoader(`/getsMockedAnyway.js`, new NativeModuleLoader()),
                 depth: Infinity,
                 provider
             },
@@ -511,5 +511,47 @@ describe(`Lint Rule Validation`, () => {
         expect(ZodLintRule.safeParse(``).success).toBe(false);
         expect(ZodLintRule.safeParse(23).success).toBe(false);
         expect(ZodLintRule.safeParse(true).success).toBe(false);
+    });
+});
+
+describe(`Jiti Integration Test`, () => {
+    const medalloPkg: IMockPackageJson = {
+        name: `medallo`,
+        version: `1.0.0`,
+        dependencies: []
+    };
+    const provider = new MockProvider([medalloPkg]);
+
+    test(`loads real lint file using jiti (default behavior)`, async () => {
+        const { stdout, stderr } = createMockContext();
+        
+        // Use actual file from test data without specifying NativeModuleLoader
+        // This tests that jiti is working properly by default
+        const lintService = new LintService(
+            {
+                entry: [`medallo`, `1.0.0`],
+                loader: new LintFileLoader(`./tests/data/lint_data/lintFile.js`),
+                depth: 0,
+                provider
+            },
+            stdout,
+            stderr
+        );
+
+        const exitCode = await lintService.process();
+
+        // Should succeed with empty rules
+        expect(exitCode).toBe(0);
+        expect(stderr.lines).toEqual([]);
+    });
+
+    test(`jiti handles ES module imports correctly`, async () => {
+        const { stdout, stderr } = createMockContext();
+        
+        // This verifies that jiti can properly load modules
+        const loader = new LintFileLoader(`./tests/data/lint_data/lintFile.js`);
+        const result = await loader.getRules();
+
+        expect(result).toEqual({ rules: [] });
     });
 });

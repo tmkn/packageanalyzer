@@ -6,7 +6,7 @@ import {
     type ILintFile
 } from "../../src/reports/lint/LintRule.js";
 import { LintService } from "../../src/reports/lint/LintService.js";
-import { LintFileLoader } from "../../src/reports/lint/RulesLoader.js";
+import { LintFileLoader, NativeModuleLoader } from "../../src/reports/lint/RulesLoader.js";
 import { createMockContext } from "../common.js";
 import { type IMockPackageJson, MockProvider } from "../mocks.js";
 
@@ -32,7 +32,7 @@ describe(`createRule tests`, () => {
         const lintService = new LintService(
             {
                 entry: [`medallo`, `1.0.0`],
-                loader: new LintFileLoader(`/getsMockedAnyway.js`),
+                loader: new LintFileLoader(`/getsMockedAnyway.js`, new NativeModuleLoader()),
                 depth: 0,
                 provider
             },
