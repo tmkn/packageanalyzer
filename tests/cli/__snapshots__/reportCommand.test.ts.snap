@@ -1,8 +1,8 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Report Command > works > stderr 1`] = `[]`;
+exports[`Report Command > correctly runs multiple reports > stderr 1`] = `[]`;
 
-exports[`Report Command > works > stdout 1`] = `
+exports[`Report Command > correctly runs multiple reports > stdout 1`] = `
 [
   "Report: Tree Report",
   "@webassemblyjs/ast@1.9.0 (14 dependencies)",
@@ -22,6 +22,30 @@ exports[`Report Command > works > stdout 1`] = `
   "    └── @xtuc/long@4.2.2 (0 dependencies)",
   "",
   "Report: Tree Report",
+  "@webassemblyjs/ast@1.9.0 (14 dependencies)",
+  "├── @webassemblyjs/helper-module-context@1.9.0 (1 dependencies)",
+  "│   └── @webassemblyjs/ast@1.9.0 (0 dependencies)",
+  "├── @webassemblyjs/helper-wasm-bytecode@1.9.0 (0 dependencies)",
+  "└── @webassemblyjs/wast-parser@1.9.0 (10 dependencies)",
+  "    ├── @webassemblyjs/ast@1.9.0 (0 dependencies)",
+  "    ├── @webassemblyjs/floating-point-hex-parser@1.9.0 (0 dependencies)",
+  "    ├── @webassemblyjs/helper-api-error@1.9.0 (0 dependencies)",
+  "    ├── @webassemblyjs/helper-code-frame@1.9.0 (4 dependencies)",
+  "    │   └── @webassemblyjs/wast-printer@1.9.0 (3 dependencies)",
+  "    │       ├── @webassemblyjs/ast@1.9.0 (0 dependencies)",
+  "    │       ├── @webassemblyjs/wast-parser@1.9.0 (0 dependencies)",
+  "    │       └── @xtuc/long@4.2.2 (0 dependencies)",
+  "    ├── @webassemblyjs/helper-fsm@1.9.0 (0 dependencies)",
+  "    └── @xtuc/long@4.2.2 (0 dependencies)",
+  "",
+  "",
+]
+`;
+
+exports[`Report Command > correctly runs single report > stderr 1`] = `[]`;
+
+exports[`Report Command > correctly runs single report > stdout 1`] = `
+[
   "@webassemblyjs/ast@1.9.0 (14 dependencies)",
   "├── @webassemblyjs/helper-module-context@1.9.0 (1 dependencies)",
   "│   └── @webassemblyjs/ast@1.9.0 (0 dependencies)",

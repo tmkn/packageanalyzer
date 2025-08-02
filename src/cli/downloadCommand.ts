@@ -21,7 +21,7 @@ export class DownloadCommand extends CliCommand<DownloadReport> {
 
     static override paths = [[`downloads`]];
 
-    getReport(): DownloadReport {
+    getReports(): DownloadReport {
         if (typeof this.package !== "undefined") {
             const params: IDownloadParams = {
                 package: this.package,

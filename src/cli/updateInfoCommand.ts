@@ -21,7 +21,7 @@ export class UpdateInfoCommand extends CliCommand<UpdateInfoReport> {
         ]
     });
 
-    getReport(): UpdateInfoReport {
+    getReports(): UpdateInfoReport {
         if (typeof this.package === "undefined") throw new Error(`Please specify a package.`);
 
         const updateInfoParams: IUpdateInfoParams = {

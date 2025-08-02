@@ -34,7 +34,7 @@ export class DiffCommand extends CliCommand<DiffReport> {
 
     static override paths = [[`diff`]];
 
-    getReport(): DiffReport {
+    getReports(): DiffReport {
         const [pkg1, pkg2] = this.range?.[0] ?? [];
 
         if (pkg1 && pkg2) {

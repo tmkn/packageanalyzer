@@ -28,6 +28,7 @@
         "verbatimModuleSyntax": true,
         /* Strictness */
         "strict": true,
+        "noImplicitOverride": true,
         /* If transpiling with TypeScript: */
         "module": "NodeNext",
         "sourceMap": true,

@@ -27,8 +27,10 @@ export function daysAgo(date: string | number | Date): string {
     return `(${dayjs(new Date()).diff(date, "day")} days ago)`;
 }
 
-export abstract class CliCommand<T extends AbstractReport<any>> extends Command {
-    abstract getReport(): T;
+export abstract class CliCommand<
+    T extends AbstractReport<any> | AbstractReport<any>[]
+> extends Command {
+    abstract getReports(): T | Promise<T>;
 
     exitCode = 0;
 
@@ -36,17 +38,17 @@ export abstract class CliCommand<T extends AbstractReport<any>> extends Command 
 
     async execute(): Promise<number | void> {
         try {
-            const report = this.getReport();
+            const reports = await this.getReports();
             const reportService = new ReportService(
                 {
                     mode: "distinct",
-                    reports: [report]
+                    reports: Array.isArray(reports) ? reports : [reports]
                 },
                 this.context.stdout,
                 this.context.stderr
             );
 
-            this.beforeProcess?.(report);
+            this.beforeProcess?.(reports);
             this.exitCode = (await reportService.process()) ?? 0;
         } catch (e: unknown) {
             const stderrFormatter: IFormatter = new Formatter(this.context.stderr);
