@@ -34,7 +34,7 @@ describe(`Lint Command`, () => {
             await command.execute();
 
             expect(stdout.lines.length).toBe(0);
-            expect(stderr.lines.length).toBe(2);
+            expect(stderr.lines.length).toBe(4);  // jiti provides detailed error with require stack
             expect(stderr.lines[0]).toContain(`Error:`);
         });
 
@@ -53,7 +53,7 @@ describe(`Lint Command`, () => {
             await command.execute();
 
             expect(stdout.lines.length).toBe(0);
-            expect(stderr.lines.length).toBe(2);
+            expect(stderr.lines.length).toBe(2);  // This should be invalid lint file format error 
             expect(stderr.lines[0]).toContain(`Error:`);
         });
 
