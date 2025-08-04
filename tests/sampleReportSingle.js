@@ -7,6 +7,5 @@ const report = new TreeReport({ package: `@webassemblyjs/ast@1.9.0`, type: `depe
 report.provider = new DumpPackageProvider(path.join(process.cwd(), `tests`, `data`, `loops_data`));
 
 module.exports = {
-    mode: "distinct",
     reports: report
 };

@@ -22,8 +22,8 @@ class DownloadCount {
 
 const foo = {
     rules: [
-        createRule("error", new ValidateKey(), "description"),
-        createRule("error", new ValidateKey(), "foobar")
+        createRule("error", new ValidateKey(), "foo"),
+        createRule("error", new ValidateKey(), "bar")
         // createRuleWithAttachment("error", {
         //     name: "some-check",
         //     check: (pkg, params) => {

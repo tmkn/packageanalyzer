@@ -55,7 +55,7 @@ export interface IReport<
 
 export type GenericReport = IReport<ReportConfigs, {}, z.ZodTypeAny>;
 
-export type ReportMethodSignature<T extends ReportConfigs> = IReport<T, {}, z.ZodTypeAny>["report"];
+type ReportMethodSignature<T extends ReportConfigs> = IReport<T, {}, z.ZodTypeAny>["report"];
 export type SingleReportMethodSignature = ReportMethodSignature<IReportConfig>;
 
 export function isReportConfigArray(x: ReportConfigs): x is IReportConfig[] {

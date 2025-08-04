@@ -43,7 +43,7 @@ describe(`Lint Command`, () => {
                 `lint`,
                 `--package`,
                 `foo`,
-                path.join(process.cwd(), `tests`, `sampleReport.js`)
+                path.join(process.cwd(), `tests`, `sampleReportMulti.js`)
             ]) as LintCommand;
 
             expect.assertions(3);
@@ -60,7 +60,7 @@ describe(`Lint Command`, () => {
         test(`fails on missing --package and --folder`, async () => {
             const command = cli.process([
                 `lint`,
-                path.join(process.cwd(), `tests`, `sampleReport.js`)
+                path.join(process.cwd(), `tests`, `sampleLintFileEmpty.js`)
             ]) as LintCommand;
 
             expect.assertions(2);

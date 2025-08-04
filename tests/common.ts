@@ -15,6 +15,8 @@ import {
 import { type PackageVersion } from "../src/visitors/visitor.js";
 import { DumpPackageProvider } from "../src/providers/folder.js";
 import type { ILogger } from "../src/loggers/ILogger.js";
+import { MockProvider, type IMockPackageJson } from "./mocks.js";
+import { ReportService } from "../src/reports/ReportService.js";
 
 class TestWritable extends Writable {
     private static _pattern = [
@@ -172,4 +174,33 @@ export class MockLogger implements ILogger {
     reset(): void {
         this._logs = [];
     }
+}
+
+export type ReportServiceContext = {
+    reportService: ReportService;
+    stdout: TestWritable;
+    stderr: TestWritable;
+};
+
+export function createReportServiceFactory<C extends new (...args: any[]) => AbstractReport<any>>(
+    ctor: C,
+    mockPkg: IMockPackageJson
+) {
+    const provider = new MockProvider([mockPkg]);
+
+    return (...args: ConstructorParameters<C>): ReportServiceContext => {
+        const { stdout, stderr } = createMockContext();
+        const report = new ctor(...args);
+
+        report.provider = provider;
+        const reportService = new ReportService(
+            {
+                reports: [report]
+            },
+            stdout,
+            stderr
+        );
+
+        return { reportService, stdout, stderr };
+    };
 }
