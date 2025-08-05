@@ -1,4 +1,5 @@
 import * as path from "path";
+import * as fs from "fs";
 import { spawnSync } from "child_process";
 
 import { cli } from "../../src/cli/cli.js";
@@ -268,10 +269,21 @@ describe(`Lint Command`, () => {
     });
 
     describe(`exit codes`, () => {
+        const cwd = process.cwd();
+        const cliPath = path.join("dist", "cli.js");
+        const packageJsonPath = path.join("tests", "data", "lint_data");
+
+        beforeAll(() => {
+            const resolvedCliPath = path.resolve(cwd, cliPath);
+
+            if (!fs.existsSync(resolvedCliPath)) {
+                throw new Error(
+                    `Tests require dist files (cli.js). Please run the 'build' command.`
+                );
+            }
+        });
+
         test(`returns 1 when reports are all 'error'`, async () => {
-            const cwd = path.join(__dirname, "..", "..");
-            const cliPath = path.join("build", "src", "cli.js");
-            const packageJsonPath = path.join("tests", "data", "lint_data");
             const lintFilePath = path.join("tests", "data", "lint_data", "allErrorLintFile.js");
             const { status, stdout, stderr } = spawnSync(
                 "node",
@@ -287,9 +299,6 @@ describe(`Lint Command`, () => {
         });
 
         test(`returns 1 when reports are mixed ('error' & 'warning')`, async () => {
-            const cwd = path.join(__dirname, "..", "..");
-            const cliPath = path.join("build", "src", "cli.js");
-            const packageJsonPath = path.join("tests", "data", "lint_data");
             const lintFilePath = path.join("tests", "data", "lint_data", "allMixedLintFile.js");
             const { status, stdout, stderr } = spawnSync(
                 "node",
@@ -305,9 +314,6 @@ describe(`Lint Command`, () => {
         });
 
         test(`returns 0 when reports are all 'warning'`, async () => {
-            const cwd = path.join(__dirname, "..", "..");
-            const cliPath = path.join("build", "src", "cli.js");
-            const packageJsonPath = path.join(cwd, "tests", "data", "lint_data");
             const lintFilePath = path.join("tests", "data", "lint_data", "allWarningLintFile.js");
             const { status, stdout, stderr } = spawnSync(
                 "node",

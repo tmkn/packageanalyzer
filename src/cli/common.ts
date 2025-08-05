@@ -1,6 +1,5 @@
 import * as path from "path";
 import * as fs from "fs";
-import { fileURLToPath } from "url";
 
 import dayjs from "dayjs";
 import { Command } from "clipanion";
@@ -14,8 +13,7 @@ export const defaultDependencyType: DependencyTypes = "dependencies";
 
 export function getVersion(): string {
     try {
-        const __dirname = path.dirname(fileURLToPath(import.meta.url));
-        const file = path.join(__dirname, "./../../../package.json");
+        const file = path.join(process.cwd(), "package.json");
 
         return JSON.parse(fs.readFileSync(file, "utf8")).version;
     } catch {

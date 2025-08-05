@@ -3,36 +3,38 @@
     "version": "0.9.16",
     "type": "module",
     "description": "A tool to analyze a Node.js project/package",
-    "main": "./build/src/index.js",
-    "types": "./build/src/index.d.ts",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
     "exports": {
-        ".": "./build/src/index.js",
-        "./web": "./build/src/index.web.js"
+        ".": "./dist/index.js",
+        "./web": "./dist/index.web.js"
     },
     "typesVersions": {
         "*": {
             "web": [
-                "./build/src/index.web.d.ts"
+                "./dist/index.web.d.ts"
             ]
         }
     },
     "files": [
-        "build/src"
+        "dist"
     ],
     "bin": {
-        "pkga": "./build/src/cli.js"
+        "pkga": "dist/cli.js"
     },
     "scripts": {
-        "build": "tsc -b",
+        "build": "tsdown",
+        "build:dev": "tsdown --watch ./src",
+        "build:ts": "tsc -b",
         "dev": "tsc -b --watch",
         "test": "vitest run",
         "test:watch": "vitest",
         "test:coverage": "vitest run --coverage",
         "test:update": "vitest run --update",
         "test:clean": "node build/tests/clean.js",
-        "test:exports": "node ./build/src/cli.js lint --package react ./tests/exportTest.js",
+        "test:exports": "node ./dist/cli.js lint --package react ./tests/exportTest.js",
         "prettier": "prettier --write \"{src,tests,utility}/**/{*.ts,*.js}\" webpack.web.config.cjs vitest.config.ts",
-        "pa": "node build/src/cli.js",
+        "pa": "node dist/cli.js",
         "preview": "npm pack && tar -xvzf *.tgz && rm -rf package *.tgz",
         "lint": "eslint \"src/**\" \"tests/**\"",
         "lint:fix": "eslint \"src/**\" \"tests/**\" --fix",
@@ -72,6 +74,7 @@
         "nock": "^14.0.5",
         "prettier": "^3.6.0",
         "ts-loader": "^9.5.1",
+        "tsdown": "^0.14.1",
         "typescript": "^5.9.2",
         "typescript-eslint": "^8.39.1",
         "vitest": "^3.2.4",
