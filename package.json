@@ -72,6 +72,7 @@
         "nock": "^14.0.5",
         "prettier": "^3.6.0",
         "ts-loader": "^9.5.1",
+        "tsdown": "^0.13.3",
         "typescript": "^5.9.2",
         "typescript-eslint": "^8.8.0",
         "vitest": "^3.2.4",
