@@ -5,8 +5,16 @@
             "type": "npm",
             "script": "dev",
             "problemMatcher": [],
-            "label": "Compile & watch",
-            //"detail": "",
+            "label": "Watch source files",
+            "runOptions": {
+                "runOn": "folderOpen"
+            }
+        },
+        {
+            "type": "npm",
+            "script": "build:dev",
+            "problemMatcher": [],
+            "label": "Watch dist files",
             "runOptions": {
                 "runOn": "folderOpen"
             }
