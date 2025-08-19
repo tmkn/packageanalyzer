@@ -1,11 +1,11 @@
-const path = require("path");
+import path from "path";
 
-const { TreeReport } = require("../build/src/reports/TreeReport");
-const { DumpPackageProvider } = require("../build/src/providers/folder");
+import { TreeReport } from "../src/reports/TreeReport.js";
+import { DumpPackageProvider } from "../src/providers/folder.js";
 
 const report = new TreeReport({ package: `@webassemblyjs/ast@1.9.0`, type: `dependencies` });
 report.provider = new DumpPackageProvider(path.join(process.cwd(), `tests`, `data`, `loops_data`));
 
 module.exports = {
-    reports: [report, report]
+    reports: report
 };

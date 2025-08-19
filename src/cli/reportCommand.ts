@@ -1,10 +1,10 @@
-import * as path from "path";
 import z from "zod";
 
 import { Command, Option } from "clipanion";
 
 import { CliCommand } from "./common.js";
 import type { AbstractReport } from "../reports/Report.js";
+import { loadConfig } from "../utils/configLoader.js";
 
 export class ReportCommand extends CliCommand<AbstractReport<any> | AbstractReport<any>[]> {
     public config: string = Option.String(`--config`, {
@@ -23,10 +23,7 @@ export class ReportCommand extends CliCommand<AbstractReport<any> | AbstractRepo
     static override paths = [[`report`]];
 
     async getReports(): Promise<AbstractReport<any> | AbstractReport<any>[]> {
-        const importPath: string = path.isAbsolute(this.config)
-            ? this.config
-            : path.join(process.cwd(), this.config);
-        const config = await import(importPath);
+        const config = await loadConfig(this.config);
 
         const { reports } = ReportServiceConfigSchema.parse(config);
 
