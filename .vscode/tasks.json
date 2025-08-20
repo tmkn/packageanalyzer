@@ -3,16 +3,16 @@
     "tasks": [
         {
             "type": "npm",
-            "script": "dev",
+            "script": "typecheck",
             "problemMatcher": [],
-            "label": "Watch source files",
+            "label": "Typecheck",
             "runOptions": {
                 "runOn": "folderOpen"
             }
         },
         {
             "type": "npm",
-            "script": "build:dev",
+            "script": "dev",
             "problemMatcher": [],
             "label": "Watch dist files",
             "runOptions": {
