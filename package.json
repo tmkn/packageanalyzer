@@ -24,9 +24,8 @@
     },
     "scripts": {
         "build": "tsdown",
-        "build:dev": "tsdown --watch ./src",
-        "build:ts": "tsc -b",
-        "dev": "tsc -b --watch",
+        "dev": "tsdown --sourcemap --watch ./src",
+        "typecheck": "tsc -b --watch",
         "test": "vitest run",
         "test:watch": "vitest",
         "test:coverage": "vitest run --coverage",
