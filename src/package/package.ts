@@ -134,7 +134,7 @@ export class Package<T extends Record<string, any>> implements IPackage<T> {
     getData(): Readonly<IPackageJson>;
     getData(key?: string): unknown {
         if (key) return get(this._data, key);
-        else return JSON.parse(JSON.stringify(this._data));
+        else return structuredClone(this._data);
     }
 
     getAttachmentData(): Partial<T>;
