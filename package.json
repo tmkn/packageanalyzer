@@ -30,7 +30,6 @@
         "test:watch": "vitest",
         "test:coverage": "vitest run --coverage",
         "test:update": "vitest run --update",
-        "test:clean": "node build/tests/clean.js",
         "test:exports": "node ./dist/cli.js lint --package react ./tests/exportTest.js",
         "prettier": "prettier --write \"{src,tests,utility}/**/{*.ts,*.js}\" webpack.web.config.cjs vitest.config.ts",
         "pa": "node dist/cli.js",
@@ -60,8 +59,8 @@
     "devDependencies": {
         "@eslint/js": "^9.33.0",
         "@types/express": "^5.0.2",
-        "@types/lodash": "^4.14.202",
-        "@types/node": "^22.1.0",
+        "@types/lodash": "^4.17.20",
+        "@types/node": "^24.3.0",
         "@types/semver": "^7.5.8",
         "@types/spdx-satisfies": "^6.0.0",
         "@types/tar": "^6.1.10",
@@ -70,9 +69,9 @@
         "express": "^5.1.0",
         "globals": "^16.2.0",
         "memory-fs": "^0.5.0",
-        "nock": "^14.0.5",
-        "prettier": "^3.6.0",
-        "ts-loader": "^9.5.1",
+        "nock": "^14.0.10",
+        "prettier": "^3.6.2",
+        "ts-loader": "^9.5.2",
         "tsdown": "^0.14.1",
         "typescript": "^5.9.2",
         "typescript-eslint": "^8.39.1",
@@ -80,23 +79,20 @@
         "webpack": "^5.89.0"
     },
     "dependencies": {
-        "@tanstack/query-core": "^5.83.0",
-        "chalk": "^4.1.0",
-        "clipanion": "^4.0.0-rc.2",
-        "dayjs": "^1.11.10",
+        "@tanstack/query-core": "^5.85.5",
+        "chalk": "^5.6.0",
+        "clipanion": "^4.0.0-rc.4",
+        "dayjs": "^1.11.13",
         "jiti": "^2.5.1",
         "lodash": "^4.17.20",
         "ora": "^5.1.0",
         "postinstall-postinstall": "^2.1.0",
-        "semver": "^7.6.0",
+        "semver": "^7.7.2",
         "spdx-satisfies": "^6.0.0",
         "tar": "^7.4.3",
         "zod": "^3.22.4"
     },
     "engines": {
         "node": ">=18"
-    },
-    "resolutions": {
-        "cliui/wrap-ansi": "7.0.0"
     }
 }
