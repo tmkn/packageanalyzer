@@ -1,126 +1,35 @@
-# Package Analyzer Architecture
+# Architecture
 
-## The Basics
+This document provides a high-level overview of the architecture of the Package Analyzer.
 
-The package analyzer is written in TypeScript with the `strict` setting and utilizes modern JavaScript syntax.
-Any other type setting(`noUncheckedIndexedAccess`) is not (yet) enabled.
+## Core Concepts
 
-Unit Tests are orchestrated with Vitest.
+The core of the application is built around a few key concepts:
 
-Furthermore the repository is configured in a way that PR's will automatically build the project on Windows, Linux and Mac.
-Additionally a SonarCube analysis is run on every PR.
+### `Package`
 
-## The Code
+The `Package` class is the central data model of the application. It represents a single package in the dependency tree and contains information about the package, such as its name, version, dependencies, and more. The `Package` class also provides a set of utility methods to traverse and query the dependency tree.
 
-### The Package class
+### `Provider`
 
-The main working model of the package analyzer is the `Package` class.
-If you analyze a package and its dependencies you will get a single `Package` which is the top most package in the hierarchy.
+The `Provider` is responsible for fetching the metadata for a package (i.e., the `package.json` file). The application includes several providers that can fetch data from different sources, such as the local file system, a remote registry, or a flat file. This design makes it easy to add new data sources.
 
-The `Package` class contains references to its immediate dependencies which itself are classes of `Package`.
-The `Package` class also contains a `parent` member to access the parent, allowing you to navigate the dependency tree in either direction.
+### `Visitor`
 
-Apart from `name`, `version` members, it also offers utility methods to easily traverse the dependency tree:
+The `Visitor` is responsible for traversing the dependency tree. It starts with a single package and then recursively visits all of its dependencies, building up the complete dependency tree. The `Visitor` uses a `Provider` to fetch the metadata for each package.
 
-```typescript
-    visit: (callback: (dependency: T) => void, includeSelf: boolean, start: T) => void;
-    getPackagesBy: (filter: (pkg: T) => boolean) => T[];
-    getPackagesByName: (name: string, version?: string) => T[];
-    getPackageByName: (name: string, version?: string) => T | null;
-```
+## `Reports`
 
-#### Adding custom data via decorators
+The reporting system is responsible for generating various reports based on the analysis of the dependency tree. Each report is implemented as a separate class that extends the `Report` class.
 
-You may want to add custom data to each package in the dependency tree.
-This could be the actual source code or download stats or number of open issues in the GitHub repository, short, anything else that cannot be found in the `package.json`.
-To add that kind of data you use a `Decorator`.
+The `ReportService` is responsible for orchestrating the report generation process. It takes a `Package` object as input and then runs the specified reports to generate the output.
 
-```typescript
-export interface IApplyArgs {
-    p: Package;
-    logger: (msg: string) => void;
-}
+## Command-Line Interface (CLI)
 
-export interface IDecorator<K extends string, T> {
-    readonly key: K;
-    readonly name: string;
-    apply: (args: IApplyArgs) => Promise<T>;
-}
-```
+The CLI is built using the `clipanion` framework. Each command is implemented as a separate class that extends the `Command` class from `clipanion`.
 
-During the traversal of the dependency tree, the `apply` method will be called for every dependency.
+The main entry point for the CLI is the `src/cli.ts` file, which registers all of the available commands and runs the CLI which then delegates to the `ReportService`.
 
-It will be called with the current `package` and a method log progress. The value that it will return will be added as custom data to the package.
+## Linting
 
-To access the data on the `Package` class you use the `getDecoratorData` method and provide the `key` of the decorator:
-
-```typescript
-const data = p.getDecoratorData("releaseinfo");
-```
-
-### Providers
-
-During the dependency tree traversal the system asks the `Provider` for the package's meta data, that is, the `package.json`.
-
-```typescript
-export interface IPackageVersionProvider {
-    //get meta data for 1 package
-    getPackageByVersion: (name: string, version?: string) => Promise<INpmPackageVersion>;
-    //get meta data for multiple packages
-    getPackagesByVersion: (modules: PackageVersion[]) => AsyncIterableIterator<INpmPackageVersion>;
-}
-```
-
-Both methods are async by nature, single meta data is returned via a `Promise`, multiple meta data is returned via an `async iterator`.
-
-Due to this, data can be fetched from a remote endpoint or from the local file system or from anywhere else really, allowing a high degree of flexibility.
-
-### Loggers
-
-Any output during the dependency tree traversal is routed to the logger.
-
-Since the API will likely change, no detailed description is provided at this point in time.
-
-### Dependency Tree Traversal
-
-At the heart of the dependency tree traversal is the `Visitor`.
-
-```typescript
-interface IVisitorConstructor {
-    new (
-        entry: PackageVersion,
-        provider: IPackageVersionProvider,
-        logger: ILogger,
-        decorators?: IDecorator<any>[]
-    ): IPackageVisitor;
-}
-```
-
-`entry` specifies the starting point of the dependency tree
-
-`provider` the visitor will ask the `provider` for information about the packages
-
-`logger` any output will be delegated to the `logger`
-
-`decorators` optionally specify decorators that you want to use during the tree traversal
-
-The `Visitor` also contains a `visit` method:
-
-```typescript
-export interface IPackageVisitor {
-    visit: (depType?: DependencyTypes) => Promise<Package>;
-}
-```
-
-Calling this method will start the dependency tree traversal
-
-Example
-
-```typescript
-const visitor = new Visitor(["react"], provider, new OraLogger());
-const p = await visitor.visit(); //defaults to "dependencies"
-const p = await visitor.visit("dependencies");
-const p = await visitor.visit("devDependencies");
-```
-
-That's it for a basic introduction about the technical markup of the package analyzer.
+A key feature of the Package Analyzer is its ability to "lint" dependencies for potential issues, such as security vulnerabilities, license non-compliance, or other quality concerns. This is implemented through a rule-based system similar to ESLint.
