@@ -82,7 +82,7 @@ export class UpdateInfoReport extends AbstractReport<IUpdateInfoParams> {
         return onlinePackageProviderType.safeParse(data).success;
     }
 
-    override validate(): z.ZodTypeAny {
+    override validate(): z.ZodType<IUpdateInfoParams> {
         return BasePackageParameter;
     }
 }

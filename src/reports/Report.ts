@@ -36,7 +36,7 @@ export interface IReportContext {
 export interface IReport<
     TReportConfigs extends ReportConfigs,
     TParams extends {},
-    TZodValidateObject extends z.ZodTypeAny
+    TZodValidateObject extends z.ZodType<TParams>
 > {
     readonly params: TParams;
     readonly name: string;
@@ -53,9 +53,9 @@ export interface IReport<
     validate?(): TZodValidateObject;
 }
 
-export type GenericReport = IReport<ReportConfigs, {}, z.ZodTypeAny>;
+export type GenericReport = IReport<ReportConfigs, {}, z.ZodType<{}>>;
 
-type ReportMethodSignature<T extends ReportConfigs> = IReport<T, {}, z.ZodTypeAny>["report"];
+type ReportMethodSignature<T extends ReportConfigs> = IReport<T, {}, z.ZodType<{}>>["report"];
 export type SingleReportMethodSignature = ReportMethodSignature<IReportConfig>;
 
 export function isReportConfigArray(x: ReportConfigs): x is IReportConfig[] {
@@ -65,7 +65,7 @@ export function isReportConfigArray(x: ReportConfigs): x is IReportConfig[] {
 export abstract class AbstractReport<
     TParams extends {},
     TReportConfigs extends ReportConfigs = ReportConfigs,
-    TZodValidateObject extends z.ZodTypeAny = z.ZodTypeAny
+    TZodValidateObject extends z.ZodType<TParams> = z.ZodType<TParams>
 > implements IReport<TReportConfigs, TParams, TZodValidateObject>
 {
     abstract name: string;

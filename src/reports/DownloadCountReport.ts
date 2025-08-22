@@ -34,7 +34,7 @@ export class DownloadReport extends AbstractReport<IDownloadParams> {
         await cliDownloads(pkg.name, this.params.url ?? null, stdoutFormatter);
     }
 
-    override validate(): z.ZodTypeAny {
+    override validate(): z.ZodType<IDownloadParams> {
         return DownloadParams;
     }
 }

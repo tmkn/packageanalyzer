@@ -9,7 +9,7 @@ export const BaseFolderParameter = z.object({
 });
 
 export const dependencyTypes = z.union([z.literal(`dependencies`), z.literal(`devDependencies`)], {
-    invalid_type_error: `type must be "dependencies" or "devDependencies"`
+    error: `type must be "dependencies" or "devDependencies"`
 });
 
 export type DependencyTypes = z.infer<typeof dependencyTypes>;

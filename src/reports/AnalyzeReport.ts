@@ -46,7 +46,11 @@ type ReleaseAttachment = {
     releaseinfo: ReturnType<typeof releaseAttachment>;
 };
 
-export class AnalyzeReport extends AbstractReport<IAnalyzeParams, ReportConfigs, z.ZodTypeAny> {
+export class AnalyzeReport extends AbstractReport<
+    IAnalyzeParams,
+    ReportConfigs,
+    z.ZodType<IAnalyzeParams>
+> {
     name = `Analyze Report`;
     configs: IReportConfig;
 
@@ -78,7 +82,7 @@ export class AnalyzeReport extends AbstractReport<IAnalyzeParams, ReportConfigs,
         return PackageParams.safeParse(data).success;
     }
 
-    override validate(): z.ZodTypeAny {
+    override validate(): z.ZodType<IAnalyzeParams> {
         return AnalyzeParams;
     }
 }

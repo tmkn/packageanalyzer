@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import { z, type ZodTypeAny } from "zod";
+import { z } from "zod";
 
 import { LoopUtilities } from "../extensions/utilities/LoopUtilities.js";
 import { type IPackage } from "../package/package.js";
@@ -58,7 +58,7 @@ export class LoopsReport extends AbstractReport<ILoopParams> {
         }
     }
 
-    override validate(): ZodTypeAny {
+    override validate(): z.ZodType<ILoopParams> {
         return LoopParams;
     }
 }

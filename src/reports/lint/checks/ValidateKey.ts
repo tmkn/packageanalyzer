@@ -5,7 +5,7 @@ import { type ILintCheck } from "../LintRule.js";
 const stringParamSchema = z.string();
 const keyConfigParamSchema = z.object({
     key: z.string(),
-    validator: z.function().args(z.unknown()).returns(z.boolean()),
+    validator: z.custom<(data: unknown) => boolean>(),
     message: z.string().optional()
 });
 

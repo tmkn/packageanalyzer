@@ -16,7 +16,7 @@ import { getPackageVersionfromString } from "../visitors/visitor.js";
 import { createTarAttachment } from "../attachments/TarAttachment.js";
 import { DumpPackageProvider } from "../providers/folder.js";
 import { type IPackage } from "../package/package.js";
-import { z, type ZodTypeAny } from "zod";
+import { z } from "zod";
 
 export class TestCommand extends CliCommand<TestReport> {
     public package = Option.String(`--package`, `typescript`);
@@ -79,7 +79,7 @@ export class TestReport extends AbstractReport<ITestReportParams> {
         return PackageParams.safeParse(data).success;
     }
 
-    override validate(): ZodTypeAny {
+    override validate(): z.ZodType<ITestReportParams> {
         return PackageParams;
     }
 }

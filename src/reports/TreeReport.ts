@@ -47,7 +47,7 @@ export class TreeReport extends AbstractReport<ITreeReportParams> {
         return PackageParams.safeParse(data).success;
     }
 
-    override validate(): z.ZodTypeAny {
+    override validate(): z.ZodType<ITreeReportParams> {
         return TreeReportParams;
     }
 }

@@ -61,7 +61,7 @@ export class DependencyDumpReport extends AbstractReport<IDependencyDumpParams> 
         stdoutFormatter.writeLine(`Done!`);
     }
 
-    override validate(): z.ZodTypeAny {
+    override validate(): z.ZodType<IDependencyDumpParams> {
         return DependencyDumpParams;
     }
 }

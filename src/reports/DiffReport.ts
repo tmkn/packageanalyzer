@@ -183,7 +183,7 @@ export class DiffReport extends AbstractReport<IDiffReportParams, [IReportConfig
         return line;
     }
 
-    override validate(): z.ZodTypeAny {
+    override validate(): z.ZodType<IDiffReportParams> {
         return DiffParams;
     }
 }
