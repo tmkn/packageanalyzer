@@ -30,7 +30,7 @@ const foo = {
         //         const _params: undefined = params;
         //         const data: number = pkg.getAttachmentData("count");
 
-        //         return `Download count: ${data}`;
+        //         return `Download count: ${Number(data).toLocaleString()}`;
         //     },
         //     attachments: { count: new DownloadCount().apply }
         // })
