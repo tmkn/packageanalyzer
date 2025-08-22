@@ -31,7 +31,9 @@ export class LintResultFormatter implements ILintResultFormatter {
             //beautify path
             const packagePath: string = path
                 .map(([name, version]) => `${name}@${version}`)
-                .map(name => chalk.cyan(name))
+                .map((name, i) =>
+                    i === path.length - 1 ? chalk.cyan.underline(name) : chalk.gray(name)
+                )
                 .join(chalk.white(` → `));
 
             // Print the package path only once
@@ -40,9 +42,7 @@ export class LintResultFormatter implements ILintResultFormatter {
                 this.formatter.writeLine(`\n${chalk.cyan(currentPackagePath)}`);
             }
 
-            this.formatter.writeLine(
-                `  [${severity}][${chalk.cyan(pkg.fullName)}][${chalk.gray(name)}]: ${message}`
-            );
+            this.formatter.writeLine(`  ${severity} ${chalk.gray(name)}: ${message}`);
 
             if (type === `error`) {
                 errorCount++;
@@ -74,13 +74,14 @@ export class LintResultFormatter implements ILintResultFormatter {
     }
 
     #severityColor(type: ILintResult["type"]): string {
+        const padded = type.padEnd(7);
         switch (type) {
             case `error`:
-                return chalk.red(type);
+                return chalk.red(padded);
             case `warning`:
-                return chalk.yellow(type);
+                return chalk.yellow(padded);
             case `internal-error`:
-                return chalk.bgRed(type);
+                return chalk.bgRed(padded);
         }
     }
 }

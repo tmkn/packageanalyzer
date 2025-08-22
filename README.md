@@ -19,8 +19,6 @@ A framework to introspect and analyze Node.js projects.
 - **Dependency Anlysis**: Get a quick overview of any Node.js package and its dependencies
 - **API**: Leverage the same API that powers the linter and dependency analysis to build fully customized checks and integrations.
 
-Please see the [Documentation](http://packageanalyzer-docs.vercel.app/) for a more in depth introduction.
-
 ## Install
 
 ```bash
