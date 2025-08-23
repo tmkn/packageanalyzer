@@ -9,7 +9,7 @@ import { PathUtilities } from "../../extensions/utilities/PathUtilities.js";
 
 const LintParams = z.object({
     lintFile: LintFile,
-    depth: z.number(),
+    depth: z.number().or(z.literal(Number.POSITIVE_INFINITY)),
     entry: PackageVersionSchema
 });
 
@@ -202,7 +202,7 @@ export class LintReport extends AbstractReport<ILintParams, IReportConfig[]> {
         );
     }
 
-    override validate(): z.ZodTypeAny {
+    override validate(): z.ZodType<ILintParams> {
         return LintParams;
     }
 }

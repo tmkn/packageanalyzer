@@ -4,7 +4,7 @@ import { type ILintCheck } from "../LintRule.js";
 
 const configValidatorScheme = z.object({
     path: z.string(),
-    validator: z.function().args(z.unknown()).returns(z.boolean())
+    validator: z.custom<(data: unknown) => boolean>()
 });
 
 const missingFieldConfigSchema = z.object({

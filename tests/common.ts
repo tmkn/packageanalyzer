@@ -77,7 +77,7 @@ export class TestReport extends AbstractReport<ITestReportParams, IReportConfig>
         return this.params.report(pkg, context);
     }
 
-    override validate(): z.ZodTypeAny {
+    override validate(): z.ZodType<ITestReportParams> {
         return TestReportParams;
     }
 }

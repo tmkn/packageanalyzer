@@ -67,7 +67,7 @@ export class LicenseReport extends AbstractReport<ILicenseParams> {
         return PackageParams.safeParse(data).success;
     }
 
-    override validate(): z.ZodTypeAny {
+    override validate(): z.ZodType<ILicenseParams> {
         return LicenseParams;
     }
 }
