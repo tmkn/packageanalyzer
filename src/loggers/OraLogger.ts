@@ -1,9 +1,9 @@
-import ora from "ora";
+import ora, { type Ora } from "ora";
 
 import { type ILogger } from "./ILogger.js";
 
 export class OraLogger implements ILogger {
-    private _logger: ora.Ora = ora();
+    private _logger: Ora = ora();
 
     start(): void {
         this._logger.start();
