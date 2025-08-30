@@ -5,9 +5,7 @@ import { UpdateInfoCommand } from "./updateInfoCommand.js";
 import { DownloadCommand } from "./downloadCommand.js";
 import { LoopsCommand } from "./loopsCommand.js";
 import { TreeCommand } from "./treeCommand.js";
-import { NpmDumpCommand } from "./npmDumpCommand.js";
 import { getVersion } from "./common.js";
-import { NpmDumpLookupCreatorCommand } from "./npmLookupCreatorCommand.js";
 import { LicenseCheckCommand } from "./licenseCommand.js";
 import { ReportCommand } from "./reportCommand.js";
 import { DependencyDumperCommand } from "./dependencyDumpCommand.js";
@@ -33,8 +31,6 @@ cli.register(DiffCommand);
 cli.register(LintCommand);
 
 //development niche commands
-cli.register(NpmDumpCommand);
-cli.register(NpmDumpLookupCreatorCommand);
 cli.register(DependencyDumperCommand);
 
 cli.register(TestCommand);
