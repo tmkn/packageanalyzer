@@ -1,9 +1,8 @@
 import * as path from "path";
 
 import { FileSystemPackageProvider } from "../../src/providers/folder.js";
-import { ReportService } from "../../src/reports/ReportService.js";
 import {
-    createMockContext,
+    createReportServiceFactory,
     type ITestReportNoValidationParams,
     TestReport,
     TestReportNoValidation
@@ -13,67 +12,45 @@ describe(`ReportService Tests`, () => {
     const rootPath = path.join("tests", "data", "testproject1");
     const provider = new FileSystemPackageProvider(rootPath);
 
+    const buildTestReport = createReportServiceFactory(TestReport, provider);
+
     test(`Executes report method`, async () => {
-        const { stdout, stderr } = createMockContext();
         const cb = vi.fn();
-        const testReport = new TestReport({
+        const { reportService } = buildTestReport({
             pkg: [`react`],
             report: async () => {
                 cb();
             }
         });
-        testReport.provider = provider;
-        const reportService = new ReportService(
-            {
-                reports: [testReport]
-            },
-            stdout,
-            stderr
-        );
 
         await reportService.process();
         expect(cb).toHaveBeenCalledTimes(1);
     });
 
     test(`Executes multiple reports`, async () => {
-        const { stdout, stderr } = createMockContext();
         const cb = vi.fn();
-        const testReport = new TestReport({
-            pkg: [`react`],
-            report: async () => {
-                cb();
-            }
-        });
-        testReport.provider = provider;
-        const reportService = new ReportService(
+        const params: ConstructorParameters<typeof TestReport> = [
             {
-                reports: [testReport, testReport, testReport]
-            },
-            stdout,
-            stderr
-        );
+                pkg: [`react`],
+                report: async () => {
+                    cb();
+                }
+            }
+        ];
+        const { reportService } = buildTestReport(params, params, params);
 
         await reportService.process();
         expect(cb).toHaveBeenCalledTimes(3);
     });
 
     test(`Provides pkg argument`, async () => {
-        const { stdout, stderr } = createMockContext();
         let fullName: string = `Unknown`;
-        const testReport = new TestReport({
+        const { reportService } = buildTestReport({
             pkg: [`react`],
             report: async ([pkg], _context) => {
                 fullName = pkg.fullName;
             }
         });
-        testReport.provider = provider;
-        const reportService = new ReportService(
-            {
-                reports: [testReport]
-            },
-            stdout,
-            stderr
-        );
 
         await reportService.process();
 
@@ -81,22 +58,13 @@ describe(`ReportService Tests`, () => {
     });
 
     test(`Provides formatter argument`, async () => {
-        const { stdout, stderr } = createMockContext();
         const token = `Hello World`;
-        const testReport = new TestReport({
+        const { reportService, stdout } = buildTestReport({
             pkg: [`react`],
             report: async (_, context) => {
                 context.stdoutFormatter.writeLine(token);
             }
         });
-        testReport.provider = provider;
-        const reportService = new ReportService(
-            {
-                reports: [testReport]
-            },
-            stdout,
-            stderr
-        );
 
         await reportService.process();
 
@@ -104,32 +72,33 @@ describe(`ReportService Tests`, () => {
     });
 
     test(`Acknowledges depth setting`, async () => {
-        const { stdout, stderr } = createMockContext();
         let directDependenciesCount1: number = -1;
         let directDependenciesCount2: number = -1;
-        const testReport1 = new TestReport({
-            pkg: [`react`],
-            report: async ([pkg], _context) => {
-                directDependenciesCount1 = pkg.directDependencies.length;
-            }
-        });
-        testReport1.provider = provider;
-        testReport1.configs.depth = 0;
-        const testReport2 = new TestReport({
-            pkg: [`react`],
-            report: async ([pkg], _context) => {
-                directDependenciesCount2 = pkg.directDependencies.length;
-            }
-        });
-        testReport2.provider = provider;
-        testReport2.configs.depth = Infinity;
-        const reportService = new ReportService(
-            {
-                reports: [testReport1, testReport2]
-            },
-            stdout,
-            stderr
+
+        const {
+            reportService,
+            reports: [report1, report2]
+        } = buildTestReport(
+            [
+                {
+                    pkg: [`react`],
+                    report: async ([pkg], _context) => {
+                        directDependenciesCount1 = pkg.directDependencies.length;
+                    }
+                }
+            ],
+            [
+                {
+                    pkg: [`react`],
+                    report: async ([pkg], _context) => {
+                        directDependenciesCount2 = pkg.directDependencies.length;
+                    }
+                }
+            ]
         );
+
+        report1.configs.depth = 0;
+        report2.configs.depth = Infinity;
 
         await reportService.process();
 
@@ -138,22 +107,12 @@ describe(`ReportService Tests`, () => {
     });
 
     test(`Writes to stderr on throw`, async () => {
-        const { stdout, stderr } = createMockContext();
-        const willThrow = new TestReport({
+        const { reportService, stdout, stderr } = buildTestReport({
             pkg: [`react`],
             report: async () => {
                 throw new Error(`Whoopsie`);
             }
         });
-        willThrow.provider = provider;
-
-        const reportService = new ReportService(
-            {
-                reports: [willThrow]
-            },
-            stdout,
-            stderr
-        );
 
         await reportService.process();
 
