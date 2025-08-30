@@ -6,7 +6,7 @@ import { type IMockPackageJson } from "../mocks.js";
 import { LintReport } from "../../src/reports/lint/LintReport.js";
 
 describe(`Lint Service Attachment Tests`, () => {
-    function setup(rules: ILintFile["rules"]): ReportServiceContext {
+    function setup(rules: ILintFile["rules"]): ReportServiceContext<LintReport> {
         const medalloPkg: IMockPackageJson = {
             name: `medallo`,
             version: `1.0.0`,
@@ -16,7 +16,7 @@ describe(`Lint Service Attachment Tests`, () => {
             ]
         };
 
-        const buildLintReport = createReportServiceFactory(LintReport, medalloPkg);
+        const buildLintReport = createReportServiceFactory(LintReport, [medalloPkg]);
 
         return buildLintReport({
             entry: [`medallo`, `1.0.0`],

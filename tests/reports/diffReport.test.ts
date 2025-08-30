@@ -1,7 +1,6 @@
 import { DiffReport } from "../../src/reports/DiffReport.js";
-import { ReportService } from "../../src/reports/ReportService.js";
-import { createMockContext } from "../common.js";
-import { type IMockPackageJson, MockProvider } from "../mocks.js";
+import { createReportServiceFactory } from "../common.js";
+import { type IMockPackageJson } from "../mocks.js";
 
 describe(`DiffReport Tests`, () => {
     const fromBaseData: IMockPackageJson = {
@@ -35,23 +34,12 @@ describe(`DiffReport Tests`, () => {
             }
         };
 
-        const provider = new MockProvider([fromPkg, toPkg]);
-        const report = new DiffReport({
+        const buildDiffReport = createReportServiceFactory(DiffReport, [fromPkg, toPkg]);
+        const { reportService, stdout, stderr } = buildDiffReport({
             from: `medallo@1.0.0`,
             to: `medallo@2.0.0`,
             type: `dependencies`
         });
-
-        report.provider = provider;
-
-        const { stdout, stderr } = createMockContext();
-        const reportService = new ReportService(
-            {
-                reports: [report]
-            },
-            stdout,
-            stderr
-        );
 
         await reportService.process();
 
@@ -80,23 +68,12 @@ describe(`DiffReport Tests`, () => {
             }
         };
 
-        const provider = new MockProvider([fromPkg, toPkg]);
-        const report = new DiffReport({
+        const buildDiffReport = createReportServiceFactory(DiffReport, [fromPkg, toPkg]);
+        const { reportService, stdout, stderr } = buildDiffReport({
             from: `medallo@1.0.0`,
             to: `medallo@2.0.0`,
             type: `dependencies`
         });
-
-        report.provider = provider;
-
-        const { stdout, stderr } = createMockContext();
-        const reportService = new ReportService(
-            {
-                reports: [report]
-            },
-            stdout,
-            stderr
-        );
 
         await reportService.process();
 
@@ -122,23 +99,12 @@ describe(`DiffReport Tests`, () => {
             }
         };
 
-        const provider = new MockProvider([fromPkg, toPkg]);
-        const report = new DiffReport({
+        const buildDiffReport = createReportServiceFactory(DiffReport, [fromPkg, toPkg]);
+        const { reportService, stdout, stderr } = buildDiffReport({
             from: `medallo@1.0.0`,
             to: `medallo@2.0.0`,
             type: `dependencies`
         });
-
-        report.provider = provider;
-
-        const { stdout, stderr } = createMockContext();
-        const reportService = new ReportService(
-            {
-                reports: [report]
-            },
-            stdout,
-            stderr
-        );
 
         await reportService.process();
 
@@ -164,23 +130,12 @@ describe(`DiffReport Tests`, () => {
             }
         };
 
-        const provider = new MockProvider([fromPkg, toPkg]);
-        const report = new DiffReport({
+        const buildDiffReport = createReportServiceFactory(DiffReport, [fromPkg, toPkg]);
+        const { reportService, stdout, stderr } = buildDiffReport({
             from: `medallo@1.0.0`,
             to: `medallo@2.0.0`,
             type: `dependencies`
         });
-
-        report.provider = provider;
-
-        const { stdout, stderr } = createMockContext();
-        const reportService = new ReportService(
-            {
-                reports: [report]
-            },
-            stdout,
-            stderr
-        );
 
         await reportService.process();
 
