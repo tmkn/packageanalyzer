@@ -24,5 +24,9 @@ export default defineConfig([
     mergeConfig(shared, {
         entry: "./apps/cli/src/cli.ts",
         dts: { build: true }
+    }),
+    mergeConfig(shared, {
+        entry: ["./packages/node/src/mcp.ts"]
+        // dts: { build: true }
     })
 ]);
