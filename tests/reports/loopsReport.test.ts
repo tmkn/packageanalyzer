@@ -2,8 +2,7 @@ import * as path from "path";
 import { DumpPackageProvider } from "../../src/providers/folder.js";
 
 import { LoopsReport } from "../../src/reports/LoopsReport.js";
-import { ReportService } from "../../src/reports/ReportService.js";
-import { createMockContext } from "../common.js";
+import { createReportServiceFactory } from "../common.js";
 
 describe(`LoopsReport Test`, () => {
     const rootPath = path.join("tests", "data", "loops_data");
@@ -14,21 +13,11 @@ describe(`LoopsReport Test`, () => {
     });
 
     test(`works`, async () => {
-        const report = new LoopsReport({
+        const buildLoopsReport = createReportServiceFactory(LoopsReport, provider);
+        const { reportService, stdout, stderr } = buildLoopsReport({
             package: `@webassemblyjs/ast@1.9.0`,
             type: `dependencies`
         });
-
-        report.provider = provider;
-
-        const { stdout, stderr } = createMockContext();
-        const reportService = new ReportService(
-            {
-                reports: [report]
-            },
-            stdout,
-            stderr
-        );
 
         await reportService.process();
 

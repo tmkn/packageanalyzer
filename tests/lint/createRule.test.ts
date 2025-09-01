@@ -6,40 +6,27 @@ import {
     type ILintCheck,
     type ILintFile
 } from "../../src/reports/lint/LintRule.js";
-import { ReportService } from "../../src/reports/ReportService.js";
-import { createMockContext } from "../common.js";
-import { type IMockPackageJson, MockProvider } from "../mocks.js";
+import { createReportServiceFactory, type ReportServiceContext } from "../common.js";
+import { type IMockPackageJson } from "../mocks.js";
 
 describe(`createRule tests`, () => {
     const mockAttachment: AttachmentFn<number> = async (args: IApplyArgs) => {
         return 3;
     };
 
-    function setupLintService(rules: ILintFile["rules"]): ReportService {
+    function setupLintService(rules: ILintFile["rules"]): ReportServiceContext<LintReport> {
         const medalloPkg: IMockPackageJson = {
             name: `medallo`,
             version: `1.0.0`
         };
-        const provider = new MockProvider([medalloPkg]);
 
-        const report = new LintReport({
+        const buildLintReport = createReportServiceFactory(LintReport, [medalloPkg]);
+
+        return buildLintReport({
             entry: [`medallo`, `1.0.0`],
             lintFile: { rules },
             depth: 0
         });
-        report.provider = provider;
-
-        const { stdout, stderr } = createMockContext();
-
-        const reportService = new ReportService(
-            {
-                reports: [report]
-            },
-            stdout,
-            stderr
-        );
-
-        return reportService;
     }
 
     function setup(params?: undefined): Promise<Parameters<ILintCheck<undefined>["check"]>>;
@@ -57,9 +44,9 @@ describe(`createRule tests`, () => {
                 params
             );
 
-            const lintService = setupLintService([rule]);
+            const { reportService } = setupLintService([rule]);
 
-            lintService.process().then((exitCode = 0) => {
+            reportService.process().then((exitCode = 0) => {
                 if (exitCode !== 0) {
                     reject(new Error(`Linting failed with exit code ${exitCode}`));
                 }
@@ -90,9 +77,9 @@ describe(`createRule tests`, () => {
             );
 
             // @ts-expect-error
-            const lintService = setupLintService([rule]);
+            const { reportService } = setupLintService([rule]);
 
-            lintService.process().then((exitCode = 0) => {
+            reportService.process().then((exitCode = 0) => {
                 if (exitCode !== 0) {
                     reject(new Error(`Linting failed with exit code ${exitCode}`));
                 }

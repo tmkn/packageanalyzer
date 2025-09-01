@@ -14,7 +14,7 @@ const medalloPkg: IMockPackageJson = {
     ]
 };
 
-const buildLintReport = createReportServiceFactory(LintReport, medalloPkg);
+const buildLintReport = createReportServiceFactory(LintReport, [medalloPkg]);
 
 describe(`LintReport Tests`, () => {
     test(`calls lint function only on root`, async () => {

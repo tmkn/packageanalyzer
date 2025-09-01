@@ -17,6 +17,7 @@ import { DumpPackageProvider } from "../src/providers/folder.js";
 import type { ILogger } from "../src/loggers/ILogger.js";
 import { MockProvider, type IMockPackageJson } from "./mocks.js";
 import { ReportService } from "../src/reports/ReportService.js";
+import type { IPackageJsonProvider } from "../src/providers/provider.js";
 
 class TestWritable extends Writable {
     private static _pattern = [
@@ -176,31 +177,56 @@ export class MockLogger implements ILogger {
     }
 }
 
-export type ReportServiceContext = {
+export type ReportServiceContext<
+    T extends AbstractReport<any> | readonly AbstractReport<any>[] = AbstractReport<any>[]
+> = {
     reportService: ReportService;
     stdout: TestWritable;
     stderr: TestWritable;
+    reports: T;
 };
 
 export function createReportServiceFactory<C extends new (...args: any[]) => AbstractReport<any>>(
     ctor: C,
-    mockPkg: IMockPackageJson
+    mockPkgsOrProvider: IMockPackageJson[] | IPackageJsonProvider
 ) {
-    const provider = new MockProvider([mockPkg]);
+    const provider = Array.isArray(mockPkgsOrProvider)
+        ? new MockProvider(mockPkgsOrProvider)
+        : mockPkgsOrProvider;
 
-    return (...args: ConstructorParameters<C>): ReportServiceContext => {
+    type ReportConstructorArgs = ConstructorParameters<C>;
+    type ReportInstance = InstanceType<C>;
+
+    function factory<T extends ReportConstructorArgs[]>(
+        ...args: T
+    ): ReportServiceContext<{ [K in keyof T]: ReportInstance }>;
+    function factory(...args: ReportConstructorArgs): ReportServiceContext<ReportInstance>;
+    function factory(...args: unknown[]): unknown {
         const { stdout, stderr } = createMockContext();
-        const report = new ctor(...args);
+        const isSingleArg = !(Array.isArray(args) && args.every(arg => Array.isArray(arg)));
+        const reportConfigs = isSingleArg ? [args] : args;
 
-        report.provider = provider;
+        const reports = reportConfigs.map(config => {
+            const report = new ctor(...config);
+            report.provider = provider;
+            return report;
+        });
+
         const reportService = new ReportService(
             {
-                reports: [report]
+                reports
             },
             stdout,
             stderr
         );
 
-        return { reportService, stdout, stderr };
-    };
+        return {
+            reportService,
+            stdout,
+            stderr,
+            reports: isSingleArg ? reports[0] : reports
+        };
+    }
+
+    return factory;
 }
