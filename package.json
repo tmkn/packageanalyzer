@@ -80,6 +80,7 @@
         "webpack": "^5.101.3"
     },
     "dependencies": {
+        "@modelcontextprotocol/sdk": "^1.17.5",
         "@tanstack/query-core": "^5.85.5",
         "chalk": "^5.6.0",
         "clipanion": "^4.0.0-rc.4",

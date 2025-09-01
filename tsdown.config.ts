@@ -13,5 +13,9 @@ export default defineConfig([
     {
         entry: ["./src/cli.ts"],
         dts: { build: true }
+    },
+    {
+        entry: ["./src/mcp.ts"]
+        // dts: { build: true }
     }
 ]);
