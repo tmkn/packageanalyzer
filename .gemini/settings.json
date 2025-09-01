@@ -1,0 +1,13 @@
+{
+    "mcpServers": {
+        "pkga-mcp": {
+            "command": "node",
+            "args": ["./dist/mcp.js"],
+            "cwd": ".",
+            "timeout": 15000,
+            "trust": false,
+            "includeTools": ["add", "dependencies"]
+            // "excludeTools": ["dangerous_tool"]
+        }
+    }
+}
