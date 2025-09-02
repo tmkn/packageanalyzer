@@ -17,7 +17,7 @@ export class DownloadCommand extends CliCommand<DownloadReport> {
         examples: [[`Show the download count for a NPM package`, `$0 loops --package typescript`]]
     });
 
-    public static DownloadUrl?: Url;
+    public static readonly DownloadUrl?: Url;
 
     static override readonly paths = [[`downloads`]];
 

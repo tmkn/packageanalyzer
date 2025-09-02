@@ -39,7 +39,8 @@ function visit<T>(node: T, converter: ITreeFormatter<T>, prefix: string, lines: 
     }
 
     for (const [i, child] of children.entries()) {
-        const identation = createIdentation(i + 1 === children.length);
+        const isLast = i + 1 === children.length;
+        const identation = isLast ? Leaf : NonLeaf;
 
         visit(child, converter, adaptPrefix(prefix) + identation, lines);
     }
@@ -62,8 +63,4 @@ function adaptPrefix(prefix: string): string {
     }
 
     return prefix;
-}
-
-function createIdentation(isLast: boolean): string {
-    return isLast ? Leaf : NonLeaf;
 }
