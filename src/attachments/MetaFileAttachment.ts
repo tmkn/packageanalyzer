@@ -6,7 +6,7 @@ interface IMetaFileData {
 }
 
 class MetaFileAttachment implements IClassAttachment<IMetaFileData> {
-    constructor(private _provider: IPackageMetaDataProvider) {}
+    constructor(private readonly _provider: IPackageMetaDataProvider) {}
 
     readonly name: string = `ReleaseAttachment`;
     readonly key = "metafile";

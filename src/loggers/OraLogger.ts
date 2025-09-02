@@ -3,7 +3,7 @@ import ora, { type Ora } from "ora";
 import { type ILogger } from "./ILogger.js";
 
 export class OraLogger implements ILogger {
-    private _logger: Ora = ora();
+    private readonly _logger: Ora = ora();
 
     start(): void {
         this._logger.start();

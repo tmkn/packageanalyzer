@@ -6,14 +6,30 @@ export default [
     { ignores: ["**/*.js", "**/*.json", "**/*.txt"] },
     { files: ["**/*.{js,mjs,cjs,ts}"] },
     { languageOptions: { globals: globals.browser } },
-    pluginJs.configs.recommended,
-    ...tseslint.configs.recommended,
+    // pluginJs.configs.recommended,
+    // ...tseslint.configs.recommendedTypeChecked,
+    {
+        languageOptions: {
+            parser: tseslint.parser,
+            parserOptions: {
+                projectService: true,
+                tsconfigRootDir: import.meta.dirname
+            }
+        },
+        plugins: {
+            "@typescript-eslint": tseslint.plugin
+        },
+        rules: {
+            "@typescript-eslint/prefer-readonly": "error"
+        }
+    },
     {
         files: ["tests/**/*.ts"],
         rules: {
             "@typescript-eslint/no-unused-vars": "off",
             "@typescript-eslint/no-explicit-any": "off",
-            "no-case-declarations": "off"
+            "no-case-declarations": "off",
+            "@typescript-eslint/prefer-readonly": "off"
         }
     }
 ];

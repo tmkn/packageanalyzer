@@ -17,11 +17,11 @@ import { type IPackageJsonProvider } from "./provider.js";
 //parses npm data from https://replicate.npmjs.com/_all_docs?limit=4&include_docs=true
 //needs a lookup file
 export class FlatFileProvider implements IPackageJsonProvider {
-    private _lookup: Map<string, ILookupInfo> = new Map();
-    private _lookupFile: string;
-    private _cache: Map<string, IPackageMetadata> = new Map();
+    private readonly _lookup: Map<string, ILookupInfo> = new Map();
+    private readonly _lookupFile: string;
+    private readonly _cache: Map<string, IPackageMetadata> = new Map();
     private _initialized = false;
-    private _logger = new OraLogger();
+    private readonly _logger = new OraLogger();
 
     public static getLookupFile(npmFile: string): string {
         try {
@@ -34,7 +34,7 @@ export class FlatFileProvider implements IPackageJsonProvider {
         }
     }
 
-    constructor(private _file: string) {
+    constructor(private readonly _file: string) {
         this._lookupFile = FlatFileProvider.getLookupFile(this._file);
     }
 

@@ -20,12 +20,12 @@ import { ReportService } from "../src/reports/ReportService.js";
 import type { IPackageJsonProvider } from "../src/providers/provider.js";
 
 class TestWritable extends Writable {
-    private static _pattern = [
+    private static readonly _pattern = [
         "[\\u001B\\u009B][[\\]()#;?]*(?:(?:(?:(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]+)*|[a-zA-Z\\d]+(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]*)*)?\\u0007)",
         "(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PR-TZcf-ntqry=><~]))"
     ].join("|");
 
-    private static _regex = new RegExp(this._pattern, "g");
+    private static readonly _regex = new RegExp(this._pattern, "g");
 
     private _output: string = "";
 

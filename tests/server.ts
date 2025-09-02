@@ -75,8 +75,8 @@ export async function createMockServer(server: AbstractMockServer): Promise<void
 
 class MockNpmServer extends AbstractMockServer {
     name = `MockNpmServer`;
-    private _dataPath = path.join("tests", "data", "mockserverdata");
-    private _cache: Map<string, Readonly<IPackageMetadata>> = new Map();
+    private readonly _dataPath = path.join("tests", "data", "mockserverdata");
+    private readonly _cache: Map<string, Readonly<IPackageMetadata>> = new Map();
 
     setup() {
         this._populateCache();
@@ -184,7 +184,7 @@ export async function createMockDownloadServer(): Promise<IMockServer> {
 
 class MockRequestServer extends AbstractMockServer {
     name = `MockRequestServer`;
-    private _artificalDelay = 2000;
+    private readonly _artificalDelay = 2000;
 
     setup() {
         let stallCalls = 0;

@@ -21,7 +21,7 @@ export class LintCommand extends CliCommand<LintReport> {
 
     public folder = Option.String(`--folder`, { description: `path to a package.json` });
 
-    static override usage = Command.Usage({
+    static override readonly usage = Command.Usage({
         description: `lint your dependency tree`,
         details: `
             This command will lint your dependency tree and print out the results
@@ -39,7 +39,7 @@ export class LintCommand extends CliCommand<LintReport> {
         ]
     });
 
-    static override paths = [[`lint`]];
+    static override readonly paths = [[`lint`]];
 
     async getReports(): Promise<LintReport> {
         const loader = new LintFileLoader(this.lintFile);

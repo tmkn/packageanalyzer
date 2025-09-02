@@ -8,7 +8,7 @@ export class UpdateInfoCommand extends CliCommand<UpdateInfoReport> {
         description: `the package to retrieve update info from e.g. typescript@3.5.1`
     });
 
-    static override usage = Command.Usage({
+    static override readonly usage = Command.Usage({
         description: `gets update info from a npm package`,
         details: `
             This command will print update information about a NPM package.
@@ -21,6 +21,8 @@ export class UpdateInfoCommand extends CliCommand<UpdateInfoReport> {
         ]
     });
 
+    static override readonly paths = [[`update`]];
+
     getReports(): UpdateInfoReport {
         if (typeof this.package === "undefined") throw new Error(`Please specify a package.`);
 
@@ -30,6 +32,4 @@ export class UpdateInfoCommand extends CliCommand<UpdateInfoReport> {
 
         return new UpdateInfoReport(updateInfoParams);
     }
-
-    static override paths = [[`update`]];
 }

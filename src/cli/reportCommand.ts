@@ -12,7 +12,7 @@ export class ReportCommand extends CliCommand<AbstractReport<any> | AbstractRepo
         description: `path to the config file`
     });
 
-    static override usage = Command.Usage({
+    static override readonly usage = Command.Usage({
         description: `run a series of checks defined in a config file`,
         details: `
             This command will run a series of checks defined in a config file
@@ -20,7 +20,7 @@ export class ReportCommand extends CliCommand<AbstractReport<any> | AbstractRepo
         examples: [[`Run a series of checks`, `$0 report --config ./path/to/config.js`]]
     });
 
-    static override paths = [[`report`]];
+    static override readonly paths = [[`report`]];
 
     async getReports(): Promise<AbstractReport<any> | AbstractReport<any>[]> {
         const config = await loadConfig(this.config);

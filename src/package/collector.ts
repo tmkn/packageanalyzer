@@ -21,7 +21,7 @@ export class CollectorNode<D, I> implements ICollectorNode<D, I> {
     constructor(
         public data: D,
         public item: I,
-        private _identity: (item: I) => string
+        private readonly _identity: (item: I) => string
     ) {}
 
     flatten(): MinLength1Array<CollectorTuple<D, I>> {

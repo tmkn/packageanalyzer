@@ -5,8 +5,8 @@ export type UpdateTuple = [from: IPackage, to: IPackage];
 
 export class DiffUtilities {
     constructor(
-        private _fromPkg: IPackage,
-        private _toPkg: IPackage
+        private readonly _fromPkg: IPackage,
+        private readonly _toPkg: IPackage
     ) {}
 
     get newMaintainers(): INpmUser[] | undefined {

@@ -8,7 +8,7 @@ type ReleaseAttachments = {
 type ReleasePackage = IPackage<ReleaseAttachments>;
 
 export class ReleaseUtilities {
-    constructor(private _p: ReleasePackage) {}
+    constructor(private readonly _p: ReleasePackage) {}
 
     get publishDate(): Date | undefined {
         return this._getPublishDate(this._p);

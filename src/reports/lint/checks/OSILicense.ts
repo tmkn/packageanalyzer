@@ -21,7 +21,7 @@ export class OSILicenseCheck implements ILintCheck {
         }
     }
 
-    private static osiLicenses: string[] = [
+    private static readonly osiLicenses: string[] = [
         "BSD-1-Clause",
         "AFL-3.0",
         "APL-1.0",

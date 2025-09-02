@@ -77,7 +77,7 @@ function convertToPackageJson(
 }
 
 export class MockProvider implements IPackageJsonProvider {
-    private _cache: Map<string, IPackageJson> = new Map();
+    private readonly _cache: Map<string, IPackageJson> = new Map();
 
     constructor(mockData: IMockPackageJson[], type: DependencyTypes = "dependencies") {
         for (const data of mockData) {

@@ -85,8 +85,8 @@ function printLicenseCheck(
 
 class LicenseCheckPrinter {
     constructor(
-        private _licenseCheckResult: LicenseCheckReport,
-        private _formatter: IFormatter
+        private readonly _licenseCheckResult: LicenseCheckReport,
+        private readonly _formatter: IFormatter
     ) {}
 
     public groupedByLicense(): Map<IPackage, ILicenseCheckResult>[] {

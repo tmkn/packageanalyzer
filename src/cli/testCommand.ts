@@ -25,7 +25,7 @@ export class TestCommand extends CliCommand<TestReport> {
         description: `the type of dependencies you want to analzye, "dependencies" or "devDependencies"`
     });
 
-    static override paths = [[`test`]];
+    static override readonly paths = [[`test`]];
 
     getReports(): TestReport {
         return new TestReport({

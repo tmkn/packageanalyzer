@@ -23,7 +23,7 @@ export class LicenseCheckCommand extends CliCommand<LicenseReport> {
 
     public folder = Option.String(`--folder`, { description: `path to a package.json` });
 
-    static override usage = Command.Usage({
+    static override readonly usage = Command.Usage({
         description: `check the licenses for all packages in the dependency tree`,
         details: `
             This command will print license informations for all packages found in the dependency tree.\n
@@ -53,7 +53,7 @@ export class LicenseCheckCommand extends CliCommand<LicenseReport> {
         ]
     });
 
-    static override paths = [[`license`]];
+    static override readonly paths = [[`license`]];
 
     getReports(): LicenseReport {
         if (!isValidDependencyType(this.type)) {

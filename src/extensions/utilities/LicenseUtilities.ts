@@ -9,7 +9,7 @@ export type LicenseSummary = Map<Name, Map<Version, License>>;
 export type GroupedLicenseSummary = Array<{ license: string; names: string[] }>;
 
 export class LicenseUtilities {
-    constructor(private _p: IPackage) {}
+    constructor(private readonly _p: IPackage) {}
 
     get license(): string {
         try {

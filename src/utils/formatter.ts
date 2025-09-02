@@ -9,7 +9,7 @@ export interface IFormatter {
 }
 
 export class Formatter implements IFormatter {
-    constructor(private _writer: Writable) {}
+    constructor(private readonly _writer: Writable) {}
 
     writeLine(line: string): void {
         this._writer.write(`${line}\n`);

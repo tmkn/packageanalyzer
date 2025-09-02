@@ -15,13 +15,13 @@ export interface ILookupEntry {
 }
 
 export class LookupFileCreator {
-    private _lookups: ILookupEntry[] = [];
+    private readonly _lookups: ILookupEntry[] = [];
 
     get lookups(): ReadonlyArray<ILookupEntry> {
         return this._lookups;
     }
 
-    constructor(private _filePath: string) {}
+    constructor(private readonly _filePath: string) {}
 
     async parse(): Promise<void> {
         const rl = readline.createInterface({
@@ -63,8 +63,8 @@ export class LookupFileCreator {
 
 export class LookupFileWriter {
     constructor(
-        private _targetFile: string,
-        private _lookups: ReadonlyArray<ILookupEntry>
+        private readonly _targetFile: string,
+        private readonly _lookups: ReadonlyArray<ILookupEntry>
     ) {}
 
     static getLine({ name, offset, length }: ILookupEntry): string {
