@@ -1,5 +1,5 @@
 import * as ts from "typescript";
-/* eslint-disable */
+ 
 //istanbul ignore next
 class InMemoryCompilerHost implements ts.CompilerHost {
     public files = new Map<string, string>();
@@ -46,10 +46,10 @@ class InMemoryCompilerHost implements ts.CompilerHost {
         return this.files.get(fileName);
     }
 }
-/* eslint-enable */
+ 
 
 export class CodeAnalyzer {
-    private _sourceFile: ts.SourceFile;
+    private readonly _sourceFile: ts.SourceFile;
     private _statements = 0;
     private _imports = 0;
     private _exports = 0;
@@ -66,7 +66,7 @@ export class CodeAnalyzer {
         return this._statements;
     }
 
-    private constructor(private _src: string) {
+    private constructor(private readonly _src: string) {
         this._sourceFile = ts.createSourceFile(`_filename`, _src, ts.ScriptTarget.ESNext, true);
 
         this._walk();

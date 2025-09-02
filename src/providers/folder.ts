@@ -10,7 +10,7 @@ import { AbstractPackageProvider, type IPackageJsonProvider } from "./provider.j
 
 //gathers packages from a node_modules folder
 export class FileSystemPackageProvider implements IPackageJsonProvider {
-    private _paths: Set<string> = new Set();
+    private readonly _paths: Set<string> = new Set();
     private readonly _cache: Map<string, Map<string, IPackageJson>> = new Map();
 
     constructor(_folder: string) {
@@ -123,7 +123,7 @@ export class FileSystemPackageProvider implements IPackageJsonProvider {
 
 // provides data provided by the dependencydump cli command
 export class DumpPackageProvider extends AbstractPackageProvider {
-    constructor(private _folder: string) {
+    constructor(private readonly _folder: string) {
         super();
 
         this._loadData();

@@ -7,7 +7,7 @@ import { downloadJson } from "../utils/requests.js";
 
 //loads npm data from the web
 export class OnlinePackageProvider extends AbstractPackageProvider {
-    private _queryClient = new QueryClient({
+    private readonly _queryClient = new QueryClient({
         defaultOptions: {
             queries: {
                 retry: 3,
@@ -17,7 +17,7 @@ export class OnlinePackageProvider extends AbstractPackageProvider {
         }
     });
 
-    constructor(private _url: Url) {
+    constructor(private readonly _url: Url) {
         super();
     }
 

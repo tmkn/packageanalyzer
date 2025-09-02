@@ -19,9 +19,9 @@ export type LicenseCheckReport = Readonly<ILicenseCheckReport>;
 
 class WhitelistLicenseCheckService {
     constructor(
-        private _p: IPackage,
-        private _whitelist: string[],
-        private _includeSelf: Readonly<boolean>
+        private readonly _p: IPackage,
+        private readonly _whitelist: string[],
+        private readonly _includeSelf: Readonly<boolean>
     ) {}
 
     private _satisfiesLicense(packageLicense: string, spdxIdentifier: string): boolean {

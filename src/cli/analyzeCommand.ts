@@ -17,7 +17,7 @@ export class AnalyzeCommand extends CliCommand<AnalyzeReport> {
 
     public full = Option.Boolean(`--full`, false, { description: `show all information` });
 
-    static override usage = Command.Usage({
+    static override readonly usage = Command.Usage({
         description: `analyze a npm package or a local project`,
         details: `
             This command will print information about a NPM package or about a local project.\n
@@ -34,7 +34,7 @@ export class AnalyzeCommand extends CliCommand<AnalyzeReport> {
         ]
     });
 
-    static override paths = [[`analyze`]];
+    static override readonly paths = [[`analyze`]];
 
     getReports(): AnalyzeReport {
         if (!isValidDependencyType(this.type)) {

@@ -1,7 +1,7 @@
 import { type IPackage } from "../../package/package.js";
 
 export class PathUtilities {
-    constructor(private _p: IPackage) {}
+    constructor(private readonly _p: IPackage) {}
 
     get path(): Array<[string, string]> {
         const path: Array<[string, string]> = [];

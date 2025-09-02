@@ -19,7 +19,7 @@ interface IPackageVisitor<T extends Attachments> {
 }
 
 export class Visitor<T extends Attachments = Attachments> implements IPackageVisitor<T> {
-    private _depthStack: string[] = [];
+    private readonly _depthStack: string[] = [];
     private _depType: DependencyTypes = "dependencies";
 
     constructor(

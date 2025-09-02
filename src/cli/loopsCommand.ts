@@ -13,7 +13,7 @@ export class LoopsCommand extends CliCommand<LoopsReport> {
         description: `the type of dependencies you want to analzye, "dependencies" or "devDependencies"`
     });
 
-    static override usage = Command.Usage({
+    static override readonly usage = Command.Usage({
         description: `show loops in the dependency tree`,
         details: `
             This command will show loops in the dependency tree.\n
@@ -35,6 +35,8 @@ export class LoopsCommand extends CliCommand<LoopsReport> {
         ]
     });
 
+    static override readonly paths = [[`loops`]];
+
     getReports(): LoopsReport {
         if (!isValidDependencyType(this.type)) {
             throw new Error(
@@ -53,6 +55,4 @@ export class LoopsCommand extends CliCommand<LoopsReport> {
 
         throw new Error(`--package was undefined`);
     }
-
-    static override paths = [[`loops`]];
 }

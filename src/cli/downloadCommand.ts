@@ -9,7 +9,7 @@ export class DownloadCommand extends CliCommand<DownloadReport> {
         description: `the package to retrieve the download count e.g. typescript@3.5.1`
     });
 
-    static override usage = Command.Usage({
+    static override readonly usage = Command.Usage({
         description: `show the download count for a NPM package`,
         details: `
             This command will show show the download count for a NPM package.
@@ -19,7 +19,7 @@ export class DownloadCommand extends CliCommand<DownloadReport> {
 
     public static DownloadUrl?: Url;
 
-    static override paths = [[`downloads`]];
+    static override readonly paths = [[`downloads`]];
 
     getReports(): DownloadReport {
         if (typeof this.package !== "undefined") {

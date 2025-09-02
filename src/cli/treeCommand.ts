@@ -17,7 +17,7 @@ export class TreeCommand extends CliCommand<TreeReport> {
         description: `path to a package.json`
     });
 
-    static override usage = Command.Usage({
+    static override readonly usage = Command.Usage({
         description: `show the dependency tree of a NPM package or a local project`,
         details: `
             This command will print the dependency tree of a NPM package or a local project.\n
@@ -43,7 +43,7 @@ export class TreeCommand extends CliCommand<TreeReport> {
         ]
     });
 
-    static override paths = [[`tree`]];
+    static override readonly paths = [[`tree`]];
 
     getReports(): TreeReport {
         if (this.folder) {

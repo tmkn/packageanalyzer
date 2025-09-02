@@ -15,7 +15,7 @@ export function printDependencyTree(p: IPackage, formatter: IFormatter): void {
 }
 
 export class LoopUtilities {
-    constructor(private _p: IPackage) {}
+    constructor(private readonly _p: IPackage) {}
 
     //returns the loop path e.g. c->d->c instead of the whole path a->b->c->d->c
     get loopPathString(): string {

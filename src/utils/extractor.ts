@@ -11,7 +11,7 @@ type ExtractCallback = (data: string, p: IPackage, i: number, max: number) => Pr
 
 //extract packages from dump file
 export class Extractor {
-    private _provider: FlatFileProvider;
+    private readonly _provider: FlatFileProvider;
     private _versions: PackageVersion[] = [];
     private _resolvedPackages: Map<string, IPackage> = new Map();
 

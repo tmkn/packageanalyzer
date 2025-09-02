@@ -14,7 +14,7 @@ export class DiffCommand extends CliCommand<DiffReport> {
         description: `the type of dependencies you want to analzye, "dependencies" or "devDependencies"`
     });
 
-    static override usage = Command.Usage({
+    static override readonly usage = Command.Usage({
         description: `compare the dependencies of 2 packages`,
         details: `
             This command will print a summary of the dependency differences between 2 packages.\n
@@ -32,7 +32,7 @@ export class DiffCommand extends CliCommand<DiffReport> {
         ]
     });
 
-    static override paths = [[`diff`]];
+    static override readonly paths = [[`diff`]];
 
     getReports(): DiffReport {
         const [pkg1, pkg2] = this.range?.[0] ?? [];

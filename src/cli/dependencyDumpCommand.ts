@@ -19,7 +19,7 @@ export class DependencyDumperCommand extends CliCommand<DependencyDumpReport> {
         description: `online registry`
     });
 
-    static override usage = Command.Usage({
+    static override readonly usage = Command.Usage({
         category: `Developer Tools`,
         description: `looks up package(s) from an online registry and dumps the package.json`,
         details: `
@@ -33,7 +33,7 @@ export class DependencyDumperCommand extends CliCommand<DependencyDumpReport> {
         ]
     });
 
-    static override paths = [[`dependencydump`]];
+    static override readonly paths = [[`dependencydump`]];
 
     getReports(): DependencyDumpReport {
         return new DependencyDumpReport({
