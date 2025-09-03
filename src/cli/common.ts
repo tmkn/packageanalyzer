@@ -8,6 +8,7 @@ import { AbstractReport } from "../reports/Report.js";
 import { ReportService } from "../reports/ReportService.js";
 import { Formatter, type IFormatter } from "../utils/formatter.js";
 import { type DependencyTypes } from "../reports/Validation.js";
+import { NodeHost } from "../host/NodeHost.js";
 
 export const defaultDependencyType: DependencyTypes = "dependencies";
 
@@ -35,23 +36,26 @@ export abstract class CliCommand<
     beforeProcess: ((report: T) => void) | undefined = undefined;
 
     async execute(): Promise<number | void> {
+        const host = new NodeHost(this.context.stdout, this.context.stderr);
+
         try {
             const reports = await this.getReports();
             const reportService = new ReportService(
                 {
                     reports: Array.isArray(reports) ? reports : [reports]
                 },
-                this.context.stdout,
-                this.context.stderr
+                host
             );
 
             this.beforeProcess?.(reports);
             this.exitCode = (await reportService.process()) ?? 0;
         } catch (e: unknown) {
-            const stderrFormatter: IFormatter = new Formatter(this.context.stderr);
+            const stderrFormatter: IFormatter = new Formatter(host.getStderr());
 
             if (e) stderrFormatter.writeLine(e?.toString());
             this.exitCode = 1;
+        } finally {
+            await Promise.all([host.getStdout().flush(), host.getStderr().flush()]);
         }
 
         return this.exitCode;

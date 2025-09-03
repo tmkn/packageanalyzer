@@ -1,3 +1,4 @@
+import { NodeAsyncWriter } from "../../src/host/NodeHost.js";
 import { DownloadReport } from "../../src/reports/DownloadCountReport.js";
 import { Formatter } from "../../src/utils/formatter.js";
 import { createMockPackage } from "../mocks.js";
@@ -23,8 +24,8 @@ describe(`DownloadCountReport Tests`, () => {
             name: `_downloads`
         });
         const { stdout, stderr } = createMockContext();
-        const stdoutFormatter = new Formatter(stdout);
-        const stderrFormatter = new Formatter(stderr);
+        const stdoutFormatter = new Formatter(new NodeAsyncWriter(stdout));
+        const stderrFormatter = new Formatter(new NodeAsyncWriter(stderr));
 
         await downloadReport.report([fakePgk], { stdoutFormatter, stderrFormatter });
 
