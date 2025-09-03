@@ -1,5 +1,6 @@
 import { describe, test, expect, beforeAll, afterAll } from "vitest";
 
+import { NodeWriter } from "../../src/host/NodeHost.js";
 import { DownloadReport } from "../../src/reports/DownloadCountReport.js";
 import { Formatter } from "../../src/utils/formatter.js";
 import { createMockPackage } from "../mocks.js";
@@ -25,8 +26,8 @@ describe(`DownloadCountReport Tests`, () => {
             name: `_downloads`
         });
         const { stdout, stderr } = createMockContext();
-        const stdoutFormatter = new Formatter(stdout);
-        const stderrFormatter = new Formatter(stderr);
+        const stdoutFormatter = new Formatter(new NodeWriter(stdout));
+        const stderrFormatter = new Formatter(new NodeWriter(stderr));
 
         await downloadReport.report([fakePgk], { stdoutFormatter, stderrFormatter });
 

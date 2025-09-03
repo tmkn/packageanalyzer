@@ -18,6 +18,7 @@ import type { ILogger } from "../src/loggers/ILogger.js";
 import { MockProvider, type IMockPackageJson } from "./mocks.js";
 import { ReportService } from "../src/reports/ReportService.js";
 import type { IPackageJsonProvider } from "../src/providers/provider.js";
+import { NodeHost } from "../src/host/NodeHost.js";
 
 class TestWritable extends Writable {
     private static readonly _pattern = [
@@ -216,8 +217,7 @@ export function createReportServiceFactory<C extends new (...args: any[]) => Abs
             {
                 reports
             },
-            stdout,
-            stderr
+            new NodeHost(stdout, stderr)
         );
 
         return {

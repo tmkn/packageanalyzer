@@ -1,4 +1,4 @@
-import { Writable } from "stream";
+import type { IWriter } from "../host/IHost.js";
 
 type LineKeyValue = [string, string];
 
@@ -9,7 +9,7 @@ export interface IFormatter {
 }
 
 export class Formatter implements IFormatter {
-    constructor(private readonly _writer: Writable) {}
+    constructor(private readonly _writer: IWriter) {}
 
     writeLine(line: string): void {
         this._writer.write(`${line}\n`);

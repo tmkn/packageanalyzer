@@ -1,5 +1,6 @@
 import * as path from "path";
 import * as fs from "fs";
+import { fileURLToPath } from "url";
 
 import dayjs from "dayjs";
 import { Command } from "clipanion";
@@ -8,13 +9,15 @@ import { AbstractReport } from "../reports/Report.js";
 import { ReportService } from "../reports/ReportService.js";
 import { Formatter, type IFormatter } from "../utils/formatter.js";
 import { type DependencyTypes } from "../reports/Validation.js";
+import { NodeHost } from "../host/NodeHost.js";
 
 export const defaultDependencyType: DependencyTypes = "dependencies";
 
 export function getVersion(): string {
     try {
-        const file = path.join(process.cwd(), "package.json");
-
+        const __dirname = path.dirname(fileURLToPath(import.meta.url));
+        // adjust when moving this function to another folder
+        const file = path.join(__dirname, "..", "..", "package.json");
         return JSON.parse(fs.readFileSync(file, "utf8")).version;
     } catch {
         return "version parse error!";
@@ -35,23 +38,26 @@ export abstract class CliCommand<
     beforeProcess: ((report: T) => void) | undefined = undefined;
 
     async execute(): Promise<number | void> {
+        const host = new NodeHost(this.context.stdout, this.context.stderr);
+
         try {
             const reports = await this.getReports();
             const reportService = new ReportService(
                 {
                     reports: Array.isArray(reports) ? reports : [reports]
                 },
-                this.context.stdout,
-                this.context.stderr
+                host
             );
 
             this.beforeProcess?.(reports);
             this.exitCode = (await reportService.process()) ?? 0;
         } catch (e: unknown) {
-            const stderrFormatter: IFormatter = new Formatter(this.context.stderr);
+            const stderrFormatter: IFormatter = new Formatter(host.getStderrWriter());
 
             if (e) stderrFormatter.writeLine(e?.toString());
             this.exitCode = 1;
+        } finally {
+            await Promise.all([host.getStdoutWriter().flush(), host.getStderrWriter().flush()]);
         }
 
         return this.exitCode;

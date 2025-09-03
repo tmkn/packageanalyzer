@@ -132,7 +132,6 @@ export function isUnpublished(
     return false;
 }
 
- 
 interface INpmLockFile {
     name: string;
     version: string;
