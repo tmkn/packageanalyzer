@@ -30,6 +30,9 @@ steps:
     - script: yarn install
       displayName: "yarn install"
 
+    - script: yarn typecheck:ci
+      displayName: "Typecheck"
+
     - script: yarn build
       displayName: "Build"
 
