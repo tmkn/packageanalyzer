@@ -1,25 +1,11 @@
-import { Writable } from "stream";
+import { createMockContext } from "./common.js";
 import { Formatter } from "../src/utils/formatter.js";
 
 describe(`Formatter Tests`, () => {
-    //todo unify with TestWritable?
-    class TestWriter extends Writable {
-        lines: string[] = [];
-
-        override _write(
-            chunk: any,
-            encoding: BufferEncoding,
-            callback: (error?: Error | null) => void
-        ): void {
-            this.lines.push(chunk.toString());
-            callback();
-        }
-    }
-
     test(`Correctly sets padding`, () => {
-        const writer = new TestWriter();
+        const { stdout: writer } = createMockContext();
         const formatter = new Formatter(writer);
-        const expectedFormat: string[] = [`key1: Test1\n`, `k:    Test2\n`];
+        const expectedFormat: string[] = [`key1: Test1`, `k:    Test2`, ``];
 
         formatter.writeGroup([
             [`key1`, `Test1`],
@@ -30,9 +16,9 @@ describe(`Formatter Tests`, () => {
     });
 
     test(`Correctly sets padding with line`, () => {
-        const writer = new TestWriter();
+        const { stdout: writer } = createMockContext();
         const formatter = new Formatter(writer);
-        const expectedFormat: string[] = [`key1: Test1\n`, `hello world\n`, `k:    Test2\n`];
+        const expectedFormat: string[] = [`key1: Test1`, `hello world`, `k:    Test2`, ``];
 
         formatter.writeGroup([[`key1`, `Test1`], `hello world`, [`k`, `Test2`]]);
 
@@ -40,9 +26,9 @@ describe(`Formatter Tests`, () => {
     });
 
     test(`Correctly writes identation`, () => {
-        const writer = new TestWriter();
+        const { stdout: writer } = createMockContext();
         const formatter = new Formatter(writer);
-        const expectedFormat: string[] = [`header\n`, `    test1\n`, `    test2\n`];
+        const expectedFormat: string[] = [`header`, `    test1`, `    test2`, ``];
 
         formatter.writeIdentation([`header`, `test1`, `test2`], 4);
 

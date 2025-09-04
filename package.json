@@ -26,6 +26,7 @@
         "build": "tsdown",
         "dev": "tsdown --sourcemap --watch ./src",
         "typecheck": "tsc -b --watch",
+        "typecheck:ci": "tsc -b",
         "test": "vitest run",
         "test:watch": "vitest",
         "test:coverage": "vitest run --coverage",
