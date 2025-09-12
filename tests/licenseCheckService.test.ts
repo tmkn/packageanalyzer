@@ -1,3 +1,4 @@
+import { describe, test, expect, beforeAll } from "vitest";
 import * as path from "path";
 
 import { type IPackage } from "../src/package/package.js";

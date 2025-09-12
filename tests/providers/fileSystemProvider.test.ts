@@ -1,7 +1,7 @@
+import { describe, test, expect, beforeAll } from "vitest";
 import * as path from "path";
 
 import { FileSystemPackageProvider } from "../../src/providers/folder.js";
-import { type IPackageJson } from "../../src/npm.js";
 
 describe(`NodeModulesProvider Tests`, () => {
     let provider: FileSystemPackageProvider;

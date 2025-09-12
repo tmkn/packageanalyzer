@@ -1,3 +1,4 @@
+import { describe, test, expect, beforeAll, afterAll } from "vitest";
 import * as path from "path";
 
 import { DumpPackageProvider } from "../../src/providers/folder.js";
@@ -11,21 +12,21 @@ describe(`DumpProvider Tests`, () => {
         provider = new DumpPackageProvider(folder);
     });
 
-    it(`Correctly retrieves based on version`, async () => {
+    test(`Correctly retrieves based on version`, async () => {
         const pkgJson = await provider.getPackageJson(`react`, `17.0.2`);
 
         expect(pkgJson.name).toBe(`react`);
         expect(pkgJson.version).toBe(`17.0.2`);
     });
 
-    it(`Correctly retrieves latest version`, async () => {
+    test(`Correctly retrieves latest version`, async () => {
         const pkgJson = await provider.getPackageJson(`react`);
 
         expect(pkgJson.name).toBe(`react`);
         expect(pkgJson.version).toBe(`18.2.0`);
     });
 
-    it(`Correctly retrieves metadata`, async () => {
+    test(`Correctly retrieves metadata`, async () => {
         const data = await provider.getPackageMetadata(`react`);
 
         expect(data).toBeDefined();

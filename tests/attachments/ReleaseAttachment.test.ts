@@ -1,3 +1,5 @@
+import { describe, test, expect } from "vitest";
+
 import { releaseAttachment } from "../../src/attachments/ReleaseAttachment.js";
 import type { IPackageMetadata, IUnpublishedPackageMetadata } from "../../src/npm.js";
 import { type IPackageMetaDataProvider } from "../../src/providers/provider.js";

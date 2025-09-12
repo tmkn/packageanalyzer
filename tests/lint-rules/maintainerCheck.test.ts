@@ -1,3 +1,5 @@
+import { describe, test, expect } from "vitest";
+
 import { createMockPackage } from "../mocks.js";
 import { MaintainerCheck } from "../../src/reports/lint/checks/MaintainerCheck.js";
 

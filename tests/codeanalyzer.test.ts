@@ -1,3 +1,5 @@
+import { describe, test, expect } from "vitest";
+
 import { CodeAnalyzer } from "../src/utils/code.js";
 
 const example1 = `

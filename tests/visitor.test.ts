@@ -1,3 +1,5 @@
+import { describe, test, expect } from "vitest";
+
 import { Visitor } from "../src/index.js";
 import { MockLogger } from "./common.js";
 import { type IMockPackageJson, MockProvider } from "./mocks.js";

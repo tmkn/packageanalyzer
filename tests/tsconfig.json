@@ -2,7 +2,7 @@
     "extends": "..",
     "compilerOptions": {
         "composite": true,
-        "types": ["vitest/globals"]
+        "types": []
     },
     "include": ["./**/*.ts"],
     "references": [{ "path": "../src" }]

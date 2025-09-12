@@ -1,3 +1,5 @@
+import { describe, test, expect } from "vitest";
+
 import { urlType } from "../src/reports/Validation.js";
 import { numPadding } from "../src/visitors/visitor.js";
 

@@ -1,3 +1,5 @@
+import { describe, test, expect } from "vitest";
+
 import { MissingFields } from "../../src/reports/lint/checks/MissingFields.js";
 import { createMockPackage } from "../mocks.js";
 

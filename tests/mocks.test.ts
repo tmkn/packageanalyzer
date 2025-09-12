@@ -1,3 +1,5 @@
+import { describe, test, expect } from "vitest";
+
 import { DependencyUtilities } from "../src/extensions/utilities/DependencyUtilities.js";
 import { createMockPackage, type IMockPackageJson, MockProvider } from "./mocks.js";
 

@@ -1,3 +1,5 @@
+import { describe, test, expect } from "vitest";
+
 import { type AttachmentFn } from "../../src/index.js";
 import { type IApplyArgs } from "../../src/attachments/Attachments.js";
 import { createRuleWithAttachment, type ILintFile } from "../../src/reports/lint/LintRule.js";

@@ -1,3 +1,5 @@
+import { describe, test, expect } from "vitest";
+
 import { CliCommand } from "../../src/cli/common.js";
 import { AbstractReport } from "../../src/reports/Report.js";
 import { isValidDependencyType } from "../../src/reports/Validation.js";

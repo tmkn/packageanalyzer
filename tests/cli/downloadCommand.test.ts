@@ -1,3 +1,5 @@
+import { describe, test, expect, beforeAll, afterAll } from "vitest";
+
 import { cli } from "../../src/cli/cli.js";
 import { createMockDownloadServer, type IMockServer, createMockNpmServer } from "../server.js";
 import { DownloadCommand } from "../../src/cli/downloadCommand.js";
