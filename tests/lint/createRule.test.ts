@@ -1,3 +1,5 @@
+import { describe, test, expect } from "vitest";
+
 import type { IApplyArgs, AttachmentFn, Attachments } from "../../src/attachments/Attachments.js";
 import { LintReport } from "../../src/reports/lint/LintReport.js";
 import {

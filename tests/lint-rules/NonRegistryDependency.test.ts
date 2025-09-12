@@ -1,3 +1,5 @@
+import { describe, test, expect } from "vitest";
+
 import { createMockPackage } from "../mocks.js";
 import { NonRegistryDependency } from "../../src/reports/lint/checks/NonRegistryDependency.js";
 

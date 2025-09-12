@@ -1,6 +1,7 @@
+import { describe, test, expect, beforeAll } from "vitest";
 import * as path from "path";
-import { DumpPackageProvider } from "../../src/providers/folder.js";
 
+import { DumpPackageProvider } from "../../src/providers/folder.js";
 import { LoopsReport } from "../../src/reports/LoopsReport.js";
 import { createReportServiceFactory } from "../common.js";
 

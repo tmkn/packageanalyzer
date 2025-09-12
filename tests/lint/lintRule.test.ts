@@ -1,3 +1,5 @@
+import { describe, test, expect } from "vitest";
+
 import { ZodLintRule } from "../../src/reports/lint/LintRule.js";
 
 describe(`Lint Rule Validation`, () => {

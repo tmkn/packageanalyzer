@@ -1,3 +1,5 @@
+import { describe, test, expect, beforeAll, afterAll } from "vitest";
+
 import { OnlinePackageProvider } from "../../src/providers/online.js";
 import { Visitor } from "../../src/visitors/visitor.js";
 import { OraLogger } from "../../src/loggers/OraLogger.js";

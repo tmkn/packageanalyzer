@@ -1,3 +1,4 @@
+import { describe, test, expect, vi } from "vitest";
 import * as path from "path";
 
 import { FileSystemPackageProvider } from "../../src/providers/folder.js";

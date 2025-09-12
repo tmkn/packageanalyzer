@@ -1,3 +1,5 @@
+import { describe, test, expect, beforeAll, afterAll } from "vitest";
+
 import { getDownloadsLastWeek } from "../src/reports/DownloadCountReport.js";
 import { createMockDownloadServer, type IMockServer } from "./server.js";
 

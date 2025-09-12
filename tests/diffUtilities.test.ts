@@ -1,3 +1,5 @@
+import { describe, test, expect } from "vitest";
+
 import { type IPackage } from "../src/package/package.js";
 import { DiffUtilities } from "../src/extensions/utilities/DiffUtilities.js";
 import { createMockPackage, type IMockPackageJson } from "./mocks.js";

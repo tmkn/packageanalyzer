@@ -1,3 +1,5 @@
+import { describe, test, expect, beforeAll, afterAll } from "vitest";
+
 import {
     cleanVersion,
     getBugfixVersionString,

@@ -1,3 +1,4 @@
+import { describe, test, expect, beforeAll, vi, afterAll } from "vitest";
 import * as fs from "fs";
 import * as path from "path";
 
@@ -17,7 +18,7 @@ describe(`TarAttachment Tests`, () => {
         nock.disableNetConnect();
     });
 
-    it(`downloads tarball and extracts content`, async () => {
+    test(`downloads tarball and extracts content`, async () => {
         const tgzPath = path.join("tests", "data", "js-tokens-4.0.0.tgz");
         const scope = nock("https://example.com")
             .get("/")
@@ -40,7 +41,7 @@ describe(`TarAttachment Tests`, () => {
         expect(data.files.size).toBe(5);
     });
 
-    it(`uses cache`, async () => {
+    test(`uses cache`, async () => {
         const cache: Map<string, ITarData> = new Map();
         const tarAttachment = createTarAttachment(cache);
         const p: IPackage = createMockPackage({});
@@ -59,7 +60,7 @@ describe(`TarAttachment Tests`, () => {
         expect(data.files.size).toBe(2);
     });
 
-    it(`throws on missing tarball url`, async () => {
+    test(`throws on missing tarball url`, async () => {
         const tarAttachment = createTarAttachment();
         const p: IPackage = createMockPackage({});
 

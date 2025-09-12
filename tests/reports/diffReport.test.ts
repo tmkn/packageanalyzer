@@ -1,3 +1,5 @@
+import { describe, test, expect } from "vitest";
+
 import { DiffReport } from "../../src/reports/DiffReport.js";
 import { createReportServiceFactory } from "../common.js";
 import { type IMockPackageJson } from "../mocks.js";

@@ -1,3 +1,5 @@
+import { describe, test, expect, beforeAll, vi, afterAll } from "vitest";
+
 import { cli } from "../../src/cli/cli.js";
 import { OnlinePackageProvider } from "../../src/providers/online.js";
 import { createMockNpmServer, type IMockServer } from "../server.js";

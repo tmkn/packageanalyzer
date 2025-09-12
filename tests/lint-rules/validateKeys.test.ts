@@ -1,3 +1,5 @@
+import { describe, test, expect } from "vitest";
+
 import { createMockPackage } from "../mocks.js";
 import { ValidateKey } from "../../src/reports/lint/checks/ValidateKey.js";
 

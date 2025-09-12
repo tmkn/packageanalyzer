@@ -1,3 +1,5 @@
+import { describe, test, expect } from "vitest";
+
 import { Package } from "../../src/package/package.js";
 import {
     classToAttachmentFn,

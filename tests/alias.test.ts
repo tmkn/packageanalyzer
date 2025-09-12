@@ -1,3 +1,5 @@
+import { describe, test, expect } from "vitest";
+
 import { OraLogger, Visitor } from "../src/index.js";
 import { type IMockPackageJson, MockProvider } from "./mocks.js";
 

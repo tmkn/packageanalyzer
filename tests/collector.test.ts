@@ -1,3 +1,5 @@
+import { describe, test, expect } from "vitest";
+
 import { createMockPackage, type IMockPackageJson } from "./mocks.js";
 
 describe(`Collector Tests`, () => {

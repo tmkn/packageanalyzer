@@ -1,3 +1,5 @@
+import { describe, test, expect } from "vitest";
+
 import { cli } from "../../src/cli/cli.js";
 import { DiffCommand } from "../../src/cli/diffCommand.js";
 import { createMockContext } from "../common.js";

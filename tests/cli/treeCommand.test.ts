@@ -1,3 +1,4 @@
+import { describe, test, expect, beforeAll, afterAll } from "vitest";
 import * as path from "path";
 
 import { cli } from "../../src/cli/cli.js";

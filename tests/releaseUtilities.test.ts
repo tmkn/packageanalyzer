@@ -1,3 +1,4 @@
+import { describe, test, expect } from "vitest";
 import { ReleaseUtilities } from "../src/extensions/utilities/ReleaseUtilities.js";
 import { createMockPackage } from "./mocks.js";
 

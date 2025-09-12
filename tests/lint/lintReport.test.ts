@@ -1,3 +1,4 @@
+import { describe, test, expect, vi } from "vitest";
 import z from "zod";
 
 import { LintReport } from "../../src/reports/lint/LintReport.js";

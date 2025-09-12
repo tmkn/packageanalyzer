@@ -1,3 +1,5 @@
+import { describe, test, expect, beforeAll, afterAll } from "vitest";
+
 import { DownloadReport } from "../../src/reports/DownloadCountReport.js";
 import { Formatter } from "../../src/utils/formatter.js";
 import { createMockPackage } from "../mocks.js";
