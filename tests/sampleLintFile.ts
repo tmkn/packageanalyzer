@@ -1,5 +1,3 @@
- 
-
 import { type AttachmentFn } from "../src/index.js";
 import { type IApplyArgs } from "../src/attachments/Attachments.js";
 import { getDownloadsLastWeek } from "../src/reports/DownloadCountReport.js";

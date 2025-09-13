@@ -94,7 +94,6 @@ export async function printStatistics(
 ): Promise<void> {
     formatter.writeLine(`Statistics for ${chalk.bold(p.fullName)}\n`);
 
-     
     all ? await printAllStatistics(p, formatter) : printBasicStatistics(p, formatter);
 }
 

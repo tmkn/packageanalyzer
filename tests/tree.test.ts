@@ -11,6 +11,7 @@ import { createMockContext } from "./common.js";
 import { DependencyUtilities } from "../src/extensions/utilities/DependencyUtilities.js";
 import { LicenseUtilities } from "../src/extensions/utilities/LicenseUtilities.js";
 import { getPackageVersionFromPath } from "../src/visitors/util.node.js";
+import { NodeWriter } from "../src/host/NodeHost.js";
 
 describe(`Tree Tests`, () => {
     test(`Print tree`, async () => {
@@ -25,9 +26,11 @@ describe(`Tree Tests`, () => {
         };
 
         const { stdout } = createMockContext();
-        const formatter = new Formatter(stdout);
+        const nodeWriter = new NodeWriter(stdout);
+        const formatter = new Formatter(nodeWriter);
 
         print(p, converter, formatter);
+        await nodeWriter.flush();
 
         expect(stdout.lines).toMatchSnapshot();
     });
@@ -47,9 +50,11 @@ describe(`Tree Tests`, () => {
         };
 
         const { stdout } = createMockContext();
-        const formatter = new Formatter(stdout);
+        const nodeWriter = new NodeWriter(stdout);
+        const formatter = new Formatter(nodeWriter);
 
         print(p, converter, formatter);
+        await nodeWriter.flush();
 
         expect(stdout.lines).toMatchSnapshot();
     });
