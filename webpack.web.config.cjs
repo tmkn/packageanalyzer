@@ -4,7 +4,7 @@ const MemoryFileSystem = require("memory-fs");
 
 const memoryFs = new MemoryFileSystem();
 const compiler = webpack({
-    entry: "./src/index.web.ts",
+    entry: "./packages/web/src/index.ts",
     mode: "development",
     target: "web",
     module: {
