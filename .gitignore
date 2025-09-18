@@ -60,6 +60,7 @@ typings/
 
 # Output of 'npm pack'
 *.tgz
+!packages/node/tests/data/js-tokens-4.0.0.tgz
 
 # dotenv environment variables file
 .env

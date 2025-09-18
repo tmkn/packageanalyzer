@@ -1,0 +1,10 @@
+{
+    "extends": "../../../tsconfig.json",
+    "compilerOptions": {
+        "composite": true,
+        "noUncheckedIndexedAccess": true,
+        "types": []
+    },
+    "include": ["./**/*.ts"],
+    "references": [{ "path": "../../shared/src" }]
+}

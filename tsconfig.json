@@ -1,19 +1,4 @@
 {
-    // "compilerOptions": {
-    // "rootDir": ".",
-    // "strict": true,
-    // "noImplicitOverride": true,
-    // "outDir": "build",
-    // "sourceMap": true,
-    // "lib": ["ESNext"],
-    // "target": "es2020",
-    // "module": "commonjs",
-    // "esModuleInterop": true,
-    // "allowSyntheticDefaultImports": true,
-    // "declaration": true,
-    // "declarationMap": true,
-    // "isolatedModules": true
-    // },
     "compilerOptions": {
         /* Base Options: */
         "rootDir": ".",
@@ -35,15 +20,46 @@
         /* AND if you're building for a library: */
         "declaration": true,
         /* If your code doesn't run in the DOM: */
-        "lib": ["es2022"]
+        "lib": ["es2022"],
+        "types": []
+        // "paths": {
+        //     "@packages/shared/*": ["./packages/shared/src/*"],
+        //     "@packages/node/*": ["./packages/node/src/*"],
+        //     "@packages/web/*": ["./packages/web/src/*"],
+        //     "@packages/test-utils/*": ["./packages/test-utils/src/*"]
+        // }
     },
     "include": [],
     "references": [
         {
-            "path": "./src"
+            "path": "./apps/cli/src"
         },
         {
-            "path": "./tests"
+            "path": "./apps/cli/tests"
+        },
+        {
+            "path": "./packages/shared/src"
+        },
+        {
+            "path": "./packages/shared/tests"
+        },
+        {
+            "path": "./packages/node/src"
+        },
+        {
+            "path": "./packages/node/tests"
+        },
+        {
+            "path": "./packages/web/src"
+        },
+        {
+            "path": "./packages/web/tests"
+        },
+        {
+            "path": "./packages/test-utils/src"
+        },
+        {
+            "path": "./packages/test-utils/tests"
         }
     ]
 }

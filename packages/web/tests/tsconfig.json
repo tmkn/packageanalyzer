@@ -1,0 +1,13 @@
+{
+    "extends": "../../../tsconfig.json",
+    "compilerOptions": {
+        "composite": true,
+        "types": []
+    },
+    "include": ["./**/*.ts"],
+    "references": [
+        { "path": "../src" },
+        { "path": "../../shared/src" },
+        { "path": "../../test-utils/src" }
+    ]
+}

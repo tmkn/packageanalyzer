@@ -24,7 +24,7 @@ export default [
         }
     },
     {
-        files: ["tests/**/*.ts"],
+        files: ["packages/*/tests/**/*.ts", "apps/*/tests/**/*.ts"],
         rules: {
             "@typescript-eslint/no-unused-vars": "off",
             "@typescript-eslint/no-explicit-any": "off",
