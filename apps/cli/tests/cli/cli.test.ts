@@ -1,4 +1,7 @@
-import { describe, test, expect } from "vitest";
+import path from "path";
+import fs from "fs";
+import { spawnSync } from "child_process";
+import { describe, test, expect, beforeAll } from "vitest";
 
 import { CliCommand } from "../../src/cli/common.js";
 import { AbstractReport } from "../../../../packages/shared/src/reports/Report.js";
@@ -103,6 +106,31 @@ describe(`CliCommand Tests`, () => {
 
             await command.execute();
         });
+    });
+});
+
+describe(`version`, () => {
+    const cwd = process.cwd();
+    const pkgJson = path.join(cwd, "package.json");
+    const { version } = JSON.parse(fs.readFileSync(pkgJson, "utf-8"));
+    const cliPath = path.join("dist", "cli.js");
+
+    beforeAll(() => {
+        const resolvedCliPath = path.resolve(cwd, cliPath);
+
+        if (!fs.existsSync(resolvedCliPath)) {
+            throw new Error(`Tests require dist files (cli.js). Please run the 'build' command.`);
+        }
+    });
+
+    test(`returns version`, async () => {
+        const { stdout } = spawnSync("node", [cliPath, "--version"], {
+            encoding: "utf-8",
+            stdio: "pipe",
+            cwd
+        });
+
+        expect(stdout).toEqual(version + "\n");
     });
 });
 
