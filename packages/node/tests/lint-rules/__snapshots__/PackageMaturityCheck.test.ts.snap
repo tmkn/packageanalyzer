@@ -1,0 +1,9 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`PackageMaturityCheck > correctly returns message if package is younger than timespan 1`] = `"rolo@1.0.0 is 1 day old (published Oct 25, 2021, 12:00 AM); 1 more day required to reach 2-day maturity"`;
+
+exports[`PackageMaturityCheck > pluralization > correctly uses "day" & "days" 1`] = `"rolo@1.0.0 is 1 day old (published Oct 25, 2021, 12:00 AM); 2 more days required to reach 3-day maturity"`;
+
+exports[`PackageMaturityCheck > pluralization > correctly uses "day" 1`] = `"rolo@1.0.0 is 1 day old (published Oct 25, 2021, 12:00 AM); 1 more day required to reach 2-day maturity"`;
+
+exports[`PackageMaturityCheck > pluralization > correctly uses "days" 1`] = `"rolo@1.0.0 is 2 days old (published Oct 24, 2021, 12:00 AM); 2 more days required to reach 4-day maturity"`;

@@ -48,7 +48,8 @@
                 "--package",
                 // "webpack@4.44.2",
                 // "react@16.12.0",
-                "react@18.2.0",
+                // "react@18.2.0",
+                "react@19.1.1",
                 "./packages/node/tests/sampleLintFile.ts"
                 // "./packages/node/tests/data/lint_data/exportTest.js"
             ],

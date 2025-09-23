@@ -7,6 +7,7 @@ import { MissingLicense } from "../src/reports/lint/checks/MissingLicense.js";
 import { NoScripts } from "../src/reports/lint/checks/NoScripts.js";
 import { NonRegistryDependency } from "../src/reports/lint/checks/NonRegistryDependency.js";
 import { ValidateKey } from "../src/reports/lint/checks/ValidateKey.js";
+import { PackageMaturityCheck } from "../src/reports/lint/checks/PackageMaturity.js";
 
 class DownloadCount {
     readonly key = "count";
@@ -20,8 +21,9 @@ class DownloadCount {
 
 const foo = {
     rules: [
-        createRule("error", new ValidateKey(), "foo"),
-        createRule("error", new ValidateKey(), "bar")
+        createRuleWithAttachment("error", new PackageMaturityCheck(), { timespan: 7 })
+        // createRule("error", new ValidateKey(), "foo"),
+        // createRule("error", new ValidateKey(), "bar")
         // createRuleWithAttachment("error", {
         //     name: "some-check",
         //     check: (pkg, params) => {
