@@ -19,7 +19,7 @@ class DownloadCount {
     }
 }
 
-const foo = {
+export default {
     rules: [
         createRuleWithAttachment("error", new PackageMaturityCheck(), { timespan: 7 })
         // createRule("error", new ValidateKey(), "foo"),
@@ -48,5 +48,3 @@ const foo = {
         // ["warning", MissingLicense, undefined]
     ]
 };
-
-export default foo;
