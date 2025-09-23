@@ -8,7 +8,7 @@ import {
     type IClassAttachment
 } from "../../../shared/src/attachments/Attachments.js";
 
-interface IMetaFileData {
+export interface IMetaFileData {
     metaFile: PackageMetaData;
 }
 
