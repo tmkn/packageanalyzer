@@ -27,7 +27,7 @@ export class PackageMaturityCheck
     implements
         ILintCheckWithAttachments<IPackageMaturityCheckParams, { metafile: MetaFileAttachmentFn }>
 {
-    name = "package-maturity";
+    name = "pkg-maturity";
 
     check(pkg: PackageWithMeta, { timespan }: IPackageMaturityCheckParams) {
         const { metaFile } = pkg.getAttachmentData("metafile");
@@ -51,9 +51,8 @@ export class PackageMaturityCheck
             }).format(new Date(publicationTime));
 
             const ageDays = dayjs().diff(dayjs(publicationTime), "day");
-            const missingDays = Number(timespan) - ageDays;
 
-            return `${pkg.fullName} is ${ageDays} ${this._formatDays(ageDays)} old (published ${formatted}); ${missingDays} more ${this._formatDays(missingDays)} required to reach ${timespan}-day maturity`;
+            return `${pkg.version} is ${ageDays} ${this._formatDays(ageDays)} old (published ${formatted}); ${timespan}-day maturity required`;
         }
     }
 
