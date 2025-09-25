@@ -40,8 +40,7 @@ describe(`PackageMaturityCheck`, () => {
         const publicationTime = now.subtract(1, "day");
         const pkg = scaffoldPackage(publicationTime.toISOString());
 
-        const rule = new PackageMaturityCheck();
-        const result = rule.check(pkg, { timespan: 2 });
+        const result = PackageMaturityCheck.check(pkg, { timespan: 2 });
 
         expect(result).toMatchSnapshot();
     });
@@ -51,8 +50,7 @@ describe(`PackageMaturityCheck`, () => {
         const publicationTime = now.subtract(3, "day");
         const pkg = scaffoldPackage(publicationTime.toISOString());
 
-        const rule = new PackageMaturityCheck();
-        const result = rule.check(pkg, { timespan: 2 });
+        const result = PackageMaturityCheck.check(pkg, { timespan: 2 });
 
         expect(result).toBeUndefined();
     });
@@ -72,8 +70,7 @@ describe(`PackageMaturityCheck`, () => {
             }
         });
 
-        const rule = new PackageMaturityCheck();
-        const result = rule.check(pkg, { timespan: 2 });
+        const result = PackageMaturityCheck.check(pkg, { timespan: 2 });
 
         expect(result).toBeUndefined();
     });
@@ -91,16 +88,14 @@ describe(`PackageMaturityCheck`, () => {
             }
         });
 
-        const rule = new PackageMaturityCheck();
-        const check = () => rule.check(pkg, { timespan: 2 });
+        const check = () => PackageMaturityCheck.check(pkg, { timespan: 2 });
 
         expect(check).toThrowError(`Could not find publication time for version 1.0.0`);
     });
 
     describe(`checkParams`, () => {
         test(`correctly parses valid input`, () => {
-            const rule = new PackageMaturityCheck();
-            const schema = rule.checkParams();
+            const schema = PackageMaturityCheck.checkParams?.()!;
 
             const validInput: IPackageMaturityCheckParams = { timespan: 5 };
             const validationResult = schema.safeParse(validInput);
@@ -108,8 +103,7 @@ describe(`PackageMaturityCheck`, () => {
         });
 
         test(`fails on invalid input`, () => {
-            const rule = new PackageMaturityCheck();
-            const schema = rule.checkParams();
+            const schema = PackageMaturityCheck.checkParams?.()!;
 
             // @ts-expect-error testing invalid input
             const invalidInput: IPackageMaturityCheckParams = { timespan: "five" };
@@ -124,8 +118,7 @@ describe(`PackageMaturityCheck`, () => {
             const publicationTime = now.subtract(2, "day");
             const pkg = scaffoldPackage(publicationTime.toISOString());
 
-            const rule = new PackageMaturityCheck();
-            const result = rule.check(pkg, { timespan: 4 });
+            const result = PackageMaturityCheck.check(pkg, { timespan: 4 });
 
             expect(result).toMatchSnapshot();
         });
@@ -135,8 +128,7 @@ describe(`PackageMaturityCheck`, () => {
             const publicationTime = now.subtract(1, "day");
             const pkg = scaffoldPackage(publicationTime.toISOString());
 
-            const rule = new PackageMaturityCheck();
-            const result = rule.check(pkg, { timespan: 2 });
+            const result = PackageMaturityCheck.check(pkg, { timespan: 2 });
 
             expect(result).toMatchSnapshot();
         });
@@ -146,8 +138,7 @@ describe(`PackageMaturityCheck`, () => {
             const publicationTime = now.subtract(1, "day");
             const pkg = scaffoldPackage(publicationTime.toISOString());
 
-            const rule = new PackageMaturityCheck();
-            const result = rule.check(pkg, { timespan: 3 });
+            const result = PackageMaturityCheck.check(pkg, { timespan: 3 });
 
             expect(result).toMatchSnapshot();
         });

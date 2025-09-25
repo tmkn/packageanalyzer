@@ -3,7 +3,6 @@ import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration.js";
 import relativeTime from "dayjs/plugin/relativeTime.js";
 
-import { type ILintCheckWithAttachments } from "../LintRule.js";
 import { type IPackage } from "../../../../../shared/src/package/package.js";
 import { isUnpublished } from "../../../../../shared/src/npm.js";
 import {
@@ -12,6 +11,7 @@ import {
 } from "../../../attachments/MetaFileAttachment.js";
 import type { AttachmentData } from "../../../../../shared/src/attachments/Attachments.js";
 import { npmOnline } from "../../../providers/online.js";
+import { rule } from "../RuleBuilder.js";
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
@@ -23,13 +23,16 @@ const PackageAgeCheckParams = z.object({
 export type IPackageMaturityCheckParams = z.infer<typeof PackageAgeCheckParams>;
 type PackageWithMeta = IPackage<AttachmentData<{ metafile: MetaFileAttachmentFn }>>;
 
-export class PackageMaturityCheck
-    implements
-        ILintCheckWithAttachments<IPackageMaturityCheckParams, { metafile: MetaFileAttachmentFn }>
-{
-    name = "pkg-maturity";
+function formatDays(days: number): string {
+    return days === 1 ? "day" : "days";
+}
 
-    check(pkg: PackageWithMeta, { timespan }: IPackageMaturityCheckParams) {
+export const PackageMaturityCheck = rule("pkg-maturity")
+    .withParams(PackageAgeCheckParams)
+    .withAttachments({
+        metafile: createMetaFileAttachment(npmOnline)
+    })
+    .check((pkg: PackageWithMeta, { timespan }: IPackageMaturityCheckParams) => {
         const { metaFile } = pkg.getAttachmentData("metafile");
 
         if (isUnpublished(metaFile)) {
@@ -52,17 +55,7 @@ export class PackageMaturityCheck
 
             const ageDays = dayjs().diff(dayjs(publicationTime), "day");
 
-            return `${pkg.version} is ${ageDays} ${this._formatDays(ageDays)} old (published ${formatted}); ${timespan}-day maturity required`;
+            return `${pkg.version} is ${ageDays} ${formatDays(ageDays)} old (published ${formatted}); ${timespan}-day maturity required`;
         }
-    }
-
-    private _formatDays(days: number): string {
-        return days === 1 ? "day" : "days";
-    }
-
-    attachments = { metafile: createMetaFileAttachment(npmOnline) };
-
-    checkParams() {
-        return PackageAgeCheckParams;
-    }
-}
+    })
+    .build();
