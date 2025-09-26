@@ -29,6 +29,17 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "Test Command",
+            "skipFiles": ["<node_internals>/**"],
+            "program": "${workspaceFolder}/build/apps/cli/src/cli.js",
+            "args": ["test"],
+            // "preLaunchTask": "tsc: build - tsconfig.json",
+            "outFiles": ["${workspaceFolder}/build/**/*.js"],
+            "console": "integratedTerminal"
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "Launch Sample Report",
             "skipFiles": ["<node_internals>/**"],
             "program": "${workspaceFolder}/dist/cli.js",
