@@ -1,90 +1,101 @@
 /* istanbul ignore file */
 // Used to quickly try out wip things in the context of the CLI
 
-import * as path from "path";
-
+import { z } from "zod";
 import { Option } from "clipanion";
+import { diffChars, createPatch, diffLines } from "diff";
+import chalk from "chalk";
 
 import { CliCommand } from "./common.js";
-import {
-    type DependencyTypes,
-    BasePackageParameter,
-    TypeParameter
-} from "../../../../packages/shared/src/reports/Validation.js";
 import {
     AbstractReport,
     type IReportConfig,
     type IReportContext
 } from "../../../../packages/shared/src/reports/Report.js";
 import { getPackageVersionfromString } from "../../../../packages/shared/src/visitors/visitor.js";
-import { createTarAttachment } from "../../../../packages/node/src/attachments/TarAttachment.js";
-import { DumpPackageProvider } from "../../../../packages/node/src/providers/folder.js";
+import {
+    createTarAttachment,
+    type ITarData
+} from "../../../../packages/node/src/attachments/TarAttachment.js";
 import { type IPackage } from "../../../../packages/shared/src/package/package.js";
-import { z } from "zod";
-import { defaultDependencyType } from "../../../../packages/node/src/common.js";
 
 export class TestCommand extends CliCommand<TestReport> {
-    public package = Option.String(`--package`, `typescript`);
-
-    public type: DependencyTypes = Option.String(`--type`, defaultDependencyType, {
-        description: `the type of dependencies you want to analzye, "dependencies" or "devDependencies"`
-    });
+    public from = Option.String(`--from`, `react@18.3.1`);
+    public to = Option.String(`--to`, `react`);
 
     static override readonly paths = [[`test`]];
 
     getReports(): TestReport {
         return new TestReport({
-            package: this.package,
-            type: this.type
+            from: this.from,
+            to: this.to
         });
     }
 }
 
-const PackageParams = BasePackageParameter.merge(TypeParameter);
+const TestReportParams = z.object({
+    from: z.string(),
+    to: z.string()
+});
 
-export type ITestReportParams = z.infer<typeof PackageParams>;
+export type ITestReportParams = z.infer<typeof TestReportParams>;
 
 export class TestReport extends AbstractReport<ITestReportParams> {
     name = `Test Report`;
-    configs: IReportConfig;
+    configs: [IReportConfig, IReportConfig];
 
     constructor(params: ITestReportParams) {
         super(params);
 
         if (this._isPackageParams(params)) {
-            this.configs = {
-                pkg: getPackageVersionfromString(params.package),
-                attachments: { tar: createTarAttachment() }
-            };
+            this.configs = [
+                {
+                    pkg: getPackageVersionfromString(params.from),
+                    attachments: { tar: createTarAttachment() }
+                },
+                {
+                    pkg: getPackageVersionfromString(params.to),
+                    attachments: { tar: createTarAttachment() }
+                }
+            ];
         } else {
             throw new Error(`Error`);
         }
     }
 
-    async report([pkg]: [IPackage], { stdoutFormatter }: IReportContext): Promise<void> {
-        const destination = path.join("packages", "node", "tests", "data", "dump");
-        const provider = new DumpPackageProvider(destination);
+    async report(
+        [pkg, pkg2]: [IPackage<{ tar: ITarData }>, IPackage<{ tar: ITarData }>],
+        { stdoutFormatter }: IReportContext
+    ): Promise<void> {
+        const tarball = pkg.getAttachmentData(`tar`);
+        const tarball2 = pkg2.getAttachmentData(`tar`);
 
-        const pkg2 = provider.getPackageJson(`react`, `17.0.2`);
-        const pkg3 = provider.getPackageJson(`react`);
+        const pkgJson = tarball.files.get(`package/package.json`);
+        const pkgJson2 = tarball2.files.get(`package/package.json`);
 
-        const [data2, data3] = await Promise.all([pkg2, pkg3]);
+        if (pkgJson && pkgJson2) {
+            // const diff = createPatch(`package.json`, pkgJson, pkgJson2);
+            const diff = diffLines(pkgJson, pkgJson2);
 
-        console.log(data2.name, data2.version);
-        console.log(data3.name, data3.version);
-        // pkg.visit(pkg => {
-        //     const { files } = pkg.getAttachmentData<TarAttachment>(`tar`);
+            diff.forEach(part => {
+                // Green for additions, red for deletions, grey for unchanged
+                const color = part.added ? chalk.green : part.removed ? chalk.red : chalk.gray;
+                process.stdout.write(color(part.value));
+            });
 
-        //     stdoutFormatter.writeLine(`Package: "${pkg.fullName}" | Files: ${files.size}`);
-        //     stdoutFormatter.writeLine(JSON.stringify([...files.keys()], null, 4));
-        // }, true);
+            // console.log(diff);
+            console.log();
+        }
+
+        console.log(`from: ${pkg.fullName}`);
+        console.log(`to: ${pkg2.fullName}`);
     }
 
-    private _isPackageParams(data: unknown): data is z.infer<typeof PackageParams> {
-        return PackageParams.safeParse(data).success;
+    private _isPackageParams(data: unknown): data is z.infer<typeof TestReportParams> {
+        return TestReportParams.safeParse(data).success;
     }
 
     override validate(): z.ZodType<ITestReportParams> {
-        return PackageParams;
+        return TestReportParams;
     }
 }
