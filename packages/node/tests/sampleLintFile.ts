@@ -21,7 +21,7 @@ class DownloadCount {
 
 export default {
     rules: [
-        createRuleWithAttachment("error", new PackageMaturityCheck(), { timespan: 7 })
+        createRuleWithAttachment("error", PackageMaturityCheck, { timespan: 7 })
         // createRule("error", new ValidateKey(), "foo"),
         // createRule("error", new ValidateKey(), "bar")
         // createRuleWithAttachment("error", {
