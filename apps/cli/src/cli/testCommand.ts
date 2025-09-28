@@ -5,6 +5,7 @@ import { z } from "zod";
 import { Option } from "clipanion";
 import { diffChars, createPatch, diffLines } from "diff";
 import chalk from "chalk";
+// eslint crashes the unit tests, remove it and replace with homegrown logic from gotham/parser
 import { ESLint } from "eslint";
 import module from "node:module";
 
