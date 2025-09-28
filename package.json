@@ -59,6 +59,7 @@
     },
     "devDependencies": {
         "@eslint/js": "^9.34.0",
+        "@oxc-project/types": "^0.93.0",
         "@types/express": "^5.0.6",
         "@types/lodash": "^4.17.21",
         "@types/node": "^24.3.2",
@@ -88,6 +89,7 @@
         "jiti": "^2.6.1",
         "lodash": "^4.17.23",
         "ora": "^9.3.0",
+        "oxc-parser": "^0.114.0",
         "semver": "^7.7.4",
         "spdx-satisfies": "^6.0.0",
         "tar": "^7.5.9",
