@@ -1273,10 +1273,10 @@ balanced-match@^1.0.0:
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.2.tgz#e83e3a7e3f300b34cb9d87f615fa0cbf357690ee"
   integrity sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==
 
-birpc@^2.5.0:
-  version "2.5.0"
-  resolved "https://registry.yarnpkg.com/birpc/-/birpc-2.5.0.tgz#3a014e54c17eceba0ce15738d484ea371dbf6527"
-  integrity sha512-VSWO/W6nNQdyP520F1mhf+Lc2f8pjGQOtoHHm7Ze8Go1kX7akpVIrtTa0fn+HB0QJEDVacl6aO08YE0PgXfdnQ==
+birpc@^2.6.1:
+  version "2.6.1"
+  resolved "https://registry.yarnpkg.com/birpc/-/birpc-2.6.1.tgz#c73463590928897e80f3263d9fbb7da63515014b"
+  integrity sha512-LPnFhlDpdSH6FJhJyn4M0kFO7vtQ5iPw24FnG0y21q09xC7e8+1LeR31S1MAIrDAHp4m7aas4bEkTDTvMAtebQ==
 
 body-parser@^2.2.0:
   version "2.2.0"
@@ -2772,16 +2772,16 @@ reusify@^1.0.4:
   resolved "https://registry.yarnpkg.com/reusify/-/reusify-1.0.4.tgz#90da382b1e126efc02146e90845a88db12925d76"
   integrity sha512-U9nH88a3fc/ekCF1l0/UP1IosiuIjyTh7hBvXVMHYgVcfGvt897Xguj2UOLDeI5BG2m7/uwyaLVT6fbtCwTyzw==
 
-rolldown-plugin-dts@^0.16.7:
-  version "0.16.7"
-  resolved "https://registry.yarnpkg.com/rolldown-plugin-dts/-/rolldown-plugin-dts-0.16.7.tgz#e40a4216ffec9afe54591843391b71ea505ef4fb"
-  integrity sha512-9iDzS4MHXMyieisFbWxuz96i/idGJNpvWILqCH06mrEZvn8Q2el3Q63xxjOt7HJjTOUNFhB1isvZFy4dA87lPQ==
+rolldown-plugin-dts@^0.16.8:
+  version "0.16.9"
+  resolved "https://registry.yarnpkg.com/rolldown-plugin-dts/-/rolldown-plugin-dts-0.16.9.tgz#2a0f4ae22c5d921ab55cb16897e8334bce3406e1"
+  integrity sha512-65fAQjQAAXW7j2V5/872r++jjjR2/Pur18/PQO/JgfJl3vKxapXO2KU1l5bUdRoFuuryF+23+Hfu0Cw3bhM97g==
   dependencies:
     "@babel/generator" "^7.28.3"
     "@babel/parser" "^7.28.4"
     "@babel/types" "^7.28.4"
     ast-kit "^2.1.2"
-    birpc "^2.5.0"
+    birpc "^2.6.1"
     debug "^4.4.3"
     dts-resolver "^2.1.2"
     get-tsconfig "^4.10.1"
@@ -3286,10 +3286,10 @@ ts-loader@^9.5.4:
     semver "^7.3.4"
     source-map "^0.7.4"
 
-tsdown@^0.15.4:
-  version "0.15.4"
-  resolved "https://registry.yarnpkg.com/tsdown/-/tsdown-0.15.4.tgz#cc9ecdba2e2cb63f1cef72fbc5fa0b41a2381430"
-  integrity sha512-aoFE8disBg8BgYcOgradr/5Yd+QDBRQ+6z8mXo/Ib7+GIaJwJsI5l/ppve05CZGcSDqwdhF4gdrA0HPHBtbBqA==
+tsdown@^0.15.5:
+  version "0.15.5"
+  resolved "https://registry.yarnpkg.com/tsdown/-/tsdown-0.15.5.tgz#48786d02df4a5edc4eaf21b97b54e2b064c661ec"
+  integrity sha512-2UP5hDBVYGHnnQSIYtDxMDjePmut7EDpvW5E2kVnjpZ17JgiPvRJPHwk5Dm045bC75+q8yxAlw/CMIELymTWaw==
   dependencies:
     ansis "^4.1.0"
     cac "^6.7.14"
@@ -3299,7 +3299,7 @@ tsdown@^0.15.4:
     empathic "^2.0.0"
     hookable "^5.5.3"
     rolldown latest
-    rolldown-plugin-dts "^0.16.7"
+    rolldown-plugin-dts "^0.16.8"
     semver "^7.7.2"
     tinyexec "^1.0.1"
     tinyglobby "^0.2.15"
