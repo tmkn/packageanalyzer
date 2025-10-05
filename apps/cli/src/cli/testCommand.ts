@@ -21,6 +21,7 @@ import {
     type ITarData
 } from "../../../../packages/node/src/attachments/TarAttachment.js";
 import { type IPackage } from "../../../../packages/shared/src/package/package.js";
+import { createVersionDiff } from "../../../../packages/shared/src/gotham/VersionDiffer.js";
 
 export class TestCommand extends CliCommand<TestReport> {
     public from = Option.String(`--from`, `react-dom@18.3.1`);
@@ -70,53 +71,67 @@ export class TestReport extends AbstractReport<ITestReportParams> {
         [pkg, pkg2]: [IPackage<{ tar: ITarData }>, IPackage<{ tar: ITarData }>],
         { stdoutFormatter }: IReportContext
     ): Promise<void> {
-        const tarball = pkg.getAttachmentData(`tar`);
-        const tarball2 = pkg2.getAttachmentData(`tar`);
+        // const tarball = pkg.getAttachmentData(`tar`);
+        // const tarball2 = pkg2.getAttachmentData(`tar`);
 
-        const pkgJson = tarball.files.get(`package/package.json`);
-        const pkgJson2 = tarball2.files.get(`package/package.json`);
+        // const pkgJson = tarball.files.get(`package/package.json`);
+        // const pkgJson2 = tarball2.files.get(`package/package.json`);
 
-        if (pkgJson && pkgJson2) {
-            // const diff = createPatch(`package.json`, pkgJson, pkgJson2);
-            const diff = diffLines(pkgJson, pkgJson2);
+        // if (pkgJson && pkgJson2) {
+        //     // const diff = createPatch(`package.json`, pkgJson, pkgJson2);
+        //     const diff = diffLines(pkgJson, pkgJson2);
 
-            diff.forEach(part => {
-                // Green for additions, red for deletions, grey for unchanged
-                const color = part.added ? chalk.green : part.removed ? chalk.red : chalk.gray;
-                process.stdout.write(color(part.value));
-            });
+        //     diff.forEach(part => {
+        //         // Green for additions, red for deletions, grey for unchanged
+        //         const color = part.added ? chalk.green : part.removed ? chalk.red : chalk.gray;
+        //         process.stdout.write(color(part.value));
+        //     });
 
-            // console.log(diff);
-            console.log();
-        }
+        //     // console.log(diff);
+        //     console.log();
+        // }
 
-        const jsFiles = new Map(
-            Array.from(tarball.files.entries()).filter(([filename]) => filename.endsWith(`.js`))
-        );
+        // const jsFiles = new Map(
+        //     Array.from(tarball.files.entries()).filter(([filename]) => filename.endsWith(`.js`))
+        // );
         // const jsFiles: Map<string, string> = new Map([
         //     [`foo.js`, `import fs from 'fs';\nconsole.log('hello');`]
         // ]);
-        const jsFiles2 = new Map(
-            Array.from(tarball2.files.entries()).filter(([filename]) => filename.endsWith(`.js`))
-        );
+        // const jsFiles2 = new Map(
+        //     Array.from(tarball2.files.entries()).filter(([filename]) => filename.endsWith(`.js`))
+        // );
 
-        const results = await lintInMemoryFiles(jsFiles);
+        // const results = await lintInMemoryFiles(jsFiles);
 
-        for (const result of results) {
-            if (result.errorCount > 0) {
-                const foo = result.messages.map(m => m.ruleId).join(`,`);
+        // for (const result of results) {
+        //     if (result.errorCount > 0) {
+        //         const foo = result.messages.map(m => m.ruleId).join(`,`);
 
-                console.log(`${foo}Found restricted imports in ${result.filePath}`);
-                for (const msg of result.messages) {
-                    console.log(
-                        `  Line ${msg.line}, Column ${msg.column}: ${msg.message} (${msg.ruleId})`
-                    );
-                }
-            }
+        //         console.log(`${foo}Found restricted imports in ${result.filePath}`);
+        //         for (const msg of result.messages) {
+        //             console.log(
+        //                 `  Line ${msg.line}, Column ${msg.column}: ${msg.message} (${msg.ruleId})`
+        //             );
+        //         }
+        //     }
+        // }
+
+        console.log(` from: ${pkg.fullName}`);
+        console.log(` to: ${pkg2.fullName}`);
+
+        const packageDiff = await createVersionDiff(pkg, pkg2);
+
+        for (const changed of packageDiff.changed) {
+            console.log(chalk.yellow(`\nChanged: ${changed.filename}\n`));
+            changed.diffLines.forEach(part => {
+                // Green for additions, red for deletions, grey for unchanged
+                const color = part.added ? chalk.green : part.removed ? chalk.red : chalk.gray;
+                const prefix = part.added ? `+ ` : part.removed ? `- ` : `  `;
+                process.stdout.write(color(prefix + part.value));
+            });
         }
 
-        console.log(`from: ${pkg.fullName}`);
-        console.log(`to: ${pkg2.fullName}`);
+        // console.log("packageDiff.packageName", `hello`);
     }
 
     private _isPackageParams(data: unknown): data is z.infer<typeof TestReportParams> {
@@ -128,39 +143,39 @@ export class TestReport extends AbstractReport<ITestReportParams> {
     }
 }
 
-async function lintInMemoryFiles(files: Map<string, string>) {
-    const restrictedModules = module.builtinModules;
-    const eslint = new ESLint({
-        overrideConfigFile: true,
-        cache: false,
-        allowInlineConfig: false,
+// async function lintInMemoryFiles(files: Map<string, string>) {
+//     const restrictedModules = module.builtinModules;
+//     const eslint = new ESLint({
+//         overrideConfigFile: true,
+//         cache: false,
+//         allowInlineConfig: false,
 
-        overrideConfig: [
-            {
-                plugins: {},
-                rules: {}
-            },
-            {
-                plugins: {},
-                files: ["**/*.js", "**/*.mjs"],
+//         overrideConfig: [
+//             {
+//                 plugins: {},
+//                 rules: {}
+//             },
+//             {
+//                 plugins: {},
+//                 files: ["**/*.js", "**/*.mjs"],
 
-                languageOptions: {
-                    ecmaVersion: "latest",
-                    sourceType: "module"
-                },
-                rules: {
-                    "no-restricted-imports": ["error", { paths: [...restrictedModules] }],
-                    "no-restricted-modules": ["error", { paths: [...restrictedModules] }]
-                }
-            }
-        ]
-    });
+//                 languageOptions: {
+//                     ecmaVersion: "latest",
+//                     sourceType: "module"
+//                 },
+//                 rules: {
+//                     "no-restricted-imports": ["error", { paths: [...restrictedModules] }],
+//                     "no-restricted-modules": ["error", { paths: [...restrictedModules] }]
+//                 }
+//             }
+//         ]
+//     });
 
-    // This part of the logic remains correct
-    const results = [];
-    for (const [filename, code] of files) {
-        const lintResults = await eslint.lintText(code, { filePath: filename });
-        results.push(...lintResults);
-    }
-    return results;
-}
+//     // This part of the logic remains correct
+//     const results = [];
+//     for (const [filename, code] of files) {
+//         const lintResults = await eslint.lintText(code, { filePath: filename });
+//         results.push(...lintResults);
+//     }
+//     return results;
+// }
