@@ -58,7 +58,7 @@
         "url": "https://github.com/tmkn/packageanalyzer/issues"
     },
     "devDependencies": {
-        "@eslint/js": "^9.34.0",
+        "@eslint/js": "^9.38.0",
         "@types/express": "^5.0.3",
         "@types/lodash": "^4.17.20",
         "@types/node": "^24.3.2",
