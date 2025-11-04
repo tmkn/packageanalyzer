@@ -75,7 +75,7 @@
         "ts-loader": "^9.5.4",
         "tsdown": "^0.15.12",
         "typescript": "^5.9.3",
-        "typescript-eslint": "^8.42.0",
+        "typescript-eslint": "^8.46.3",
         "vitest": "^3.2.4",
         "webpack": "^5.102.1"
     },
