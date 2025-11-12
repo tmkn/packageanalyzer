@@ -8,7 +8,8 @@ import pkg from "./package.json" with { type: "json" };
 const shared = defineConfig({
     define: {
         __APP_VERSION__: JSON.stringify(pkg.version.trim())
-    }
+    },
+    fixedExtension: false
 });
 
 export default defineConfig([
