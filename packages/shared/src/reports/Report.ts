@@ -66,8 +66,7 @@ export abstract class AbstractReport<
     TParams extends {},
     TReportConfigs extends ReportConfigs = ReportConfigs,
     TZodValidateObject extends z.ZodType<TParams> = z.ZodType<TParams>
-> implements IReport<TReportConfigs, TParams, TZodValidateObject>
-{
+> implements IReport<TReportConfigs, TParams, TZodValidateObject> {
     abstract name: string;
     readonly params: TParams;
     abstract configs: TReportConfigs;
