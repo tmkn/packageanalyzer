@@ -19,8 +19,10 @@ export interface IBaseLintCheck<T> extends ISharedLintCheckParams {
     check: (pkg: IPackage, params: T) => string | string[] | void;
 }
 
-export interface ILintCheckWithAttachments<T, A extends Attachments>
-    extends ISharedLintCheckParams {
+export interface ILintCheckWithAttachments<
+    T,
+    A extends Attachments
+> extends ISharedLintCheckParams {
     check: (pkg: IPackage<AttachmentData<A>>, params: T) => string | string[] | void;
     attachments: A;
 }
