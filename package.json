@@ -80,7 +80,7 @@
         "webpack": "^5.103.0"
     },
     "dependencies": {
-        "@tanstack/query-core": "^5.90.11",
+        "@tanstack/query-core": "^5.90.12",
         "chalk": "^5.6.2",
         "clipanion": "^4.0.0-rc.4",
         "dayjs": "^1.11.19",
