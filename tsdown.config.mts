@@ -1,5 +1,4 @@
-import { defineConfig } from "tsdown";
-import { mergeConfig } from "vitest/config";
+import { defineConfig, mergeConfig } from "tsdown";
 
 import pkg from "./package.json" with { type: "json" };
 
