@@ -5,6 +5,7 @@ import { Formatter, type IFormatter } from "../utils/formatter.js";
 import { Visitor } from "../visitors/visitor.js";
 import { type GenericReport, type IReportConfig, isReportConfigArray } from "./Report.js";
 import type { IHost } from "../host/IHost.js";
+import { AnalyzerEventBus } from "../events/EventBus.js";
 
 export type ReportServiceConfig = {
     reports: GenericReport[];
@@ -13,6 +14,7 @@ export type ReportServiceConfig = {
 export class ReportService {
     private readonly _stdoutFormatter: IFormatter;
     private readonly _stderrFormatter: IFormatter;
+    private readonly _eventBus: AnalyzerEventBus = new AnalyzerEventBus();
 
     constructor(
         private readonly _config: ReportServiceConfig,
@@ -37,6 +39,7 @@ export class ReportService {
                 this._host.getStdoutWriter().flush(),
                 this._host.getStderrWriter().flush()
             ]);
+            this._eventBus.cleanup();
         }
 
         return exitCode;
