@@ -119,15 +119,14 @@ export class Visitor<T extends Attachments = Attachments> implements IPackageVis
 
         for (const [key, attachment] of Object.entries(this._attachments)) {
             try {
-                const attachmentMsg = `[${p.fullName}][Attachment: ${numPadding(
-                    i,
-                    totalAttachments
-                )} - ${key}]`;
-                this._logger.log(attachmentMsg);
+                const attachmentScope = `Attachment: ${numPadding(i, totalAttachments)} - ${key}`;
+                const attachmentLogger = this._logger.scope(p.fullName).scope(attachmentScope);
+
+                attachmentLogger.log(`Processing...`);
 
                 const data = await attachment({
                     p,
-                    logger: (msg: string) => this._logger.log(`${attachmentMsg} - ${msg}`)
+                    logger: (msg: string) => attachmentLogger.log(msg)
                 });
 
                 p.setAttachmentData(key, data);
