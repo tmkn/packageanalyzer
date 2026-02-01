@@ -151,10 +151,13 @@ export function setupRegistryMocks(
 }
 
 export class MockLogger implements ILogger {
-    private _logs: string[] = [];
+    constructor(
+        private readonly scopes: string[] = [],
+        private readonly logsRef: string[] = []
+    ) {}
 
     get logs(): string[] {
-        return this._logs;
+        return this.logsRef;
     }
 
     start(): void {
@@ -166,15 +169,28 @@ export class MockLogger implements ILogger {
     }
 
     log(msg: string): void {
-        this._logs.push(msg);
+        this.logsRef.push(this.format(msg));
     }
 
     error(msg: string): void {
-        this._logs.push(msg);
+        this.logsRef.push(this.format(msg));
     }
 
     reset(): void {
-        this._logs = [];
+        this.logsRef.length = 0;
+    }
+
+    scope(name: string): ILogger {
+        return new MockLogger([...this.scopes, name], this.logsRef);
+    }
+
+    private format(msg: string): string {
+        if (this.scopes.length === 0) {
+            return msg;
+        }
+
+        const prefix = this.scopes.map(s => `[${s}]`).join("");
+        return `${prefix} ${msg}`;
     }
 }
 

@@ -21,6 +21,10 @@ describe(`Visitor Tests`, () => {
 
         await visitor.visit();
 
-        expect(mockLogger.logs[0]).toMatchSnapshot();
+        const attachmenLogMessage = mockLogger.logs.some(str =>
+            str.includes("hello from attachment")
+        );
+
+        expect(attachmenLogMessage).toBe(true);
     });
 });
