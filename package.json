@@ -70,7 +70,7 @@
         "express": "^5.2.1",
         "globals": "^17.3.0",
         "memory-fs": "^0.5.0",
-        "nock": "^14.0.10",
+        "nock": "^14.0.11",
         "prettier": "^3.8.1",
         "ts-loader": "^9.5.4",
         "tsdown": "^0.20.3",
