@@ -60,7 +60,7 @@
     "devDependencies": {
         "@eslint/js": "^9.34.0",
         "@types/express": "^5.0.6",
-        "@types/lodash": "^4.17.21",
+        "@types/lodash": "^4.17.23",
         "@types/node": "^24.3.2",
         "@types/semver": "^7.7.1",
         "@types/spdx-satisfies": "^6.0.0",
