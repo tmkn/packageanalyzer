@@ -2098,10 +2098,10 @@ hasown@^2.0.2:
   dependencies:
     function-bind "^1.1.2"
 
-hookable@^6.0.1:
-  version "6.0.1"
-  resolved "https://registry.yarnpkg.com/hookable/-/hookable-6.0.1.tgz#be950f1b8ef38af24d4354657e9e3590d2a5b5e6"
-  integrity sha512-uKGyY8BuzN/a5gvzvA+3FVWo0+wUjgtfSdnmjtrOVwQCZPHpHDH2WRO3VZSOeluYrHoDCiXFffZXs8Dj1ULWtw==
+hookable@^6.1.0:
+  version "6.1.0"
+  resolved "https://registry.yarnpkg.com/hookable/-/hookable-6.1.0.tgz#f9eb1c39928b5c6db4e8884155d402420030555e"
+  integrity sha512-ZoKZSJgu8voGK2geJS+6YtYjvIzu9AOM/KZXsBxr83uhLL++e9pEv/dlgwgy3dvHg06kTz6JOh1hk3C8Ceiymw==
 
 html-escaper@^2.0.0:
   version "2.0.2"
@@ -3305,16 +3305,16 @@ ts-loader@^9.5.4:
     semver "^7.3.4"
     source-map "^0.7.4"
 
-tsdown@^0.21.3:
-  version "0.21.3"
-  resolved "https://registry.yarnpkg.com/tsdown/-/tsdown-0.21.3.tgz#33de82b2d4800a7f6847a98061a1d40bae7ba8e5"
-  integrity sha512-oKKeMC8+IgNsB+81hvF5VBsqhqL/nr0g9vse+ujbK40vv0i3ReFI6gUts7hQH7J53ylQNjMgf2Vu6n0+P/uddA==
+tsdown@^0.21.4:
+  version "0.21.4"
+  resolved "https://registry.yarnpkg.com/tsdown/-/tsdown-0.21.4.tgz#e241055963c3263c73be9394d18115b835f6cad8"
+  integrity sha512-Q/kBi8SXkr4X6JI/NAZKZY1UuiEcbuXtIskL4tZCsgpDiEPM/2W6lC+OonNA31S+V3KsWedFvbFDBs23hvt+Aw==
   dependencies:
     ansis "^4.2.0"
     cac "^7.0.0"
     defu "^6.1.4"
     empathic "^2.0.0"
-    hookable "^6.0.1"
+    hookable "^6.1.0"
     import-without-cache "^0.2.5"
     obug "^2.1.1"
     picomatch "^4.0.3"
