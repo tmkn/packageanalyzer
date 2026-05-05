@@ -2272,10 +2272,10 @@ optionator@^0.9.3:
     type-check "^0.4.0"
     word-wrap "^1.2.5"
 
-ora@^9.3.0:
-  version "9.3.0"
-  resolved "https://registry.yarnpkg.com/ora/-/ora-9.3.0.tgz#187c87cc1062350f549f481de32bf91424c2b0e3"
-  integrity sha512-lBX72MWFduWEf7v7uWf5DHp9Jn5BI8bNPGuFgtXMmr2uDz2Gz2749y3am3agSDdkhHPHYmmxEGSKH85ZLGzgXw==
+ora@^9.4.0:
+  version "9.4.0"
+  resolved "https://registry.yarnpkg.com/ora/-/ora-9.4.0.tgz#0c9bc0128254928be6b65e109d11ba7222620eff"
+  integrity sha512-84cglkRILFxdtA8hAvLNdMrtBpPNBTrQ9/ulg0FA7xLMnD6mifv+enAIeRmvtv+WgdCE+LPGOfQmtJRrVaIVhQ==
   dependencies:
     chalk "^5.6.2"
     cli-cursor "^5.0.0"
@@ -2283,7 +2283,7 @@ ora@^9.3.0:
     is-interactive "^2.0.0"
     is-unicode-supported "^2.1.0"
     log-symbols "^7.0.1"
-    stdin-discarder "^0.3.1"
+    stdin-discarder "^0.3.2"
     string-width "^8.1.0"
 
 outvariant@^1.4.0, outvariant@^1.4.3:
@@ -2733,10 +2733,10 @@ std-env@^4.0.0-rc.1:
   resolved "https://registry.yarnpkg.com/std-env/-/std-env-4.0.0.tgz#ba3dc31c3a46bc5ba21138aa20a6a4ceb5bb9b7e"
   integrity sha512-zUMPtQ/HBY3/50VbpkupYHbRroTRZJPRLvreamgErJVys0ceuzMkD44J/QjqhHjOzK42GQ3QZIeFG1OYfOtKqQ==
 
-stdin-discarder@^0.3.1:
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/stdin-discarder/-/stdin-discarder-0.3.1.tgz#92a1e741e709248865d0562bb7babe84d350ae6a"
-  integrity sha512-reExS1kSGoElkextOcPkel4NE99S0BWxjUHQeDFnR8S993JxpPX7KU4MNmO19NXhlJp+8dmdCbKQVNgLJh2teA==
+stdin-discarder@^0.3.2:
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/stdin-discarder/-/stdin-discarder-0.3.2.tgz#998ab3b9a988661e6036a9bfdc96f43649e8e83e"
+  integrity sha512-eCPu1qRxPVkl5605OTWF8Wz40b4Mf45NY5LQmVPQ599knfs5QhASUm9GbJ5BDMDOXgrnh0wyEdvzmL//YMlw0A==
 
 strict-event-emitter@^0.5.1:
   version "0.5.1"
