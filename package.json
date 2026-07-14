@@ -74,7 +74,7 @@
     "oxfmt": "^0.56.0",
     "ts-loader": "^9.6.2",
     "tsdown": "^0.22.7",
-    "typescript": "^6.0.3",
+    "typescript": "^7.0.2",
     "typescript-eslint": "^8.42.0",
     "vitest": "^4.1.6",
     "webpack": "^5.108.4"
