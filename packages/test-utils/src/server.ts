@@ -78,7 +78,7 @@ class MockNpmServer extends AbstractMockServer {
     private readonly _dataPath = path.join("packages", "node", "tests", "data", "mockserverdata");
     private readonly _cache: Map<string, Readonly<IPackageMetadata>> = new Map();
 
-    setup() {
+    setup(): void {
         this._populateCache();
 
         this._app.get(`/:name/:version`, (req, res) => {
@@ -158,7 +158,7 @@ export async function createMockNpmServer(): Promise<IMockServer> {
 class MockDownloadServer extends AbstractMockServer {
     name = `MockDownloadServer`;
 
-    setup() {
+    setup(): void {
         this._app.get(`/:name`, (req, res) => {
             const { name } = req.params;
 
@@ -186,7 +186,7 @@ class MockRequestServer extends AbstractMockServer {
     name = `MockRequestServer`;
     private readonly _artificalDelay = 2000;
 
-    setup() {
+    setup(): void {
         let stallCalls = 0;
 
         this._app.get("/echo", (req, res) => void res.json({ hello: "world" }));

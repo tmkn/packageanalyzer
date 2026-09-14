@@ -3,7 +3,7 @@ import { type ILintCheck } from "../LintRule.js";
 
 export class OSILicenseCheck implements ILintCheck {
     name = "has-osi-license";
-    check(pkg: IPackage) {
+    check(pkg: IPackage): string | void {
         const license = pkg.getData("license");
         if (license) {
             if (typeof license === "string") {

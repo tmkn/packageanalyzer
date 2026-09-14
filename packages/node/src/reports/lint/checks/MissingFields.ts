@@ -16,7 +16,7 @@ export type IMissingFieldConfig = z.infer<typeof missingFieldConfigSchema>;
 export class MissingFields implements ILintCheck<IMissingFieldConfig> {
     name: string = "missing-field";
 
-    check(pkg: IPackage, { fields }: IMissingFieldConfig) {
+    check(pkg: IPackage, { fields }: IMissingFieldConfig): string[] {
         const messages: string[] = [];
 
         for (const field of fields) {
@@ -32,7 +32,7 @@ export class MissingFields implements ILintCheck<IMissingFieldConfig> {
         return messages;
     }
 
-    checkParams() {
+    checkParams(): z.ZodType<IMissingFieldConfig> {
         return missingFieldConfigSchema;
     }
 
