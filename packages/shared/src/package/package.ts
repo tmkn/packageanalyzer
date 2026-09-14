@@ -158,7 +158,7 @@ export class Package<T extends Record<string, any>> implements IPackage<T> {
     }
 
     collect<D>(dataFn: (pkg: IPackage<T>) => D): ICollectorNode<D, IPackage<T>> {
-        const identityFn = (i: IPackage<T>) => i.fullName;
+        const identityFn = (i: IPackage<T>): string => i.fullName;
         const rootCollectorNode: ICollectorNode<D, IPackage<T>> = new CollectorNode(
             dataFn(this),
             this,

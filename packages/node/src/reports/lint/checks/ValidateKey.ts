@@ -16,7 +16,7 @@ type StringParam = z.infer<typeof stringParamSchema>;
 
 export class ValidateKey implements ILintCheck<ValidateKeyParams> {
     name = "validate-key";
-    check(pkg: IPackage, params: ValidateKeyParams) {
+    check(pkg: IPackage, params: ValidateKeyParams): string | void {
         if (this.#isKeyParam(params)) {
             const key = params;
             const data = pkg.getData(key);

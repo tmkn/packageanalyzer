@@ -10,7 +10,7 @@ interface IMaintainerCheck {
 
 export class MaintainerCheck implements ILintCheck<IMaintainerCheck> {
     name = "maintainer-check";
-    check(pkg: IPackage, { authors }: IMaintainerCheck) {
+    check(pkg: IPackage, { authors }: IMaintainerCheck): string[] {
         const authorMessages: string[] = [];
 
         for (const author of authors) {
@@ -29,7 +29,7 @@ export class MaintainerCheck implements ILintCheck<IMaintainerCheck> {
         return authorMessages;
     }
 
-    checkParams() {
+    checkParams(): z.ZodType<IMaintainerCheck> {
         return z.object({
             authors: z.array(z.string())
         });

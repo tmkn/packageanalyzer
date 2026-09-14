@@ -27,7 +27,7 @@ class RuleBuilder<Name extends string, A extends Attachments, P extends z.ZodTyp
 
     check(
         check: (pkg: IPackage<AttachmentData<A>>, params: z.infer<P>) => string | void | string[]
-    ) {
+    ): { build: () => Readonly<ILintCheck<z.infer<P>, A>> } {
         return {
             build: (): Readonly<ILintCheck<z.infer<P>, A>> => {
                 const hasParams = !(this._params instanceof z.ZodUndefined);
@@ -41,7 +41,7 @@ class RuleBuilder<Name extends string, A extends Attachments, P extends z.ZodTyp
                 let composedRule: any = baseRule;
 
                 if (hasParams) {
-                    composedRule = { ...baseRule, checkParams: () => this._params };
+                    composedRule = { ...baseRule, checkParams: (): P => this._params };
                 }
 
                 if (hasAttachments) {
@@ -54,6 +54,8 @@ class RuleBuilder<Name extends string, A extends Attachments, P extends z.ZodTyp
     }
 }
 
-export function rule<T extends string>(name: T) {
+export function rule<T extends string>(
+    name: T
+): RuleBuilder<T, Record<string, never>, z.ZodUndefined> {
     return new RuleBuilder<T, Record<string, never>, z.ZodUndefined>(name);
 }

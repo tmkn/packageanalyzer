@@ -24,7 +24,7 @@ class InMemoryCompilerHost implements ts.CompilerHost {
         _data: string,
         _writeByteOrderMark: boolean,
         _onError?: (message: string) => void
-    ) {
+    ): void {
         console.log("writeFile not implemented");
     }
     getCurrentDirectory(): string {
@@ -72,7 +72,7 @@ export class CodeAnalyzer {
     }
 
     private _walk(): void {
-        const walk = (node: ts.Node) => {
+        const walk = (node: ts.Node): void => {
             this._statements++;
 
             if (node.kind === ts.SyntaxKind.PropertyAccessExpression) {

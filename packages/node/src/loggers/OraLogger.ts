@@ -8,20 +8,20 @@ export class OraLogger implements ILogger {
         private readonly scopes: string[] = []
     ) {}
 
-    start() {
+    start(): void {
         this.spinner.start();
     }
 
-    stop() {
+    stop(): void {
         this.spinner.stop();
     }
 
-    log(msg: string) {
+    log(msg: string): void {
         this.spinner.text = this.format(msg);
         this.spinner.render();
     }
 
-    error(msg: string) {
+    error(msg: string): void {
         this.spinner.stopAndPersist({
             symbol: "❌ ",
             text: this.format(msg)

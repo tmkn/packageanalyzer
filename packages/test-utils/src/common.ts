@@ -203,10 +203,17 @@ export type ReportServiceContext<
     reports: T;
 };
 
+type ReportServiceFactory<C extends new (...args: any[]) => AbstractReport<any>> = {
+    <T extends ConstructorParameters<C>[]>(
+        ...args: T
+    ): ReportServiceContext<{ [K in keyof T]: InstanceType<C> }>;
+    (...args: ConstructorParameters<C>): ReportServiceContext<InstanceType<C>>;
+};
+
 export function createReportServiceFactory<C extends new (...args: any[]) => AbstractReport<any>>(
     ctor: C,
     mockPkgsOrProvider: IMockPackageJson[] | IPackageJsonProvider
-) {
+): ReportServiceFactory<C> {
     const provider = Array.isArray(mockPkgsOrProvider)
         ? new MockProvider(mockPkgsOrProvider)
         : mockPkgsOrProvider;
