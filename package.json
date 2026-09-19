@@ -64,7 +64,7 @@
     "@types/semver": "^7.8.0",
     "@types/spdx-satisfies": "^6.0.0",
     "@types/tar": "^6.1.13",
-    "@vitest/coverage-v8": "^4.1.6",
+    "@vitest/coverage-v8": "^5.0.1",
     "express": "^5.2.1",
     "memory-fs": "^0.5.0",
     "nock": "^14.0.17",
