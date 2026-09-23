@@ -14,15 +14,15 @@ const shared = defineConfig({
 export default defineConfig([
     mergeConfig(shared, {
         entry: { index: "./packages/node/src/index.ts" },
-        dts: { build: true }
+        dts: { tsconfig: "./tsconfig.dts.json" }
     }),
     mergeConfig(shared, {
         entry: { "index.web": "./packages/web/src/index.ts" },
-        dts: { build: true },
+        dts: { tsconfig: "./tsconfig.dts.json" },
         platform: "browser"
     }),
     mergeConfig(shared, {
         entry: "./apps/cli/src/cli.ts",
-        dts: { build: true }
+        dts: { tsconfig: "./tsconfig.dts.json" }
     })
 ]);

@@ -1,54 +1,6 @@
-import * as ts from "typescript";
-
-//istanbul ignore next
-class InMemoryCompilerHost implements ts.CompilerHost {
-    public files = new Map<string, string>();
-
-    getSourceFile(
-        fileName: string,
-        languageVersion: ts.ScriptTarget,
-        _onError?: ((message: string) => void) | undefined,
-        _shouldCreateNewSourceFile?: boolean | undefined
-    ): ts.SourceFile | undefined {
-        const src = this.files.get(fileName);
-
-        if (src) {
-            return ts.createSourceFile(fileName, src, languageVersion);
-        }
-    }
-    getDefaultLibFileName(_options: ts.CompilerOptions): string {
-        return "lib.d.ts";
-    }
-    writeFile(
-        _filename: string,
-        _data: string,
-        _writeByteOrderMark: boolean,
-        _onError?: (message: string) => void
-    ): void {
-        console.log("writeFile not implemented");
-    }
-    getCurrentDirectory(): string {
-        return "";
-    }
-    getCanonicalFileName(fileName: string): string {
-        return fileName;
-    }
-    useCaseSensitiveFileNames(): boolean {
-        return true;
-    }
-    getNewLine(): string {
-        return "\n";
-    }
-    fileExists(fileName: string): boolean {
-        return this.files.has(fileName);
-    }
-    readFile(fileName: string): string | undefined {
-        return this.files.get(fileName);
-    }
-}
+import { parseSync, visitorKeys, type Node } from "oxc-parser";
 
 export class CodeAnalyzer {
-    private readonly _sourceFile: ts.SourceFile;
     private _statements = 0;
     private _imports = 0;
     private _exports = 0;
@@ -65,36 +17,46 @@ export class CodeAnalyzer {
         return this._statements;
     }
 
-    private constructor(private readonly _src: string) {
-        this._sourceFile = ts.createSourceFile(`_filename`, _src, ts.ScriptTarget.ESNext, true);
-
-        this._walk();
+    private constructor(src: string) {
+        const { program } = parseSync(`_filename.ts`, src, { sourceType: `unambiguous` });
+        this._walk(program);
     }
 
-    private _walk(): void {
-        const walk = (node: ts.Node): void => {
+    private _walk(sourceFile: Node): void {
+        const walk = (node: Node): void => {
             this._statements++;
 
-            if (node.kind === ts.SyntaxKind.PropertyAccessExpression) {
-                const [first, , third] = node.getChildren();
-
-                if (first?.getText() === `module` && third?.getText() === `exports`) {
-                    this._exports++;
-                }
+            if (
+                node.type === `MemberExpression` &&
+                !node.computed &&
+                node.object.type === `Identifier` &&
+                node.object.name === `module` &&
+                node.property.type === `Identifier` &&
+                node.property.name === `exports`
+            ) {
+                this._exports++;
             }
 
-            if (node.kind === ts.SyntaxKind.CallExpression) {
-                const [first] = node.getChildren();
-
-                if (first?.getText() === `require`) {
-                    this._imports++;
-                }
+            if (
+                node.type === `CallExpression` &&
+                node.callee.type === `Identifier` &&
+                node.callee.name === `require`
+            ) {
+                this._imports++;
             }
 
-            ts.forEachChild(node, walk);
+            for (const key of visitorKeys[node.type] ?? []) {
+                const child = (node as unknown as Record<string, Node | Node[] | null>)[key];
+
+                if (Array.isArray(child)) {
+                    child.forEach(walk);
+                } else if (child) {
+                    walk(child);
+                }
+            }
         };
 
-        walk(this._sourceFile);
+        walk(sourceFile);
     }
 
     /*public static FromFile(filePath: string): CodeAnalyzer {

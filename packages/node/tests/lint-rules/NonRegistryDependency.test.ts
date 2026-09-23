@@ -50,7 +50,7 @@ describe(`NonRegistryDependency`, () => {
                     dependencyType
                 );
 
-                // @ ts-expect-error technically can be void but we ignore that for the test
+                // @ts-expect-error technically can be void but we ignore that for the test
                 const [result] = NonRegistryDependency.check(pkg, undefined);
 
                 expect(result).toContain(`dependency git-dependency is included via ${protocol}`);
