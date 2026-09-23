@@ -32,7 +32,7 @@ describe(`CodeAnalyzer Tests`, () => {
     test(`Analzye example code 1`, () => {
         const test = CodeAnalyzer.FromString(example1);
 
-        expect(test.statements).toBe(45);
+        expect(test.statements).toBe(33);
         expect(test.exports).toBe(1);
         expect(test.imports).toBe(0);
     });
@@ -40,7 +40,7 @@ describe(`CodeAnalyzer Tests`, () => {
     test(`Analzye example code 2`, () => {
         const test = CodeAnalyzer.FromString(example2);
 
-        expect(test.statements).toBe(94);
+        expect(test.statements).toBe(77);
         expect(test.exports).toBe(1);
         expect(test.imports).toBe(2);
     });

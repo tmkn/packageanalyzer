@@ -1,0 +1,10 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "composite": false,
+        "incremental": false,
+        "types": ["node"]
+    },
+    "include": ["apps/cli/src/**/*.ts", "packages/*/src/**/*.ts"],
+    "references": []
+}
