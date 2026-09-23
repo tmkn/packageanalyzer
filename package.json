@@ -1,96 +1,97 @@
 {
-  "name": "@tmkn/packageanalyzer",
-  "version": "0.9.16",
-  "type": "module",
-  "description": "A framework to introspect Node.js packages",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": "./dist/index.js",
-    "./web": "./dist/index.web.js"
-  },
-  "typesVersions": {
-    "*": {
-      "web": [
-        "./dist/index.web.d.ts"
-      ]
+    "name": "@tmkn/packageanalyzer",
+    "version": "0.9.16",
+    "type": "module",
+    "description": "A framework to introspect Node.js packages",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": "./dist/index.js",
+        "./web": "./dist/index.web.js"
+    },
+    "typesVersions": {
+        "*": {
+            "web": [
+                "./dist/index.web.d.ts"
+            ]
+        }
+    },
+    "files": [
+        "dist"
+    ],
+    "bin": {
+        "pkga": "dist/cli.js"
+    },
+    "scripts": {
+        "build": "tsdown",
+        "dev": "tsdown --sourcemap --watch ./src",
+        "typecheck": "tsc -b --watch",
+        "typecheck:ci": "tsc -b",
+        "test": "vitest run",
+        "test:watch": "vitest",
+        "test:coverage": "vitest run --coverage",
+        "test:update": "vitest run --update",
+        "test:exports": "node ./dist/cli.js lint --package react ./packages/node/tests/exportTest.js",
+        "prettier": "oxfmt \"{apps,packages}/**/{*.ts,*.js,*.mts}\" webpack.web.config.cjs vitest.config.mts tsdown.config.mts",
+        "pa": "node dist/cli.js",
+        "preview": "npm pack && tar -xvzf *.tgz && rm -rf package *.tgz",
+        "lint": "oxlint --config oxlint.config.mts packages apps",
+        "lint:fix": "oxlint --config oxlint.config.mts packages apps --fix",
+        "lint:web": "node ./webpack.web.config.cjs",
+        "prepublishOnly": "npm run build",
+        "publish:test": "npm publish --dry-run"
+    },
+    "author": "tmkn",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/tmkn/packageanalyzer.git"
+    },
+    "keywords": [
+        "package",
+        "analyzer",
+        "dependency",
+        "tree",
+        "lint"
+    ],
+    "bugs": {
+        "url": "https://github.com/tmkn/packageanalyzer/issues"
+    },
+    "devDependencies": {
+        "@types/express": "^5.0.6",
+        "@types/lodash": "^4.17.24",
+        "@types/node": "^24.3.2",
+        "@types/semver": "^7.8.0",
+        "@types/spdx-satisfies": "^6.0.0",
+        "@types/tar": "^6.1.13",
+        "@vitest/coverage-v8": "^5.0.1",
+        "express": "^5.2.1",
+        "memory-fs": "^0.5.0",
+        "nock": "^14.0.17",
+        "oxfmt": "^0.67.0",
+        "oxlint": "^1.83.0",
+        "oxlint-tsgolint": "^7.0.2001",
+        "ts-loader": "^9.6.2",
+        "tsdown": "^0.23.0",
+        "typescript": "^6.0.3",
+        "vite": "^8.3.0",
+        "vitest": "^5.0.1",
+        "webpack": "^5.111.0"
+    },
+    "dependencies": {
+        "@tanstack/query-core": "^5.103.1",
+        "chalk": "^6.0.0",
+        "clipanion": "^4.0.0-rc.4",
+        "dayjs": "^1.11.23",
+        "jiti": "^2.7.0",
+        "lodash": "^4.18.1",
+        "ora": "^9.4.1",
+        "semver": "^7.8.5",
+        "spdx-satisfies": "^6.0.0",
+        "tar": "^7.5.21",
+        "zod": "^4.6.5"
+    },
+    "engines": {
+        "node": ">=18"
     }
-  },
-  "files": [
-    "dist"
-  ],
-  "bin": {
-    "pkga": "dist/cli.js"
-  },
-  "scripts": {
-    "build": "tsdown",
-    "dev": "tsdown --sourcemap --watch ./src",
-    "typecheck": "tsc -b --watch",
-    "typecheck:ci": "tsc -b",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage",
-    "test:update": "vitest run --update",
-    "test:exports": "node ./dist/cli.js lint --package react ./packages/node/tests/exportTest.js",
-    "prettier": "oxfmt \"{apps,packages}/**/{*.ts,*.js,*.mts}\" webpack.web.config.cjs vitest.config.mts tsdown.config.mts",
-    "pa": "node dist/cli.js",
-    "preview": "npm pack && tar -xvzf *.tgz && rm -rf package *.tgz",
-    "lint": "oxlint --config oxlint.config.mts packages apps",
-    "lint:fix": "oxlint --config oxlint.config.mts packages apps --fix",
-    "lint:web": "node ./webpack.web.config.cjs",
-    "prepublishOnly": "npm run build",
-    "publish:test": "npm publish --dry-run"
-  },
-  "author": "tmkn",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/tmkn/packageanalyzer.git"
-  },
-  "keywords": [
-    "package",
-    "analyzer",
-    "dependency",
-    "tree",
-    "lint"
-  ],
-  "bugs": {
-    "url": "https://github.com/tmkn/packageanalyzer/issues"
-  },
-  "devDependencies": {
-    "@types/express": "^5.0.6",
-    "@types/lodash": "^4.17.24",
-    "@types/node": "^24.3.2",
-    "@types/semver": "^7.8.0",
-    "@types/spdx-satisfies": "^6.0.0",
-    "@types/tar": "^6.1.13",
-    "@vitest/coverage-v8": "^4.1.6",
-    "express": "^5.2.1",
-    "memory-fs": "^0.5.0",
-    "nock": "^14.0.17",
-    "oxfmt": "^0.67.0",
-    "oxlint": "^1.83.0",
-    "oxlint-tsgolint": "^7.0.2001",
-    "ts-loader": "^9.6.2",
-    "tsdown": "^0.23.0",
-    "typescript": "^6.0.3",
-    "vitest": "^5.0.1",
-    "webpack": "^5.111.0"
-  },
-  "dependencies": {
-    "@tanstack/query-core": "^5.103.1",
-    "chalk": "^6.0.0",
-    "clipanion": "^4.0.0-rc.4",
-    "dayjs": "^1.11.23",
-    "jiti": "^2.7.0",
-    "lodash": "^4.18.1",
-    "ora": "^9.4.1",
-    "semver": "^7.8.5",
-    "spdx-satisfies": "^6.0.0",
-    "tar": "^7.5.21",
-    "zod": "^4.6.5"
-  },
-  "engines": {
-    "node": ">=18"
-  }
 }
