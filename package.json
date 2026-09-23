@@ -68,7 +68,7 @@
         "express": "^5.2.1",
         "memory-fs": "^0.5.0",
         "nock": "^14.0.17",
-        "oxfmt": "^0.67.0",
+        "oxfmt": "^0.68.0",
         "oxlint": "^1.83.0",
         "oxlint-tsgolint": "^7.0.2001",
         "ts-loader": "^9.6.2",
