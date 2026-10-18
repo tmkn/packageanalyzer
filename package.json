@@ -70,7 +70,7 @@
         "nock": "^14.0.17",
         "oxfmt": "^0.73.0",
         "oxlint": "^1.88.0",
-        "oxlint-tsgolint": "^7.0.2003",
+        "oxlint-tsgolint": "^7.0.2004",
         "ts-loader": "^9.6.2",
         "tsdown": "^0.23.1",
         "typescript": "^6.0.3",
