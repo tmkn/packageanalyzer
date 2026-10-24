@@ -434,10 +434,10 @@
   resolved "https://registry.yarnpkg.com/@rolldown/pluginutils/-/pluginutils-1.0.1.tgz#e3fcee093fbb5ce765e1ad088ff4de2889f6f9be"
   integrity sha512-2j9bGt5Jh8hj+vPtgzPtl72j0yRxHAyumoo6TNfAjsLB04UtpSvPbPcDcBMxz7n+9CYB0c1GxQFxYRg2jimqGw==
 
-"@tanstack/query-core@^5.104.2":
-  version "5.104.2"
-  resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-5.104.2.tgz#f06a6938160edcd09d22def172c381895b81627d"
-  integrity sha512-/qbsxJK5c3Ve1aFIULWYNcT2jeRUAiD4HME6Eu2ZdpofHoVgAjpkQhLg5xHuOoBkTPQUJLfP7zOxy0qsBcqROA==
+"@tanstack/query-core@^5.104.5":
+  version "5.104.5"
+  resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-5.104.5.tgz#251e241c537fb065ae188d0332e62cf413db863c"
+  integrity sha512-Q94gI8Opd+CbdVNOdj8ZCyV8WqLYitrDq1t96Xc8WZT6lY0r5iRnJLXYDxMex7EEf2v+mXvn4FcjaBKSxXZQ9A==
 
 "@types/body-parser@*":
   version "1.19.5"
