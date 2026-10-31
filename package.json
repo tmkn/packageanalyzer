@@ -69,7 +69,7 @@
         "memory-fs": "^0.5.0",
         "nock": "^14.0.17",
         "oxfmt": "^0.73.0",
-        "oxlint": "^1.88.0",
+        "oxlint": "^1.90.0",
         "oxlint-tsgolint": "^7.0.2004",
         "ts-loader": "^9.6.2",
         "tsdown": "^0.23.1",
