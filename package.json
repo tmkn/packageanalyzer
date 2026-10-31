@@ -72,7 +72,7 @@
         "oxlint": "^1.88.0",
         "oxlint-tsgolint": "^7.0.2004",
         "ts-loader": "^9.6.2",
-        "tsdown": "^0.23.1",
+        "tsdown": "^0.23.3",
         "typescript": "^6.0.3",
         "vite": "^8.3.4",
         "vitest": "^5.0.1",
